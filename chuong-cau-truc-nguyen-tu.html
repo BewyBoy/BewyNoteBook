@@ -164,6 +164,27 @@
     .el-btn.active .num,
     .el-btn.active .nm { color: rgba(30,27,24,0.65); }
 
+    .periodic-open {
+      width: 100%;
+      margin: 2px 0 18px;
+      padding: 11px 12px;
+      border: 1px solid rgba(251,244,228,0.16);
+      border-radius: 10px;
+      background: rgba(47,143,111,0.18);
+      color: #FBF4E4;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all .18s ease;
+    }
+    .periodic-open:hover {
+      background: rgba(47,143,111,0.34);
+      border-color: #2F8F6F;
+      transform: translateY(-1px);
+    }
+
     .toggle-row {
       display: flex; gap: 8px; margin-bottom: 22px;
     }
@@ -234,6 +255,103 @@
     }
     .theme-toggle:hover { background: rgba(47,143,111,0.2); border-color: #2F8F6F; }
 
+    .pt-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(6, 10, 8, 0.72);
+      backdrop-filter: blur(5px);
+      padding: 20px;
+    }
+    .pt-modal.hidden { display: none; }
+
+    .pt-panel {
+      width: min(1200px, 96vw);
+      max-height: 92vh;
+      overflow: auto;
+      background: #151d19;
+      border: 1px solid rgba(251,244,228,0.12);
+      border-radius: 14px;
+      box-shadow: 0 24px 60px -20px rgba(0,0,0,0.6);
+      padding: 16px 16px 18px;
+    }
+    .pt-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .pt-head h3 {
+      font-family: 'Caveat', cursive;
+      font-size: 34px;
+      color: #FBF4E4;
+      line-height: 1;
+      margin: 0;
+    }
+    .pt-head p {
+      font-size: 12px;
+      color: rgba(251,244,228,0.62);
+      margin: 2px 0 0;
+    }
+    .pt-close {
+      border: 1px solid rgba(251,244,228,0.15);
+      background: rgba(251,244,228,0.05);
+      color: #FBF4E4;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    .pt-grid {
+      display: grid;
+      grid-template-columns: repeat(18, minmax(34px, 1fr));
+      gap: 6px;
+    }
+    .pt-gap { visibility: hidden; }
+
+    .pt-cell {
+      min-height: 52px;
+      border-radius: 8px;
+      border: 1px solid rgba(251,244,228,0.12);
+      background: rgba(251,244,228,0.05);
+      color: #FBF4E4;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      cursor: pointer;
+      padding: 4px 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .pt-cell:hover {
+      transform: translateY(-1px);
+      border-color: #F2B544;
+      background: rgba(242,181,68,0.24);
+    }
+    .pt-cell .num { font-size: 9px; opacity: 0.72; line-height: 1; }
+    .pt-cell .sym { font-size: 15px; font-weight: 700; line-height: 1; }
+    .pt-cell .name { font-size: 9px; opacity: 0.75; line-height: 1.15; text-align: center; }
+
+    .pt-cell.noble { background: rgba(111,184,209,0.22); }
+    .pt-cell.alkali { background: rgba(242,181,68,0.24); }
+    .pt-cell.alkaline { background: rgba(232,155,168,0.22); }
+    .pt-cell.halogen { background: rgba(217,99,59,0.24); }
+    .pt-cell.nonmetal { background: rgba(47,143,111,0.24); }
+    .pt-cell.metalloid { background: rgba(199,60,46,0.26); }
+    .pt-cell.active {
+      outline: 2px solid #FBF4E4;
+      box-shadow: 0 0 0 2px rgba(47,143,111,0.8) inset;
+    }
+
     body.light-mode .app {
       filter: invert(1) hue-rotate(180deg);
     }
@@ -255,6 +373,19 @@
 
   <a class="back-link" href="Learning Resources Hub v4.html">← Quay lại thư viện</a>
   <button id="theme-toggle" class="theme-toggle" type="button">☀ Light</button>
+
+  <div id="pt-modal" class="pt-modal hidden" aria-hidden="true">
+    <div class="pt-panel">
+      <div class="pt-head">
+        <div>
+          <h3>Bảng tuần hoàn hóa học</h3>
+          <p>Nhấn vào một nguyên tố để dựng mô hình nguyên tử tương tác.</p>
+        </div>
+        <button id="pt-close" class="pt-close" type="button">Đóng</button>
+      </div>
+      <div id="pt-grid" class="pt-grid"></div>
+    </div>
+  </div>
 
   <div class="app">
     <!-- ============ LEFT: KNOWLEDGE ============ -->
@@ -367,6 +498,7 @@
     <aside class="controls">
       <h3>Chọn nguyên tố</h3>
       <div class="element-grid" id="el-grid"></div>
+      <button id="periodic-open" class="periodic-open" type="button">Mở bảng tuần hoàn</button>
 
       <h3>Chế độ hiển thị</h3>
       <div class="toggle-row">
@@ -408,37 +540,174 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-    // ── Element data: Z, N (neutron của đồng vị phổ biến), tên VN, cấu hình, shells
-    const ELEMENTS = [
-      { z: 1,  sym: 'H',  vn: 'Hydro',   n: 0,  mass: 1.008,  cfg: '1s¹',                shells: [1] },
-      { z: 2,  sym: 'He', vn: 'Heli',    n: 2,  mass: 4.0026, cfg: '1s²',                shells: [2] },
-      { z: 3,  sym: 'Li', vn: 'Liti',    n: 4,  mass: 6.94,   cfg: '1s² 2s¹',            shells: [2, 1] },
-      { z: 6,  sym: 'C',  vn: 'Carbon',  n: 6,  mass: 12.011, cfg: '1s² 2s² 2p²',        shells: [2, 4] },
-      { z: 7,  sym: 'N',  vn: 'Nitơ',    n: 7,  mass: 14.007, cfg: '1s² 2s² 2p³',        shells: [2, 5] },
-      { z: 8,  sym: 'O',  vn: 'Oxi',     n: 8,  mass: 15.999, cfg: '1s² 2s² 2p⁴',        shells: [2, 6] },
-      { z: 10, sym: 'Ne', vn: 'Neon',    n: 10, mass: 20.180, cfg: '1s² 2s² 2p⁶',        shells: [2, 8] },
-      { z: 11, sym: 'Na', vn: 'Natri',   n: 12, mass: 22.990, cfg: '[Ne] 3s¹',           shells: [2, 8, 1] },
+    // ── Dữ liệu bảng tuần hoàn + sinh cấu hình nguyên tử xấp xỉ cho mô hình Bohr
+    const SYMBOLS = [
+      'H','He','Li','Be','B','C','N','O','F','Ne',
+      'Na','Mg','Al','Si','P','S','Cl','Ar',
+      'K','Ca','Sc','Ti','V','Cr','Mn','Fe','Co','Ni','Cu','Zn','Ga','Ge','As','Se','Br','Kr',
+      'Rb','Sr','Y','Zr','Nb','Mo','Tc','Ru','Rh','Pd','Ag','Cd','In','Sn','Sb','Te','I','Xe',
+      'Cs','Ba','La','Ce','Pr','Nd','Pm','Sm','Eu','Gd','Tb','Dy','Ho','Er','Tm','Yb','Lu',
+      'Hf','Ta','W','Re','Os','Ir','Pt','Au','Hg','Tl','Pb','Bi','Po','At','Rn',
+      'Fr','Ra','Ac','Th','Pa','U','Np','Pu','Am','Cm','Bk','Cf','Es','Fm','Md','No','Lr',
+      'Rf','Db','Sg','Bh','Hs','Mt','Ds','Rg','Cn','Nh','Fl','Mc','Lv','Ts','Og'
     ];
 
-    // ── Build element grid buttons
+    const NAMES_VI = {
+      H: 'Hydro', He: 'Heli', Li: 'Liti', Be: 'Beri', B: 'Bo', C: 'Carbon', N: 'Nitơ', O: 'Oxi', F: 'Flo', Ne: 'Neon',
+      Na: 'Natri', Mg: 'Magiê', Al: 'Nhôm', Si: 'Silic', P: 'Photpho', S: 'Lưu huỳnh', Cl: 'Clo', Ar: 'Argon',
+      K: 'Kali', Ca: 'Canxi', Fe: 'Sắt', Cu: 'Đồng', Zn: 'Kẽm', Ag: 'Bạc', Au: 'Vàng', Hg: 'Thủy ngân', Pb: 'Chì',
+      Br: 'Brom', I: 'Iot', Xe: 'Xenon', Rn: 'Radon', U: 'Urani', Pu: 'Plutoni', Og: 'Oganesson'
+    };
+
+    const PERIOD_ROWS = [
+      ['H','','','','','','','','','','','','','','','','','He'],
+      ['Li','Be','','','','','','','','','','','B','C','N','O','F','Ne'],
+      ['Na','Mg','','','','','','','','','','','Al','Si','P','S','Cl','Ar'],
+      ['K','Ca','Sc','Ti','V','Cr','Mn','Fe','Co','Ni','Cu','Zn','Ga','Ge','As','Se','Br','Kr'],
+      ['Rb','Sr','Y','Zr','Nb','Mo','Tc','Ru','Rh','Pd','Ag','Cd','In','Sn','Sb','Te','I','Xe'],
+      ['Cs','Ba','La','Hf','Ta','W','Re','Os','Ir','Pt','Au','Hg','Tl','Pb','Bi','Po','At','Rn'],
+      ['Fr','Ra','Ac','Rf','Db','Sg','Bh','Hs','Mt','Ds','Rg','Cn','Nh','Fl','Mc','Lv','Ts','Og'],
+      ['','','La','Ce','Pr','Nd','Pm','Sm','Eu','Gd','Tb','Dy','Ho','Er','Tm','Yb','Lu',''],
+      ['','','Ac','Th','Pa','U','Np','Pu','Am','Cm','Bk','Cf','Es','Fm','Md','No','Lr',''],
+    ];
+
+    const ALKALI = new Set(['Li','Na','K','Rb','Cs','Fr']);
+    const ALKALINE = new Set(['Be','Mg','Ca','Sr','Ba','Ra']);
+    const HALOGEN = new Set(['F','Cl','Br','I','At','Ts']);
+    const NOBLE = new Set(['He','Ne','Ar','Kr','Xe','Rn','Og']);
+    const METALLOID = new Set(['B','Si','Ge','As','Sb','Te']);
+    const NONMETAL = new Set(['H','C','N','O','P','S','Se']);
+
+    const Z_BY_SYMBOL = Object.fromEntries(SYMBOLS.map((s, i) => [s, i + 1]));
+    const SHELL_LABELS = ['K', 'L', 'M', 'N', 'O', 'P', 'Q'];
+
+    function categoryOf(sym) {
+      if (NOBLE.has(sym)) return 'noble';
+      if (ALKALI.has(sym)) return 'alkali';
+      if (ALKALINE.has(sym)) return 'alkaline';
+      if (HALOGEN.has(sym)) return 'halogen';
+      if (METALLOID.has(sym)) return 'metalloid';
+      if (NONMETAL.has(sym)) return 'nonmetal';
+      return '';
+    }
+
+    function shellConfigByZ(z) {
+      // Aufbau order (xấp xỉ) để gom electron theo lớp n cho mô hình Bohr.
+      const orbitals = [
+        ['1s', 2], ['2s', 2], ['2p', 6], ['3s', 2], ['3p', 6],
+        ['4s', 2], ['3d', 10], ['4p', 6], ['5s', 2], ['4d', 10],
+        ['5p', 6], ['6s', 2], ['4f', 14], ['5d', 10], ['6p', 6],
+        ['7s', 2], ['5f', 14], ['6d', 10], ['7p', 6],
+      ];
+      const byShell = [0, 0, 0, 0, 0, 0, 0];
+      let left = z;
+      for (const [orb, cap] of orbitals) {
+        if (left <= 0) break;
+        const take = Math.min(cap, left);
+        const shell = Number(orb[0]) - 1;
+        byShell[shell] += take;
+        left -= take;
+      }
+      const shells = byShell.filter(v => v > 0);
+      return shells;
+    }
+
+    function getElementByZ(z) {
+      const sym = SYMBOLS[z - 1] || '?';
+      const vn = NAMES_VI[sym] || `Nguyên tố ${sym}`;
+      const n = z === 1 ? 0 : Math.max(1, Math.round(z * 1.35) - z);
+      const shells = shellConfigByZ(z);
+      const cfg = shells.map((v, i) => `${SHELL_LABELS[i]}${v}`).join(' ');
+      return { z, sym, vn, n, cfg, shells };
+    }
+
+    // ── Build quick element grid
+    const QUICK_Z = [1, 2, 3, 6, 7, 8, 10, 11];
     const grid = document.getElementById('el-grid');
-    let currentIndex = 0;
-    ELEMENTS.forEach((el, i) => {
+    let currentZ = 1;
+
+    function syncQuickActive() {
+      document.querySelectorAll('.el-btn').forEach((btn) => {
+        btn.classList.toggle('active', Number(btn.dataset.z) === currentZ);
+      });
+    }
+
+    QUICK_Z.forEach((z) => {
+      const el = getElementByZ(z);
       const b = document.createElement('button');
-      b.className = 'el-btn' + (i === 0 ? ' active' : '');
+      b.className = 'el-btn' + (z === currentZ ? ' active' : '');
+      b.dataset.z = String(z);
       b.innerHTML = `<span class="num">${el.z}</span><span class="sym">${el.sym}</span><span class="nm">${el.vn}</span>`;
       b.addEventListener('click', () => {
-        currentIndex = i;
-        document.querySelectorAll('.el-btn').forEach(x => x.classList.remove('active'));
-        b.classList.add('active');
-        // Reset molecule toggle về "Nguyên tử" để hiển thị nguyên tố vừa chọn
-        molecule = 'none';
-        document.querySelectorAll('.toggle-btn[data-mol]').forEach(b2 => {
-          b2.classList.toggle('active', b2.dataset.mol === 'none');
-        });
-        applyElement(el);
+        currentZ = z;
+        syncQuickActive();
+        syncPeriodicActive();
+        applyElement(getElementByZ(currentZ));
       });
       grid.appendChild(b);
+    });
+
+    // ── Build periodic table modal
+    const ptModal = document.getElementById('pt-modal');
+    const ptGrid = document.getElementById('pt-grid');
+    const ptOpen = document.getElementById('periodic-open');
+    const ptClose = document.getElementById('pt-close');
+
+    function syncPeriodicActive() {
+      ptGrid.querySelectorAll('.pt-cell').forEach((cell) => {
+        cell.classList.toggle('active', Number(cell.dataset.z) === currentZ);
+      });
+    }
+
+    PERIOD_ROWS.forEach((row) => {
+      row.forEach((sym) => {
+        if (!sym) {
+          const gap = document.createElement('div');
+          gap.className = 'pt-gap';
+          ptGrid.appendChild(gap);
+          return;
+        }
+        const z = Z_BY_SYMBOL[sym];
+        const el = getElementByZ(z);
+        const cell = document.createElement('button');
+        cell.type = 'button';
+        cell.className = `pt-cell ${categoryOf(sym)}`.trim();
+        cell.dataset.z = String(z);
+        cell.innerHTML = `<span class="num">${z}</span><span class="sym">${sym}</span><span class="name">${el.vn}</span>`;
+        cell.addEventListener('click', () => {
+          currentZ = z;
+          syncQuickActive();
+          syncPeriodicActive();
+          applyElement(getElementByZ(currentZ));
+          ptModal.classList.add('hidden');
+          ptModal.setAttribute('aria-hidden', 'true');
+        });
+        ptGrid.appendChild(cell);
+      });
+    });
+
+    syncPeriodicActive();
+
+    ptOpen.addEventListener('click', () => {
+      ptModal.classList.remove('hidden');
+      ptModal.setAttribute('aria-hidden', 'false');
+      syncPeriodicActive();
+    });
+    ptClose.addEventListener('click', () => {
+      ptModal.classList.add('hidden');
+      ptModal.setAttribute('aria-hidden', 'true');
+    });
+    ptModal.addEventListener('click', (e) => {
+      if (e.target === ptModal) {
+        ptModal.classList.add('hidden');
+        ptModal.setAttribute('aria-hidden', 'true');
+      }
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        ptModal.classList.add('hidden');
+        ptModal.setAttribute('aria-hidden', 'true');
+      }
     });
 
     // ── Three.js setup
@@ -497,7 +766,6 @@
     scene.add(atomGroup);
 
     let mode = 'bohr';
-    let molecule = 'none';
     const electronAnims = []; // { mesh, radius, speed, phase, axis }
 
     function clearAtom() {
@@ -630,152 +898,12 @@
       else                 buildElectronCloud(el.shells, radius);
 
       // Update side panel
-      document.getElementById('el-title').textContent = el.vn + ' (' + el.sym + ')';
-      document.getElementById('el-info').textContent  = 'Z = ' + el.z + ' · Khối lượng ≈ ' + el.mass + ' u';
+      document.getElementById('el-title').textContent = `${el.vn} (${el.sym})`;
+      document.getElementById('el-info').textContent  = `Z = ${el.z} · Lớp e: ${el.cfg}`;
       document.getElementById('stat-p').textContent = el.z;
       document.getElementById('stat-n').textContent = el.n;
       document.getElementById('stat-e').textContent = el.z;
       document.getElementById('cfg-text').textContent = el.cfg;
-    }
-
-    // ── Phân tử / liên kết theo quy tắc octet ─────────────────────────────
-    const MOLECULES = {
-      NaCl: {
-        title: 'Natri clorua (NaCl)',
-        info: 'Liên kết ion · Na cho 1e → Na⁺, Cl nhận 1e → Cl⁻ (cả hai đạt octet).',
-        atoms: [
-          { el: 'Na', pos: [-3.2, 0, 0], scale: 1.6, charge: '+' },
-          { el: 'Cl', pos: [ 3.2, 0, 0], scale: 1.9, charge: '−' },
-        ],
-        bonds: [], // ion → không vẽ que liên kết, hiển thị điện tích
-      },
-      H2O: {
-        title: 'Nước (H₂O)',
-        info: 'Liên kết cộng hóa trị · O dùng chung 2 cặp electron với 2 H, góc ~104.5°.',
-        atoms: [
-          { el: 'O', pos: [0, 0.45, 0], scale: 1.7 },
-          { el: 'H', pos: [-2.1, -0.8, 0], scale: 1.0 },
-          { el: 'H', pos: [ 2.1, -0.8, 0], scale: 1.0 },
-        ],
-        bonds: [ [0,1,1], [0,2,1] ],
-      },
-      O2: {
-        title: 'Oxi phân tử (O₂)',
-        info: 'Liên kết đôi cộng hóa trị · 2 nguyên tử O chia sẻ 2 cặp electron.',
-        atoms: [
-          { el: 'O', pos: [-1.9, 0, 0], scale: 1.6 },
-          { el: 'O', pos: [ 1.9, 0, 0], scale: 1.6 },
-        ],
-        bonds: [ [0,1,2] ],
-      },
-    };
-
-    const EL_STYLE = {
-      H:  { color: 0xFBF4E4, label: '#1E1B18' },
-      O:  { color: 0xE66B5C, label: '#FFFFFF' },
-      N:  { color: 0x6FB8D1, label: '#FFFFFF' },
-      C:  { color: 0x2A2520, label: '#FBF4E4' },
-      Na: { color: 0xE89BA8, label: '#1E1B18' },
-      Cl: { color: 0x3AAE85, label: '#1E1B18' },
-    };
-
-    function makeLabelSprite(text, fg) {
-      const canvas = document.createElement('canvas');
-      const size = 128;
-      canvas.width = canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, size, size);
-      ctx.fillStyle = fg || '#FFFFFF';
-      ctx.font = 'bold 64px "Be Vietnam Pro", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(text, size/2, size/2 + 4);
-      const tex = new THREE.CanvasTexture(canvas);
-      tex.anisotropy = 4;
-      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
-      const sp = new THREE.Sprite(mat);
-      sp.renderOrder = 10;
-      return sp;
-    }
-
-    function buildMolecule(name) {
-      const data = MOLECULES[name];
-      if (!data) return;
-
-      const atomGeo = new THREE.SphereGeometry(0.9, 28, 28);
-      const atomMeshes = [];
-      data.atoms.forEach((a) => {
-        const style = EL_STYLE[a.el] || { color: 0xFBF4E4, label: '#1E1B18' };
-        const m = new THREE.Mesh(
-          atomGeo,
-          new THREE.MeshStandardMaterial({
-            color: style.color, roughness: 0.35, metalness: 0.15,
-            emissive: style.color, emissiveIntensity: 0.15,
-          })
-        );
-        m.scale.setScalar(a.scale);
-        m.position.set(...a.pos);
-        atomGroup.add(m);
-        atomMeshes.push(m);
-
-        const label = makeLabelSprite(a.el + (a.charge || ''), style.label);
-        label.position.set(a.pos[0], a.pos[1] + a.scale * 1.1 + 0.4, a.pos[2]);
-        label.scale.set(1.6, 1.6, 1.6);
-        atomGroup.add(label);
-      });
-
-      // Que liên kết — chia tách theo bậc (đơn / đôi / ba)
-      data.bonds.forEach(([i, j, order]) => {
-        const a = new THREE.Vector3(...data.atoms[i].pos);
-        const b = new THREE.Vector3(...data.atoms[j].pos);
-        const dir = new THREE.Vector3().subVectors(b, a);
-        const len = dir.length();
-        const mid = new THREE.Vector3().addVectors(a, b).multiplyScalar(0.5);
-
-        // vector vuông góc trong mặt phẳng xy để tách các bond song song
-        const perp = new THREE.Vector3(-dir.y, dir.x, 0).normalize();
-        const spread = 0.22;
-
-        for (let k = 0; k < order; k++) {
-          const offset = (k - (order - 1) / 2) * spread * 2;
-          const cyl = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.12, 0.12, len, 16),
-            new THREE.MeshStandardMaterial({ color: 0xC9C2B0, roughness: 0.6 })
-          );
-          cyl.position.copy(mid).addScaledVector(perp, offset);
-          // Hướng cylinder dọc theo dir
-          cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
-          atomGroup.add(cyl);
-        }
-      });
-
-      // Halo ion cho NaCl: hiển thị điện tích trực quan
-      if (name === 'NaCl') {
-        data.atoms.forEach((a, i) => {
-          const color = a.charge === '+' ? 0xF2B544 : 0x6FB8D1;
-          const halo = new THREE.Mesh(
-            new THREE.SphereGeometry(a.scale * 1.4, 28, 28),
-            new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.12 })
-          );
-          halo.position.set(...a.pos);
-          atomGroup.add(halo);
-        });
-      }
-    }
-
-    function applyMolecule(name) {
-      clearAtom();
-      buildMolecule(name);
-      const data = MOLECULES[name];
-      document.getElementById('el-title').textContent = data.title;
-      document.getElementById('el-info').textContent  = data.info;
-      // Ẩn các thẻ thống kê electron cho phân tử (không còn ý nghĩa 1-nguyên-tử)
-      document.getElementById('stat-p').textContent = '—';
-      document.getElementById('stat-n').textContent = '—';
-      document.getElementById('stat-e').textContent = '—';
-      document.getElementById('cfg-text').textContent = name === 'NaCl' ? 'Na⁺ + Cl⁻ (ion)'
-                                          : name === 'H2O' ? 'O–H × 2 (cộng hóa trị)'
-                                          : 'O = O (liên kết đôi)';
     }
 
     // Mode toggle (Bohr / Cloud) — chỉ áp dụng khi đang ở chế độ nguyên tử
@@ -784,22 +912,11 @@
         document.querySelectorAll('.toggle-btn[data-mode]').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         mode = btn.dataset.mode;
-        if (molecule === 'none') applyElement(ELEMENTS[currentIndex]);
+        applyElement(getElementByZ(currentZ));
       });
     });
 
-    // Molecule toggle (Octet)
-    document.querySelectorAll('.toggle-btn[data-mol]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.toggle-btn[data-mol]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        molecule = btn.dataset.mol;
-        if (molecule === 'none') applyElement(ELEMENTS[currentIndex]);
-        else                     applyMolecule(molecule);
-      });
-    });
-
-    applyElement(ELEMENTS[0]);
+    applyElement(getElementByZ(currentZ));
 
     // ── Resize
     function resize() {

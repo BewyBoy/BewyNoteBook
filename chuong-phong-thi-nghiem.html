@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hóa học · Chương 5 — Phòng thí nghiệm</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      min-height: 100%;
+      background: #0F1411;
+      color: #FBF4E4;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      overflow-x: hidden;
+    }
+    ::selection { background: #F2B544; color: #1E1B18; }
+
+    .theme-toggle {
+      position: fixed;
+      top: 18px;
+      right: 190px;
+      z-index: 40;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(251,244,228,0.12);
+      background: rgba(15,20,17,0.7);
+      backdrop-filter: blur(8px);
+      color: #FBF4E4;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      font-family: 'Be Vietnam Pro', sans-serif;
+    }
+    .theme-toggle:hover { background: rgba(47,143,111,0.2); border-color: #2F8F6F; }
+
+    .back-link {
+      position: fixed;
+      top: 18px;
+      right: 24px;
+      z-index: 40;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      background: rgba(15,20,17,0.7);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(251,244,228,0.12);
+      color: #FBF4E4;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      font-family: 'Be Vietnam Pro', sans-serif;
+    }
+    .back-link:hover { background: rgba(47,143,111,0.2); border-color: #2F8F6F; }
+
+    .hero {
+      padding: 88px 24px 28px;
+      background:
+        radial-gradient(circle at 16% 16%, rgba(111,184,209,0.2), transparent 44%),
+        radial-gradient(circle at 82% 8%, rgba(242,181,68,0.16), transparent 40%),
+        linear-gradient(180deg, #1B2520 0%, #0F1411 68%);
+      border-bottom: 1px solid rgba(251,244,228,0.08);
+    }
+    .hero-inner {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+    }
+    .crumb {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(251,244,228,0.56);
+      margin-bottom: 16px;
+    }
+    .crumb a { color: #2F8F6F; text-decoration: none; }
+    .crumb a:hover { color: #3AAE85; }
+
+    .title {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(46px, 7.2vw, 84px);
+      line-height: 0.92;
+      margin-bottom: 8px;
+      color: #FBF4E4;
+    }
+    .subtitle {
+      font-family: 'Patrick Hand SC', cursive;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 13px;
+      color: #6FB8D1;
+      margin-bottom: 14px;
+    }
+    .intro {
+      max-width: 900px;
+      font-size: 16px;
+      line-height: 1.7;
+      color: rgba(251,244,228,0.82);
+    }
+
+    .layout {
+      width: min(1120px, 100%);
+      margin: 24px auto 60px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(251,244,228,0.04);
+      border: 1px solid rgba(251,244,228,0.08);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .panel h2 {
+      font-family: 'Caveat', cursive;
+      font-size: 34px;
+      line-height: 1;
+      color: #FBF4E4;
+      margin-bottom: 8px;
+    }
+    .panel h3 {
+      font-family: 'Patrick Hand SC', cursive;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      color: rgba(251,244,228,0.58);
+      margin-bottom: 8px;
+    }
+
+    .mission {
+      border: 1px solid rgba(251,244,228,0.1);
+      border-radius: 10px;
+      background: rgba(15,20,17,0.48);
+      padding: 10px;
+      margin-bottom: 8px;
+      transition: all 0.2s ease;
+    }
+    .mission.done {
+      border-color: rgba(47,143,111,0.6);
+      background: rgba(47,143,111,0.18);
+    }
+    .mission .name {
+      font-size: 14px;
+      color: #FBF4E4;
+      margin-bottom: 3px;
+      font-weight: 600;
+    }
+    .mission .hint {
+      font-size: 12px;
+      color: rgba(251,244,228,0.7);
+      line-height: 1.55;
+    }
+
+    .badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .badge {
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border: 1px solid rgba(251,244,228,0.2);
+      color: rgba(251,244,228,0.8);
+      background: rgba(251,244,228,0.04);
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(260px, 340px) 1fr;
+      gap: 12px;
+    }
+
+    .palette {
+      border: 1px solid rgba(251,244,228,0.1);
+      border-radius: 12px;
+      background: rgba(15,20,17,0.5);
+      padding: 10px;
+      min-height: 520px;
+    }
+
+    .chip-group { margin-bottom: 12px; }
+    .chip-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+    }
+    .chip {
+      user-select: none;
+      border: 1px solid rgba(251,244,228,0.16);
+      border-radius: 10px;
+      background: rgba(251,244,228,0.04);
+      color: #FBF4E4;
+      padding: 8px 6px;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.35;
+      cursor: grab;
+      transition: all 0.18s ease;
+      font-weight: 600;
+    }
+    .chip:hover { background: rgba(111,184,209,0.14); border-color: rgba(111,184,209,0.5); }
+    .chip.dragging { opacity: 0.45; }
+
+    .arena {
+      border: 1px solid rgba(251,244,228,0.1);
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(47,143,111,0.17), transparent 38%),
+        radial-gradient(circle at 90% 88%, rgba(242,181,68,0.16), transparent 40%),
+        rgba(15,20,17,0.58);
+      padding: 10px;
+      min-height: 520px;
+    }
+
+    .dropzones {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .dropzone {
+      border: 2px dashed rgba(251,244,228,0.28);
+      border-radius: 12px;
+      min-height: 120px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: rgba(251,244,228,0.02);
+      transition: all 0.18s ease;
+    }
+    .dropzone.over {
+      border-color: #6FB8D1;
+      background: rgba(111,184,209,0.15);
+    }
+    .dropzone .label {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(251,244,228,0.56);
+      margin-bottom: 4px;
+    }
+    .dropzone .value {
+      font-size: 18px;
+      font-family: 'Caveat', cursive;
+      color: #FBF4E4;
+      line-height: 1;
+      min-height: 24px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .btn {
+      border: 1px solid rgba(251,244,228,0.2);
+      background: rgba(251,244,228,0.04);
+      color: #FBF4E4;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .btn:hover { border-color: rgba(47,143,111,0.6); background: rgba(47,143,111,0.18); transform: translateY(-1px); }
+
+    .reactor {
+      border: 1px solid rgba(251,244,228,0.1);
+      border-radius: 12px;
+      min-height: 230px;
+      padding: 12px;
+      background: rgba(15,20,17,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    .reactor h4 {
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(251,244,228,0.56);
+      margin-bottom: 8px;
+    }
+
+    .result {
+      margin-top: 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(251,244,228,0.12);
+      background: rgba(251,244,228,0.03);
+      padding: 10px;
+    }
+    .result .status {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #F2B544;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+    .result .phenom {
+      color: rgba(251,244,228,0.86);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 6px;
+    }
+    .result .eq {
+      color: #6FB8D1;
+      font-size: 14px;
+      line-height: 1.6;
+      font-family: 'Patrick Hand', cursive;
+      white-space: pre-wrap;
+    }
+
+    .fx {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .bubble {
+      position: absolute;
+      bottom: -18px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(251,244,228,0.7);
+      animation: bubble 2s linear infinite;
+    }
+    .ppt {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 14px;
+      height: 36px;
+      border-radius: 12px 12px 6px 6px;
+      opacity: 0;
+      transform: translateY(6px);
+      animation: settle 1s ease forwards;
+    }
+    .indicator {
+      position: absolute;
+      top: 46px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 130px;
+      height: 20px;
+      border-radius: 999px;
+      opacity: 0;
+      animation: fadeIn 0.7s ease forwards;
+    }
+
+    @keyframes bubble {
+      from { transform: translateY(0) scale(0.7); opacity: 0.8; }
+      to { transform: translateY(-180px) scale(1.2); opacity: 0; }
+    }
+    @keyframes settle {
+      to { opacity: 0.88; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      to { opacity: 0.9; }
+    }
+
+    .footer-note {
+      margin-top: 10px;
+      color: rgba(251,244,228,0.62);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    body.light-mode .content-wrap { filter: invert(1) hue-rotate(180deg); }
+    body.light-mode .content-wrap img,
+    body.light-mode .content-wrap svg { filter: invert(1) hue-rotate(180deg); }
+
+    @media (max-width: 1080px) {
+      .layout { grid-template-columns: 1fr; }
+      .workspace { grid-template-columns: 1fr; }
+      .palette { min-height: auto; }
+      .arena { min-height: 500px; }
+    }
+
+    @media (max-width: 640px) {
+      .theme-toggle,
+      .back-link { position: absolute; top: 10px; }
+      .theme-toggle { right: 150px; }
+      .back-link { right: 12px; }
+      .hero { padding: 68px 14px 24px; }
+      .layout { padding: 0 12px; }
+      .dropzones { grid-template-columns: 1fr; }
+      .chip-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button">☀ Light</button>
+  <a class="back-link" href="Learning Resources Hub v4.html">← Quay lại thư viện</a>
+
+  <div class="content-wrap">
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="crumb">
+          <a href="Learning Resources Hub v4.html">Hóa học</a>
+          <span>›</span>
+          <span>Chương 5</span>
+        </div>
+        <h1 class="title">Phòng thí nghiệm</h1>
+        <p class="subtitle">Game kéo-thả · nhận biết chất · quan sát hiện tượng</p>
+        <p class="intro">
+          Kéo thả các chất và thuốc thử vào buồng phản ứng để khám phá hiện tượng, kết tủa, khí thoát ra
+          và phương trình minh họa. Các thử nghiệm trong game bám theo bảng nhận biết chất và khí bạn đã cung cấp.
+        </p>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="panel">
+        <h2>Nhiệm vụ</h2>
+        <div id="missions"></div>
+        <div class="badges">
+          <span class="badge" id="score-badge">0 / 8 hoàn thành</span>
+          <span class="badge">Drag & Drop</span>
+          <span class="badge">Quan sát hiện tượng</span>
+        </div>
+        <p class="footer-note">
+          Mẹo: thử các cặp không nằm trong nhiệm vụ, game vẫn phản hồi theo dữ liệu phản ứng đã cài đặt.
+        </p>
+      </aside>
+
+      <section class="panel">
+        <h2>Trò chơi phản ứng</h2>
+        <div class="workspace">
+          <div class="palette">
+            <div class="chip-group">
+              <h3>Chất cần thử</h3>
+              <div class="chip-grid" id="sample-list"></div>
+            </div>
+            <div class="chip-group">
+              <h3>Thuốc thử / điều kiện</h3>
+              <div class="chip-grid" id="reagent-list"></div>
+            </div>
+          </div>
+
+          <div class="arena">
+            <div class="dropzones">
+              <div class="dropzone" id="sample-zone" data-zone="sample">
+                <span class="label">Chất cần thử</span>
+                <span class="value" id="sample-picked">(thả vào đây)</span>
+              </div>
+              <div class="dropzone" id="reagent-zone" data-zone="reagent">
+                <span class="label">Thuốc thử / điều kiện</span>
+                <span class="value" id="reagent-picked">(thả vào đây)</span>
+              </div>
+            </div>
+
+            <div class="controls">
+              <button id="run-btn" class="btn" type="button">Quan sát phản ứng</button>
+              <button id="clear-btn" class="btn" type="button">Xóa lựa chọn</button>
+            </div>
+
+            <div class="reactor" id="reactor">
+              <h4>Buồng phản ứng</h4>
+              <div class="fx" id="fx-layer"></div>
+              <div class="result" id="result-box">
+                <div class="status">Chờ thao tác</div>
+                <div class="phenom">Hãy kéo một chất cần thử và một thuốc thử vào đúng ô.</div>
+                <div class="eq">-</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const KEY = 'bewy-theme';
+      const themeBtn = document.getElementById('theme-toggle');
+
+      const SAMPLES = [
+        'Na2SO4', 'Na2SO3', 'Na2CO3', 'NaCl', 'FeCl2', 'FeCl3', 'MgCl2', 'SO2', 'CO2', 'H2', 'Cl2', 'CO'
+      ];
+      const REAGENTS = [
+        'BaCl2', 'HCl', 'AgNO3', 'NaOH', 'Ca(OH)2', 'dd Br2', 'dd KMnO4', 'Quy tim am', 'KI + ho tinh bot', 'CuO, to'
+      ];
+
+      const REACTIONS = {
+        'Na2SO4|BaCl2': {
+          mission: 'Sulfate + BaCl2',
+          status: 'Đúng thuốc thử',
+          phenomenon: 'Xuất hiện kết tủa trắng BaSO4, không tan trong axit mạnh.',
+          equation: 'Na2SO4 + BaCl2 -> BaSO4 v + 2NaCl',
+          effect: { type: 'precipitate', color: '#F3EFE3' },
+        },
+        'Na2SO3|HCl': {
+          mission: 'Sulfite + axit',
+          status: 'Đúng thuốc thử',
+          phenomenon: 'Khí SO2 thoát ra, không màu và có mùi hắc.',
+          equation: 'Na2SO3 + 2HCl -> 2NaCl + SO2 ^ + H2O',
+          effect: { type: 'gas', color: '#E8E8E8' },
+        },
+        'Na2CO3|HCl': {
+          mission: 'Carbonate + axit',
+          status: 'Đúng thuốc thử',
+          phenomenon: 'Sủi bọt khí CO2 không màu.',
+          equation: 'Na2CO3 + 2HCl -> 2NaCl + CO2 ^ + H2O',
+          effect: { type: 'gas', color: '#F0F0F0' },
+        },
+        'NaCl|AgNO3': {
+          mission: 'Chloride + AgNO3',
+          status: 'Đúng thuốc thử',
+          phenomenon: 'Xuất hiện kết tủa trắng AgCl.',
+          equation: 'NaCl + AgNO3 -> AgCl v + NaNO3',
+          effect: { type: 'precipitate', color: '#F6F5F1' },
+        },
+        'FeCl2|NaOH': {
+          mission: 'Fe(II) + kiem',
+          status: 'Đúng thuốc thử',
+          phenomenon: 'Tạo kết tủa trắng xanh Fe(OH)2, sau đó dễ hóa nâu ngoài không khí.',
+          equation: 'FeCl2 + 2NaOH -> Fe(OH)2 v + 2NaCl',
+          effect: { type: 'precipitate', color: '#B8D4C8' },
+        },
+        'FeCl3|NaOH': {
+          mission: 'Fe(III) + kiem',
+          status: 'Đúng thuốc thử',
+          phenomenon: 'Tạo kết tủa nâu đỏ Fe(OH)3.',
+          equation: 'FeCl3 + 3NaOH -> Fe(OH)3 v + 3NaCl',
+          effect: { type: 'precipitate', color: '#A35A3A' },
+        },
+        'MgCl2|NaOH': {
+          mission: 'Mg(II) + kiem',
+          status: 'Đúng thuốc thử',
+          phenomenon: 'Xuất hiện kết tủa trắng Mg(OH)2.',
+          equation: 'MgCl2 + 2NaOH -> Mg(OH)2 v + 2NaCl',
+          effect: { type: 'precipitate', color: '#F0F0EE' },
+        },
+        'CO2|Ca(OH)2': {
+          mission: 'CO2 + nuoc voi',
+          status: 'Đúng thuốc thử',
+          phenomenon: 'Nước vôi trong bị vẩn đục trắng do tạo CaCO3.',
+          equation: 'CO2 + Ca(OH)2 -> CaCO3 v + H2O',
+          effect: { type: 'cloud', color: '#F7F7F5' },
+        },
+        'SO2|dd Br2': {
+          mission: null,
+          status: 'Phản ứng xảy ra',
+          phenomenon: 'Dung dịch brom mất màu nâu đỏ.',
+          equation: 'SO2 + Br2 + 2H2O -> H2SO4 + 2HBr',
+          effect: { type: 'indicator', color: '#DFA15D' },
+        },
+        'SO2|dd KMnO4': {
+          mission: null,
+          status: 'Phản ứng xảy ra',
+          phenomenon: 'Dung dịch KMnO4 bị mất màu tím.',
+          equation: '5SO2 + 2KMnO4 + 2H2O -> K2SO4 + 2MnSO4 + 2H2SO4',
+          effect: { type: 'indicator', color: '#8E5CAF' },
+        },
+        'Cl2|Quy tim am': {
+          mission: null,
+          status: 'Phản ứng quan sát',
+          phenomenon: 'Quỳ tím ẩm đỏ lên rồi nhanh chóng bị tẩy màu.',
+          equation: 'Cl2 + H2O <-> HCl + HClO',
+          effect: { type: 'indicator', color: '#A84A76' },
+        },
+        'Cl2|KI + ho tinh bot': {
+          mission: null,
+          status: 'Phản ứng quan sát',
+          phenomenon: 'Giải phóng I2 làm hồ tinh bột chuyển xanh tím.',
+          equation: 'Cl2 + 2KI -> 2KCl + I2',
+          effect: { type: 'indicator', color: '#4A5FB2' },
+        },
+        'H2|CuO, to': {
+          mission: null,
+          status: 'Phản ứng xảy ra',
+          phenomenon: 'CuO đen bị khử thành Cu đỏ, có H2O tạo thành.',
+          equation: 'CuO + H2 -> Cu + H2O',
+          effect: { type: 'indicator', color: '#A85A3A' },
+        },
+        'CO|CuO, to': {
+          mission: null,
+          status: 'Phản ứng xảy ra',
+          phenomenon: 'CuO bị khử thành Cu đỏ; khí đi qua làm đục Ca(OH)2 do sinh CO2.',
+          equation: 'CuO + CO -> Cu + CO2',
+          effect: { type: 'indicator', color: '#9B6B3C' },
+        },
+      };
+
+      const MISSIONS = [
+        { key: 'Na2SO4|BaCl2', title: 'Nhận biết gốc sulfate (SO4)' },
+        { key: 'Na2SO3|HCl', title: 'Nhận biết gốc sulfite (SO3)' },
+        { key: 'Na2CO3|HCl', title: 'Nhận biết gốc carbonate (CO3)' },
+        { key: 'NaCl|AgNO3', title: 'Nhận biết gốc chloride (Cl-)' },
+        { key: 'FeCl2|NaOH', title: 'Nhận biết muối sắt (II)' },
+        { key: 'FeCl3|NaOH', title: 'Nhận biết muối sắt (III)' },
+        { key: 'MgCl2|NaOH', title: 'Nhận biết muối magie' },
+        { key: 'CO2|Ca(OH)2', title: 'Nhận biết khí CO2' },
+      ];
+
+      const missionDone = new Set();
+      const state = { sample: null, reagent: null };
+
+      const sampleList = document.getElementById('sample-list');
+      const reagentList = document.getElementById('reagent-list');
+      const sampleZone = document.getElementById('sample-zone');
+      const reagentZone = document.getElementById('reagent-zone');
+      const samplePicked = document.getElementById('sample-picked');
+      const reagentPicked = document.getElementById('reagent-picked');
+      const runBtn = document.getElementById('run-btn');
+      const clearBtn = document.getElementById('clear-btn');
+      const resultBox = document.getElementById('result-box');
+      const fxLayer = document.getElementById('fx-layer');
+      const missionsBox = document.getElementById('missions');
+      const scoreBadge = document.getElementById('score-badge');
+
+      const setTheme = (mode) => {
+        document.body.classList.toggle('light-mode', mode === 'light');
+        if (themeBtn) themeBtn.textContent = mode === 'light' ? '🌙 Dark' : '☀ Light';
+      };
+
+      const createChip = (text, type) => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'chip';
+        chip.draggable = true;
+        chip.textContent = text;
+        chip.dataset.type = type;
+        chip.dataset.value = text;
+
+        chip.addEventListener('dragstart', (e) => {
+          chip.classList.add('dragging');
+          e.dataTransfer.setData('text/plain', JSON.stringify({ type, value: text }));
+          e.dataTransfer.effectAllowed = 'copy';
+        });
+
+        chip.addEventListener('dragend', () => chip.classList.remove('dragging'));
+        return chip;
+      };
+
+      const renderPalette = () => {
+        SAMPLES.forEach((s) => sampleList.appendChild(createChip(s, 'sample')));
+        REAGENTS.forEach((r) => reagentList.appendChild(createChip(r, 'reagent')));
+      };
+
+      const renderMissions = () => {
+        missionsBox.innerHTML = '';
+        MISSIONS.forEach((m) => {
+          const card = document.createElement('div');
+          card.className = 'mission' + (missionDone.has(m.key) ? ' done' : '');
+          card.innerHTML = `
+            <div class="name">${missionDone.has(m.key) ? '✓ ' : ''}${m.title}</div>
+            <div class="hint">Ghép đúng cặp phản ứng để mở khóa nhiệm vụ này.</div>
+          `;
+          missionsBox.appendChild(card);
+        });
+        scoreBadge.textContent = `${missionDone.size} / ${MISSIONS.length} hoàn thành`;
+      };
+
+      const setDrop = (zone, payload) => {
+        if (!payload) return;
+        if (zone === 'sample' && payload.type === 'sample') {
+          state.sample = payload.value;
+          samplePicked.textContent = payload.value;
+        }
+        if (zone === 'reagent' && payload.type === 'reagent') {
+          state.reagent = payload.value;
+          reagentPicked.textContent = payload.value;
+        }
+      };
+
+      const wireZone = (element, zoneName) => {
+        element.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          element.classList.add('over');
+        });
+        element.addEventListener('dragleave', () => element.classList.remove('over'));
+        element.addEventListener('drop', (e) => {
+          e.preventDefault();
+          element.classList.remove('over');
+          try {
+            const payload = JSON.parse(e.dataTransfer.getData('text/plain'));
+            setDrop(zoneName, payload);
+          } catch (_) {}
+        });
+      };
+
+      const clearFX = () => { fxLayer.innerHTML = ''; };
+
+      const applyFX = (effect) => {
+        clearFX();
+        if (!effect) return;
+        if (effect.type === 'gas') {
+          for (let i = 0; i < 14; i += 1) {
+            const b = document.createElement('span');
+            b.className = 'bubble';
+            b.style.left = `${12 + Math.random() * 76}%`;
+            b.style.animationDelay = `${Math.random() * 1.2}s`;
+            b.style.animationDuration = `${1.6 + Math.random() * 1.2}s`;
+            b.style.background = effect.color || 'rgba(255,255,255,0.8)';
+            fxLayer.appendChild(b);
+          }
+        }
+        if (effect.type === 'precipitate') {
+          const p = document.createElement('div');
+          p.className = 'ppt';
+          p.style.background = effect.color || '#EFEFEF';
+          fxLayer.appendChild(p);
+        }
+        if (effect.type === 'cloud') {
+          const p = document.createElement('div');
+          p.className = 'ppt';
+          p.style.height = '58px';
+          p.style.bottom = '24px';
+          p.style.background = effect.color || '#F5F5F5';
+          fxLayer.appendChild(p);
+        }
+        if (effect.type === 'indicator') {
+          const id = document.createElement('div');
+          id.className = 'indicator';
+          id.style.background = effect.color || '#B07BAA';
+          fxLayer.appendChild(id);
+        }
+      };
+
+      const renderResult = (status, phenomenon, equation) => {
+        resultBox.innerHTML = `
+          <div class="status">${status}</div>
+          <div class="phenom">${phenomenon}</div>
+          <div class="eq">${equation}</div>
+        `;
+      };
+
+      const runReaction = () => {
+        if (!state.sample || !state.reagent) {
+          renderResult('Thiếu dữ liệu', 'Cần kéo đủ 1 chất cần thử và 1 thuốc thử/điều kiện.', '-');
+          clearFX();
+          return;
+        }
+
+        const key = `${state.sample}|${state.reagent}`;
+        const data = REACTIONS[key];
+
+        if (!data) {
+          renderResult(
+            'Chưa ghi nhận',
+            `Không có phản ứng đặc trưng trong bộ dữ liệu cho cặp ${state.sample} và ${state.reagent}.`,
+            'Thử cặp khác theo bảng nhận biết.'
+          );
+          clearFX();
+          return;
+        }
+
+        renderResult(data.status, data.phenomenon, data.equation);
+        applyFX(data.effect);
+
+        if (data.mission && !missionDone.has(key)) {
+          missionDone.add(key);
+          renderMissions();
+        }
+      };
+
+      const clearSelection = () => {
+        state.sample = null;
+        state.reagent = null;
+        samplePicked.textContent = '(thả vào đây)';
+        reagentPicked.textContent = '(thả vào đây)';
+        clearFX();
+        renderResult('Chờ thao tác', 'Hãy kéo một chất cần thử và một thuốc thử vào đúng ô.', '-');
+      };
+
+      wireZone(sampleZone, 'sample');
+      wireZone(reagentZone, 'reagent');
+      runBtn.addEventListener('click', runReaction);
+      clearBtn.addEventListener('click', clearSelection);
+
+      renderPalette();
+      renderMissions();
+
+      const saved = localStorage.getItem(KEY);
+      setTheme(saved === 'light' ? 'light' : 'dark');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+          const next = document.body.classList.contains('light-mode') ? 'dark' : 'light';
+          localStorage.setItem(KEY, next);
+          setTheme(next);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

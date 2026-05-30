@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hóa học · Chương 3 — Các loại liên kết hóa học</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      min-height: 100%;
+      background: #0F1411;
+      color: #FBF4E4;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      overflow-x: hidden;
+    }
+    ::selection { background: #F2B544; color: #1E1B18; }
+
+    .theme-toggle {
+      position: fixed;
+      top: 18px;
+      right: 190px;
+      z-index: 20;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(251,244,228,0.12);
+      background: rgba(15,20,17,0.7);
+      backdrop-filter: blur(8px);
+      color: #FBF4E4;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      font-family: 'Be Vietnam Pro', sans-serif;
+    }
+    .theme-toggle:hover { background: rgba(47,143,111,0.2); border-color: #2F8F6F; }
+
+    .back-link {
+      position: fixed;
+      top: 18px;
+      right: 24px;
+      z-index: 20;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      background: rgba(15,20,17,0.7);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(251,244,228,0.12);
+      color: #FBF4E4;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      font-family: 'Be Vietnam Pro', sans-serif;
+    }
+    .back-link:hover { background: rgba(47,143,111,0.2); border-color: #2F8F6F; }
+
+    .hero {
+      padding: 88px 24px 28px;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(242,181,68,0.12), transparent 45%),
+        radial-gradient(circle at 82% 0%, rgba(47,143,111,0.16), transparent 40%),
+        linear-gradient(180deg, #1A2520 0%, #0F1411 68%);
+      border-bottom: 1px solid rgba(251,244,228,0.08);
+    }
+    .hero-inner {
+      width: min(1060px, 100%);
+      margin: 0 auto;
+    }
+    .crumb {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(251,244,228,0.56);
+      margin-bottom: 16px;
+    }
+    .crumb a { color: #2F8F6F; text-decoration: none; }
+    .crumb a:hover { color: #3AAE85; }
+
+    .title {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(44px, 6.5vw, 76px);
+      line-height: 0.95;
+      color: #FBF4E4;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-family: 'Patrick Hand SC', cursive;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 13px;
+      color: #2F8F6F;
+      margin-bottom: 16px;
+    }
+    .intro {
+      max-width: 840px;
+      font-size: 16px;
+      line-height: 1.7;
+      color: rgba(251,244,228,0.82);
+    }
+
+    .layout {
+      width: min(1060px, 100%);
+      margin: 24px auto 52px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .card {
+      background: rgba(251,244,228,0.04);
+      border: 1px solid rgba(251,244,228,0.08);
+      border-radius: 16px;
+      padding: 18px 18px 16px;
+    }
+    .card h2 {
+      font-family: 'Caveat', cursive;
+      font-size: 36px;
+      line-height: 1;
+      color: #FBF4E4;
+      margin-bottom: 10px;
+    }
+    .card p {
+      color: rgba(251,244,228,0.78);
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .bond {
+      border: 1px solid rgba(251,244,228,0.1);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(15,20,17,0.45);
+    }
+    .bond h3 {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      margin-bottom: 7px;
+      color: #FBF4E4;
+    }
+    .tag {
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-weight: 700;
+      color: #1E1B18;
+      background: #F2B544;
+    }
+    .bond ul {
+      margin-left: 16px;
+      color: rgba(251,244,228,0.8);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+    .bond ul li { margin-bottom: 4px; }
+
+    .viz-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0 12px;
+    }
+    .viz-btn {
+      border: 1px solid rgba(251,244,228,0.2);
+      background: rgba(251,244,228,0.04);
+      color: #FBF4E4;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .viz-btn:hover {
+      border-color: rgba(47,143,111,0.55);
+      background: rgba(47,143,111,0.15);
+      transform: translateY(-1px);
+    }
+    .viz-btn.active {
+      background: #2F8F6F;
+      border-color: #2F8F6F;
+      color: #1E1B18;
+    }
+    .viz-stage {
+      border: 1px solid rgba(251,244,228,0.12);
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(47,143,111,0.2), transparent 42%),
+        radial-gradient(circle at 80% 85%, rgba(242,181,68,0.14), transparent 44%),
+        rgba(15,20,17,0.58);
+      padding: 10px;
+      overflow: hidden;
+    }
+    .viz-stage svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .viz-info {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .viz-info .mini {
+      border: 1px solid rgba(251,244,228,0.1);
+      border-radius: 10px;
+      background: rgba(15,20,17,0.45);
+      padding: 10px;
+    }
+    .viz-info .mini h4 {
+      color: #F2B544;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+    .viz-info .mini p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.6;
+      color: rgba(251,244,228,0.84);
+    }
+
+    .float {
+      animation: float 2.8s ease-in-out infinite;
+    }
+    .flow {
+      animation: flow 1.6s linear infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    @keyframes flow {
+      from { stroke-dashoffset: 16; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    .compare {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .compare th,
+    .compare td {
+      border: 1px solid rgba(251,244,228,0.1);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+      color: rgba(251,244,228,0.85);
+    }
+    .compare th {
+      background: rgba(47,143,111,0.22);
+      color: #FBF4E4;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .note {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(242,181,68,0.26);
+      background: rgba(242,181,68,0.11);
+      color: rgba(251,244,228,0.9);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .quiz {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .quiz-item {
+      border: 1px solid rgba(251,244,228,0.1);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(15,20,17,0.45);
+    }
+    .quiz-item h4 {
+      font-size: 14px;
+      color: #F2B544;
+      margin-bottom: 6px;
+      letter-spacing: 0.04em;
+    }
+    .quiz-item p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    body.light-mode .content-wrap {
+      filter: invert(1) hue-rotate(180deg);
+    }
+    body.light-mode .content-wrap img,
+    body.light-mode .content-wrap svg {
+      filter: invert(1) hue-rotate(180deg);
+    }
+
+    @media (max-width: 920px) {
+      .theme-toggle { right: 172px; }
+      .grid-2,
+      .quiz,
+      .viz-info { grid-template-columns: 1fr; }
+      .hero { padding-top: 80px; }
+    }
+
+    @media (max-width: 640px) {
+      .theme-toggle,
+      .back-link {
+        position: absolute;
+        top: 10px;
+      }
+      .theme-toggle { right: 152px; }
+      .back-link { right: 12px; }
+      .layout { padding: 0 12px; }
+      .hero { padding: 68px 14px 24px; }
+      .title { line-height: 0.9; }
+    }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button">☀ Light</button>
+  <a class="back-link" href="Learning Resources Hub v4.html">← Quay lại thư viện</a>
+
+  <div class="content-wrap">
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="crumb">
+          <a href="Learning Resources Hub v4.html">Hóa học</a>
+          <span>›</span>
+          <span>Chương 3</span>
+        </div>
+        <h1 class="title">Các loại liên kết hóa học</h1>
+        <p class="subtitle">Ion · cộng hóa trị · kim loại · liên kết yếu</p>
+        <p class="intro">
+          Liên kết hóa học là "chất keo" giữ các nguyên tử lại với nhau để tạo nên phân tử,
+          tinh thể và vật liệu. Chương này tóm tắt trực quan các loại liên kết quan trọng,
+          cách nhận biết nhanh, ví dụ điển hình và sự khác biệt về tính chất vật lý.
+        </p>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="card">
+        <h2>1. Ba liên kết chính</h2>
+        <div class="grid-2">
+          <article class="bond">
+            <h3>Liên kết ion <span class="tag">electron chuyển hẳn</span></h3>
+            <ul>
+              <li>Thường hình thành giữa kim loại và phi kim.</li>
+              <li>Kim loại nhường electron tạo cation, phi kim nhận electron tạo anion.</li>
+              <li>Lực hút tĩnh điện giữa ion trái dấu tạo mạng tinh thể bền.</li>
+              <li>Ví dụ: NaCl, MgO, CaF2.</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Liên kết cộng hóa trị <span class="tag">chia sẻ electron</span></h3>
+            <ul>
+              <li>Thường giữa các nguyên tử phi kim.</li>
+              <li>Cặp electron dùng chung giúp đạt cấu hình bền.</li>
+              <li>Có thể không phân cực (H2, O2) hoặc phân cực (H2O, HCl).</li>
+              <li>Có liên kết đơn, đôi, ba tùy số cặp electron chung.</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Liên kết kim loại <span class="tag">biển electron</span></h3>
+            <ul>
+              <li>Xuất hiện trong mạng tinh thể kim loại.</li>
+              <li>Electron hóa trị chuyển động tương đối tự do quanh mạng ion dương.</li>
+              <li>Giải thích tính dẫn điện, dẫn nhiệt, dẻo và ánh kim.</li>
+              <li>Ví dụ: Cu, Al, Fe và các hợp kim như thép, đồng thau.</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Gợi ý nhận diện nhanh <span class="tag">mẹo thi</span></h3>
+            <ul>
+              <li>Kim loại + phi kim: ưu tiên xét liên kết ion.</li>
+              <li>Phi kim + phi kim: thường là cộng hóa trị.</li>
+              <li>Nguyên tố kim loại tinh khiết: liên kết kim loại.</li>
+              <li>Phân tử phân cực mạnh thường có tương tác liên phân tử mạnh hơn.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>2. Các loại liên kết khác và tương tác yếu</h2>
+        <p>Chọn loại liên kết để xem mô phỏng trực quan cơ chế electron:</p>
+        <div class="viz-toolbar" role="tablist" aria-label="Bộ chọn mô phỏng liên kết">
+          <button class="viz-btn active" type="button" data-viz="ionic" role="tab" aria-selected="true">Liên kết ion</button>
+          <button class="viz-btn" type="button" data-viz="covalent" role="tab" aria-selected="false">Cộng hóa trị</button>
+          <button class="viz-btn" type="button" data-viz="metallic" role="tab" aria-selected="false">Kim loại</button>
+          <button class="viz-btn" type="button" data-viz="hydrogen" role="tab" aria-selected="false">Hydro</button>
+        </div>
+        <div class="viz-stage" id="viz-stage" aria-live="polite"></div>
+        <div class="viz-info">
+          <div class="mini">
+            <h4>Cơ chế</h4>
+            <p id="viz-mechanism">Electron chuyển từ kim loại sang phi kim, tạo ion trái dấu hút nhau.</p>
+          </div>
+          <div class="mini">
+            <h4>Tính chất nổi bật</h4>
+            <p id="viz-property">Tạo tinh thể bền, thường nóng chảy cao, dẫn điện khi nóng chảy hoặc tan.</p>
+          </div>
+        </div>
+        <div class="grid-2">
+          <article class="bond">
+            <h3>Liên kết cho - nhận (phối trí)</h3>
+            <ul>
+              <li>Một nguyên tử cho cả cặp electron dùng chung.</li>
+              <li>Ví dụ: NH4+ hình thành từ NH3 nhận H+.</li>
+              <li>Rất quan trọng trong hóa học phức chất kim loại chuyển tiếp.</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Liên kết hydro</h3>
+            <ul>
+              <li>Là lực hút đặc biệt giữa H (gắn với N/O/F) và cặp electron tự do.</li>
+              <li>Không mạnh bằng liên kết cộng hóa trị nhưng mạnh hơn nhiều lực yếu khác.</li>
+              <li>Giải thích nhiệt độ sôi cao của nước và cấu trúc DNA.</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Lực Van der Waals</h3>
+            <ul>
+              <li>Gồm lưỡng cực - lưỡng cực và lực phân tán London.</li>
+              <li>Tồn tại giữa hầu hết các phân tử, đặc biệt quan trọng ở chất không cực.</li>
+              <li>Ảnh hưởng tính chất như nhiệt độ sôi, độ nhớt, độ tan.</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Tương tác ion - lưỡng cực</h3>
+            <ul>
+              <li>Giữa ion và phân tử phân cực (như Na+ với H2O).</li>
+              <li>Là cơ sở cho quá trình hòa tan nhiều muối trong nước.</li>
+              <li>Đóng vai trò lớn trong điện hóa và sinh hóa.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>3. Bảng so sánh nhanh</h2>
+        <table class="compare" aria-label="Bảng so sánh các loại liên kết">
+          <thead>
+            <tr>
+              <th>Loại liên kết</th>
+              <th>Cơ chế chính</th>
+              <th>Tính chất thường gặp</th>
+              <th>Ví dụ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ion</td>
+              <td>Trao đổi electron tạo ion trái dấu hút nhau</td>
+              <td>Nhiệt độ nóng chảy cao, giòn, dẫn điện khi nóng chảy hoặc trong dung dịch</td>
+              <td>NaCl, KBr, MgO</td>
+            </tr>
+            <tr>
+              <td>Cộng hóa trị</td>
+              <td>Chia sẻ cặp electron</td>
+              <td>Thường tạo phân tử; tính chất phụ thuộc độ phân cực và khối lượng phân tử</td>
+              <td>H2O, CO2, CH4</td>
+            </tr>
+            <tr>
+              <td>Kim loại</td>
+              <td>Ion dương trong "biển" electron tự do</td>
+              <td>Dẫn điện tốt, dẻo, dễ dát mỏng, có ánh kim</td>
+              <td>Fe, Cu, Al</td>
+            </tr>
+            <tr>
+              <td>Liên kết hydro</td>
+              <td>H tương tác với cặp electron tự do của N/O/F</td>
+              <td>Tăng nhiệt độ sôi, ổn định cấu trúc phân tử sinh học</td>
+              <td>Giữa các phân tử H2O, trong DNA</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note">
+          Lưu ý: trong thực tế, nhiều chất có bản chất "lai" giữa ion và cộng hóa trị.
+          Cách tốt nhất là kết hợp độ âm điện, cấu trúc tinh thể và dữ liệu thực nghiệm để kết luận.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>4. Tự kiểm tra nhanh</h2>
+        <div class="quiz">
+          <article class="quiz-item">
+            <h4>Câu 1</h4>
+            <p>Vì sao NaCl dẫn điện khi nóng chảy nhưng không dẫn điện ở trạng thái rắn?</p>
+          </article>
+          <article class="quiz-item">
+            <h4>Câu 2</h4>
+            <p>Liên kết trong phân tử O2 là liên kết gì? Đơn, đôi hay ba?</p>
+          </article>
+          <article class="quiz-item">
+            <h4>Câu 3</h4>
+            <p>Giải thích bằng mô hình electron vì sao kim loại đồng dẫn điện tốt.</p>
+          </article>
+          <article class="quiz-item">
+            <h4>Câu 4</h4>
+            <p>Tại sao nước có nhiệt độ sôi cao hơn nhiều so với phân tử có khối lượng tương tự?</p>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const KEY = 'bewy-theme';
+      const btn = document.getElementById('theme-toggle');
+      const vizStage = document.getElementById('viz-stage');
+      const vizButtons = Array.from(document.querySelectorAll('.viz-btn'));
+      const vizMechanism = document.getElementById('viz-mechanism');
+      const vizProperty = document.getElementById('viz-property');
+
+      const vizData = {
+        ionic: {
+          mechanism: 'Electron chuyển từ kim loại sang phi kim, tạo ion trái dấu hút nhau.',
+          property: 'Tạo tinh thể bền, thường nóng chảy cao, dẫn điện khi nóng chảy hoặc tan.',
+          svg: `
+            <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg" aria-label="Mô phỏng liên kết ion">
+              <defs>
+                <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto">
+                  <polygon points="0 0, 8 3.5, 0 7" fill="#F2B544" />
+                </marker>
+              </defs>
+              <circle cx="180" cy="140" r="64" fill="#D9633B" opacity="0.8" />
+              <text x="180" y="148" text-anchor="middle" fill="#1E1B18" font-size="32" font-weight="700">Na</text>
+              <circle cx="620" cy="140" r="64" fill="#2F8F6F" opacity="0.85" />
+              <text x="620" y="148" text-anchor="middle" fill="#1E1B18" font-size="32" font-weight="700">Cl</text>
+              <circle class="float" cx="285" cy="140" r="12" fill="#6FB8D1" />
+              <path class="flow" d="M302 140 L542 140" stroke="#F2B544" stroke-width="4" stroke-dasharray="6 5" fill="none" marker-end="url(#arr)"/>
+              <text x="400" y="122" text-anchor="middle" fill="#FBF4E4" font-size="16">e⁻ chuyển hẳn</text>
+              <text x="180" y="228" text-anchor="middle" fill="#FBF4E4" font-size="22">Na⁺</text>
+              <text x="620" y="228" text-anchor="middle" fill="#FBF4E4" font-size="22">Cl⁻</text>
+            </svg>
+          `,
+        },
+        covalent: {
+          mechanism: 'Hai nguyên tử phi kim chia sẻ cặp electron chung để bền hơn.',
+          property: 'Tạo phân tử; có thể phân cực hoặc không phân cực tùy độ âm điện.',
+          svg: `
+            <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg" aria-label="Mô phỏng liên kết cộng hóa trị">
+              <circle cx="300" cy="140" r="78" fill="#6FB8D1" opacity="0.78" />
+              <circle cx="500" cy="140" r="78" fill="#2F8F6F" opacity="0.78" />
+              <text x="300" y="146" text-anchor="middle" fill="#1E1B18" font-size="30" font-weight="700">H</text>
+              <text x="500" y="146" text-anchor="middle" fill="#1E1B18" font-size="30" font-weight="700">Cl</text>
+              <circle class="float" cx="390" cy="140" r="10" fill="#F2B544" />
+              <circle class="float" cx="410" cy="140" r="10" fill="#F2B544" />
+              <text x="400" y="102" text-anchor="middle" fill="#FBF4E4" font-size="16">cặp e⁻ dùng chung</text>
+              <path d="M346 140 L454 140" stroke="#F2B544" stroke-width="5" stroke-linecap="round" />
+            </svg>
+          `,
+        },
+        metallic: {
+          mechanism: 'Mạng ion dương kim loại được bao quanh bởi electron hóa trị chuyển động tự do.',
+          property: 'Dẫn điện, dẫn nhiệt tốt; dẻo và dễ dát mỏng.',
+          svg: `
+            <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg" aria-label="Mô phỏng liên kết kim loại">
+              <rect x="100" y="56" width="600" height="168" rx="18" fill="rgba(47,143,111,0.15)" stroke="#2F8F6F" stroke-width="2"/>
+              <g fill="#D9633B">
+                <circle cx="180" cy="110" r="22"/><circle cx="320" cy="110" r="22"/><circle cx="460" cy="110" r="22"/><circle cx="600" cy="110" r="22"/>
+                <circle cx="250" cy="176" r="22"/><circle cx="390" cy="176" r="22"/><circle cx="530" cy="176" r="22"/>
+              </g>
+              <g fill="#6FB8D1">
+                <circle class="float" cx="145" cy="176" r="8"/>
+                <circle class="float" cx="275" cy="110" r="8"/>
+                <circle class="float" cx="355" cy="176" r="8"/>
+                <circle class="float" cx="435" cy="110" r="8"/>
+                <circle class="float" cx="565" cy="176" r="8"/>
+                <circle class="float" cx="650" cy="140" r="8"/>
+              </g>
+              <text x="400" y="40" text-anchor="middle" fill="#FBF4E4" font-size="16">"Biển" electron tự do quanh ion dương</text>
+            </svg>
+          `,
+        },
+        hydrogen: {
+          mechanism: 'H gắn với N/O/F bị hút bởi cặp e tự do của phân tử lân cận.',
+          property: 'Làm tăng lực hút liên phân tử, ảnh hưởng lớn đến nhiệt độ sôi và cấu trúc sinh học.',
+          svg: `
+            <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg" aria-label="Mô phỏng liên kết hydro">
+              <g>
+                <circle cx="260" cy="130" r="34" fill="#2F8F6F"/>
+                <text x="260" y="137" text-anchor="middle" fill="#1E1B18" font-size="20" font-weight="700">O</text>
+                <circle cx="210" cy="180" r="22" fill="#6FB8D1"/>
+                <text x="210" y="186" text-anchor="middle" fill="#1E1B18" font-size="16" font-weight="700">H</text>
+                <circle cx="310" cy="180" r="22" fill="#6FB8D1"/>
+                <text x="310" y="186" text-anchor="middle" fill="#1E1B18" font-size="16" font-weight="700">H</text>
+              </g>
+              <g>
+                <circle cx="540" cy="130" r="34" fill="#2F8F6F"/>
+                <text x="540" y="137" text-anchor="middle" fill="#1E1B18" font-size="20" font-weight="700">O</text>
+                <circle cx="490" cy="180" r="22" fill="#6FB8D1"/>
+                <text x="490" y="186" text-anchor="middle" fill="#1E1B18" font-size="16" font-weight="700">H</text>
+                <circle cx="590" cy="180" r="22" fill="#6FB8D1"/>
+                <text x="590" y="186" text-anchor="middle" fill="#1E1B18" font-size="16" font-weight="700">H</text>
+              </g>
+              <path class="flow" d="M332 180 L468 180" stroke="#F2B544" stroke-width="4" stroke-dasharray="6 6" fill="none"/>
+              <text x="400" y="165" text-anchor="middle" fill="#FBF4E4" font-size="15">liên kết hydro</text>
+            </svg>
+          `,
+        },
+      };
+
+      const renderViz = (key) => {
+        const data = vizData[key] || vizData.ionic;
+        if (vizStage) vizStage.innerHTML = data.svg;
+        if (vizMechanism) vizMechanism.textContent = data.mechanism;
+        if (vizProperty) vizProperty.textContent = data.property;
+      };
+
+      vizButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          vizButtons.forEach((item) => {
+            item.classList.remove('active');
+            item.setAttribute('aria-selected', 'false');
+          });
+          button.classList.add('active');
+          button.setAttribute('aria-selected', 'true');
+          renderViz(button.dataset.viz);
+        });
+      });
+
+      renderViz('ionic');
+
+      const applyTheme = (mode) => {
+        document.body.classList.toggle('light-mode', mode === 'light');
+        if (btn) btn.textContent = mode === 'light' ? '🌙 Dark' : '☀ Light';
+      };
+      const saved = localStorage.getItem(KEY);
+      applyTheme(saved === 'light' ? 'light' : 'dark');
+      if (btn) {
+        btn.addEventListener('click', () => {
+          const next = document.body.classList.contains('light-mode') ? 'dark' : 'light';
+          localStorage.setItem(KEY, next);
+          applyTheme(next);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
