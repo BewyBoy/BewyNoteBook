@@ -215,6 +215,11 @@
     }
     .chip:hover { background: rgba(111,184,209,0.14); border-color: rgba(111,184,209,0.5); }
     .chip.dragging { opacity: 0.45; }
+    .chip.selected {
+      border-color: #6FB8D1;
+      background: rgba(111,184,209,0.22);
+      box-shadow: 0 0 0 1px rgba(111,184,209,0.35) inset;
+    }
 
     .arena {
       border: 1px solid rgba(251,244,228,0.1);
@@ -225,6 +230,44 @@
         rgba(15,20,17,0.58);
       padding: 10px;
       min-height: 520px;
+    }
+
+    .three-lab-shell {
+      border: 1px solid rgba(251,244,228,0.12);
+      border-radius: 12px;
+      background: rgba(15,20,17,0.48);
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .three-lab-hud {
+      padding: 8px 10px;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: rgba(251,244,228,0.78);
+      border-bottom: 1px solid rgba(251,244,228,0.1);
+      background: rgba(251,244,228,0.03);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .three-lab-hud .hint {
+      color: rgba(251,244,228,0.65);
+      font-size: 11px;
+    }
+    .three-lab-canvas {
+      position: relative;
+      height: 300px;
+      background:
+        radial-gradient(circle at 14% 12%, rgba(111,184,209,0.15), transparent 38%),
+        radial-gradient(circle at 88% 82%, rgba(242,181,68,0.14), transparent 40%),
+        rgba(15,20,17,0.72);
+    }
+    .three-lab-canvas canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
     }
 
     .dropzones {
@@ -459,6 +502,14 @@
           </div>
 
           <div class="arena">
+            <div class="three-lab-shell">
+              <div class="three-lab-hud">
+                <span id="three-status">3D Lab: Click chai để chọn, rồi click bình để thả.</span>
+                <span class="hint">Bình trái = Chất cần thử | Bình phải = Thuốc thử</span>
+              </div>
+              <div id="three-lab-canvas" class="three-lab-canvas" aria-label="Phòng thí nghiệm 3D"></div>
+            </div>
+
             <div class="dropzones">
               <div class="dropzone" id="sample-zone" data-zone="sample">
                 <span class="label">Chất cần thử</span>
@@ -490,6 +541,7 @@
     </main>
   </div>
 
+  <script src="https://unpkg.com/three@0.164.1/build/three.min.js" crossorigin="anonymous"></script>
   <script>
     (function () {
       const KEY = 'bewy-theme';
@@ -629,10 +681,312 @@
       const fxLayer = document.getElementById('fx-layer');
       const missionsBox = document.getElementById('missions');
       const scoreBadge = document.getElementById('score-badge');
+      const threeCanvasHost = document.getElementById('three-lab-canvas');
+      const threeStatus = document.getElementById('three-status');
+
+      let threeLab = null;
+      let threePicked = null;
 
       const setTheme = (mode) => {
         document.body.classList.toggle('light-mode', mode === 'light');
         if (themeBtn) themeBtn.textContent = mode === 'light' ? '🌙 Dark' : '☀ Light';
+      };
+
+      const colorFromText = (text, alphaShift) => {
+        let hash = 0;
+        for (let i = 0; i < text.length; i += 1) hash = (hash * 31 + text.charCodeAt(i)) >>> 0;
+        const r = 90 + (hash & 0x5f);
+        const g = 90 + ((hash >> 6) & 0x5f);
+        const b = 90 + ((hash >> 12) & 0x5f);
+        const boost = alphaShift || 0;
+        return new THREE.Color(`rgb(${Math.min(255, r + boost)},${Math.min(255, g + boost)},${Math.min(255, b + boost)})`);
+      };
+
+      const updateThreeStatus = (text) => {
+        if (threeStatus) threeStatus.textContent = text;
+      };
+
+      const clearBottleSelection = () => {
+        if (!threeLab) return;
+        threeLab.bottles.forEach((b) => {
+          if (b.body.material.emissive) b.body.material.emissive.setHex(0x000000);
+          b.group.scale.set(1, 1, 1);
+        });
+      };
+
+      const refreshThreeSelectionDisplay = () => {
+        if (!threeLab) return;
+        const applyLiquid = (zone) => {
+          const target = threeLab.beakers[zone];
+          if (!target) return;
+          const value = state[zone];
+          if (value) {
+            target.liquid.visible = true;
+            target.liquid.material.color.copy(colorFromText(value, 30));
+            target.liquid.material.opacity = 0.72;
+            target.liquid.scale.y = 0.9;
+          } else {
+            target.liquid.visible = false;
+          }
+        };
+        applyLiquid('sample');
+        applyLiquid('reagent');
+      };
+
+      const playThreeEffect = (effect) => {
+        if (!threeLab || !effect) return;
+        if (effect.type === 'gas') {
+          const spawnBubbles = (zone, count) => {
+            const beaker = threeLab.beakers[zone];
+            if (!beaker) return;
+            for (let i = 0; i < count; i += 1) {
+              const bubble = new THREE.Mesh(
+                new THREE.SphereGeometry(0.07 + Math.random() * 0.04, 12, 12),
+                new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.8 })
+              );
+              bubble.position.set(
+                beaker.group.position.x + (Math.random() - 0.5) * 0.55,
+                -0.3 + Math.random() * 0.2,
+                beaker.group.position.z + (Math.random() - 0.5) * 0.5
+              );
+              bubble.userData = {
+                vx: (Math.random() - 0.5) * 0.01,
+                vy: 0.015 + Math.random() * 0.016,
+                life: 120 + Math.random() * 60,
+              };
+              threeLab.scene.add(bubble);
+              threeLab.particles.push(bubble);
+            }
+          };
+          spawnBubbles('sample', 22);
+          spawnBubbles('reagent', 22);
+        }
+        if (effect.type === 'precipitate' || effect.type === 'cloud') {
+          const beaker = threeLab.beakers.sample;
+          if (beaker) {
+            beaker.liquid.visible = true;
+            beaker.liquid.material.color.set(effect.color || '#e8e8e8');
+            beaker.liquid.material.opacity = effect.type === 'cloud' ? 0.84 : 0.76;
+          }
+        }
+        if (effect.type === 'indicator') {
+          const tint = new THREE.Color(effect.color || '#b07baa');
+          ['sample', 'reagent'].forEach((zone) => {
+            const beaker = threeLab.beakers[zone];
+            if (!beaker) return;
+            beaker.liquid.visible = true;
+            beaker.liquid.material.color.copy(tint);
+            beaker.liquid.material.opacity = 0.76;
+          });
+        }
+      };
+
+      const initThreeLab = () => {
+        if (!threeCanvasHost) return;
+        if (!window.THREE) {
+          updateThreeStatus('Không tải được Three.js. Bạn vẫn có thể chơi bằng click hoặc drag-drop ở khu 2D bên dưới.');
+          return;
+        }
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(46, 1, 0.1, 100);
+        camera.position.set(0, 3.2, 8.8);
+        camera.lookAt(0, 0.2, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        threeCanvasHost.appendChild(renderer.domElement);
+
+        const ambient = new THREE.AmbientLight(0xffffff, 0.74);
+        const key = new THREE.DirectionalLight(0xffffff, 0.95);
+        key.position.set(3, 7, 5);
+        const rim = new THREE.DirectionalLight(0x7eb9d4, 0.35);
+        rim.position.set(-4, 2, -2);
+        scene.add(ambient, key, rim);
+
+        const table = new THREE.Mesh(
+          new THREE.BoxGeometry(12, 0.45, 7),
+          new THREE.MeshStandardMaterial({ color: 0x2c241d, roughness: 0.82, metalness: 0.08 })
+        );
+        table.position.set(0, -1.1, 0.2);
+        scene.add(table);
+
+        const shelfMat = new THREE.MeshStandardMaterial({ color: 0x3a3026, roughness: 0.82, metalness: 0.06 });
+        const leftShelf = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.18, 1.6), shelfMat);
+        leftShelf.position.set(-3.4, 0.75, -2.15);
+        const rightShelf = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.18, 1.6), shelfMat);
+        rightShelf.position.set(3.4, 0.75, -2.15);
+        scene.add(leftShelf, rightShelf);
+
+        const beakerFactory = (zone, x) => {
+          const g = new THREE.Group();
+          g.position.set(x, -0.44, 1.5);
+
+          const glass = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.84, 0.93, 1.9, 32, 1, true),
+            new THREE.MeshPhysicalMaterial({ color: 0xd5e5ee, transparent: true, opacity: 0.2, roughness: 0.05, transmission: 0.95, thickness: 0.2 })
+          );
+          glass.position.y = 0.2;
+
+          const liquid = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.72, 0.8, 1.05, 28),
+            new THREE.MeshStandardMaterial({ color: 0x4d646e, transparent: true, opacity: 0.62 })
+          );
+          liquid.position.y = -0.15;
+          liquid.visible = false;
+
+          const ring = new THREE.Mesh(
+            new THREE.TorusGeometry(0.9, 0.05, 14, 42),
+            new THREE.MeshStandardMaterial({ color: zone === 'sample' ? 0x6fb8d1 : 0xf2b544, emissive: 0x000000 })
+          );
+          ring.rotation.x = Math.PI / 2;
+          ring.position.y = 1.15;
+
+          g.add(glass, liquid, ring);
+          g.userData = { zone, target: true, ring };
+          scene.add(g);
+          return { group: g, glass, liquid, ring };
+        };
+
+        const beakers = {
+          sample: beakerFactory('sample', -1.65),
+          reagent: beakerFactory('reagent', 1.65),
+        };
+
+        const bottleFactory = (type, value, pos, idx) => {
+          const group = new THREE.Group();
+          group.position.set(pos.x, pos.y, pos.z);
+
+          const color = colorFromText(value, 10);
+          const body = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.22, 0.25, 0.74, 18),
+            new THREE.MeshStandardMaterial({ color, roughness: 0.4, metalness: 0.1 })
+          );
+          body.position.y = 0.37;
+
+          const neck = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.1, 0.12, 0.22, 12),
+            new THREE.MeshStandardMaterial({ color: 0xd9d9d9, roughness: 0.5 })
+          );
+          neck.position.y = 0.83;
+
+          const cap = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.11, 0.11, 0.08, 12),
+            new THREE.MeshStandardMaterial({ color: 0x1d2226, roughness: 0.6 })
+          );
+          cap.position.y = 0.97;
+
+          group.add(body, neck, cap);
+          group.userData = { pick: true, type, value, idx };
+          scene.add(group);
+          return { group, body };
+        };
+
+        const bottles = [];
+        const sampleDeck = SAMPLES.slice(0, 10);
+        const reagentDeck = REAGENTS.slice(0, 10);
+        sampleDeck.forEach((value, i) => {
+          const col = i % 5;
+          const row = Math.floor(i / 5);
+          bottles.push(bottleFactory('sample', value, {
+            x: -5.1 + col * 0.72,
+            y: -0.36 + row * 0.84,
+            z: -2.5,
+          }, i));
+        });
+        reagentDeck.forEach((value, i) => {
+          const col = i % 5;
+          const row = Math.floor(i / 5);
+          bottles.push(bottleFactory('reagent', value, {
+            x: 1.9 + col * 0.72,
+            y: -0.36 + row * 0.84,
+            z: -2.5,
+          }, i));
+        });
+
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const clickables = [beakers.sample.group, beakers.reagent.group, ...bottles.map((b) => b.group)];
+
+        const pointer = (event) => {
+          const rect = renderer.domElement.getBoundingClientRect();
+          mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+          mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+          raycaster.setFromCamera(mouse, camera);
+          const hits = raycaster.intersectObjects(clickables, true);
+          if (!hits.length) return;
+
+          let target = hits[0].object;
+          while (target && !target.userData.pick && !target.userData.target) target = target.parent;
+          if (!target) return;
+
+          if (target.userData.pick) {
+            clearBottleSelection();
+            const bottle = bottles.find((b) => b.group === target);
+            if (bottle) {
+              bottle.body.material.emissive = new THREE.Color(0x1b6f75);
+              bottle.group.scale.set(1.08, 1.08, 1.08);
+            }
+            threePicked = { type: target.userData.type, value: target.userData.value };
+            updateThreeStatus(`Đã chọn ${threePicked.value}. Click bình ${threePicked.type === 'sample' ? 'trái' : 'phải'} để thả.`);
+            return;
+          }
+
+          if (target.userData.target && threePicked) {
+            setDrop(target.userData.zone, threePicked);
+            refreshThreeSelectionDisplay();
+            updateThreeStatus(`Đã thả ${threePicked.value} vào bình ${target.userData.zone === 'sample' ? 'chất cần thử' : 'thuốc thử'}.`);
+            clearBottleSelection();
+            threePicked = null;
+          }
+        };
+        renderer.domElement.addEventListener('pointerdown', pointer);
+
+        const resize = () => {
+          const w = threeCanvasHost.clientWidth;
+          const h = threeCanvasHost.clientHeight;
+          renderer.setSize(w, h, false);
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+        };
+        resize();
+        window.addEventListener('resize', resize);
+
+        const particles = [];
+        const animate = () => {
+          bottles.forEach((b, i) => {
+            b.group.rotation.y = Math.sin(Date.now() * 0.0007 + i) * 0.05;
+          });
+
+          for (let i = particles.length - 1; i >= 0; i -= 1) {
+            const p = particles[i];
+            p.position.x += p.userData.vx;
+            p.position.y += p.userData.vy;
+            p.userData.life -= 1;
+            p.material.opacity = Math.max(0, p.userData.life / 180);
+            if (p.userData.life <= 0) {
+              scene.remove(p);
+              p.geometry.dispose();
+              p.material.dispose();
+              particles.splice(i, 1);
+            }
+          }
+
+          renderer.render(scene, camera);
+          requestAnimationFrame(animate);
+        };
+        animate();
+
+        threeLab = {
+          scene,
+          camera,
+          renderer,
+          beakers,
+          bottles,
+          particles,
+        };
+
+        refreshThreeSelectionDisplay();
       };
 
       const createChip = (text, type) => {
@@ -651,7 +1005,20 @@
         });
 
         chip.addEventListener('dragend', () => chip.classList.remove('dragging'));
+        chip.addEventListener('click', () => {
+          setDrop(type, { type, value: text });
+          updateThreeStatus(`Đã chọn nhanh ${text} bằng click.`);
+        });
         return chip;
+      };
+
+      const refreshChipSelection = () => {
+        document.querySelectorAll('.chip').forEach((chip) => {
+          const type = chip.dataset.type;
+          const value = chip.dataset.value;
+          const selected = (type === 'sample' && state.sample === value) || (type === 'reagent' && state.reagent === value);
+          chip.classList.toggle('selected', selected);
+        });
       };
 
       const renderPalette = () => {
@@ -683,6 +1050,8 @@
           state.reagent = payload.value;
           reagentPicked.textContent = payload.value;
         }
+        refreshChipSelection();
+        refreshThreeSelectionDisplay();
       };
 
       const wireZone = (element, zoneName) => {
@@ -751,6 +1120,7 @@
         if (!state.sample || !state.reagent) {
           renderResult('Thiếu dữ liệu', 'Cần kéo đủ 1 chất cần thử và 1 thuốc thử/điều kiện.', '-');
           clearFX();
+          updateThreeStatus('Thiếu dữ liệu: cần chọn cả chất cần thử và thuốc thử.');
           return;
         }
 
@@ -764,11 +1134,14 @@
             'Thử cặp khác theo bảng nhận biết.'
           );
           clearFX();
+          updateThreeStatus('Cặp này chưa có phản ứng trong bộ dữ liệu.');
           return;
         }
 
         renderResult(data.status, data.phenomenon, data.equation);
         applyFX(data.effect);
+        playThreeEffect(data.effect);
+        updateThreeStatus(`Đã phản ứng: ${state.sample} + ${state.reagent}`);
 
         if (data.mission && !missionDone.has(key)) {
           missionDone.add(key);
@@ -781,7 +1154,10 @@
         state.reagent = null;
         samplePicked.textContent = '(thả vào đây)';
         reagentPicked.textContent = '(thả vào đây)';
+        refreshChipSelection();
         clearFX();
+        refreshThreeSelectionDisplay();
+        updateThreeStatus('3D Lab: Click chai để chọn, rồi click bình để thả.');
         renderResult('Chờ thao tác', 'Hãy kéo một chất cần thử và một thuốc thử vào đúng ô.', '-');
       };
 
@@ -791,7 +1167,9 @@
       clearBtn.addEventListener('click', clearSelection);
 
       renderPalette();
+      refreshChipSelection();
       renderMissions();
+      initThreeLab();
 
       const saved = localStorage.getItem(KEY);
       setTheme(saved === 'light' ? 'light' : 'dark');
