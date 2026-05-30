@@ -1,0 +1,230 @@
+/* =========================================================
+   Vietnam Walkable City — Colors & Type
+   A warm, hand-drawn doodle system for the Đi Bộ campaign.
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Patrick+Hand&family=Patrick+Hand+SC&family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap&subset=vietnamese,latin-ext');
+
+/* ---------- COLOR ---------------------------------------- */
+:root {
+  /* Paper & ink — the foundation. Everything sits on cream paper
+     drawn with warm black ink, like an old sketchbook. */
+  --paper:        #FBF4E4;   /* warm cream — default page bg */
+  --paper-deep:   #F2E7CE;   /* slightly toasted paper */
+  --paper-shadow: #E8D9B6;   /* paper edge / fold shadow */
+  --ink:          #2A2520;   /* warm black — primary ink */
+  --ink-soft:     #4D4439;   /* secondary ink, for body */
+  --ink-faint:    #8A7E6C;   /* tertiary, captions */
+
+  /* Brand spot colors — pulled from Vietnamese street life:
+     terracotta roof tiles, jade shutters, sky after rain,
+     marigold offerings, motorbike-helmet red, lotus pink. */
+  --terracotta:   #D9633B;   /* roof red — primary accent */
+  --terracotta-deep: #B04A26;
+  --jade:         #2F8F6F;   /* shutter green — secondary */
+  --jade-deep:    #1F6A52;
+  --sky:          #6FB8D1;   /* monsoon-clear sky */
+  --sky-deep:     #3F8AAA;
+  --marigold:     #F2B544;   /* yellow flower — highlight */
+  --marigold-deep:#D89824;
+  --lotus:        #E89BA8;   /* soft pink */
+  --lotus-deep:   #C76C7E;
+
+  /* Doodle utility */
+  --highlight:    #FFE9A8;   /* marker-pen highlight */
+  --highlight-jade:#C8E5D7;
+  --stamp-red:    #C73C2E;   /* stamp / sticker red */
+
+  /* Semantic — campaign tone */
+  --bg:           var(--paper);
+  --bg-soft:      var(--paper-deep);
+  --fg1:          var(--ink);
+  --fg2:          var(--ink-soft);
+  --fg3:          var(--ink-faint);
+  --accent:       var(--terracotta);
+  --accent-2:     var(--jade);
+  --link:         var(--jade-deep);
+  --positive:     var(--jade);     /* "what cities could be" */
+  --negative:     var(--terracotta-deep); /* "what cities are now" — never red-alarm, just warm-warning */
+  --warn:         var(--marigold-deep);
+
+  /* Scribble line weights */
+  --line-thin:   1.5px;
+  --line:        2.5px;
+  --line-bold:   3.5px;
+  --line-doodle: 4px;
+
+  /* Radii — nothing is perfectly round. Use these as a base
+     then add a wobble via border-radius % shorthand. */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 22px;
+  --r-pill: 999px;
+  --r-blob: 62% 38% 55% 45% / 50% 60% 40% 50%; /* organic blob */
+
+  /* Spacing — generous, breathing-room scale */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+
+  /* Shadows — soft drop, not slick. Like ink bleed. */
+  --shadow-sketch: 3px 3px 0 var(--ink);                      /* sticker offset */
+  --shadow-sketch-sm: 2px 2px 0 var(--ink);
+  --shadow-soft:   0 6px 18px -8px rgba(42,37,32,0.25);
+  --shadow-paper:  0 2px 0 var(--paper-shadow), 0 8px 24px -10px rgba(42,37,32,0.2);
+
+  /* Type families */
+  --font-doodle:   'Caveat', 'Patrick Hand', cursive;       /* big personality */
+  --font-hand:     'Patrick Hand', 'Caveat', cursive;       /* hand-printed UI */
+  --font-hand-sc:  'Patrick Hand SC', 'Patrick Hand', cursive;
+  --font-body:     'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+
+  /* Type scale */
+  --t-display:  clamp(48px, 8vw, 96px);
+  --t-h1:       clamp(36px, 5vw, 56px);
+  --t-h2:       clamp(28px, 3.5vw, 40px);
+  --t-h3:       22px;
+  --t-h4:       18px;
+  --t-body:     16px;
+  --t-small:    14px;
+  --t-caption:  12px;
+}
+
+/* ---------- BASE ----------------------------------------- */
+html, body {
+  background: var(--paper);
+  color: var(--fg1);
+  font-family: var(--font-body);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Subtle paper-grain texture, applied via ::before on body if desired */
+.paper-grain {
+  position: relative;
+}
+.paper-grain::before {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(42,37,32,0.025) 0 1px, transparent 1px),
+    radial-gradient(circle at 70% 60%, rgba(42,37,32,0.02) 0 1px, transparent 1px),
+    radial-gradient(circle at 40% 80%, rgba(42,37,32,0.025) 0 1px, transparent 1px);
+  background-size: 7px 7px, 11px 11px, 13px 13px;
+  mix-blend-mode: multiply;
+  opacity: 0.6;
+}
+
+/* ---------- SEMANTIC TYPE -------------------------------- */
+.t-display, h1.display {
+  font-family: var(--font-doodle);
+  font-weight: 700;
+  font-size: var(--t-display);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  color: var(--fg1);
+}
+h1, .t-h1 {
+  font-family: var(--font-doodle);
+  font-weight: 700;
+  font-size: var(--t-h1);
+  line-height: 1.0;
+  letter-spacing: -0.005em;
+  color: var(--fg1);
+  margin: 0 0 var(--s-4);
+}
+h2, .t-h2 {
+  font-family: var(--font-hand);
+  font-weight: 400;
+  font-size: var(--t-h2);
+  line-height: 1.1;
+  color: var(--fg1);
+  margin: 0 0 var(--s-3);
+}
+h3, .t-h3 {
+  font-family: var(--font-hand);
+  font-size: var(--t-h3);
+  line-height: 1.2;
+  color: var(--fg1);
+  margin: 0 0 var(--s-3);
+}
+h4, .t-h4 {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--t-h4);
+  line-height: 1.3;
+  color: var(--fg1);
+  margin: 0 0 var(--s-2);
+}
+p, .t-body {
+  font-family: var(--font-body);
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--fg2);
+  margin: 0 0 var(--s-4);
+  text-wrap: pretty;
+}
+small, .t-small {
+  font-size: var(--t-small);
+  color: var(--fg3);
+}
+.t-caption {
+  font-family: var(--font-hand);
+  font-size: var(--t-caption);
+  letter-spacing: 0.04em;
+  color: var(--fg3);
+  text-transform: uppercase;
+}
+.t-quote {
+  font-family: var(--font-doodle);
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.15;
+  color: var(--fg1);
+}
+
+/* Marker-pen highlight on inline text */
+.t-highlight {
+  background: linear-gradient(180deg, transparent 55%, var(--highlight) 55%, var(--highlight) 92%, transparent 92%);
+  padding: 0 0.15em;
+}
+.t-highlight--jade {
+  background: linear-gradient(180deg, transparent 55%, var(--highlight-jade) 55%, var(--highlight-jade) 92%, transparent 92%);
+}
+
+/* Underline that looks hand-drawn */
+.t-underline {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8'><path d='M2 5 Q 50 1 100 4 T 198 5' fill='none' stroke='%232A2520' stroke-width='2.5' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-size: 100% 0.3em;
+  background-position: 0 100%;
+  padding-bottom: 0.15em;
+}
+
+/* Code / mono — kept for completeness, not a campaign focus */
+code, kbd, samp {
+  font-family: 'Courier New', ui-monospace, monospace;
+  background: var(--paper-deep);
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+  font-size: 0.92em;
+}
+
+/* ---------- LINK ----------------------------------------- */
+a {
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--jade);
+  transition: color 0.15s ease;
+}
+a:hover { color: var(--jade-deep); text-decoration-color: var(--jade-deep); }

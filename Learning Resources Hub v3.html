@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Learning Resources Hub</title>
+  <link rel="stylesheet" href="colors_and_type.css"/>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100vh; overflow: hidden;
+      background: #1E1B18; color: #FBF4E4;
+      font-family: 'Be Vietnam Pro', sans-serif;
+    }
+    ::selection { background: #F2B544; color: #1E1B18; }
+
+    @keyframes flatFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes flatPopIn {
+      from { opacity: 0; transform: scale(0.92) translateY(12px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+  </style>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+
+  <script type="text/babel">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "bookColor": "#C73C2E",
+      "accentColor": "#F2B544"
+    }/*EDITMODE-END*/;
+
+    function useTweaksSafe(defaults) {
+      if (typeof useTweaks === 'function') return useTweaks(defaults);
+      const [values, setValues] = React.useState(defaults);
+      const setTweak = React.useCallback((key, value) => {
+        setValues(prev => ({ ...prev, [key]: value }));
+      }, []);
+      return [values, setTweak];
+    }
+
+    const SUBJECTS = [
+      { id: 'math',      label: 'Math',      icon: 'π',  color: '#F2B544', deep: '#D89824',
+        chapters: ['Algebra Fundamentals', 'Calculus I & II', 'Linear Algebra', 'Probability & Statistics', 'Discrete Mathematics'] },
+      { id: 'physics',   label: 'Physics',   icon: '⚙',  color: '#6FB8D1', deep: '#3F8AAA',
+        chapters: ['Classical Mechanics', 'Electromagnetism', 'Thermodynamics', 'Waves & Optics', 'Modern Physics'] },
+      { id: 'chemistry', label: 'Chemistry', icon: '⚗',  color: '#2F8F6F', deep: '#1F6A52',
+        chapters: ['Atomic Structure', 'Chemical Bonding', 'Organic Chemistry', 'Reaction Kinetics', 'Analytical Methods'] },
+      { id: 'biology',   label: 'Biology',   icon: '🧬',  color: '#D9633B', deep: '#B04A26',
+        chapters: ['Cell Biology', 'Genetics & DNA', 'Human Anatomy', 'Ecology & Environment', 'Evolutionary Biology'] },
+      { id: 'economics', label: 'Economics', icon: '📊',  color: '#E89BA8', deep: '#C76C7E',
+        chapters: ['Microeconomics', 'Macroeconomics', 'International Trade', 'Financial Markets', 'Development Economics'] },
+    ];
+
+    /* ---- Tab extruding from book ---- */
+    function BookTab({ subject, active, onClick, index, total }) {
+      const isActive = active === subject.id;
+      const [hov, setHov] = React.useState(false);
+
+      const tabH = 52;
+      const gap = 8;
+      const topOffset = 60 + index * (tabH + gap);
+
+      return (
+        <button
+          onClick={() => onClick(subject.id)}
+          onMouseEnter={() => setHov(true)}
+          onMouseLeave={() => setHov(false)}
+          style={{
+            position: 'absolute',
+            right: isActive ? -140 : hov ? -130 : -120,
+            top: topOffset,
+            width: 140,
+            height: tabH,
+            display: 'flex', alignItems: 'center', gap: 10,
+            padding: '0 16px',
+            fontFamily: "'Be Vietnam Pro', sans-serif",
+            fontSize: 15, fontWeight: isActive ? 700 : 500,
+            color: isActive ? '#1E1B18' : '#FBF4E4',
+            background: isActive ? subject.color : 'rgba(251,244,228,0.08)',
+            border: 'none',
+            borderRadius: '0 12px 12px 0',
+            cursor: 'pointer',
+            transition: 'all 0.3s cubic-bezier(.34,1.56,.64,1)',
+            zIndex: isActive ? 5 : 2,
+            boxShadow: isActive
+              ? `4px 4px 16px -2px ${subject.color}55`
+              : hov ? '2px 2px 8px rgba(0,0,0,0.3)' : 'none',
+          }}
+        >
+          <span style={{
+            width: 30, height: 30, borderRadius: 8,
+            background: isActive ? 'rgba(0,0,0,0.12)' : 'rgba(251,244,228,0.06)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 16, flexShrink: 0,
+          }}>{subject.icon}</span>
+          <span style={{ whiteSpace: 'nowrap' }}>{subject.label}</span>
+        </button>
+      );
+    }
+
+    /* ---- Chapter row inside book ---- */
+    function ChapterRow({ index, label, color }) {
+      const [hov, setHov] = React.useState(false);
+      return (
+        <div
+          onMouseEnter={() => setHov(true)}
+          onMouseLeave={() => setHov(false)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 14,
+            padding: '10px 14px',
+            background: hov ? 'rgba(251,244,228,0.08)' : 'transparent',
+            borderRadius: 12,
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            transform: hov ? 'translateX(6px)' : 'none',
+          }}
+        >
+          <span style={{
+            width: 32, height: 32, borderRadius: 9,
+            background: hov ? color : 'rgba(251,244,228,0.06)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 14, fontWeight: 700,
+            color: hov ? '#1E1B18' : 'rgba(251,244,228,0.35)',
+            transition: 'all 0.2s ease', flexShrink: 0,
+          }}>{index + 1}</span>
+          <span style={{ fontSize: 16, color: '#FBF4E4' }}>{label}</span>
+          <span style={{
+            marginLeft: 'auto', fontSize: 15,
+            color: 'rgba(251,244,228,0.15)',
+            transform: hov ? 'translateX(4px)' : 'none',
+            opacity: hov ? 1 : 0,
+            transition: 'all 0.2s ease',
+          }}>→</span>
+        </div>
+      );
+    }
+
+    /* ---- The Book ---- */
+    function Book({ activeSubject, onTabClick, bookColor, accentColor }) {
+      const activeS = SUBJECTS.find(s => s.id === activeSubject) || SUBJECTS[0];
+
+      // Derive spine color (darker shade)
+      const spineColor = bookColor === '#C73C2E' ? '#9E2E22' :
+                         bookColor === '#2F8F6F' ? '#1F6A52' :
+                         bookColor === '#6FB8D1' ? '#3F8AAA' :
+                         bookColor === '#D9633B' ? '#B04A26' : '#9E2E22';
+
+      return (
+        <div style={{
+          position: 'relative',
+          width: '100%', height: '100%',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          {/* Book body */}
+          <div style={{
+            position: 'relative',
+            width: '85%', maxWidth: 520,
+            aspectRatio: '0.78',
+            borderRadius: '6px 16px 16px 6px',
+            overflow: 'visible',
+            display: 'flex', flexDirection: 'row',
+            boxShadow: '12px 12px 0 rgba(0,0,0,0.2)',
+          }}>
+            {/* Spine */}
+            <div style={{
+              width: 32, flexShrink: 0,
+              background: spineColor,
+              borderRadius: '6px 0 0 6px',
+            }} />
+
+            {/* Main cover / content area */}
+            <div style={{
+              flex: 1,
+              background: bookColor,
+              borderRadius: '0 14px 14px 0',
+              display: 'flex', flexDirection: 'column',
+              padding: '0',
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              {/* Bookmark ribbon */}
+              <div style={{
+                position: 'absolute', top: 0, left: 80,
+                width: 24, height: 60,
+                background: '#1E1B18',
+                clipPath: 'polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%)',
+                zIndex: 3,
+              }} />
+
+              {/* Title label plaque */}
+              <div style={{
+                margin: '40px 20px 0',
+                padding: '18px 20px 14px',
+                background: '#FBF4E4',
+                borderRadius: 8,
+              }}>
+                <h1 style={{
+                  fontFamily: "'Caveat', cursive", fontWeight: 700,
+                  fontSize: 'clamp(22px, 2.8vw, 32px)',
+                  lineHeight: 1.05, color: '#2A2520',
+                  margin: 0,
+                }}>Learning Resources Hub</h1>
+                <p style={{
+                  fontFamily: "'Patrick Hand SC', cursive",
+                  fontSize: 11, letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  color: '#8A7E6C', margin: '6px 0 0',
+                }}>Curriculum Chapters</p>
+              </div>
+
+              {/* Active subject content area (inside book) */}
+              <div style={{
+                margin: '12px 16px 14px',
+                flex: 1,
+                background: 'rgba(0,0,0,0.15)',
+                borderRadius: 12,
+                padding: '14px 10px',
+                display: 'flex', flexDirection: 'column',
+                overflow: 'visible',
+                minHeight: 0,
+              }}>
+                {/* Subject header */}
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '0 8px 14px',
+                  borderBottom: '1px solid rgba(251,244,228,0.1)',
+                  marginBottom: 10,
+                }}>
+                  <div style={{
+                    width: 36, height: 36, borderRadius: 10,
+                    background: activeS.color,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 18,
+                    boxShadow: `0 4px 12px -2px ${activeS.color}55`,
+                  }}>{activeS.icon}</div>
+                  <div>
+                    <div style={{
+                      fontFamily: "'Caveat', cursive", fontSize: 22, fontWeight: 700,
+                      color: '#FBF4E4', lineHeight: 1,
+                    }}>{activeS.label}</div>
+                    <div style={{
+                      fontSize: 12, color: 'rgba(251,244,228,0.35)', marginTop: 2,
+                    }}>{activeS.chapters.length} chapters</div>
+                  </div>
+                </div>
+
+                {/* Chapters list */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                  {activeS.chapters.map((ch, i) => (
+                    <ChapterRow key={`${activeS.id}-${i}`} index={i} label={ch} color={activeS.color} />
+                  ))}
+                </div>
+              </div>
+
+              {/* Small clasp at bottom */}
+              <div style={{
+                width: 40, height: 8, borderRadius: 4,
+                background: spineColor,
+                margin: '0 auto 10px',
+                flexShrink: 0,
+              }} />
+            </div>
+
+            {/* Subject tabs extruding from right edge */}
+            {SUBJECTS.map((s, i) => (
+              <BookTab key={s.id} subject={s} active={activeSubject}
+                onClick={onTabClick} index={i} total={SUBJECTS.length} />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* ---- Main App ---- */
+    function App() {
+      const [tweaks, setTweak] = useTweaksSafe(TWEAK_DEFAULTS);
+      const [activeSubject, setActiveSubject] = React.useState('math');
+      const hasTweaksUI = typeof TweaksPanel !== 'undefined'
+        && typeof TweakSection !== 'undefined'
+        && typeof TweakColor !== 'undefined';
+
+      return (
+        <div style={{
+          height: '100vh', display: 'flex',
+          background: '#1E1B18', position: 'relative', overflow: 'hidden',
+        }}>
+
+          {/* Book area — left 2/3 */}
+          <div style={{
+            width: '66.6%', height: '100%',
+            padding: '32px 60px 32px 40px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            position: 'relative',
+          }}>
+            {/* Accent glow behind book */}
+            <div style={{
+              position: 'absolute',
+              top: '20%', left: '15%',
+              width: '60%', height: '60%',
+              background: `radial-gradient(ellipse, ${tweaks.accentColor}10 0%, transparent 70%)`,
+              pointerEvents: 'none',
+            }} />
+
+            <Book
+              activeSubject={activeSubject}
+              onTabClick={setActiveSubject}
+              bookColor={tweaks.bookColor}
+              accentColor={tweaks.accentColor}
+            />
+          </div>
+
+          {/* Right sidebar — 1/3 */}
+          <div style={{
+            width: '33.3%', height: '100%',
+            display: 'flex', flexDirection: 'column',
+            justifyContent: 'center',
+            padding: '40px 40px 40px 80px',
+          }}>
+            {/* Brand */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 10,
+              marginBottom: 48,
+            }}>
+              <div style={{
+                width: 40, height: 40, borderRadius: 12,
+                background: tweaks.accentColor,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <rect x="2" y="3" width="13" height="17" rx="2" fill="#1E1B18" opacity="0.2"/>
+                  <rect x="6" y="1" width="13" height="17" rx="2" fill="#1E1B18" opacity="0.6"/>
+                  <rect x="9" y="4" width="7" height="3" rx="1" fill="#FBF4E4" opacity="0.7"/>
+                </svg>
+              </div>
+              <span style={{
+                fontFamily: "'Caveat', cursive", fontWeight: 700,
+                fontSize: 24, color: '#FBF4E4',
+              }}>LR Hub</span>
+            </div>
+
+            {/* Tagline */}
+            <p style={{
+              fontFamily: "'Be Vietnam Pro', sans-serif",
+              fontSize: 15, lineHeight: 1.6,
+              color: 'rgba(251,244,228,0.4)',
+              marginBottom: 40, maxWidth: 260,
+            }}>
+              Select a subject tab to browse chapters. Click any chapter to begin.
+            </p>
+
+            {/* CTAs */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <ActionButton label="Explore Chapters" primary color={tweaks.accentColor} />
+              <ActionButton label="Download Syllabus" />
+            </div>
+          </div>
+
+          {/* Render tweaks UI only when tweaks runtime is available. */}
+          {hasTweaksUI && (
+            <TweaksPanel title="Tweaks">
+              <TweakSection title="Book">
+                <TweakColor label="Cover" value={tweaks.bookColor}
+                  onChange={v => setTweak('bookColor', v)}
+                  options={['#C73C2E', '#2F8F6F', '#6FB8D1', '#D9633B']} />
+              </TweakSection>
+              <TweakSection title="Accent">
+                <TweakColor label="Color" value={tweaks.accentColor}
+                  onChange={v => setTweak('accentColor', v)}
+                  options={['#F2B544', '#D9633B', '#6FB8D1', '#E89BA8']} />
+              </TweakSection>
+            </TweaksPanel>
+          )}
+        </div>
+      );
+    }
+
+    function ActionButton({ label, primary, color }) {
+      const [hov, setHov] = React.useState(false);
+      const [pressed, setPressed] = React.useState(false);
+      return (
+        <button
+          onMouseEnter={() => setHov(true)}
+          onMouseLeave={() => { setHov(false); setPressed(false); }}
+          onMouseDown={() => setPressed(true)}
+          onMouseUp={() => setPressed(false)}
+          style={{
+            fontFamily: "'Be Vietnam Pro', sans-serif",
+            fontSize: 15, fontWeight: 600,
+            padding: '14px 28px',
+            background: primary ? (color || '#F2B544') : 'transparent',
+            color: primary ? '#1E1B18' : '#FBF4E4',
+            border: primary ? 'none' : '1.5px solid rgba(251,244,228,0.12)',
+            borderRadius: 12, cursor: 'pointer',
+            transform: pressed ? 'scale(0.97)' : hov ? 'translateY(-1px)' : 'none',
+            boxShadow: primary && hov ? `0 8px 24px -6px ${color || '#F2B544'}55` : 'none',
+            transition: 'all 0.2s cubic-bezier(.34,1.56,.64,1)',
+            textAlign: 'center',
+          }}
+        >{label}</button>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

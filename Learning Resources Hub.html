@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Learning Resources Hub</title>
+  <link rel="stylesheet" href="colors_and_type.css"/>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body {
+      background: var(--paper);
+      font-family: var(--font-body);
+    }
+
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(-3deg); }
+      50% { transform: rotate(3deg); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.9) rotate(-2deg); }
+      to { opacity: 1; transform: scale(1) rotate(-0.5deg); }
+    }
+    @keyframes drawIn {
+      from { stroke-dashoffset: 300; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(1deg); }
+    }
+
+    /* Subtle paper grain */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(42,37,32,0.025) 0 1px, transparent 1px),
+        radial-gradient(circle at 70% 60%, rgba(42,37,32,0.02) 0 1px, transparent 1px),
+        radial-gradient(circle at 40% 80%, rgba(42,37,32,0.025) 0 1px, transparent 1px);
+      background-size: 7px 7px, 11px 11px, 13px 13px;
+      mix-blend-mode: multiply;
+      opacity: 0.6;
+      z-index: 0;
+    }
+
+    /* Grid pattern underlay for brutalism feel */
+    .grid-underlay {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        linear-gradient(var(--paper-shadow) 1px, transparent 1px),
+        linear-gradient(90deg, var(--paper-shadow) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.25;
+    }
+  </style>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="grid-underlay"></div>
+  <div id="root"></div>
+
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="components.jsx"></script>
+
+  <script type="text/babel">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "notebookColor": "#6FB8D1",
+      "bgAccent": "cream",
+      "showDoodles": true,
+      "layout": "centered"
+    }/*EDITMODE-END*/;
+
+    function App() {
+      const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+      const [activeSubject, setActiveSubject] = React.useState('math');
+      const [modalSubject, setModalSubject] = React.useState(null);
+      const [loaded, setLoaded] = React.useState(false);
+
+      React.useEffect(() => {
+        setTimeout(() => setLoaded(true), 100);
+      }, []);
+
+      const bgMap = {
+        cream: 'var(--paper)',
+        warm: 'var(--paper-deep)',
+        pink: 'var(--lotus)',
+      };
+
+      const pageBg = bgMap[tweaks.bgAccent] || 'var(--paper)';
+      const isStacked = tweaks.layout === 'stacked';
+
+      return (
+        <div style={{
+          minHeight: '100vh',
+          background: pageBg,
+          position: 'relative',
+          overflow: 'hidden',
+          transition: 'background 0.4s ease',
+        }}>
+          {/* === NAV BAR === */}
+          <nav style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '16px 32px',
+            borderBottom: '2.5px solid var(--ink)',
+            background: 'var(--paper)',
+            position: 'relative', zIndex: 10,
+            animation: loaded ? 'slideUp 0.5s ease both' : 'none',
+          }}>
+            <BrandMark />
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              {['Home', 'Chapters', 'About'].map((link, i) => (
+                <a key={link} href="#" onClick={e => e.preventDefault()} style={{
+                  fontFamily: 'var(--font-hand)', fontSize: 17,
+                  color: i === 0 ? 'var(--ink)' : 'var(--ink-faint)',
+                  textDecoration: 'none',
+                  padding: '6px 14px',
+                  border: i === 0 ? '2px solid var(--ink)' : '2px solid transparent',
+                  borderRadius: 'var(--r-sm)',
+                  transition: 'all 0.15s ease',
+                }}>{link}</a>
+              ))}
+            </div>
+          </nav>
+
+          {/* === MAIN CONTENT === */}
+          <main style={{
+            maxWidth: 1100,
+            margin: '0 auto',
+            padding: isStacked ? '40px 24px 80px' : '60px 32px 80px',
+            position: 'relative', zIndex: 1,
+          }}>
+
+            {/* Doodle decorations */}
+            <DoodleDecor tweaks={tweaks} />
+
+            {/* Hero section */}
+            <div style={{
+              display: 'flex',
+              flexDirection: isStacked ? 'column' : 'row',
+              alignItems: isStacked ? 'center' : 'flex-start',
+              gap: isStacked ? 32 : 0,
+              animation: loaded ? 'slideUp 0.6s ease 0.1s both' : 'none',
+            }}>
+
+              {/* Notebook + Spiral */}
+              <div style={{
+                flex: '1 1 auto',
+                position: 'relative',
+                minWidth: 0,
+              }}>
+                <NotebookCard
+                  activeSubject={activeSubject}
+                  onSubjectClick={setActiveSubject}
+                  tweaks={tweaks}
+                />
+                {/* Washi tape decorations */}
+                <WashiTape color="var(--marigold)" rotate={-32} style={{ top: -8, left: 30 }} />
+                <WashiTape color="var(--lotus)" rotate={25} style={{ bottom: -6, right: 20 }} />
+              </div>
+
+              {/* Subject Tabs */}
+              <div style={{
+                display: 'flex', flexDirection: 'column',
+                gap: 8,
+                paddingTop: isStacked ? 0 : 30,
+                marginLeft: isStacked ? 0 : -8,
+                alignSelf: isStacked ? 'stretch' : 'flex-start',
+                animation: loaded ? 'slideUp 0.7s ease 0.2s both' : 'none',
+              }}>
+                {SUBJECTS.map((s, i) => (
+                  <SubjectTab
+                    key={s.id}
+                    subject={s}
+                    active={activeSubject}
+                    onClick={(id) => {
+                      setActiveSubject(id);
+                      setModalSubject(id);
+                    }}
+                    index={i}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* CTA Section */}
+            <div style={{
+              display: 'flex', flexDirection: 'column',
+              alignItems: isStacked ? 'center' : 'flex-start',
+              gap: 28,
+              marginTop: 48,
+              animation: loaded ? 'slideUp 0.8s ease 0.3s both' : 'none',
+            }}>
+
+              {/* Buttons */}
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                <SketchButton primary onClick={() => setModalSubject(activeSubject)}>
+                  Explore Chapters
+                </SketchButton>
+                <SketchButton onClick={() => {}}>
+                  Download Syllabus
+                </SketchButton>
+              </div>
+
+              {/* Feature bullets */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                gap: '14px 32px',
+                padding: '24px 28px',
+                background: 'var(--paper)',
+                border: '2.5px solid var(--ink)',
+                borderRadius: 'var(--r-md)',
+                boxShadow: 'var(--shadow-sketch-sm)',
+                transform: 'rotate(0.3deg)',
+                width: '100%', maxWidth: 640,
+              }}>
+                <FeatureBullet icon="📖" text="Real textbook insights" />
+                <FeatureBullet icon="🧪" text="Chemistry & reactions" />
+                <FeatureBullet icon="🧬" text="Biology & biosphere" />
+                <FeatureBullet icon="📈" text="Economics fundamentals" />
+              </div>
+            </div>
+
+            {/* Footer-ish area */}
+            <div style={{
+              marginTop: 64, paddingTop: 24,
+              borderTop: '2px dashed var(--ink-faint)',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              animation: loaded ? 'slideUp 0.9s ease 0.4s both' : 'none',
+            }}>
+              <p style={{
+                fontFamily: 'var(--font-hand)', fontSize: 15,
+                color: 'var(--ink-faint)', margin: 0,
+              }}>
+                Sketch &amp; learn — hand-drawn knowledge, one chapter at a time.
+              </p>
+              <BrandMark />
+            </div>
+          </main>
+
+          {/* Subject detail modal */}
+          <SubjectModal subject={modalSubject} onClose={() => setModalSubject(null)} />
+
+          {/* ---- Tweaks Panel ---- */}
+          <TweaksPanel title="Tweaks">
+            <TweakSection title="Notebook">
+              <TweakColor
+                label="Cover Color"
+                value={tweaks.notebookColor}
+                onChange={v => setTweak('notebookColor', v)}
+                options={['#6FB8D1', '#D9633B', '#2F8F6F', '#E89BA8']}
+              />
+            </TweakSection>
+            <TweakSection title="Page Background">
+              <TweakRadio
+                label="Tone"
+                value={tweaks.bgAccent}
+                onChange={v => setTweak('bgAccent', v)}
+                options={['cream', 'warm', 'pink']}
+              />
+            </TweakSection>
+            <TweakSection title="Layout">
+              <TweakRadio
+                label="Arrangement"
+                value={tweaks.layout}
+                onChange={v => setTweak('layout', v)}
+                options={['centered', 'stacked']}
+              />
+            </TweakSection>
+            <TweakSection title="Decorations">
+              <TweakToggle
+                label="Doodle decorations"
+                value={tweaks.showDoodles}
+                onChange={v => setTweak('showDoodles', v)}
+              />
+            </TweakSection>
+          </TweaksPanel>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
