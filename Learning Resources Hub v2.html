@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -111,7 +111,7 @@
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               {['Home', 'Chapters', 'About'].map((link, i) => (
                 <a key={link} href="#" onClick={e => e.preventDefault()} style={{
-                  fontFamily: "'Be Vietnam Pro', sans-serif",
+                  fontFamily: "'Times New Roman', Times, serif",
                   fontSize: 14, fontWeight: i === 0 ? 600 : 400,
                   color: i === 0 ? FLAT.cream : 'rgba(251,244,228,0.4)',
                   textDecoration: 'none',
@@ -149,14 +149,14 @@
                   fontSize: 12,
                 }}>📖</span>
                 <span style={{
-                  fontFamily: "'Be Vietnam Pro', sans-serif",
+                  fontFamily: "'Times New Roman', Times, serif",
                   fontSize: 13, fontWeight: 600,
                   color: tweaks.accentColor,
                 }}>Curriculum Chapters</span>
               </div>
 
               <h1 style={{
-                fontFamily: "'Caveat', cursive", fontWeight: 700,
+                fontFamily: "'Times New Roman', Times, serif", fontWeight: 700,
                 fontSize: 'clamp(42px, 6vw, 64px)',
                 lineHeight: 0.95, color: FLAT.cream,
                 margin: '0 0 20px',
@@ -166,7 +166,7 @@
               </h1>
 
               <p style={{
-                fontFamily: "'Be Vietnam Pro', sans-serif",
+                fontFamily: "'Times New Roman', Times, serif",
                 fontSize: 17, lineHeight: 1.6,
                 color: 'rgba(251,244,228,0.5)',
                 margin: '0 0 36px', maxWidth: 420,
@@ -195,12 +195,12 @@
                 ].map((stat, i) => (
                   <div key={i}>
                     <div style={{
-                      fontFamily: "'Caveat', cursive",
+                      fontFamily: "'Times New Roman', Times, serif",
                       fontSize: 32, fontWeight: 700,
                       color: i === 0 ? tweaks.accentColor : FLAT.cream,
                     }}>{stat.num}</div>
                     <div style={{
-                      fontFamily: "'Be Vietnam Pro', sans-serif",
+                      fontFamily: "'Times New Roman', Times, serif",
                       fontSize: 13, color: 'rgba(251,244,228,0.35)',
                     }}>{stat.label}</div>
                   </div>
@@ -269,7 +269,7 @@
                 width: 220, flexShrink: 0,
               }}>
                 <div style={{
-                  fontFamily: "'Patrick Hand', cursive",
+                  fontFamily: "'Times New Roman', Times, serif",
                   fontSize: 14, color: 'rgba(251,244,228,0.3)',
                   textTransform: 'uppercase', letterSpacing: '0.08em',
                   padding: '0 0 10px 22px',
@@ -300,11 +300,11 @@
                   }}>{activeS.icon}</div>
                   <div>
                     <h3 style={{
-                      fontFamily: "'Caveat', cursive", fontSize: 26, fontWeight: 700,
+                      fontFamily: "'Times New Roman', Times, serif", fontSize: 26, fontWeight: 700,
                       color: FLAT.cream, margin: 0,
                     }}>{activeS.label}</h3>
                     <p style={{
-                      fontFamily: "'Be Vietnam Pro', sans-serif",
+                      fontFamily: "'Times New Roman', Times, serif",
                       fontSize: 13, color: 'rgba(251,244,228,0.4)', margin: 0,
                     }}>5 chapters available</p>
                   </div>
@@ -314,7 +314,7 @@
                   </FlatButton>
                 </div>
                 <p style={{
-                  fontFamily: "'Be Vietnam Pro', sans-serif",
+                  fontFamily: "'Times New Roman', Times, serif",
                   fontSize: 15, lineHeight: 1.6,
                   color: 'rgba(251,244,228,0.5)', margin: 0,
                 }}>{activeS.desc}</p>
@@ -357,7 +357,7 @@
             position: 'relative', zIndex: 1,
           }}>
             <p style={{
-              fontFamily: "'Be Vietnam Pro', sans-serif",
+              fontFamily: "'Times New Roman', Times, serif",
               fontSize: 13, color: 'rgba(251,244,228,0.25)', margin: 0,
             }}>
               Flat design notebook — one chapter at a time.

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -10,7 +10,7 @@
     html, body {
       height: 100vh; width: 100vw; overflow: hidden;
       background: #0F1411; color: #FBF4E4;
-      font-family: 'Be Vietnam Pro', sans-serif;
+      font-family: 'Times New Roman', Times, serif;
     }
     ::selection { background: #2F8F6F; color: #1E1B18; }
 
@@ -40,19 +40,19 @@
     .crumb a:hover { color: #3AAE85; }
 
     h1.title {
-      font-family: 'Caveat', cursive; font-weight: 700;
+      font-family: 'Times New Roman', Times, serif; font-weight: 700;
       font-size: 42px; line-height: 1.0; color: #FBF4E4;
       margin: 0 0 4px;
     }
     .subtitle {
-      font-family: 'Patrick Hand SC', cursive;
+      font-family: 'Times New Roman', Times, serif;
       font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase;
       color: #2F8F6F; margin-bottom: 22px;
     }
 
     .section { margin-top: 22px; }
     .section h3 {
-      font-family: 'Be Vietnam Pro', sans-serif;
+      font-family: 'Times New Roman', Times, serif;
       font-size: 11px; font-weight: 700;
       letter-spacing: 0.16em; text-transform: uppercase;
       color: rgba(251,244,228,0.5); margin-bottom: 10px;
@@ -72,7 +72,7 @@
       border-left: 3px solid #2F8F6F;
     }
     .tl-year {
-      font-family: 'Caveat', cursive; font-weight: 700;
+      font-family: 'Times New Roman', Times, serif; font-weight: 700;
       font-size: 22px; color: #F2B544; line-height: 1; min-width: 56px;
     }
     .tl-body strong { color: #FBF4E4; font-weight: 700; font-size: 13.5px; }
@@ -104,7 +104,7 @@
       box-shadow: 0 0 10px #2F8F6F;
     }
     .stage-overlay h2 {
-      font-family: 'Caveat', cursive; font-weight: 700;
+      font-family: 'Times New Roman', Times, serif; font-weight: 700;
       font-size: 36px; color: #FBF4E4; line-height: 1; margin-top: 8px;
     }
     .stage-overlay .element-info {
@@ -125,7 +125,7 @@
     .stage-hint {
       position: absolute; right: 24px; bottom: 22px; z-index: 5;
       font-size: 12px; color: rgba(251,244,228,0.4);
-      font-family: 'Patrick Hand', cursive; letter-spacing: 0.05em;
+      font-family: 'Times New Roman', Times, serif; letter-spacing: 0.05em;
     }
 
     /* ---------- Right: controls ---------- */
@@ -136,7 +136,7 @@
       padding: 28px 24px 40px;
     }
     .controls h3 {
-      font-family: 'Be Vietnam Pro', sans-serif;
+      font-family: 'Times New Roman', Times, serif;
       font-size: 11px; font-weight: 700;
       letter-spacing: 0.16em; text-transform: uppercase;
       color: rgba(251,244,228,0.5); margin-bottom: 12px;
@@ -149,7 +149,7 @@
       position: relative;
       padding: 10px 6px 8px; border-radius: 10px; border: none;
       background: rgba(251,244,228,0.05); color: #FBF4E4;
-      font-family: 'Be Vietnam Pro', sans-serif; cursor: pointer;
+      font-family: 'Times New Roman', Times, serif; cursor: pointer;
       transition: all .18s ease;
       display: flex; flex-direction: column; align-items: center; gap: 2px;
     }
@@ -170,7 +170,7 @@
     .toggle-btn {
       flex: 1; padding: 10px 8px; border-radius: 10px; border: none;
       background: rgba(251,244,228,0.05); color: #FBF4E4;
-      font-family: 'Be Vietnam Pro', sans-serif; font-size: 12.5px; font-weight: 600;
+      font-family: 'Times New Roman', Times, serif; font-size: 12.5px; font-weight: 600;
       cursor: pointer; transition: all .18s ease;
     }
     .toggle-btn:hover { background: rgba(242,181,68,0.15); }
@@ -186,7 +186,7 @@
       color: rgba(251,244,228,0.5);
     }
     .stat-card .value {
-      font-family: 'Be Vietnam Pro', sans-serif;
+      font-family: 'Times New Roman', Times, serif;
       font-size: 22px; font-weight: 700; color: #FBF4E4;
       margin-top: 2px;
     }
@@ -205,7 +205,7 @@
       color: rgba(251,244,228,0.5);
     }
     .config .value {
-      font-family: 'Be Vietnam Pro', sans-serif;
+      font-family: 'Times New Roman', Times, serif;
       font-size: 15px; font-weight: 600; color: #3AAE85;
       margin-top: 4px; letter-spacing: 0.02em;
     }
@@ -218,7 +218,7 @@
       border: 1px solid rgba(251,244,228,0.12);
       color: #FBF4E4; font-size: 13px; font-weight: 600;
       text-decoration: none;
-      font-family: 'Be Vietnam Pro', sans-serif;
+      font-family: 'Times New Roman', Times, serif;
     }
     .back-link:hover { background: rgba(47,143,111,0.2); border-color: #2F8F6F; }
 
@@ -230,7 +230,7 @@
       background: rgba(15,20,17,0.7); backdrop-filter: blur(8px);
       color: #FBF4E4; font-size: 12px; font-weight: 700;
       letter-spacing: 0.04em; cursor: pointer;
-      font-family: 'Be Vietnam Pro', sans-serif;
+      font-family: 'Times New Roman', Times, serif;
     }
     .theme-toggle:hover { background: rgba(47,143,111,0.2); border-color: #2F8F6F; }
 
@@ -737,7 +737,7 @@
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, size, size);
       ctx.fillStyle = fg || '#FFFFFF';
-      ctx.font = 'bold 64px "Be Vietnam Pro", sans-serif';
+      ctx.font = 'bold 64px "Times New Roman", Times, serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(text, size/2, size/2 + 4);

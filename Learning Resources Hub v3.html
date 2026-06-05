@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -11,7 +11,7 @@
     html, body {
       height: 100vh; overflow: hidden;
       background: #1E1B18; color: #FBF4E4;
-      font-family: 'Be Vietnam Pro', sans-serif;
+      font-family: 'Times New Roman', Times, serif;
     }
     ::selection { background: #F2B544; color: #1E1B18; }
 
@@ -81,7 +81,7 @@
             height: tabH,
             display: 'flex', alignItems: 'center', gap: 10,
             padding: '0 16px',
-            fontFamily: "'Be Vietnam Pro', sans-serif",
+            fontFamily: "'Times New Roman', Times, serif",
             fontSize: 15, fontWeight: isActive ? 700 : 500,
             color: isActive ? '#1E1B18' : '#FBF4E4',
             background: isActive ? subject.color : 'rgba(251,244,228,0.08)',
@@ -203,13 +203,13 @@
                 borderRadius: 8,
               }}>
                 <h1 style={{
-                  fontFamily: "'Caveat', cursive", fontWeight: 700,
+                  fontFamily: "'Times New Roman', Times, serif", fontWeight: 700,
                   fontSize: 'clamp(22px, 2.8vw, 32px)',
                   lineHeight: 1.05, color: '#2A2520',
                   margin: 0,
                 }}>Learning Resources Hub</h1>
                 <p style={{
-                  fontFamily: "'Patrick Hand SC', cursive",
+                  fontFamily: "'Times New Roman', Times, serif",
                   fontSize: 11, letterSpacing: '0.1em',
                   textTransform: 'uppercase',
                   color: '#8A7E6C', margin: '6px 0 0',
@@ -243,7 +243,7 @@
                   }}>{activeS.icon}</div>
                   <div>
                     <div style={{
-                      fontFamily: "'Caveat', cursive", fontSize: 22, fontWeight: 700,
+                      fontFamily: "'Times New Roman', Times, serif", fontSize: 22, fontWeight: 700,
                       color: '#FBF4E4', lineHeight: 1,
                     }}>{activeS.label}</div>
                     <div style={{
@@ -341,14 +341,14 @@
                 </svg>
               </div>
               <span style={{
-                fontFamily: "'Caveat', cursive", fontWeight: 700,
+                fontFamily: "'Times New Roman', Times, serif", fontWeight: 700,
                 fontSize: 24, color: '#FBF4E4',
               }}>LR Hub</span>
             </div>
 
             {/* Tagline */}
             <p style={{
-              fontFamily: "'Be Vietnam Pro', sans-serif",
+              fontFamily: "'Times New Roman', Times, serif",
               fontSize: 15, lineHeight: 1.6,
               color: 'rgba(251,244,228,0.4)',
               marginBottom: 40, maxWidth: 260,
@@ -392,7 +392,7 @@
           onMouseDown={() => setPressed(true)}
           onMouseUp={() => setPressed(false)}
           style={{
-            fontFamily: "'Be Vietnam Pro', sans-serif",
+            fontFamily: "'Times New Roman', Times, serif",
             fontSize: 15, fontWeight: 600,
             padding: '14px 28px',
             background: primary ? (color || '#F2B544') : 'transparent',

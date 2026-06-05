@@ -3,8 +3,6 @@
    A warm, hand-drawn doodle system for the Đi Bộ campaign.
    ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Patrick+Hand&family=Patrick+Hand+SC&family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap&subset=vietnamese,latin-ext');
-
 /* ---------- COLOR ---------------------------------------- */
 :root {
   /* Paper & ink — the foundation. Everything sits on cream paper
@@ -80,10 +78,10 @@
   --shadow-paper:  0 2px 0 var(--paper-shadow), 0 8px 24px -10px rgba(42,37,32,0.2);
 
   /* Type families */
-  --font-doodle:   'Caveat', 'Patrick Hand', cursive;       /* big personality */
-  --font-hand:     'Patrick Hand', 'Caveat', cursive;       /* hand-printed UI */
-  --font-hand-sc:  'Patrick Hand SC', 'Patrick Hand', cursive;
-  --font-body:     'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+  --font-doodle:   'Times New Roman', Times, serif;
+  --font-hand:     'Times New Roman', Times, serif;
+  --font-hand-sc:  'Times New Roman', Times, serif;
+  --font-body:     'Times New Roman', Times, serif;
 
   /* Type scale */
   --t-display:  clamp(48px, 8vw, 96px);
@@ -211,7 +209,7 @@ small, .t-small {
 
 /* Code / mono — kept for completeness, not a campaign focus */
 code, kbd, samp {
-  font-family: 'Courier New', ui-monospace, monospace;
+  font-family: 'Times New Roman', Times, serif;
   background: var(--paper-deep);
   padding: 0.15em 0.35em;
   border-radius: 4px;
