@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vật lý · Điện học — Điện tích &amp; Điện trường</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SKETCHBOOK / NOTEBOOK STYLE
+    ══════════════════════════════════════ */
+
+    /* Google Font — handwritten feel */
+    @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Caveat:wght@400;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── CSS custom properties ── */
+    :root {
+      --paper:        #F5F0E0;
+      --paper-dark:   #EDE5CC;
+      --ink:          #1A1208;
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #C44010;
+      --accent-blue:  #1A4FA0;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-g:  rgba(80, 180, 100, 0.30);
+      --line-h:       30px;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #8B7355;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #9E8565 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #6B5540 0%, transparent 50%),
+        repeating-linear-gradient(
+          45deg,
+          transparent, transparent 3px,
+          rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px
+        );
+      color: var(--ink);
+      font-family: 'Kalam', cursive;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    /* ══ Fixed nav ══ */
+    .theme-toggle {
+      position: fixed; top: 14px; right: 194px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 13px; border-radius: 4px;
+      background: var(--paper); color: var(--ink);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 13px; font-weight: 700;
+      cursor: pointer; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(-1deg);
+      transition: transform 0.1s;
+    }
+    .theme-toggle:hover { transform: rotate(0deg); border-color: var(--accent); }
+
+    .back-link {
+      position: fixed; top: 14px; right: 20px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent-blue);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(0.8deg);
+      transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent-blue); }
+
+    /* ══ Notebook page shell ══ */
+    .content-wrap {
+      width: min(1060px, 100%);
+      margin: 0 auto;
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.25),
+         6px 0 18px rgba(0,0,0,0.20),
+         0  12px 32px rgba(0,0,0,0.35);
+    }
+
+    /* ══ Ruled-paper background (pure CSS) ══ */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(
+          90deg,
+          transparent 71px,
+          var(--red-margin) 71px,
+          var(--red-margin) 73px,
+          transparent 73px
+        ),
+        repeating-linear-gradient(
+          180deg,
+          transparent 0px,
+          transparent calc(var(--line-h) - 1px),
+          var(--blue-line) calc(var(--line-h) - 1px),
+          var(--blue-line) var(--line-h)
+        );
+      background-attachment: local;
+    }
+
+    /* ══ Hero ══ */
+    .hero {
+      padding: 72px 40px 40px 96px;
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+    }
+    .crumb {
+      font-size: 12px; letter-spacing: 0.06em;
+      color: var(--ink-light); margin-bottom: 10px;
+      font-family: 'Kalam', cursive;
+    }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+
+    .title {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(40px, 6vw, 78px);
+      line-height: 1.0; color: var(--ink);
+      margin-bottom: 6px; font-weight: 700;
+    }
+    .title-stroke {
+      width: clamp(160px, 38vw, 400px); height: 3px;
+      background: var(--accent);
+      border-radius: 2px; margin-bottom: 14px;
+      transform: rotate(-0.4deg);
+    }
+    .subtitle {
+      font-family: 'Kalam', cursive;
+      font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent-blue); margin-bottom: 16px;
+    }
+    .intro {
+      max-width: 800px; font-size: 16px;
+      line-height: var(--line-h);
+      color: var(--ink-mid);
+    }
+
+    /* ══ Layout ══ */
+    .layout {
+      display: grid; grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    /* ══ Card ══ */
+    .card {
+      padding: 28px 36px 32px 96px;
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+
+    .card:nth-child(even) { background-color: var(--paper-dark); }
+    .card.ruled-page:nth-child(even) {
+      background-color: var(--paper-dark);
+    }
+
+    /* ── Punched holes strip ── */
+    .card::before,
+    .hero::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #8B7355 0%, #8B7355 55%,
+        transparent 56%
+      );
+      background-size: 36px 80px;
+      background-repeat: repeat-y;
+      background-position: 0 20px;
+    }
+
+    .card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .card-title {
+      font-family: 'Caveat', cursive;
+      font-size: 26px; color: var(--ink); line-height: 1.1;
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 2px; display: inline;
+    }
+    .tag {
+      font-family: 'Kalam', cursive;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 700; padding: 3px 10px; border-radius: 3px;
+      background: var(--highlight-y);
+      color: var(--ink); border: 1px solid rgba(26,18,8,0.18);
+      flex-shrink: 0;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.15);
+      transform: rotate(1.2deg);
+    }
+
+    .card-body {
+      font-size: 15px;
+      line-height: var(--line-h);
+      color: var(--ink-mid); margin-bottom: 16px;
+    }
+    .card-body strong { color: var(--ink); }
+    .card-body em { color: var(--accent); font-style: italic; }
+
+    /* ── Formula chips ── */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+    .chip {
+      font-family: 'Caveat', cursive;
+      font-size: 17px; padding: 3px 16px;
+      background: rgba(26,79,160,0.07);
+      border: 2px solid rgba(26,79,160,0.40);
+      border-radius: 3px; color: var(--accent-blue);
+    }
+
+    /* ── Sub-panels ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .bond {
+      background: rgba(0,0,0,0.03);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px 12px;
+      border-radius: 0 4px 4px 0;
+    }
+    .bond-name {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .bond-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Slider controls ── */
+    .controls { display: flex; flex-wrap: wrap; gap: 18px; margin: 12px 0 10px; }
+    .ctrl { display: flex; flex-direction: column; gap: 4px; }
+    .ctrl label {
+      font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-light); font-family: 'Kalam', cursive;
+    }
+    .ctrl input[type=range] { width: 150px; accent-color: var(--accent); }
+    .ctrl .val {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; color: var(--accent); font-weight: 700;
+    }
+
+    /* ── Readouts ── */
+    .readouts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .readout {
+      font-family: 'Caveat', cursive; font-size: 15px;
+      background: rgba(196,64,16,0.07);
+      border: 1.5px solid rgba(196,64,16,0.28);
+      border-radius: 3px; padding: 4px 12px;
+      color: var(--ink-mid);
+    }
+    .readout span { color: var(--accent); font-weight: 700; }
+
+    /* ── Viz toolbar ── */
+    .viz-toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .viz-btn {
+      font-family: 'Kalam', cursive;
+      padding: 5px 13px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.22);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background 0.12s, transform 0.1s;
+    }
+    .viz-btn:hover { background: var(--highlight-y); color: var(--ink); transform: translateY(-1px); }
+    .viz-btn.active {
+      background: var(--highlight-y); color: var(--ink);
+      border-color: var(--accent);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .viz-stage {
+      background: #151C14;
+      border: 2px solid rgba(26,18,8,0.30);
+      border-radius: 4px; overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .viz-stage canvas { display: block; }
+
+    /* ── Highlight box ── */
+    .aero-card {
+      background: var(--highlight-g);
+      border-left: 3px solid var(--accent-blue);
+      border-radius: 0 4px 4px 0;
+      padding: 16px 18px 14px; margin-top: 4px;
+    }
+    .aero-title {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent-blue); margin-bottom: 7px;
+    }
+    .aero-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Compare table ── */
+    .compare { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .compare th {
+      padding: 8px 12px; text-align: left;
+      background: rgba(196,64,16,0.10); color: var(--accent);
+      font-weight: 700; letter-spacing: 0.05em; font-size: 11px;
+      text-transform: uppercase;
+      border-bottom: 2px solid rgba(196,64,16,0.28);
+    }
+    .compare td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--blue-line);
+      color: var(--ink-mid); vertical-align: top;
+    }
+    .compare tr:last-child td { border-bottom: none; }
+    .compare tr:hover td { background: var(--highlight-y); }
+
+    /* ── Spring / interactive controls (for spring page) ── */
+    .spring-demo { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+    .spring-canvas-wrap canvas { display: block; border-radius: 4px; background: #0E1410; border: 2px solid rgba(26,18,8,0.30); cursor: grab; }
+    .spring-canvas-wrap canvas:active { cursor: grabbing; }
+    .spring-controls { display: flex; flex-direction: column; gap: 14px; }
+    .ctrl-group {
+      background: rgba(0,0,0,0.04);
+      border: 1px solid rgba(26,18,8,0.12);
+      border-radius: 4px; padding: 14px;
+    }
+    .ctrl-label {
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); font-weight: 700; margin-bottom: 8px;
+      font-family: 'Kalam', cursive;
+    }
+    .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .slider-row label { font-size: 13px; color: var(--ink-mid); width: 100px; flex-shrink: 0; }
+    .slider-row input[type=range] { flex: 1; accent-color: var(--accent); }
+    .slider-row .val { font-size: 13px; color: var(--accent-blue); width: 54px; text-align: right; font-family: 'Caveat', cursive; }
+    .btn-row { display: flex; gap: 8px; margin-top: 4px; }
+    .ctrl-btn {
+      flex: 1; padding: 7px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.20);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      font-family: 'Kalam', cursive;
+      transition: background 0.12s;
+    }
+    .ctrl-btn:hover { background: var(--highlight-y); color: var(--ink); }
+    .ctrl-btn.active { background: var(--highlight-y); border-color: var(--accent); color: var(--ink); }
+
+    /* ══ Dark mode ══ */
+    body.dark-mode {
+      background: #3A3020;
+      --paper:      #1C1810;
+      --paper-dark: #211E12;
+      --ink:        #EDE0C0;
+      --ink-mid:    #C4AE82;
+      --ink-light:  #8A7658;
+      --blue-line:  rgba(80, 110, 180, 0.18);
+      --red-margin: rgba(200, 70, 70, 0.5);
+      --highlight-y: rgba(180, 150, 30, 0.35);
+      --highlight-g: rgba(50, 130, 70, 0.20);
+    }
+    body.dark-mode .content-wrap {
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.5),
+         6px 0 18px rgba(0,0,0,0.4),
+         0  12px 32px rgba(0,0,0,0.6);
+    }
+    body.dark-mode .card::before,
+    body.dark-mode .hero::before {
+      background-color: rgba(0,0,0,0.15);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #3A3020 0%, #3A3020 55%,
+        transparent 56%
+      );
+    }
+
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .spring-demo { grid-template-columns: 1fr; }
+      .theme-toggle { right: 172px; }
+    }
+    @media (max-width: 640px) {
+      .theme-toggle, .back-link { position: absolute; top: 10px; }
+      .theme-toggle { right: 148px; } .back-link { right: 12px; }
+      .hero, .card { padding-left: 56px; }
+      .card::before, .hero::before { width: 28px; background-size: 28px 80px; }
+    }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button">☀ Light</button>
+  <a class="back-link" href="chuong-dien-hoc.html">← Điện học</a>
+
+  <div class="content-wrap">
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="crumb">
+          <a href="Learning Resources Hub v4.html">Vật lý</a>
+          <span>›</span>
+          <a href="chuong-dien-hoc.html">Điện học</a>
+          <span>›</span>
+          <span>Chủ đề 1</span>
+        </div>
+        <h1 class="title">Điện tích &amp; Điện trường</h1>
+        <p class="subtitle">Điện học · Chủ đề 1 / 3</p>
+        <p class="intro">
+          Mọi tương tác điện bắt đầu từ điện tích. Coulomb đo lực giữa hai điện tích, điện trường mô tả ảnh hưởng của chúng lên không gian xung quanh, còn điện thế xác định năng lượng tiềm tàng của hệ.
+        </p>
+      </div>
+    </header>
+
+    <main class="layout">
+
+      <section class="card">
+        <div class="card-head"><h2 class="card-title">Điện tích &amp; Lực Coulomb</h2><span class="tag">Tĩnh điện</span></div>
+        <p class="card-body">Điện tích là tính chất cơ bản của vật chất. Hai loại: dương (+) và âm (−). Cùng dấu đẩy, khác dấu hút. Điện tích được bảo toàn và lượng tử hóa: q = ne, e = 1.6×10⁻¹⁹ C. Lực giữa hai điện tích điểm tuân theo định luật Coulomb.</p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Định luật Coulomb</div>
+            <div class="bond-body">F = k·|q₁q₂|/r²<br>k = 9×10⁹ N·m²/C²<br>= 1/(4πε₀), ε₀ = 8.85×10⁻¹² F/m<br>r = khoảng cách giữa hai điện tích</div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Nguyên lý chồng chất</div>
+            <div class="bond-body">Lực do nhiều điện tích tác dụng lên một điện tích bằng tổng vector của các lực thành phần.<br><strong>F⃗ = F⃗₁ + F⃗₂ + …</strong></div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">F = kq₁q₂/r²</span>
+          <span class="chip">k = 9×10⁹ N·m²/C²</span>
+          <span class="chip">e = 1.6×10⁻¹⁹ C</span>
+          <span class="chip">ε₀ = 8.85×10⁻¹² F/m</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2 class="card-title">Điện trường</h2><span class="tag">E⃗</span></div>
+        <p class="card-body">Điện trường là vùng không gian mà điện tích thử đặt vào đó chịu lực tác dụng. Véctơ cường độ điện trường E⃗ tại một điểm bằng lực điện tác dụng lên điện tích thử dương đặt tại điểm đó chia cho điện tích thử đó. Đường sức điện trường xuất phát từ điện tích dương, kết thúc ở điện tích âm.</p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Điện trường điểm</div>
+            <div class="bond-body">E = F/q = kQ/r²<br>Hướng: ra xa nếu Q &gt; 0, hướng vào nếu Q &lt; 0.<br>Đơn vị: V/m = N/C</div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Điện trường đều</div>
+            <div class="bond-body">Giữa hai bản tụ phẳng song song:<br>E = U/d<br>Đường sức song song, cách đều nhau.<br>F = qE = const (lực không đổi)</div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">E = F/q</span>
+          <span class="chip">E = kQ/r²</span>
+          <span class="chip">E = U/d (điện trường đều)</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2 class="card-title">Điện thế &amp; Tụ điện</h2><span class="tag">V · C</span></div>
+        <p class="card-body">Điện thế V tại một điểm bằng công của lực điện để dịch chuyển một đơn vị điện tích dương từ điểm đó ra vô cực. Hiệu điện thế U = V_A − V_B là điện áp giữa hai điểm. Tụ điện lưu trữ điện tích và năng lượng điện trường.</p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Điện thế &amp; công</div>
+            <div class="bond-body">V = kQ/r (điện tích điểm)<br>A_AB = q(V_A − V_B) = qU<br>E = −dV/dx (liên hệ E và V)</div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Tụ điện</div>
+            <div class="bond-body">Q = CU (C: điện dung, đơn vị F)<br>C = ε₀εS/d (tụ phẳng)<br>W = ½CU² = Q²/(2C) (năng lượng)<br>Nối tiếp: 1/C = Σ1/Cᵢ<br>Song song: C = ΣCᵢ</div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">V = kQ/r</span>
+          <span class="chip">Q = CU</span>
+          <span class="chip">W = ½CU²</span>
+          <span class="chip">C = ε₀εS/d</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2 class="card-title">Mô phỏng</h2><span class="tag">Viz</span></div>
+        <div class="viz-toolbar">
+          <button class="viz-btn active" onclick="setViz('coulomb')">Lực Coulomb</button>
+          <button class="viz-btn" onclick="setViz('field_pos')">Điện trường (+)</button>
+          <button class="viz-btn" onclick="setViz('field_dipole')">Lưỡng cực</button>
+          <button class="viz-btn" onclick="setViz('capacitor')">Tụ điện</button>
+        </div>
+        <div class="viz-stage"><svg id="viz-svg" viewBox="0 0 600 270" xmlns="http://www.w3.org/2000/svg"></svg></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2 class="card-title">So sánh các đại lượng tĩnh điện</h2><span class="tag">Bảng</span></div>
+        <table class="compare">
+          <thead><tr><th>Đại lượng</th><th>Ký hiệu</th><th>Công thức</th><th>Đơn vị</th><th>Ý nghĩa</th></tr></thead>
+          <tbody>
+            <tr><td>Điện tích</td><td>q, Q</td><td>q = ne</td><td>Coulomb (C)</td><td>Nguồn gốc mọi tương tác điện</td></tr>
+            <tr><td>Lực Coulomb</td><td>F</td><td>kq₁q₂/r²</td><td>Newton (N)</td><td>Lực giữa hai điện tích</td></tr>
+            <tr><td>Cường độ điện trường</td><td>E</td><td>F/q = kQ/r²</td><td>V/m = N/C</td><td>Lực trên mỗi đơn vị điện tích</td></tr>
+            <tr><td>Điện thế</td><td>V</td><td>kQ/r</td><td>Volt (V)</td><td>Năng lượng trên mỗi đơn vị điện tích</td></tr>
+            <tr><td>Điện dung</td><td>C</td><td>Q/U</td><td>Farad (F)</td><td>Khả năng tích điện</td></tr>
+            <tr><td>Năng lượng tụ</td><td>W</td><td>½CU²</td><td>Joule (J)</td><td>Năng lượng điện trường tích lũy</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2 class="card-title">Tự kiểm tra</h2><span class="tag">Quiz</span></div>
+        <div class="quiz" id="quiz"></div>
+      </section>
+
+    </main>
+
+    <nav class="sub-nav">
+      <a href="chuong-dien-hoc.html">← Tổng quan Điện học</a>
+      <a href="chuong-dien-hoc-dong-dien.html">Dòng điện &amp; Mạch điện →</a>
+    </nav>
+  </div>
+
+  <script>
+    (function(){const KEY='bewy-theme',btn=document.getElementById('theme-toggle');const apply=m=>{document.body.classList.toggle('light-mode',m==='light');if(btn)btn.textContent=m==='light'?'🌙 Dark':'☀ Light';};apply(localStorage.getItem(KEY)==='light'?'light':'dark');if(btn)btn.addEventListener('click',()=>{const n=document.body.classList.contains('light-mode')?'dark':'light';localStorage.setItem(KEY,n);apply(n);});})();
+
+    const NS='http://www.w3.org/2000/svg';
+    function el(tag,a,t){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a||{}))e.setAttribute(k,v);if(t!==undefined)e.textContent=t;return e;}
+
+    function drawCoulomb(svg){
+      // Two charges
+      const q1x=160,q2x=440,cy=135;
+      // Force arrows
+      svg.appendChild(el('line',{x1:q1x+20,y1:cy,x2:q1x+90,y2:cy,stroke:'#FF6B6B','stroke-width':2.5}));
+      svg.appendChild(el('polygon',{points:`${q1x+90},${cy} ${q1x+78},${cy-5} ${q1x+78},${cy+5}`,fill:'#FF6B6B'}));
+      svg.appendChild(el('line',{x1:q2x-20,y1:cy,x2:q2x-90,y2:cy,stroke:'#FF6B6B','stroke-width':2.5}));
+      svg.appendChild(el('polygon',{points:`${q2x-90},${cy} ${q2x-78},${cy-5} ${q2x-78},${cy+5}`,fill:'#FF6B6B'}));
+      // Charges
+      svg.appendChild(el('circle',{cx:q1x,cy,r:20,fill:'rgba(242,100,100,0.9)',stroke:'#FF9999','stroke-width':2}));
+      svg.appendChild(el('text',{x:q1x,y:cy+5,fill:'#FFF','font-size':18,'text-anchor':'middle',style:'font-weight:700'},'+'));
+      svg.appendChild(el('circle',{cx:q2x,cy,r:20,fill:'rgba(242,100,100,0.9)',stroke:'#FF9999','stroke-width':2}));
+      svg.appendChild(el('text',{x:q2x,y:cy+5,fill:'#FFF','font-size':18,'text-anchor':'middle',style:'font-weight:700'},'+'));
+      // Distance label
+      svg.appendChild(el('line',{x1:q1x,y1:cy+40,x2:q2x,y2:cy+40,stroke:'rgba(251,244,228,0.3)','stroke-width':1,'stroke-dasharray':'4 3'}));
+      svg.appendChild(el('text',{x:(q1x+q2x)/2,y:cy+56,fill:'rgba(251,244,228,0.6)','font-size':12,'text-anchor':'middle'},'r'));
+      svg.appendChild(el('text',{x:q1x-30,y:cy+56,fill:'rgba(251,244,228,0.4)','font-size':11},'q₁'));
+      svg.appendChild(el('text',{x:q2x+14,y:cy+56,fill:'rgba(251,244,228,0.4)','font-size':11},'q₂'));
+      svg.appendChild(el('text',{x:q1x+70,y:cy-14,fill:'#FF9999','font-size':12},'F₁₂'));
+      svg.appendChild(el('text',{x:q2x-100,y:cy-14,fill:'#FF9999','font-size':12},'F₂₁'));
+      svg.appendChild(el('text',{x:190,y:230,fill:'rgba(251,244,228,0.6)','font-size':14,'text-anchor':'middle'},'F = k·q₁q₂/r²  (cùng dấu → đẩy nhau)'));
+    }
+
+    function drawFieldPos(svg){
+      const cx=300,cy=135;
+      svg.appendChild(el('circle',{cx,cy,r:16,fill:'rgba(242,181,68,0.9)',stroke:'#F2B544','stroke-width':2}));
+      svg.appendChild(el('text',{x:cx,y:cy+5,fill:'#1E1B18','font-size':16,'text-anchor':'middle',style:'font-weight:700'},'+'));
+      const angles=[0,45,90,135,180,225,270,315];
+      angles.forEach(deg=>{
+        const rad=deg*Math.PI/180;
+        const r1=26,r2=90;
+        const x1=cx+r1*Math.cos(rad),y1=cy+r1*Math.sin(rad);
+        const x2=cx+r2*Math.cos(rad),y2=cy+r2*Math.sin(rad);
+        svg.appendChild(el('line',{x1,y1,x2,y2,stroke:'rgba(242,181,68,0.7)','stroke-width':1.8}));
+        const ax=cx+(r2-10)*Math.cos(rad),ay=cy+(r2-10)*Math.sin(rad);
+        const px=-Math.sin(rad)*4,py=Math.cos(rad)*4;
+        svg.appendChild(el('polygon',{points:`${x2},${y2} ${ax+px},${ay+py} ${ax-px},${ay-py}`,fill:'rgba(242,181,68,0.7)'}));
+      });
+      svg.appendChild(el('text',{x:300,y:252,fill:'rgba(251,244,228,0.5)','font-size':12,'text-anchor':'middle'},'Đường sức: tỏa ra từ điện tích dương'));
+    }
+
+    function drawDipole(svg){
+      const cx=300,cy=135,sep=80;
+      const qpx=cx-sep,qnx=cx+sep;
+      // Field lines (approximate dipole)
+      const lines=[
+        [[qpx,cy-20],[250,80],[320,60],[qnx,cy-20]],
+        [[qpx,cy-14],[260,100],[330,90],[qnx,cy-14]],
+        [[qpx,cy],[270,135],[330,135],[qnx,cy]],
+        [[qpx,cy+14],[260,170],[330,180],[qnx,cy+14]],
+        [[qpx,cy+20],[250,190],[320,210],[qnx,cy+20]],
+      ];
+      lines.forEach(pts=>{
+        const d=pts.map((p,i)=>i===0?`M${p[0]},${p[1]}`:`L${p[0]},${p[1]}`).join(' ');
+        svg.appendChild(el('path',{d,stroke:'rgba(242,181,68,0.55)','stroke-width':1.5,fill:'none'}));
+        // Arrow mid
+        const mp=pts[2];
+        svg.appendChild(el('polygon',{points:`${mp[0]+8},${mp[1]} ${mp[0]-2},${mp[1]-4} ${mp[0]-2},${mp[1]+4}`,fill:'rgba(242,181,68,0.55)'}));
+      });
+      // Charges
+      svg.appendChild(el('circle',{cx:qpx,cy,r:18,fill:'rgba(242,100,100,0.85)',stroke:'#FF9999','stroke-width':2}));
+      svg.appendChild(el('text',{x:qpx,y:cy+5,fill:'#FFF','font-size':16,'text-anchor':'middle',style:'font-weight:700'},'+'));
+      svg.appendChild(el('circle',{cx:qnx,cy,r:18,fill:'rgba(80,120,220,0.85)',stroke:'#99AAFF','stroke-width':2}));
+      svg.appendChild(el('text',{x:qnx,y:cy+5,fill:'#FFF','font-size':16,'text-anchor':'middle',style:'font-weight:700'},'−'));
+      svg.appendChild(el('text',{x:300,y:252,fill:'rgba(251,244,228,0.5)','font-size':12,'text-anchor':'middle'},'Lưỡng cực điện: đường sức từ (+) → (−)'));
+    }
+
+    function drawCapacitor(svg){
+      // Plates
+      svg.appendChild(el('rect',{x:190,y:60,width:220,height:14,fill:'rgba(212,160,23,0.6)',stroke:'#D4A017','stroke-width':1.5,rx:3}));
+      svg.appendChild(el('rect',{x:190,y:196,width:220,height:14,fill:'rgba(80,120,220,0.6)',stroke:'#6688EE','stroke-width':1.5,rx:3}));
+      svg.appendChild(el('text',{x:180,y:72,fill:'#F2B544','font-size':12,'text-anchor':'end'},'+Q'));
+      svg.appendChild(el('text',{x:180,y:208,fill:'#99AAFF','font-size':12,'text-anchor':'end'},'−Q'));
+      svg.appendChild(el('text',{x:430,y:135,fill:'rgba(251,244,228,0.5)','font-size':11},'d'));
+      svg.appendChild(el('line',{x1:424,y1:74,x2:424,y2:196,stroke:'rgba(251,244,228,0.25)','stroke-width':1,'stroke-dasharray':'4 3'}));
+      // Uniform field lines
+      for(let x=220;x<=380;x+=20){
+        svg.appendChild(el('line',{x1:x,y1:74,x2:x,y2:196,stroke:'rgba(242,181,68,0.5)','stroke-width':1.5}));
+        svg.appendChild(el('polygon',{points:`${x},150 ${x-4},138 ${x+4},138`,fill:'rgba(242,181,68,0.5)'}));
+      }
+      svg.appendChild(el('text',{x:300,y:148,fill:'rgba(242,181,68,0.8)','font-size':13,'text-anchor':'middle'},'E'));
+      // Labels
+      svg.appendChild(el('text',{x:300,y:240,fill:'rgba(251,244,228,0.5)','font-size':12,'text-anchor':'middle'},'Q = CU  |  W = ½CU²  |  E = U/d'));
+      // Battery
+      svg.appendChild(el('line',{x1:120,y1:67,x2:190,y2:67,stroke:'rgba(251,244,228,0.35)','stroke-width':1.5}));
+      svg.appendChild(el('line',{x1:120,y1:203,x2:190,y2:203,stroke:'rgba(251,244,228,0.35)','stroke-width':1.5}));
+      svg.appendChild(el('line',{x1:120,y1:67,x2:120,y2:203,stroke:'rgba(251,244,228,0.35)','stroke-width':1.5}));
+      svg.appendChild(el('text',{x:100,y:138,fill:'rgba(251,244,228,0.5)','font-size':12,'text-anchor':'middle'},'U'));
+    }
+
+    const fns={coulomb:drawCoulomb,field_pos:drawFieldPos,field_dipole:drawDipole,capacitor:drawCapacitor};
+    const labels={coulomb:'Lực Coulomb',field_pos:'Điện trường (+)',field_dipole:'Lưỡng cực',capacitor:'Tụ điện'};
+    function setViz(name){
+      document.querySelectorAll('.viz-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim()===labels[name]));
+      const svg=document.getElementById('viz-svg');while(svg.firstChild)svg.removeChild(svg.firstChild);fns[name](svg);
+    }
+    setViz('coulomb');
+
+    const questions=[
+      {q:'Hai điện tích q₁=2μC, q₂=3μC cách nhau r=0.1m. Lực Coulomb bằng?',opts:['5.4 N','0.054 N','540 N','0.54 N'],ans:0},
+      {q:'Điện trường tại điểm cách điện tích Q=1μC một khoảng r=1m?',opts:['9000 V/m','9 V/m','900 V/m','90000 V/m'],ans:0},
+      {q:'Tụ C=10μF nạp đến U=100V. Năng lượng tích lũy?',opts:['0.05 J','0.5 J','5 J','0.005 J'],ans:0},
+      {q:'Hai tụ C₁=4μF và C₂=4μF ghép nối tiếp. Điện dung tương đương?',opts:['2 μF','8 μF','4 μF','1 μF'],ans:0},
+    ];
+    const qel=document.getElementById('quiz');
+    questions.forEach((q,qi)=>{
+      const a=document.createElement('article');a.className='quiz-item';
+      a.innerHTML=`<div class="quiz-q">${qi+1}. ${q.q}</div><ul class="quiz-opts">${q.opts.map((o,i)=>`<li data-qi="${qi}" data-i="${i}">${o}</li>`).join('')}</ul>`;
+      qel.appendChild(a);
+    });
+    qel.addEventListener('click',e=>{
+      const li=e.target.closest('li[data-qi]');if(!li)return;
+      const qi=+li.dataset.qi,i=+li.dataset.i;
+      const s=qel.querySelectorAll(`li[data-qi="${qi}"]`);
+      if([...s].some(x=>x.classList.contains('correct')||x.classList.contains('wrong')))return;
+      s.forEach(x=>{if(+x.dataset.i===questions[qi].ans)x.classList.add('correct');else if(+x.dataset.i===i)x.classList.add('wrong');});
+    });
+  </script>
+</body>
+</html>

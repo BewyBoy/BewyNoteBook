@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vật lý · Điện học — Dòng điện &amp; Mạch điện</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SKETCHBOOK / NOTEBOOK STYLE
+    ══════════════════════════════════════ */
+
+    /* Google Font — handwritten feel */
+    @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Caveat:wght@400;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── CSS custom properties ── */
+    :root {
+      --paper:        #F5F0E0;
+      --paper-dark:   #EDE5CC;
+      --ink:          #1A1208;
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #C44010;
+      --accent-blue:  #1A4FA0;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-g:  rgba(80, 180, 100, 0.30);
+      --line-h:       30px;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #8B7355;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #9E8565 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #6B5540 0%, transparent 50%),
+        repeating-linear-gradient(
+          45deg,
+          transparent, transparent 3px,
+          rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px
+        );
+      color: var(--ink);
+      font-family: 'Kalam', cursive;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    /* ══ Fixed nav ══ */
+    .theme-toggle {
+      position: fixed; top: 14px; right: 194px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 13px; border-radius: 4px;
+      background: var(--paper); color: var(--ink);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 13px; font-weight: 700;
+      cursor: pointer; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(-1deg);
+      transition: transform 0.1s;
+    }
+    .theme-toggle:hover { transform: rotate(0deg); border-color: var(--accent); }
+
+    .back-link {
+      position: fixed; top: 14px; right: 20px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent-blue);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(0.8deg);
+      transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent-blue); }
+
+    /* ══ Notebook page shell ══ */
+    .content-wrap {
+      width: min(1060px, 100%);
+      margin: 0 auto;
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.25),
+         6px 0 18px rgba(0,0,0,0.20),
+         0  12px 32px rgba(0,0,0,0.35);
+    }
+
+    /* ══ Ruled-paper background (pure CSS) ══ */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(
+          90deg,
+          transparent 71px,
+          var(--red-margin) 71px,
+          var(--red-margin) 73px,
+          transparent 73px
+        ),
+        repeating-linear-gradient(
+          180deg,
+          transparent 0px,
+          transparent calc(var(--line-h) - 1px),
+          var(--blue-line) calc(var(--line-h) - 1px),
+          var(--blue-line) var(--line-h)
+        );
+      background-attachment: local;
+    }
+
+    /* ══ Hero ══ */
+    .hero {
+      padding: 72px 40px 40px 96px;
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+    }
+    .crumb {
+      font-size: 12px; letter-spacing: 0.06em;
+      color: var(--ink-light); margin-bottom: 10px;
+      font-family: 'Kalam', cursive;
+    }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+
+    .title {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(40px, 6vw, 78px);
+      line-height: 1.0; color: var(--ink);
+      margin-bottom: 6px; font-weight: 700;
+    }
+    .title-stroke {
+      width: clamp(160px, 38vw, 400px); height: 3px;
+      background: var(--accent);
+      border-radius: 2px; margin-bottom: 14px;
+      transform: rotate(-0.4deg);
+    }
+    .subtitle {
+      font-family: 'Kalam', cursive;
+      font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent-blue); margin-bottom: 16px;
+    }
+    .intro {
+      max-width: 800px; font-size: 16px;
+      line-height: var(--line-h);
+      color: var(--ink-mid);
+    }
+
+    /* ══ Layout ══ */
+    .layout {
+      display: grid; grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    /* ══ Card ══ */
+    .card {
+      padding: 28px 36px 32px 96px;
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+
+    .card:nth-child(even) { background-color: var(--paper-dark); }
+    .card.ruled-page:nth-child(even) {
+      background-color: var(--paper-dark);
+    }
+
+    /* ── Punched holes strip ── */
+    .card::before,
+    .hero::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #8B7355 0%, #8B7355 55%,
+        transparent 56%
+      );
+      background-size: 36px 80px;
+      background-repeat: repeat-y;
+      background-position: 0 20px;
+    }
+
+    .card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .card-title {
+      font-family: 'Caveat', cursive;
+      font-size: 26px; color: var(--ink); line-height: 1.1;
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 2px; display: inline;
+    }
+    .tag {
+      font-family: 'Kalam', cursive;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 700; padding: 3px 10px; border-radius: 3px;
+      background: var(--highlight-y);
+      color: var(--ink); border: 1px solid rgba(26,18,8,0.18);
+      flex-shrink: 0;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.15);
+      transform: rotate(1.2deg);
+    }
+
+    .card-body {
+      font-size: 15px;
+      line-height: var(--line-h);
+      color: var(--ink-mid); margin-bottom: 16px;
+    }
+    .card-body strong { color: var(--ink); }
+    .card-body em { color: var(--accent); font-style: italic; }
+
+    /* ── Formula chips ── */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+    .chip {
+      font-family: 'Caveat', cursive;
+      font-size: 17px; padding: 3px 16px;
+      background: rgba(26,79,160,0.07);
+      border: 2px solid rgba(26,79,160,0.40);
+      border-radius: 3px; color: var(--accent-blue);
+    }
+
+    /* ── Sub-panels ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .bond {
+      background: rgba(0,0,0,0.03);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px 12px;
+      border-radius: 0 4px 4px 0;
+    }
+    .bond-name {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .bond-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Slider controls ── */
+    .controls { display: flex; flex-wrap: wrap; gap: 18px; margin: 12px 0 10px; }
+    .ctrl { display: flex; flex-direction: column; gap: 4px; }
+    .ctrl label {
+      font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-light); font-family: 'Kalam', cursive;
+    }
+    .ctrl input[type=range] { width: 150px; accent-color: var(--accent); }
+    .ctrl .val {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; color: var(--accent); font-weight: 700;
+    }
+
+    /* ── Readouts ── */
+    .readouts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .readout {
+      font-family: 'Caveat', cursive; font-size: 15px;
+      background: rgba(196,64,16,0.07);
+      border: 1.5px solid rgba(196,64,16,0.28);
+      border-radius: 3px; padding: 4px 12px;
+      color: var(--ink-mid);
+    }
+    .readout span { color: var(--accent); font-weight: 700; }
+
+    /* ── Viz toolbar ── */
+    .viz-toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .viz-btn {
+      font-family: 'Kalam', cursive;
+      padding: 5px 13px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.22);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background 0.12s, transform 0.1s;
+    }
+    .viz-btn:hover { background: var(--highlight-y); color: var(--ink); transform: translateY(-1px); }
+    .viz-btn.active {
+      background: var(--highlight-y); color: var(--ink);
+      border-color: var(--accent);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .viz-stage {
+      background: #151C14;
+      border: 2px solid rgba(26,18,8,0.30);
+      border-radius: 4px; overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .viz-stage canvas { display: block; }
+
+    /* ── Highlight box ── */
+    .aero-card {
+      background: var(--highlight-g);
+      border-left: 3px solid var(--accent-blue);
+      border-radius: 0 4px 4px 0;
+      padding: 16px 18px 14px; margin-top: 4px;
+    }
+    .aero-title {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent-blue); margin-bottom: 7px;
+    }
+    .aero-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Compare table ── */
+    .compare { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .compare th {
+      padding: 8px 12px; text-align: left;
+      background: rgba(196,64,16,0.10); color: var(--accent);
+      font-weight: 700; letter-spacing: 0.05em; font-size: 11px;
+      text-transform: uppercase;
+      border-bottom: 2px solid rgba(196,64,16,0.28);
+    }
+    .compare td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--blue-line);
+      color: var(--ink-mid); vertical-align: top;
+    }
+    .compare tr:last-child td { border-bottom: none; }
+    .compare tr:hover td { background: var(--highlight-y); }
+
+    /* ── Spring / interactive controls (for spring page) ── */
+    .spring-demo { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+    .spring-canvas-wrap canvas { display: block; border-radius: 4px; background: #0E1410; border: 2px solid rgba(26,18,8,0.30); cursor: grab; }
+    .spring-canvas-wrap canvas:active { cursor: grabbing; }
+    .spring-controls { display: flex; flex-direction: column; gap: 14px; }
+    .ctrl-group {
+      background: rgba(0,0,0,0.04);
+      border: 1px solid rgba(26,18,8,0.12);
+      border-radius: 4px; padding: 14px;
+    }
+    .ctrl-label {
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); font-weight: 700; margin-bottom: 8px;
+      font-family: 'Kalam', cursive;
+    }
+    .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .slider-row label { font-size: 13px; color: var(--ink-mid); width: 100px; flex-shrink: 0; }
+    .slider-row input[type=range] { flex: 1; accent-color: var(--accent); }
+    .slider-row .val { font-size: 13px; color: var(--accent-blue); width: 54px; text-align: right; font-family: 'Caveat', cursive; }
+    .btn-row { display: flex; gap: 8px; margin-top: 4px; }
+    .ctrl-btn {
+      flex: 1; padding: 7px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.20);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      font-family: 'Kalam', cursive;
+      transition: background 0.12s;
+    }
+    .ctrl-btn:hover { background: var(--highlight-y); color: var(--ink); }
+    .ctrl-btn.active { background: var(--highlight-y); border-color: var(--accent); color: var(--ink); }
+
+    /* ══ Dark mode ══ */
+    body.dark-mode {
+      background: #3A3020;
+      --paper:      #1C1810;
+      --paper-dark: #211E12;
+      --ink:        #EDE0C0;
+      --ink-mid:    #C4AE82;
+      --ink-light:  #8A7658;
+      --blue-line:  rgba(80, 110, 180, 0.18);
+      --red-margin: rgba(200, 70, 70, 0.5);
+      --highlight-y: rgba(180, 150, 30, 0.35);
+      --highlight-g: rgba(50, 130, 70, 0.20);
+    }
+    body.dark-mode .content-wrap {
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.5),
+         6px 0 18px rgba(0,0,0,0.4),
+         0  12px 32px rgba(0,0,0,0.6);
+    }
+    body.dark-mode .card::before,
+    body.dark-mode .hero::before {
+      background-color: rgba(0,0,0,0.15);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #3A3020 0%, #3A3020 55%,
+        transparent 56%
+      );
+    }
+
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .spring-demo { grid-template-columns: 1fr; }
+      .theme-toggle { right: 172px; }
+    }
+    @media (max-width: 640px) {
+      .theme-toggle, .back-link { position: absolute; top: 10px; }
+      .theme-toggle { right: 148px; } .back-link { right: 12px; }
+      .hero, .card { padding-left: 56px; }
+      .card::before, .hero::before { width: 28px; background-size: 28px 80px; }
+    }
+    @keyframes flow { from{stroke-dashoffset:40}to{stroke-dashoffset:0} }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button">☀ Light</button>
+  <a class="back-link" href="chuong-dien-hoc.html">← Điện học</a>
+
+  <div class="content-wrap">
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="crumb">
+          <a href="Learning Resources Hub v4.html">Vật lý</a><span>›</span>
+          <a href="chuong-dien-hoc.html">Điện học</a><span>›</span>
+          <span>Chủ đề 2</span>
+        </div>
+        <h1 class="title">Dòng điện &amp; Mạch điện</h1>
+        <p class="subtitle">Điện học · Chủ đề 2 / 3</p>
+        <p class="intro">Dòng điện là dòng chuyển dịch có hướng của các hạt mang điện. Định luật Ohm và các định luật Kirchhoff cho phép phân tích bất kỳ mạch điện nào — từ mạch đơn giản đến phức tạp.</p>
+      </div>
+    </header>
+
+    <main class="layout">
+
+      <section class="card">
+        <div class="card-head"><h2 class="card-title">Dòng điện &amp; Định luật Ohm</h2><span class="tag">Ohm</span></div>
+        <p class="card-body">Cường độ dòng điện I đo lượng điện tích qua tiết diện dây dẫn mỗi giây. Định luật Ohm (Georg Simon Ohm, 1827): điện áp hai đầu điện trở tỉ lệ thuận với cường độ dòng điện. Điện trở R phụ thuộc vật liệu, chiều dài và tiết diện dây.</p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Định luật Ohm</div>
+            <div class="bond-body">U = I·R<br>I: cường độ (A = C/s)<br>U: hiệu điện thế (V)<br>R: điện trở (Ω = V/A)<br>Điện dẫn: G = 1/R (siemens, S)</div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Điện trở dây dẫn</div>
+            <div class="bond-body">R = ρ·L/A<br>ρ: điện trở suất (Ω·m)<br>L: chiều dài (m), A: tiết diện (m²)<br>Đồng: ρ ≈ 1.7×10⁻⁸ Ω·m<br>Phụ thuộc nhiệt độ: R = R₀(1+αΔT)</div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">U = IR</span>
+          <span class="chip">R = ρL/A</span>
+          <span class="chip">G = 1/R</span>
+          <span class="chip">R(T) = R₀(1+αΔT)</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2 class="card-title">Ghép điện trở &amp; Nguồn điện</h2><span class="tag">Mạch</span></div>
+        <p class="card-body">Điện trở ghép nối tiếp có cùng dòng điện; ghép song song có cùng điện áp. Nguồn điện thực tế có suất điện động ε và điện trở trong r. Hiệu điện thế đầu cực: U = ε − I·r (khi phát điện).</p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Nối tiếp</div>
+            <div class="bond-body">R_tđ = R₁ + R₂ + … + Rₙ<br>I₁ = I₂ = … = I (cùng dòng)<br>U = U₁ + U₂ + … (cộng áp)<br>Điện trở tăng lên khi ghép thêm</div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Song song</div>
+            <div class="bond-body">1/R_tđ = 1/R₁ + 1/R₂ + …<br>U₁ = U₂ = … = U (cùng áp)<br>I = I₁ + I₂ + … (cộng dòng)<br>R₂ ghép song song: R_tđ = R₁R₂/(R₁+R₂)</div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Nguồn điện thực tế</div>
+            <div class="bond-body">ε: suất điện động (V)<br>r: điện trở trong (Ω)<br>U_tải = ε − I·r<br>I = ε/(R + r)</div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Định luật Kirchhoff</div>
+            <div class="bond-body">K1 (nút): ΣI_vào = ΣI_ra<br>K2 (vòng): ΣU = 0 (theo chiều vòng)<br>Dùng để giải mạch phức tạp nhiều nhánh</div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">R_nt = ΣRᵢ</span>
+          <span class="chip">1/R_ss = Σ1/Rᵢ</span>
+          <span class="chip">I = ε/(R+r)</span>
+          <span class="chip">U = ε − Ir</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2 class="card-title">Công suất &amp; Nhiệt điện</h2><span class="tag">Năng lượng</span></div>
+        <p class="card-body">Dòng điện thực hiện công khi chạy qua điện trở, tạo ra nhiệt (hiệu ứng Joule–Lenz). Công suất điện P = UI đo tốc độ tiêu thụ hay cung cấp năng lượng. Điện năng tính theo kWh trong thực tế.</p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Công suất</div>
+            <div class="bond-body">P = U·I = I²R = U²/R<br>Đơn vị: Watt (W = J/s)<br>Điện năng: W = P·t = U·I·t<br>Thực tế: 1 kWh = 3.6×10⁶ J</div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Định luật Joule–Lenz</div>
+            <div class="bond-body">Q = I²Rt<br>Q: nhiệt tỏa ra (J)<br>I: dòng điện (A), R: điện trở (Ω), t: thời gian (s)<br>Ứng dụng: bếp điện, bóng đèn sợi đốt</div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">P = UI = I²R = U²/R</span>
+          <span class="chip">Q = I²Rt</span>
+          <span class="chip">W = Pt</span>
+          <span class="chip">1 kWh = 3.6 MJ</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2 class="card-title">Mô phỏng</h2><span class="tag">Viz</span></div>
+        <div class="viz-toolbar">
+          <button class="viz-btn active" onclick="setViz('ohm')">Định luật Ohm</button>
+          <button class="viz-btn" onclick="setViz('series')">Nối tiếp</button>
+          <button class="viz-btn" onclick="setViz('parallel')">Song song</button>
+          <button class="viz-btn" onclick="setViz('kirchhoff')">Kirchhoff</button>
+        </div>
+        <div class="viz-stage"><svg id="viz-svg" viewBox="0 0 600 270" xmlns="http://www.w3.org/2000/svg"></svg></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2 class="card-title">So sánh ghép điện trở &amp; tụ điện</h2><span class="tag">Bảng</span></div>
+        <table class="compare">
+          <thead><tr><th>Kiểu ghép</th><th>Điện trở nối tiếp</th><th>Điện trở song song</th><th>Tụ nối tiếp</th><th>Tụ song song</th></tr></thead>
+          <tbody>
+            <tr><td>Tương đương</td><td>R = R₁+R₂+…</td><td>1/R = Σ1/Rᵢ</td><td>1/C = Σ1/Cᵢ</td><td>C = C₁+C₂+…</td></tr>
+            <tr><td>Đại lượng bằng nhau</td><td>Dòng I</td><td>Điện áp U</td><td>Điện tích Q</td><td>Điện áp U</td></tr>
+            <tr><td>Đại lượng cộng lại</td><td>Điện áp U</td><td>Dòng I</td><td>Điện áp U</td><td>Điện tích Q</td></tr>
+            <tr><td>Kết quả</td><td>R tăng</td><td>R giảm</td><td>C giảm</td><td>C tăng</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2 class="card-title">Tự kiểm tra</h2><span class="tag">Quiz</span></div>
+        <div class="quiz" id="quiz"></div>
+      </section>
+
+    </main>
+    <nav class="sub-nav">
+      <a href="chuong-dien-hoc-dien-tich-truong.html">← Điện tích &amp; Điện trường</a>
+      <a href="chuong-dien-hoc-tu-truong.html">Từ trường &amp; Cảm ứng điện từ →</a>
+    </nav>
+  </div>
+
+  <script>
+    (function(){const KEY='bewy-theme',btn=document.getElementById('theme-toggle');const apply=m=>{document.body.classList.toggle('light-mode',m==='light');if(btn)btn.textContent=m==='light'?'🌙 Dark':'☀ Light';};apply(localStorage.getItem(KEY)==='light'?'light':'dark');if(btn)btn.addEventListener('click',()=>{const n=document.body.classList.contains('light-mode')?'dark':'light';localStorage.setItem(KEY,n);apply(n);});})();
+
+    const NS='http://www.w3.org/2000/svg';
+    function el(tag,a,t){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a||{}))e.setAttribute(k,v);if(t!==undefined)e.textContent=t;return e;}
+
+    function resistor(svg,x,y,label){
+      svg.appendChild(el('rect',{x,y:y-8,width:40,height:16,fill:'rgba(212,160,23,0.2)',stroke:'#D4A017','stroke-width':1.5,rx:3}));
+      if(label)svg.appendChild(el('text',{x:x+20,y:y+24,fill:'rgba(251,244,228,0.6)','font-size':11,'text-anchor':'middle'},label));
+    }
+    function battery(svg,x,y,label){
+      svg.appendChild(el('line',{x1:x,y1:y-14,x2:x,y2:y+14,stroke:'#F2B544','stroke-width':3}));
+      svg.appendChild(el('line',{x1:x+6,y1:y-8,x2:x+6,y2:y+8,stroke:'rgba(242,181,68,0.5)','stroke-width':2}));
+      if(label)svg.appendChild(el('text',{x:x+18,y:y+4,fill:'#F2B544','font-size':12},label));
+    }
+    function wire(svg,x1,y1,x2,y2,animated){
+      const l=el('line',{x1,y1,x2,y2,stroke:'rgba(242,181,68,0.7)','stroke-width':2});
+      if(animated){l.setAttribute('stroke-dasharray','8 4');l.style.animation='flow 0.8s linear infinite';}
+      svg.appendChild(l);
+    }
+
+    function drawOhm(svg){
+      // Simple circuit: battery + resistor
+      wire(svg,80,135,180,135);wire(svg,220,135,420,135,true);wire(svg,420,135,520,135);
+      wire(svg,520,135,520,200);wire(svg,80,200,520,200);wire(svg,80,135,80,200);
+      battery(svg,80,167,'ε');
+      resistor(svg,180,135,'R');
+      // Labels
+      svg.appendChild(el('text',{x:300,y:115,fill:'rgba(251,244,228,0.7)','font-size':13,'text-anchor':'middle'},'→ I = U/R'));
+      svg.appendChild(el('text',{x:300,y:220,fill:'rgba(251,244,228,0.45)','font-size':12,'text-anchor':'middle'},'U = IR  ·  P = I²R  ·  Q = I²Rt'));
+      // Voltmeter
+      svg.appendChild(el('ellipse',{cx:320,cy:105,rx:22,ry:15,fill:'none',stroke:'rgba(110,219,176,0.5)','stroke-width':1.5}));
+      svg.appendChild(el('text',{x:320,y:110,fill:'rgba(110,219,176,0.7)','font-size':11,'text-anchor':'middle'},'V'));
+      svg.appendChild(el('line',{x1:220,y1:105,x2:298,y2:105,stroke:'rgba(110,219,176,0.4)','stroke-width':1,'stroke-dasharray':'3 2'}));
+      svg.appendChild(el('line',{x1:342,y1:105,x2:420,y2:105,stroke:'rgba(110,219,176,0.4)','stroke-width':1,'stroke-dasharray':'3 2'}));
+      svg.appendChild(el('line',{x1:220,y1:105,x2:220,y2:135,stroke:'rgba(110,219,176,0.4)','stroke-width':1}));
+      svg.appendChild(el('line',{x1:420,y1:105,x2:420,y2:135,stroke:'rgba(110,219,176,0.4)','stroke-width':1}));
+    }
+
+    function drawSeries(svg){
+      wire(svg,40,135,100,135,true);wire(svg,140,135,200,135,true);wire(svg,240,135,300,135,true);
+      wire(svg,340,135,400,135,true);wire(svg,400,135,520,135,true);
+      wire(svg,520,135,520,200);wire(svg,40,200,520,200);wire(svg,40,135,40,200);
+      battery(svg,40,167,'ε');
+      resistor(svg,100,135,'R₁');resistor(svg,200,135,'R₂');resistor(svg,300,135,'R₃');
+      // I labels
+      svg.appendChild(el('text',{x:170,y:118,fill:'rgba(242,181,68,0.7)','font-size':11},'I'));
+      svg.appendChild(el('text',{x:270,y:118,fill:'rgba(242,181,68,0.7)','font-size':11},'I'));
+      svg.appendChild(el('text',{x:370,y:118,fill:'rgba(242,181,68,0.7)','font-size':11},'I'));
+      svg.appendChild(el('text',{x:300,y:240,fill:'rgba(251,244,228,0.5)','font-size':12,'text-anchor':'middle'},'R_tđ = R₁ + R₂ + R₃  ·  Dòng I như nhau'));
+    }
+
+    function drawParallel(svg){
+      // Horizontal rails
+      wire(svg,40,80,560,80);wire(svg,40,190,560,190);
+      wire(svg,40,80,40,190);wire(svg,560,80,560,190);
+      battery(svg,40,135,'ε');
+      // Three parallel branches
+      [[160,'R₁'],[280,'R₂'],[400,'R₃']].forEach(([x,lbl])=>{
+        svg.appendChild(el('line',{x1:x,y1:80,x2:x,y2:107,stroke:'rgba(242,181,68,0.6)','stroke-width':2}));
+        resistor(svg,x-20,135,lbl);
+        svg.appendChild(el('line',{x1:x,y1:163,x2:x,y2:190,stroke:'rgba(242,181,68,0.6)','stroke-width':2}));
+      });
+      svg.appendChild(el('text',{x:300,y:240,fill:'rgba(251,244,228,0.5)','font-size':12,'text-anchor':'middle'},'1/R_tđ = 1/R₁ + 1/R₂ + 1/R₃  ·  Điện áp U như nhau'));
+      // Current arrows on rails
+      svg.appendChild(el('polygon',{points:'460,74 448,69 448,79',fill:'rgba(242,181,68,0.5)'}));
+      svg.appendChild(el('text',{x:440,y:68,fill:'rgba(242,181,68,0.5)','font-size':11},'I'));
+    }
+
+    function drawKirchhoff(svg){
+      // Junction node A at center
+      const ax=280,ay=135;
+      svg.appendChild(el('circle',{cx:ax,cy:ay,r:6,fill:'#F2B544'}));
+      svg.appendChild(el('text',{cx:ax,cy:ay,x:ax-4,y:ay-12,fill:'#F2B544','font-size':13},'A'));
+      // Three branches
+      // Branch 1: left  I₁ → A
+      wire(svg,80,135,ax-6,ay);resistor(svg,110,135,'R₁');
+      svg.appendChild(el('text',{x:160,y:120,fill:'rgba(110,219,176,0.7)','font-size':12},'I₁→'));
+      // Branch 2: right A →
+      wire(svg,ax+6,ay,480,135,true);resistor(svg,370,135,'R₂');
+      svg.appendChild(el('text',{x:330,y:120,fill:'rgba(110,219,176,0.7)','font-size':12},'I₂→'));
+      // Branch 3: down A →
+      wire(svg,ax,ay+6,ax,220);resistor(svg,ax-20,180,'R₃');
+      svg.appendChild(el('text',{x:ax+8,y:175,fill:'rgba(110,219,176,0.7)','font-size':11},'I₃↓'));
+      // Sources
+      battery(svg,80,167,'ε₁');battery(svg,480,167,'ε₂');
+      wire(svg,80,135,80,190);wire(svg,480,135,480,190);
+      wire(svg,80,190,280,190);wire(svg,480,190,280,190);wire(svg,280,220,280,190);
+      // Kirchhoff labels
+      svg.appendChild(el('text',{x:300,y:248,fill:'rgba(251,244,228,0.5)','font-size':12,'text-anchor':'middle'},'Nút A: I₁ = I₂ + I₃'));
+    }
+
+    const fns={ohm:drawOhm,series:drawSeries,parallel:drawParallel,kirchhoff:drawKirchhoff};
+    const labels={ohm:'Định luật Ohm',series:'Nối tiếp',parallel:'Song song',kirchhoff:'Kirchhoff'};
+    function setViz(name){
+      document.querySelectorAll('.viz-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim()===labels[name]));
+      const svg=document.getElementById('viz-svg');while(svg.firstChild)svg.removeChild(svg.firstChild);fns[name](svg);
+    }
+    setViz('ohm');
+
+    const questions=[
+      {q:'R₁=6Ω, R₂=3Ω ghép song song, nối nguồn U=12V. Dòng tổng I=?',opts:['6 A','2 A','4 A','3 A'],ans:0},
+      {q:'Bóng đèn 60W, 220V. Điện trở của bóng?',opts:['807 Ω','13.2 Ω','3667 Ω','220 Ω'],ans:0},
+      {q:'Nguồn ε=9V, r=1Ω, R=8Ω. Hiệu điện thế hai đầu R?',opts:['8 V','9 V','1 V','7 V'],ans:0},
+      {q:'3 điện trở R=6Ω nối tiếp, đặt U=18V. Công suất mỗi điện trở?',opts:['6 W','2 W','18 W','3 W'],ans:0},
+    ];
+    const qel=document.getElementById('quiz');
+    questions.forEach((q,qi)=>{
+      const a=document.createElement('article');a.className='quiz-item';
+      a.innerHTML=`<div class="quiz-q">${qi+1}. ${q.q}</div><ul class="quiz-opts">${q.opts.map((o,i)=>`<li data-qi="${qi}" data-i="${i}">${o}</li>`).join('')}</ul>`;
+      qel.appendChild(a);
+    });
+    qel.addEventListener('click',e=>{
+      const li=e.target.closest('li[data-qi]');if(!li)return;
+      const qi=+li.dataset.qi,i=+li.dataset.i;
+      const s=qel.querySelectorAll(`li[data-qi="${qi}"]`);
+      if([...s].some(x=>x.classList.contains('correct')||x.classList.contains('wrong')))return;
+      s.forEach(x=>{if(+x.dataset.i===questions[qi].ans)x.classList.add('correct');else if(+x.dataset.i===i)x.classList.add('wrong');});
+    });
+  </script>
+</body>
+</html>

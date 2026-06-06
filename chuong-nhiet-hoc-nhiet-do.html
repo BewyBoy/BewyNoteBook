@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vật lý · Nhiệt học — Nhiệt độ &amp; Nhiệt lượng</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SKETCHBOOK / NOTEBOOK STYLE
+    ══════════════════════════════════════ */
+
+    /* Google Font — handwritten feel */
+    @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Caveat:wght@400;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── CSS custom properties ── */
+    :root {
+      --paper:        #F5F0E0;
+      --paper-dark:   #EDE5CC;
+      --ink:          #1A1208;
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #C44010;
+      --accent-blue:  #1A4FA0;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-g:  rgba(80, 180, 100, 0.30);
+      --line-h:       30px;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #8B7355;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #9E8565 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #6B5540 0%, transparent 50%),
+        repeating-linear-gradient(
+          45deg,
+          transparent, transparent 3px,
+          rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px
+        );
+      color: var(--ink);
+      font-family: 'Kalam', cursive;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    /* ══ Fixed nav ══ */
+    .theme-toggle {
+      position: fixed; top: 14px; right: 194px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 13px; border-radius: 4px;
+      background: var(--paper); color: var(--ink);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 13px; font-weight: 700;
+      cursor: pointer; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(-1deg);
+      transition: transform 0.1s;
+    }
+    .theme-toggle:hover { transform: rotate(0deg); border-color: var(--accent); }
+
+    .back-link {
+      position: fixed; top: 14px; right: 20px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent-blue);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(0.8deg);
+      transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent-blue); }
+
+    /* ══ Notebook page shell ══ */
+    .content-wrap {
+      width: min(1060px, 100%);
+      margin: 0 auto;
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.25),
+         6px 0 18px rgba(0,0,0,0.20),
+         0  12px 32px rgba(0,0,0,0.35);
+    }
+
+    /* ══ Ruled-paper background (pure CSS) ══ */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(
+          90deg,
+          transparent 71px,
+          var(--red-margin) 71px,
+          var(--red-margin) 73px,
+          transparent 73px
+        ),
+        repeating-linear-gradient(
+          180deg,
+          transparent 0px,
+          transparent calc(var(--line-h) - 1px),
+          var(--blue-line) calc(var(--line-h) - 1px),
+          var(--blue-line) var(--line-h)
+        );
+      background-attachment: local;
+    }
+
+    /* ══ Hero ══ */
+    .hero {
+      padding: 72px 40px 40px 96px;
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+    }
+    .crumb {
+      font-size: 12px; letter-spacing: 0.06em;
+      color: var(--ink-light); margin-bottom: 10px;
+      font-family: 'Kalam', cursive;
+    }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+
+    .title {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(40px, 6vw, 78px);
+      line-height: 1.0; color: var(--ink);
+      margin-bottom: 6px; font-weight: 700;
+    }
+    .title-stroke {
+      width: clamp(160px, 38vw, 400px); height: 3px;
+      background: var(--accent);
+      border-radius: 2px; margin-bottom: 14px;
+      transform: rotate(-0.4deg);
+    }
+    .subtitle {
+      font-family: 'Kalam', cursive;
+      font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent-blue); margin-bottom: 16px;
+    }
+    .intro {
+      max-width: 800px; font-size: 16px;
+      line-height: var(--line-h);
+      color: var(--ink-mid);
+    }
+
+    /* ══ Layout ══ */
+    .layout {
+      display: grid; grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    /* ══ Card ══ */
+    .card {
+      padding: 28px 36px 32px 96px;
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+
+    .card:nth-child(even) { background-color: var(--paper-dark); }
+    .card.ruled-page:nth-child(even) {
+      background-color: var(--paper-dark);
+    }
+
+    /* ── Punched holes strip ── */
+    .card::before,
+    .hero::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #8B7355 0%, #8B7355 55%,
+        transparent 56%
+      );
+      background-size: 36px 80px;
+      background-repeat: repeat-y;
+      background-position: 0 20px;
+    }
+
+    .card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .card-title {
+      font-family: 'Caveat', cursive;
+      font-size: 26px; color: var(--ink); line-height: 1.1;
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 2px; display: inline;
+    }
+    .tag {
+      font-family: 'Kalam', cursive;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 700; padding: 3px 10px; border-radius: 3px;
+      background: var(--highlight-y);
+      color: var(--ink); border: 1px solid rgba(26,18,8,0.18);
+      flex-shrink: 0;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.15);
+      transform: rotate(1.2deg);
+    }
+
+    .card-body {
+      font-size: 15px;
+      line-height: var(--line-h);
+      color: var(--ink-mid); margin-bottom: 16px;
+    }
+    .card-body strong { color: var(--ink); }
+    .card-body em { color: var(--accent); font-style: italic; }
+
+    /* ── Formula chips ── */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+    .chip {
+      font-family: 'Caveat', cursive;
+      font-size: 17px; padding: 3px 16px;
+      background: rgba(26,79,160,0.07);
+      border: 2px solid rgba(26,79,160,0.40);
+      border-radius: 3px; color: var(--accent-blue);
+    }
+
+    /* ── Sub-panels ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .bond {
+      background: rgba(0,0,0,0.03);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px 12px;
+      border-radius: 0 4px 4px 0;
+    }
+    .bond-name {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .bond-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Slider controls ── */
+    .controls { display: flex; flex-wrap: wrap; gap: 18px; margin: 12px 0 10px; }
+    .ctrl { display: flex; flex-direction: column; gap: 4px; }
+    .ctrl label {
+      font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-light); font-family: 'Kalam', cursive;
+    }
+    .ctrl input[type=range] { width: 150px; accent-color: var(--accent); }
+    .ctrl .val {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; color: var(--accent); font-weight: 700;
+    }
+
+    /* ── Readouts ── */
+    .readouts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .readout {
+      font-family: 'Caveat', cursive; font-size: 15px;
+      background: rgba(196,64,16,0.07);
+      border: 1.5px solid rgba(196,64,16,0.28);
+      border-radius: 3px; padding: 4px 12px;
+      color: var(--ink-mid);
+    }
+    .readout span { color: var(--accent); font-weight: 700; }
+
+    /* ── Viz toolbar ── */
+    .viz-toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .viz-btn {
+      font-family: 'Kalam', cursive;
+      padding: 5px 13px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.22);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background 0.12s, transform 0.1s;
+    }
+    .viz-btn:hover { background: var(--highlight-y); color: var(--ink); transform: translateY(-1px); }
+    .viz-btn.active {
+      background: var(--highlight-y); color: var(--ink);
+      border-color: var(--accent);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .viz-stage {
+      background: #151C14;
+      border: 2px solid rgba(26,18,8,0.30);
+      border-radius: 4px; overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .viz-stage canvas { display: block; }
+
+    /* ── Highlight box ── */
+    .aero-card {
+      background: var(--highlight-g);
+      border-left: 3px solid var(--accent-blue);
+      border-radius: 0 4px 4px 0;
+      padding: 16px 18px 14px; margin-top: 4px;
+    }
+    .aero-title {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent-blue); margin-bottom: 7px;
+    }
+    .aero-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Compare table ── */
+    .compare { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .compare th {
+      padding: 8px 12px; text-align: left;
+      background: rgba(196,64,16,0.10); color: var(--accent);
+      font-weight: 700; letter-spacing: 0.05em; font-size: 11px;
+      text-transform: uppercase;
+      border-bottom: 2px solid rgba(196,64,16,0.28);
+    }
+    .compare td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--blue-line);
+      color: var(--ink-mid); vertical-align: top;
+    }
+    .compare tr:last-child td { border-bottom: none; }
+    .compare tr:hover td { background: var(--highlight-y); }
+
+    /* ── Spring / interactive controls (for spring page) ── */
+    .spring-demo { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+    .spring-canvas-wrap canvas { display: block; border-radius: 4px; background: #0E1410; border: 2px solid rgba(26,18,8,0.30); cursor: grab; }
+    .spring-canvas-wrap canvas:active { cursor: grabbing; }
+    .spring-controls { display: flex; flex-direction: column; gap: 14px; }
+    .ctrl-group {
+      background: rgba(0,0,0,0.04);
+      border: 1px solid rgba(26,18,8,0.12);
+      border-radius: 4px; padding: 14px;
+    }
+    .ctrl-label {
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); font-weight: 700; margin-bottom: 8px;
+      font-family: 'Kalam', cursive;
+    }
+    .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .slider-row label { font-size: 13px; color: var(--ink-mid); width: 100px; flex-shrink: 0; }
+    .slider-row input[type=range] { flex: 1; accent-color: var(--accent); }
+    .slider-row .val { font-size: 13px; color: var(--accent-blue); width: 54px; text-align: right; font-family: 'Caveat', cursive; }
+    .btn-row { display: flex; gap: 8px; margin-top: 4px; }
+    .ctrl-btn {
+      flex: 1; padding: 7px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.20);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      font-family: 'Kalam', cursive;
+      transition: background 0.12s;
+    }
+    .ctrl-btn:hover { background: var(--highlight-y); color: var(--ink); }
+    .ctrl-btn.active { background: var(--highlight-y); border-color: var(--accent); color: var(--ink); }
+
+    /* ══ Dark mode ══ */
+    body.dark-mode {
+      background: #3A3020;
+      --paper:      #1C1810;
+      --paper-dark: #211E12;
+      --ink:        #EDE0C0;
+      --ink-mid:    #C4AE82;
+      --ink-light:  #8A7658;
+      --blue-line:  rgba(80, 110, 180, 0.18);
+      --red-margin: rgba(200, 70, 70, 0.5);
+      --highlight-y: rgba(180, 150, 30, 0.35);
+      --highlight-g: rgba(50, 130, 70, 0.20);
+    }
+    body.dark-mode .content-wrap {
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.5),
+         6px 0 18px rgba(0,0,0,0.4),
+         0  12px 32px rgba(0,0,0,0.6);
+    }
+    body.dark-mode .card::before,
+    body.dark-mode .hero::before {
+      background-color: rgba(0,0,0,0.15);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #3A3020 0%, #3A3020 55%,
+        transparent 56%
+      );
+    }
+
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .spring-demo { grid-template-columns: 1fr; }
+      .theme-toggle { right: 172px; }
+    }
+    @media (max-width: 640px) {
+      .theme-toggle, .back-link { position: absolute; top: 10px; }
+      .theme-toggle { right: 148px; } .back-link { right: 12px; }
+      .hero, .card { padding-left: 56px; }
+      .card::before, .hero::before { width: 28px; background-size: 28px 80px; }
+    }
+  </style>
+</head>
+<body>
+  <button id="themeBtn" class="theme-toggle" type="button">☽ Tối</button>
+  <a class="back-link" href="chuong-nhiet-hoc.html">← Nhiệt học</a>
+
+  <div class="content-wrap">
+    <header class="hero ruled-page">
+        <div class="crumb">
+          <a href="Learning Resources Hub v4.html">Vật lý</a>
+          <span>›</span>
+          <a href="chuong-nhiet-hoc.html">Nhiệt học</a>
+          <span>›</span>
+          <span>Nhiệt độ &amp; Nhiệt lượng</span>
+        </div>
+        <h1 class="title">Nhiệt độ &amp; Nhiệt lượng</h1>
+        <div class="title-stroke"></div>
+        <p class="subtitle">Chủ đề 1 · Đo lường và truyền nhiệt</p>
+        <p class="intro">
+          Nhiệt độ đo mức độ chuyển động hỗn loạn của các phân tử. Nhiệt lượng là năng lượng
+          truyền từ vật nóng hơn sang vật lạnh hơn — cho đến khi cân bằng nhiệt được thiết lập.
+        </p>
+    </header>
+
+    <main class="layout">
+
+      <section class="card ruled-page">
+        <h2>1. Nhiệt độ và thang đo</h2>
+        <div class="grid-2">
+          <article class="bond">
+            <h3>Thang nhiệt độ <span class="tag">3 thang phổ biến</span></h3>
+            <ul>
+              <li><strong>Celsius (°C)</strong>: 0°C = nước đá tan, 100°C = nước sôi (1 atm).</li>
+              <li><strong>Kelvin (K)</strong>: thang tuyệt đối, 0 K = không độ tuyệt đối (−273,15°C).</li>
+              <li><strong>Fahrenheit (°F)</strong>: dùng ở Mỹ; 32°F = 0°C, 212°F = 100°C.</li>
+              <li>Quy đổi: <em>K = °C + 273,15</em> và <em>°F = (°C × 9/5) + 32</em>.</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Không độ tuyệt đối <span class="tag">0 K</span></h3>
+            <ul>
+              <li>Ở 0 K, chuyển động nhiệt của phân tử là nhỏ nhất có thể.</li>
+              <li>Không thể đạt được 0 K trong thực tế (nguyên lý III nhiệt động lực học).</li>
+              <li>Thang Kelvin luôn dùng trong các phương trình vật lý và hóa học.</li>
+              <li>Nhiệt độ âm Kelvin về vật lý là vô nghĩa.</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Nhiệt kế <span class="tag">nguyên lý đo</span></h3>
+            <ul>
+              <li>Nhiệt kế thủy ngân: dựa trên giãn nở nhiệt của chất lỏng.</li>
+              <li>Nhiệt kế điện trở: điện trở thay đổi theo nhiệt độ.</li>
+              <li>Nhiệt kế bức xạ (hồng ngoại): đo bức xạ phát ra — không cần tiếp xúc.</li>
+              <li>Mọi nhiệt kế đều dựa trên tính chất thay đổi theo nhiệt độ của vật liệu.</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Cân bằng nhiệt <span class="tag">nguyên lý 0</span></h3>
+            <ul>
+              <li>Hai vật tiếp xúc nhiệt sẽ đạt cùng nhiệt độ sau một thời gian.</li>
+              <li>Nguyên lý 0 nhiệt động lực học: A cân bằng nhiệt với C, B cân bằng nhiệt với C → A cân bằng nhiệt với B.</li>
+              <li>Đây là cơ sở để định nghĩa nhiệt độ như một đại lượng vật lý.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="card ruled-page">
+        <h2>2. Nhiệt lượng và truyền nhiệt</h2>
+        <p>Chọn hình thức truyền nhiệt để xem mô phỏng:</p>
+        <div class="viz-toolbar" role="tablist">
+          <button class="viz-btn active" type="button" data-viz="conduction" role="tab" aria-selected="true">Dẫn nhiệt</button>
+          <button class="viz-btn" type="button" data-viz="convection" role="tab" aria-selected="false">Đối lưu</button>
+          <button class="viz-btn" type="button" data-viz="radiation" role="tab" aria-selected="false">Bức xạ</button>
+          <button class="viz-btn" type="button" data-viz="thermo" role="tab" aria-selected="false">Nhiệt kế</button>
+        </div>
+        <div class="viz-stage" id="viz-stage" aria-live="polite"></div>
+        <div class="viz-info">
+          <div class="mini"><h4>Cơ chế</h4><p id="viz-mechanism"></p></div>
+          <div class="mini"><h4>Ví dụ thực tế</h4><p id="viz-example"></p></div>
+        </div>
+      </section>
+
+      <section class="card ruled-page">
+        <h2>3. Nhiệt lượng và sự thay đổi trạng thái</h2>
+        <div class="grid-2">
+          <article class="bond">
+            <h3>Nhiệt lượng cảm nhiệt <span class="tag">Q = mcΔT</span></h3>
+            <ul>
+              <li><em>m</em>: khối lượng (kg), <em>c</em>: nhiệt dung riêng (J/kg·K), <em>ΔT</em>: độ thay đổi nhiệt độ.</li>
+              <li>Nước có c = 4200 J/kg·K — rất cao, giúp điều hòa khí hậu.</li>
+              <li>Q > 0: vật nhận nhiệt. Q &lt; 0: vật tỏa nhiệt.</li>
+              <li>Không làm thay đổi trạng thái — chỉ thay đổi nhiệt độ.</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Nhiệt lượng ẩn <span class="tag">Q = mL</span></h3>
+            <ul>
+              <li>Xảy ra khi chất chuyển trạng thái (rắn ↔ lỏng ↔ khí).</li>
+              <li>Nhiệt độ <strong>không thay đổi</strong> trong quá trình này.</li>
+              <li>L_nóng chảy nước đá = 334 000 J/kg.</li>
+              <li>L_hóa hơi nước = 2 260 000 J/kg — rất lớn, giải thích vì sao mồ hôi làm mát hiệu quả.</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Phương trình cân bằng nhiệt</h3>
+            <ul>
+              <li>Nhiệt tỏa ra = Nhiệt thu vào.</li>
+              <li>Σ(m·c·ΔT) = 0 cho toàn hệ cô lập.</li>
+              <li>Bước giải: xác định vật nào tỏa, vật nào thu nhiệt; lập phương trình; giải.</li>
+              <li>Chú ý: ΔT luôn = T_cuối − T_đầu (có dấu).</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Giãn nở nhiệt <span class="tag">ΔL = α·L₀·ΔT</span></h3>
+            <ul>
+              <li>Hầu hết vật liệu giãn nở khi nóng lên và co lại khi lạnh đi.</li>
+              <li>Giãn nở dài: <em>ΔL = α·L₀·ΔT</em> (α là hệ số giãn nở dài).</li>
+              <li>Giãn nở thể tích: <em>ΔV = β·V₀·ΔT</em>, với β ≈ 3α.</li>
+              <li>Ngoại lệ: nước đạt mật độ cực đại ở 4°C — giải thích tại sao hồ đóng băng từ trên xuống.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="formula-block">
+          <div class="formula-chip">
+            <strong>Q = mcΔT</strong>
+            <small>Nhiệt lượng cảm nhiệt (J)</small>
+          </div>
+          <div class="formula-chip">
+            <strong>Q = mL</strong>
+            <small>Nhiệt lượng ẩn chuyển thể</small>
+          </div>
+          <div class="formula-chip">
+            <strong>K = °C + 273,15</strong>
+            <small>Đổi sang Kelvin</small>
+          </div>
+          <div class="formula-chip">
+            <strong>ΔL = αL₀ΔT</strong>
+            <small>Giãn nở nhiệt dài</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="card ruled-page">
+        <h2>4. Bảng nhiệt dung riêng một số chất</h2>
+        <table class="compare">
+          <thead>
+            <tr><th>Chất</th><th>c (J/kg·K)</th><th>Nhận xét</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Nước (lỏng)</td><td>4 200</td><td>Cao nhất trong các chất thông dụng — điều hòa nhiệt khí hậu, làm mát động cơ</td></tr>
+            <tr><td>Băng</td><td>2 090</td><td>Thấp hơn nước lỏng — tuyết nóng lên nhanh hơn khi mặt trời chiếu</td></tr>
+            <tr><td>Nhôm</td><td>900</td><td>Cao cho kim loại — chảo nhôm nóng lên chậm, tản nhiệt đều</td></tr>
+            <tr><td>Sắt / Thép</td><td>450</td><td>Thấp hơn nhôm — nóng lên nhanh hơn với cùng nhiệt lượng</td></tr>
+            <tr><td>Đồng</td><td>385</td><td>Dẫn nhiệt tốt + c thấp → dùng trong tản nhiệt, nồi nấu</td></tr>
+            <tr><td>Vàng</td><td>129</td><td>Rất thấp — nóng lên nhanh, dùng làm tiếp điểm điện chất lượng cao</td></tr>
+          </tbody>
+        </table>
+        <p class="note">
+          Nhiệt dung riêng của nước gần bằng 10 lần sắt — đây là lý do đại dương điều hòa nhiệt độ Trái Đất
+          hiệu quả hơn nhiều so với đất liền. Vùng ven biển ít dao động nhiệt hơn nội địa.
+        </p>
+      </section>
+
+      <section class="card ruled-page">
+        <h2>5. Tự kiểm tra</h2>
+        <div class="quiz">
+          <article class="quiz-item">
+            <h4>Câu 1</h4>
+            <p>Đun 2 kg nước từ 25°C đến 100°C cần bao nhiêu nhiệt lượng? Sau đó hóa hơi hoàn toàn cần thêm bao nhiêu? (c = 4200 J/kg·K, L = 2 260 000 J/kg)</p>
+          </article>
+          <article class="quiz-item">
+            <h4>Câu 2</h4>
+            <p>Thả 200 g sắt ở 180°C vào 500 g nước ở 20°C. Tính nhiệt độ cân bằng. (c_sắt = 450, c_nước = 4200 J/kg·K)</p>
+          </article>
+          <article class="quiz-item">
+            <h4>Câu 3</h4>
+            <p>Tại sao đường ray xe lửa có khe hở giữa các đoạn? Nếu đoạn dài 25 m, α_thép = 12×10⁻⁶ K⁻¹, tính độ giãn khi ΔT = 50°C.</p>
+          </article>
+          <article class="quiz-item">
+            <h4>Câu 4</h4>
+            <p>Tại sao mồ hôi làm mát cơ thể hiệu quả hơn chỉ làm ướt bề mặt da? Giải thích bằng khái niệm nhiệt ẩn hóa hơi.</p>
+          </article>
+        </div>
+      </section>
+
+    </main>
+
+    <nav class="sub-nav">
+      <a href="chuong-nhiet-hoc.html">← Tổng quan Nhiệt học</a>
+      <a class="next" href="chuong-nhiet-hoc-khi-ly-tuong.html">Khí lý tưởng →</a>
+    </nav>
+  </div>
+
+  <script>
+    (function () {
+      const vizStage = document.getElementById('viz-stage');
+      const vizButtons = Array.from(document.querySelectorAll('.viz-btn'));
+      const vizMechanism = document.getElementById('viz-mechanism');
+      const vizExample = document.getElementById('viz-example');
+
+      const vizData = {
+        conduction: {
+          mechanism: 'Nhiệt dẫn trực tiếp qua tiếp xúc: phân tử nóng va chạm và truyền năng lượng cho phân tử lân cận lạnh hơn.',
+          example: 'Cầm muỗng kim loại nhúng vào nước sôi — tay cảm thấy nóng ngay. Kim loại dẫn nhiệt tốt hơn gỗ rất nhiều.',
+          svg: `<svg viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="barGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#D9633B"/>
+                <stop offset="100%" stop-color="#6FB8D1"/>
+              </linearGradient>
+            </defs>
+            <rect x="80" y="90" width="640" height="60" rx="10" fill="url(#barGrad)" opacity="0.85"/>
+            <text x="100" y="127" fill="#1E1B18" font-size="15" font-weight="700">NÓNG</text>
+            <text x="660" y="127" fill="#1E1B18" font-size="15" font-weight="700">LẠNH</text>
+            <text x="400" y="52" text-anchor="middle" fill="#FBF4E4" font-size="15">Nhiệt truyền từ nóng → lạnh qua tiếp xúc trực tiếp</text>
+            <g fill="#F2B544" opacity="0.7">
+              <circle cx="180" cy="120" r="6"><animate attributeName="cx" values="180;230;180" dur="1.2s" repeatCount="indefinite"/></circle>
+              <circle cx="310" cy="120" r="5"><animate attributeName="cx" values="310;360;310" dur="1.5s" repeatCount="indefinite"/></circle>
+              <circle cx="450" cy="120" r="4"><animate attributeName="cx" values="450;490;450" dur="1.8s" repeatCount="indefinite"/></circle>
+              <circle cx="580" cy="120" r="3"><animate attributeName="cx" values="580;610;580" dur="2.2s" repeatCount="indefinite"/></circle>
+            </g>
+            <text x="400" y="196" text-anchor="middle" fill="rgba(251,244,228,0.5)" font-size="13">Kích thước dao động thu nhỏ dần theo chiều lạnh hơn</text>
+          </svg>`,
+        },
+        convection: {
+          mechanism: 'Chất lỏng/khí nóng nhẹ hơn nổi lên, lạnh hơn chìm xuống — tạo dòng đối lưu tuần hoàn.',
+          example: 'Ấm đun nước: nước đáy nóng nổi lên, nước mặt lạnh chìm xuống. Gió biển: ban ngày đất nóng hơn biển, không khí đất nóng bốc lên.',
+          svg: `<svg viewBox="0 0 800 260" xmlns="http://www.w3.org/2000/svg">
+            <rect x="120" y="50" width="560" height="170" rx="14" fill="rgba(111,184,209,0.15)" stroke="rgba(111,184,209,0.3)" stroke-width="2"/>
+            <rect x="120" y="200" width="560" height="20" rx="0" fill="#D9633B" opacity="0.6"/>
+            <text x="400" y="214" text-anchor="middle" fill="#1E1B18" font-size="12" font-weight="700">NGUỒN NHIỆT</text>
+            <defs>
+              <marker id="arrUp" markerWidth="7" markerHeight="7" refX="3.5" refY="6" orient="auto">
+                <polygon points="0 7, 3.5 0, 7 7" fill="#D9633B"/>
+              </marker>
+              <marker id="arrDn" markerWidth="7" markerHeight="7" refX="3.5" refY="1" orient="auto">
+                <polygon points="0 0, 3.5 7, 7 0" fill="#6FB8D1"/>
+              </marker>
+            </defs>
+            <line x1="280" y1="195" x2="280" y2="65" stroke="#D9633B" stroke-width="3" marker-end="url(#arrUp)" stroke-dasharray="6 4">
+              <animate attributeName="stroke-dashoffset" values="10;0" dur="1s" repeatCount="indefinite"/>
+            </line>
+            <line x1="520" y1="65" x2="520" y2="195" stroke="#6FB8D1" stroke-width="3" marker-end="url(#arrDn)" stroke-dasharray="6 4">
+              <animate attributeName="stroke-dashoffset" values="10;0" dur="1s" repeatCount="indefinite"/>
+            </line>
+            <path d="M280 65 Q400 42 520 65" stroke="#D9633B" stroke-width="2" fill="none" stroke-dasharray="5 4"/>
+            <path d="M280 195 Q400 218 520 195" stroke="#6FB8D1" stroke-width="2" fill="none" stroke-dasharray="5 4"/>
+            <text x="230" y="130" fill="#D9633B" font-size="13">Nóng↑</text>
+            <text x="530" y="130" fill="#6FB8D1" font-size="13">Lạnh↓</text>
+          </svg>`,
+        },
+        radiation: {
+          mechanism: 'Truyền nhiệt qua sóng điện từ (tia hồng ngoại) — không cần môi trường vật chất. Mọi vật đều phát và hấp thụ bức xạ nhiệt.',
+          example: 'Nhiệt từ Mặt Trời truyền qua chân không vũ trụ đến Trái Đất. Bếp hồng ngoại, đèn sưởi, nhiệt kế bức xạ.',
+          svg: `<svg viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="160" cy="120" r="52" fill="#D9633B" opacity="0.9"/>
+            <text x="160" y="126" text-anchor="middle" fill="#1E1B18" font-size="14" font-weight="700">NÓNG</text>
+            <circle cx="640" cy="120" r="40" fill="#6FB8D1" opacity="0.8"/>
+            <text x="640" y="126" text-anchor="middle" fill="#1E1B18" font-size="13" font-weight="700">LẠNH</text>
+            <g stroke="#F2B544" stroke-width="2.5" fill="none">
+              <path d="M215 100 Q290 80 360 100 Q430 120 500 100 Q560 82 598 100">
+                <animate attributeName="d" values="M215 100 Q290 80 360 100 Q430 120 500 100 Q560 82 598 100;M215 100 Q290 120 360 100 Q430 80 500 100 Q560 118 598 100;M215 100 Q290 80 360 100 Q430 120 500 100 Q560 82 598 100" dur="1.4s" repeatCount="indefinite"/>
+              </path>
+              <path d="M215 120 Q310 100 395 120 Q480 140 560 120 Q592 110 598 120" opacity="0.7">
+                <animate attributeName="d" values="M215 120 Q310 100 395 120 Q480 140 560 120 Q592 110 598 120;M215 120 Q310 140 395 120 Q480 100 560 120 Q592 130 598 120;M215 120 Q310 100 395 120 Q480 140 560 120 Q592 110 598 120" dur="1.8s" repeatCount="indefinite"/>
+              </path>
+              <path d="M215 140 Q290 160 360 140 Q440 120 510 140 Q568 155 598 140" opacity="0.5">
+                <animate attributeName="d" values="M215 140 Q290 160 360 140 Q440 120 510 140 Q568 155 598 140;M215 140 Q290 120 360 140 Q440 160 510 140 Q568 125 598 140;M215 140 Q290 160 360 140 Q440 120 510 140 Q568 155 598 140" dur="2.2s" repeatCount="indefinite"/>
+              </path>
+            </g>
+            <text x="400" y="210" text-anchor="middle" fill="rgba(251,244,228,0.5)" font-size="13">Sóng hồng ngoại — không cần môi trường</text>
+          </svg>`,
+        },
+        thermo: {
+          mechanism: 'Nhiệt kế thủy ngân: chất lỏng giãn nở khi nhiệt độ tăng, dâng lên trong ống mao dẫn. Thang chia cho biết nhiệt độ.',
+          example: 'Nhiệt kế y tế đo thân nhiệt 37°C. Nhiệt kế khí hậu ghi nhiệt độ môi trường. Thủy ngân dùng vì giãn nở tuyến tính và dễ đọc.',
+          svg: `<svg viewBox="0 0 800 260" xmlns="http://www.w3.org/2000/svg">
+            <rect x="370" y="40" width="60" height="180" rx="30" fill="none" stroke="rgba(251,244,228,0.3)" stroke-width="3"/>
+            <rect x="384" y="220" width="32" height="0" rx="16" fill="#D9633B" id="mercury-body"/>
+            <circle cx="400" cy="224" r="22" fill="#D9633B"/>
+            <rect x="384" y="130" width="32" height="90" rx="4" fill="#D9633B" opacity="0.85">
+              <animate attributeName="height" values="20;90;20" dur="3s" repeatCount="indefinite"/>
+              <animate attributeName="y" values="200;130;200" dur="3s" repeatCount="indefinite"/>
+            </rect>
+            <line x1="432" y1="80" x2="460" y2="80" stroke="rgba(251,244,228,0.4)" stroke-width="1"/>
+            <line x1="432" y1="110" x2="455" y2="110" stroke="rgba(251,244,228,0.3)" stroke-width="1"/>
+            <line x1="432" y1="140" x2="460" y2="140" stroke="rgba(251,244,228,0.4)" stroke-width="1"/>
+            <line x1="432" y1="170" x2="455" y2="170" stroke="rgba(251,244,228,0.3)" stroke-width="1"/>
+            <line x1="432" y1="200" x2="460" y2="200" stroke="rgba(251,244,228,0.4)" stroke-width="1"/>
+            <text x="466" y="84" fill="rgba(251,244,228,0.7)" font-size="13">100°C</text>
+            <text x="461" y="144" fill="rgba(251,244,228,0.7)" font-size="13">50°C</text>
+            <text x="466" y="204" fill="rgba(251,244,228,0.7)" font-size="13">0°C</text>
+            <text x="400" y="28" text-anchor="middle" fill="#FBF4E4" font-size="15">Thủy ngân dâng khi nhiệt độ tăng</text>
+          </svg>`,
+        },
+      };
+
+      const render = (key) => {
+        const d = vizData[key] || vizData.conduction;
+        if (vizStage) vizStage.innerHTML = d.svg;
+        if (vizMechanism) vizMechanism.textContent = d.mechanism;
+        if (vizExample) vizExample.textContent = d.example;
+      };
+
+      vizButtons.forEach((b) => {
+        b.addEventListener('click', () => {
+          vizButtons.forEach((x) => { x.classList.remove('active'); x.setAttribute('aria-selected','false'); });
+          b.classList.add('active'); b.setAttribute('aria-selected','true');
+          render(b.dataset.viz);
+        });
+      });
+      render('conduction');
+    })();
+  </script>
+  <script>
+    (function(){
+      const body = document.body;
+      const btn  = document.getElementById('themeBtn');
+      const saved = localStorage.getItem('bewy-theme');
+      if (saved === 'dark') { body.classList.add('dark-mode'); btn.textContent = '☀ Sáng'; }
+      btn.addEventListener('click', () => {
+        const dark = body.classList.toggle('dark-mode');
+        btn.textContent = dark ? '☀ Sáng' : '☽ Tối';
+        localStorage.setItem('bewy-theme', dark ? 'dark' : 'light');
+      });
+    })();
+  </script>
+</body>
+</html>

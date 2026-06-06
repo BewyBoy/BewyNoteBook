@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vật lý · Lò xo & Dao động</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SKETCHBOOK / NOTEBOOK STYLE
+    ══════════════════════════════════════ */
+
+    /* Google Font — handwritten feel */
+    @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Caveat:wght@400;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── CSS custom properties ── */
+    :root {
+      --paper:        #F5F0E0;
+      --paper-dark:   #EDE5CC;
+      --ink:          #1A1208;
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #C44010;
+      --accent-blue:  #1A4FA0;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-g:  rgba(80, 180, 100, 0.30);
+      --line-h:       30px;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #8B7355;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #9E8565 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #6B5540 0%, transparent 50%),
+        repeating-linear-gradient(
+          45deg,
+          transparent, transparent 3px,
+          rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px
+        );
+      color: var(--ink);
+      font-family: 'Kalam', cursive;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    /* ══ Fixed nav ══ */
+    .theme-toggle {
+      position: fixed; top: 14px; right: 194px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 13px; border-radius: 4px;
+      background: var(--paper); color: var(--ink);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 13px; font-weight: 700;
+      cursor: pointer; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(-1deg);
+      transition: transform 0.1s;
+    }
+    .theme-toggle:hover { transform: rotate(0deg); border-color: var(--accent); }
+
+    .back-link {
+      position: fixed; top: 14px; right: 20px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent-blue);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(0.8deg);
+      transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent-blue); }
+
+    /* ══ Notebook page shell ══ */
+    .content-wrap {
+      width: min(1060px, 100%);
+      margin: 0 auto;
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.25),
+         6px 0 18px rgba(0,0,0,0.20),
+         0  12px 32px rgba(0,0,0,0.35);
+    }
+
+    /* ══ Ruled-paper background (pure CSS) ══ */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(
+          90deg,
+          transparent 71px,
+          var(--red-margin) 71px,
+          var(--red-margin) 73px,
+          transparent 73px
+        ),
+        repeating-linear-gradient(
+          180deg,
+          transparent 0px,
+          transparent calc(var(--line-h) - 1px),
+          var(--blue-line) calc(var(--line-h) - 1px),
+          var(--blue-line) var(--line-h)
+        );
+      background-attachment: local;
+    }
+
+    /* ══ Hero ══ */
+    .hero {
+      padding: 72px 40px 40px 96px;
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+    }
+    .crumb {
+      font-size: 12px; letter-spacing: 0.06em;
+      color: var(--ink-light); margin-bottom: 10px;
+      font-family: 'Kalam', cursive;
+    }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+
+    .title {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(40px, 6vw, 78px);
+      line-height: 1.0; color: var(--ink);
+      margin-bottom: 6px; font-weight: 700;
+    }
+    .title-stroke {
+      width: clamp(160px, 38vw, 400px); height: 3px;
+      background: var(--accent);
+      border-radius: 2px; margin-bottom: 14px;
+      transform: rotate(-0.4deg);
+    }
+    .subtitle {
+      font-family: 'Kalam', cursive;
+      font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent-blue); margin-bottom: 16px;
+    }
+    .intro {
+      max-width: 800px; font-size: 16px;
+      line-height: var(--line-h);
+      color: var(--ink-mid);
+    }
+
+    /* ══ Layout ══ */
+    .layout {
+      display: grid; grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    /* ══ Card ══ */
+    .card {
+      padding: 28px 36px 32px 96px;
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+
+    .card:nth-child(even) { background-color: var(--paper-dark); }
+    .card.ruled-page:nth-child(even) {
+      background-color: var(--paper-dark);
+    }
+
+    /* ── Punched holes strip ── */
+    .card::before,
+    .hero::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #8B7355 0%, #8B7355 55%,
+        transparent 56%
+      );
+      background-size: 36px 80px;
+      background-repeat: repeat-y;
+      background-position: 0 20px;
+    }
+
+    .card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .card-title {
+      font-family: 'Caveat', cursive;
+      font-size: 26px; color: var(--ink); line-height: 1.1;
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 2px; display: inline;
+    }
+    .tag {
+      font-family: 'Kalam', cursive;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 700; padding: 3px 10px; border-radius: 3px;
+      background: var(--highlight-y);
+      color: var(--ink); border: 1px solid rgba(26,18,8,0.18);
+      flex-shrink: 0;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.15);
+      transform: rotate(1.2deg);
+    }
+
+    .card-body {
+      font-size: 15px;
+      line-height: var(--line-h);
+      color: var(--ink-mid); margin-bottom: 16px;
+    }
+    .card-body strong { color: var(--ink); }
+    .card-body em { color: var(--accent); font-style: italic; }
+
+    /* ── Formula chips ── */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+    .chip {
+      font-family: 'Caveat', cursive;
+      font-size: 17px; padding: 3px 16px;
+      background: rgba(26,79,160,0.07);
+      border: 2px solid rgba(26,79,160,0.40);
+      border-radius: 3px; color: var(--accent-blue);
+    }
+
+    /* ── Sub-panels ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .bond {
+      background: rgba(0,0,0,0.03);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px 12px;
+      border-radius: 0 4px 4px 0;
+    }
+    .bond-name {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .bond-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Slider controls ── */
+    .controls { display: flex; flex-wrap: wrap; gap: 18px; margin: 12px 0 10px; }
+    .ctrl { display: flex; flex-direction: column; gap: 4px; }
+    .ctrl label {
+      font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-light); font-family: 'Kalam', cursive;
+    }
+    .ctrl input[type=range] { width: 150px; accent-color: var(--accent); }
+    .ctrl .val {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; color: var(--accent); font-weight: 700;
+    }
+
+    /* ── Readouts ── */
+    .readouts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .readout {
+      font-family: 'Caveat', cursive; font-size: 15px;
+      background: rgba(196,64,16,0.07);
+      border: 1.5px solid rgba(196,64,16,0.28);
+      border-radius: 3px; padding: 4px 12px;
+      color: var(--ink-mid);
+    }
+    .readout span { color: var(--accent); font-weight: 700; }
+
+    /* ── Viz toolbar ── */
+    .viz-toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .viz-btn {
+      font-family: 'Kalam', cursive;
+      padding: 5px 13px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.22);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background 0.12s, transform 0.1s;
+    }
+    .viz-btn:hover { background: var(--highlight-y); color: var(--ink); transform: translateY(-1px); }
+    .viz-btn.active {
+      background: var(--highlight-y); color: var(--ink);
+      border-color: var(--accent);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .viz-stage {
+      background: #151C14;
+      border: 2px solid rgba(26,18,8,0.30);
+      border-radius: 4px; overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .viz-stage canvas { display: block; }
+
+    /* ── Highlight box ── */
+    .aero-card {
+      background: var(--highlight-g);
+      border-left: 3px solid var(--accent-blue);
+      border-radius: 0 4px 4px 0;
+      padding: 16px 18px 14px; margin-top: 4px;
+    }
+    .aero-title {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent-blue); margin-bottom: 7px;
+    }
+    .aero-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Compare table ── */
+    .compare { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .compare th {
+      padding: 8px 12px; text-align: left;
+      background: rgba(196,64,16,0.10); color: var(--accent);
+      font-weight: 700; letter-spacing: 0.05em; font-size: 11px;
+      text-transform: uppercase;
+      border-bottom: 2px solid rgba(196,64,16,0.28);
+    }
+    .compare td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--blue-line);
+      color: var(--ink-mid); vertical-align: top;
+    }
+    .compare tr:last-child td { border-bottom: none; }
+    .compare tr:hover td { background: var(--highlight-y); }
+
+    /* ── Spring / interactive controls (for spring page) ── */
+    .spring-demo { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+    .spring-canvas-wrap canvas { display: block; border-radius: 4px; background: #0E1410; border: 2px solid rgba(26,18,8,0.30); cursor: grab; }
+    .spring-canvas-wrap canvas:active { cursor: grabbing; }
+    .spring-controls { display: flex; flex-direction: column; gap: 14px; }
+    .ctrl-group {
+      background: rgba(0,0,0,0.04);
+      border: 1px solid rgba(26,18,8,0.12);
+      border-radius: 4px; padding: 14px;
+    }
+    .ctrl-label {
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); font-weight: 700; margin-bottom: 8px;
+      font-family: 'Kalam', cursive;
+    }
+    .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .slider-row label { font-size: 13px; color: var(--ink-mid); width: 100px; flex-shrink: 0; }
+    .slider-row input[type=range] { flex: 1; accent-color: var(--accent); }
+    .slider-row .val { font-size: 13px; color: var(--accent-blue); width: 54px; text-align: right; font-family: 'Caveat', cursive; }
+    .btn-row { display: flex; gap: 8px; margin-top: 4px; }
+    .ctrl-btn {
+      flex: 1; padding: 7px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.20);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      font-family: 'Kalam', cursive;
+      transition: background 0.12s;
+    }
+    .ctrl-btn:hover { background: var(--highlight-y); color: var(--ink); }
+    .ctrl-btn.active { background: var(--highlight-y); border-color: var(--accent); color: var(--ink); }
+
+    /* ══ Dark mode ══ */
+    body.dark-mode {
+      background: #3A3020;
+      --paper:      #1C1810;
+      --paper-dark: #211E12;
+      --ink:        #EDE0C0;
+      --ink-mid:    #C4AE82;
+      --ink-light:  #8A7658;
+      --blue-line:  rgba(80, 110, 180, 0.18);
+      --red-margin: rgba(200, 70, 70, 0.5);
+      --highlight-y: rgba(180, 150, 30, 0.35);
+      --highlight-g: rgba(50, 130, 70, 0.20);
+    }
+    body.dark-mode .content-wrap {
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.5),
+         6px 0 18px rgba(0,0,0,0.4),
+         0  12px 32px rgba(0,0,0,0.6);
+    }
+    body.dark-mode .card::before,
+    body.dark-mode .hero::before {
+      background-color: rgba(0,0,0,0.15);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #3A3020 0%, #3A3020 55%,
+        transparent 56%
+      );
+    }
+
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .spring-demo { grid-template-columns: 1fr; }
+      .theme-toggle { right: 172px; }
+    }
+    @media (max-width: 640px) {
+      .theme-toggle, .back-link { position: absolute; top: 10px; }
+      .theme-toggle { right: 148px; } .back-link { right: 12px; }
+      .hero, .card { padding-left: 56px; }
+      .card::before, .hero::before { width: 28px; background-size: 28px 80px; }
+    }
+  </style>
+</head>
+<body>
+  <button id="themeBtn" class="theme-toggle" type="button">☽ Tối</button>
+  <a class="back-link" href="Learning Resources Hub v4.html">← Thư viện</a>
+
+  <div class="content-wrap">
+    <header class="hero ruled-page">
+        <div class="crumb"><a href="Learning Resources Hub v4.html">Vật lý</a> › <span>Cơ học</span> › <span>Lò xo</span></div>
+        <h1 class="title">Lò xo &amp; Dao động</h1>
+        <div class="title-stroke"></div>
+        <p class="subtitle">Định luật Hooke · Dao động điều hòa · Năng lượng</p>
+        <p class="intro">
+          Lò xo là hệ vật lý đơn giản nhất thể hiện dao động. Từ định luật Hooke đến dao động điều hòa và cộng hưởng — mọi hệ dao động trong tự nhiên đều tuân theo cùng một bộ phương trình.
+        </p>
+    </header>
+
+    <main class="layout">
+
+      <!-- ══ 1. Định luật Hooke ══ -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Định luật Hooke</h2>
+          <span class="tag">Lực phục hồi</span>
+        </div>
+        <p class="card-body">
+          Khi lò xo bị kéo hoặc nén một đoạn x so với vị trí tự nhiên, nó sinh ra một lực đàn hồi ngược chiều với biến dạng và tỉ lệ với độ biến dạng đó. Đây là định luật Hooke — có hiệu lực trong <em>giới hạn đàn hồi</em> của vật liệu.
+        </p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Công thức</div>
+            <div class="bond-body">
+              <strong style="color:#6DDBB0;font-size:18px;">F = −kx</strong><br><br>
+              F: lực đàn hồi (N)<br>
+              k: độ cứng lò xo (N/m)<br>
+              x: độ biến dạng so với vị trí cân bằng (m)<br>
+              Dấu (−): lực luôn hướng về vị trí cân bằng
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Độ cứng k</div>
+            <div class="bond-body">
+              k đặc trưng cho độ "cứng" của lò xo.<br><br>
+              k lớn → lò xo cứng, khó biến dạng<br>
+              k nhỏ → lò xo mềm, dễ biến dạng<br><br>
+              Đơn vị: N/m<br>
+              Thép: k ≈ 10³–10⁵ N/m<br>
+              Cao su mềm: k ≈ 10–100 N/m
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Ghép lò xo nối tiếp</div>
+            <div class="bond-body">
+              1/k_tđ = 1/k₁ + 1/k₂<br>
+              (tương tự điện trở song song)<br><br>
+              Cùng lực tác dụng, độ giãn cộng lại<br>
+              k_tđ &lt; k₁, k₂ → mềm hơn
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Ghép lò xo song song</div>
+            <div class="bond-body">
+              k_tđ = k₁ + k₂<br>
+              (tương tự điện trở nối tiếp)<br><br>
+              Cùng độ giãn, lực cộng lại<br>
+              k_tđ &gt; k₁, k₂ → cứng hơn
+            </div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">F = −kx</span>
+          <span class="chip">1/k_nt = Σ1/kᵢ</span>
+          <span class="chip">k_ss = Σkᵢ</span>
+          <span class="chip">Giới hạn đàn hồi</span>
+        </div>
+      </section>
+
+      <!-- ══ 2. Interactive Spring ══ -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Mô phỏng tương tác</h2>
+          <span class="tag">Kéo để thử</span>
+        </div>
+        <p class="card-body">Kéo khối nặng lên/xuống để quan sát lực đàn hồi, gia tốc và năng lượng thay đổi theo thời gian thực. Dùng thanh trượt để thay đổi độ cứng k và khối lượng m.</p>
+
+        <div class="spring-demo">
+          <!-- Spring canvas -->
+          <div class="spring-canvas-wrap">
+            <canvas id="spring-canvas" width="480" height="420"></canvas>
+          </div>
+
+          <!-- Controls -->
+          <div class="spring-controls">
+            <div class="ctrl-group">
+              <div class="ctrl-label">Thông số</div>
+              <div class="slider-row">
+                <label>Độ cứng k</label>
+                <input type="range" id="sl-k" min="50" max="400" value="150" step="10">
+                <span class="val" id="v-k">150 N/m</span>
+              </div>
+              <div class="slider-row">
+                <label>Khối lượng m</label>
+                <input type="range" id="sl-m" min="0.2" max="3" value="1" step="0.1">
+                <span class="val" id="v-m">1.0 kg</span>
+              </div>
+              <div class="slider-row">
+                <label>Tắt dần b</label>
+                <input type="range" id="sl-b" min="0" max="6" value="0" step="0.2">
+                <span class="val" id="v-b">0 (lý tưởng)</span>
+              </div>
+            </div>
+
+            <div class="ctrl-group">
+              <div class="ctrl-label">Điều khiển</div>
+              <div class="btn-row">
+                <button class="ctrl-btn" id="btn-pause">⏸ Pause</button>
+                <button class="ctrl-btn" id="btn-reset">↺ Reset</button>
+              </div>
+            </div>
+
+            <div class="ctrl-group">
+              <div class="ctrl-label">Đọc số</div>
+              <div class="readout">
+                <div class="readout-item"><strong id="rd-x">0.00 m</strong>Độ lệch x</div>
+                <div class="readout-item"><strong id="rd-v">0.00 m/s</strong>Vận tốc v</div>
+                <div class="readout-item"><strong id="rd-F">0.00 N</strong>Lực F</div>
+                <div class="readout-item"><strong id="rd-a">0.00 m/s²</strong>Gia tốc a</div>
+                <div class="readout-item"><strong id="rd-Ep">0.00 J</strong>Thế năng</div>
+                <div class="readout-item"><strong id="rd-Ek">0.00 J</strong>Động năng</div>
+                <div class="readout-item" style="grid-column:1/-1"><strong id="rd-T">— s</strong>Chu kỳ T</div>
+              </div>
+            </div>
+
+            <div class="ctrl-group">
+              <div class="ctrl-label">Biên độ ban đầu</div>
+              <div class="slider-row">
+                <label>Biên độ A</label>
+                <input type="range" id="sl-A" min="20" max="150" value="80" step="5">
+                <span class="val" id="v-A">0.08 m</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ 3. Dao động điều hòa ══ -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Dao động điều hòa</h2>
+          <span class="tag">SHM</span>
+        </div>
+        <p class="card-body">
+          Khi lực phục hồi tỉ lệ với độ lệch (F = −kx), hệ thực hiện <strong>dao động điều hòa (Simple Harmonic Motion)</strong>. Phương trình chuyển động là phương trình vi phân bậc hai có nghiệm hình sin — vị trí, vận tốc và gia tốc đều dao động tuần hoàn, nhưng lệch pha nhau.
+        </p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Phương trình chuyển động</div>
+            <div class="bond-body">
+              x(t) = A·cos(ωt + φ₀)<br>
+              v(t) = −Aω·sin(ωt + φ₀)<br>
+              a(t) = −Aω²·cos(ωt + φ₀)<br><br>
+              A: biên độ (m)<br>
+              ω: tần số góc (rad/s)<br>
+              φ₀: pha ban đầu (rad)
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Tần số &amp; Chu kỳ</div>
+            <div class="bond-body">
+              ω = √(k/m) (rad/s)<br>
+              T = 2π/ω = 2π√(m/k)<br>
+              f = 1/T = (1/2π)√(k/m)<br><br>
+              T tăng khi m tăng (nặng hơn → chậm hơn)<br>
+              T giảm khi k tăng (cứng hơn → nhanh hơn)<br>
+              T <em>không phụ thuộc</em> biên độ A!
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Hệ lò xo — con lắc đơn</div>
+            <div class="bond-body">
+              Lò xo: T = 2π√(m/k)<br>
+              Con lắc đơn: T = 2π√(L/g)<br><br>
+              Tương đồng: k ↔ mg/L<br>
+              Cả hai đều là dao động điều hòa khi biên độ nhỏ.
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Lệch pha</div>
+            <div class="bond-body">
+              x và a lệch pha π (ngược chiều nhau)<br>
+              v lệch pha π/2 so với x<br><br>
+              Khi x = A (biên): v = 0, |a| = max<br>
+              Khi x = 0 (cân bằng): |v| = max, a = 0
+            </div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">x = A cos(ωt+φ₀)</span>
+          <span class="chip">ω = √(k/m)</span>
+          <span class="chip">T = 2π√(m/k)</span>
+          <span class="chip">v_max = Aω</span>
+          <span class="chip">a_max = Aω²</span>
+        </div>
+      </section>
+
+      <!-- ══ 4. Năng lượng ══ -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Năng lượng trong dao động</h2>
+          <span class="tag">Bảo toàn</span>
+        </div>
+        <p class="card-body">
+          Trong dao động lý tưởng (không ma sát), tổng cơ năng được bảo toàn. Thế năng đàn hồi và động năng liên tục chuyển hóa qua lại — khi thế năng cực đại thì động năng bằng 0 và ngược lại.
+        </p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Thế năng đàn hồi</div>
+            <div class="bond-body">
+              W_đh = ½kx²<br>
+              = ½kA²cos²(ωt + φ₀)<br><br>
+              Cực đại tại x = ±A (biên dao động)<br>
+              Bằng 0 tại x = 0 (vị trí cân bằng)
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Động năng</div>
+            <div class="bond-body">
+              W_đ = ½mv²<br>
+              = ½mA²ω²sin²(ωt + φ₀)<br><br>
+              Cực đại tại x = 0 (vị trí cân bằng)<br>
+              Bằng 0 tại x = ±A (biên dao động)
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Cơ năng toàn phần</div>
+            <div class="bond-body">
+              E = W_đh + W_đ = ½kA²<br><br>
+              Không đổi theo thời gian (lý tưởng)<br>
+              E tỉ lệ với bình phương biên độ<br>
+              v tại vị trí x: v = ω√(A²−x²)
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Dao động tắt dần</div>
+            <div class="bond-body">
+              Có ma sát → E giảm dần theo thời gian<br>
+              A(t) = A₀·e^(−bt/2m)<br>
+              b: hệ số tắt dần (kg/s)<br><br>
+              Tắt dần yếu: vẫn dao động tuần hoàn<br>
+              Tắt dần tới hạn: nhanh nhất về cân bằng
+            </div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">W_đh = ½kx²</span>
+          <span class="chip">W_đ = ½mv²</span>
+          <span class="chip">E = ½kA² = const</span>
+          <span class="chip">v = ω√(A²−x²)</span>
+          <span class="chip">A(t) = A₀e^(−bt/2m)</span>
+        </div>
+      </section>
+
+      <!-- ══ 5. Graph Viz ══ -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Đồ thị dao động</h2>
+          <span class="tag">Viz</span>
+        </div>
+        <div class="viz-toolbar">
+          <button class="viz-btn active" onclick="setGraph('xvt')">x, v, a theo t</button>
+          <button class="viz-btn" onclick="setGraph('energy')">Năng lượng theo t</button>
+          <button class="viz-btn" onclick="setGraph('phase')">Không gian pha (x,v)</button>
+          <button class="viz-btn" onclick="setGraph('damped')">Tắt dần</button>
+        </div>
+        <div class="viz-stage">
+          <canvas id="graph-canvas" width="1000" height="240"></canvas>
+        </div>
+      </section>
+
+      <!-- ══ 6. Cộng hưởng ══ -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Cộng hưởng &amp; Ứng dụng</h2>
+          <span class="tag">Resonance</span>
+        </div>
+        <p class="card-body">
+          Khi tần số lực kích thích bằng tần số tự nhiên ω₀ = √(k/m), biên độ dao động tăng lên đột ngột — gọi là cộng hưởng. Cộng hưởng có thể hữu ích (nhạc cụ, cầu MRI) hoặc nguy hiểm (sập cầu Tacoma, động đất).
+        </p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Điều kiện cộng hưởng</div>
+            <div class="bond-body">
+              ω_kích = ω₀ = √(k/m)<br>
+              f_kích = f₀ = (1/2π)√(k/m)<br><br>
+              Tắt dần nhỏ → biên độ cộng hưởng rất lớn<br>
+              Tắt dần lớn → biên độ cộng hưởng bị hạn chế
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Ứng dụng thực tế</div>
+            <div class="bond-body">
+              Giảm xóc xe: hệ lò xo + tắt dần<br>
+              Đàn guitar: cộng hưởng hộp âm<br>
+              MRI: cộng hưởng từ hạt nhân<br>
+              Thiết kế cầu: tránh cộng hưởng gió<br>
+              Đồng hồ lò xo (chronograph)
+            </div>
+          </article>
+        </div>
+
+        <!-- ══ So sánh ══ -->
+        <h3 style="font-size:17px;color:#FBF4E4;margin:22px 0 12px;">So sánh các hệ dao động</h3>
+        <table class="compare">
+          <thead><tr><th>Đặc điểm</th><th>Lò xo ngang</th><th>Lò xo đứng</th><th>Con lắc đơn</th><th>Con lắc vật lý</th></tr></thead>
+          <tbody>
+            <tr><td>Lực phục hồi</td><td>−kx</td><td>−kx (tính từ VTCB mới)</td><td>−mg sinθ ≈ −mgθ</td><td>−MgL sinθ</td></tr>
+            <tr><td>Chu kỳ T</td><td>2π√(m/k)</td><td>2π√(m/k)</td><td>2π√(L/g)</td><td>2π√(I/MgL)</td></tr>
+            <tr><td>Phụ thuộc biên độ</td><td>Không</td><td>Không</td><td>Không (góc nhỏ)</td><td>Không (góc nhỏ)</td></tr>
+            <tr><td>Ví dụ</td><td>Lò xo trên mặt phẳng</td><td>Cân lò xo, giảm xóc</td><td>Đồng hồ quả lắc</td><td>Cánh tay, cửa quay</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const body = document.body;
+      const btn  = document.getElementById('themeBtn');
+      const saved = localStorage.getItem('bewy-theme');
+      if (saved === 'dark') { body.classList.add('dark-mode'); btn.textContent = '☀ Sáng'; }
+      btn.addEventListener('click', () => {
+        const dark = body.classList.toggle('dark-mode');
+        btn.textContent = dark ? '☀ Sáng' : '☽ Tối';
+        localStorage.setItem('bewy-theme', dark ? 'dark' : 'light');
+      });
+    })();
+
+  /* ════════════════════════════════════════════
+     INTERACTIVE SPRING SIMULATION
+  ════════════════════════════════════════════ */
+  (function(){
+    const cv  = document.getElementById('spring-canvas');
+    const ctx = cv.getContext('2d');
+    const W   = cv.width, H = cv.height;
+
+    // Physics state
+    let k=150, m=1, b=0, A_px=80;
+    let x=80, v=0;          // x in pixels from equilibrium
+    const PX_PER_M = 1000;  // 1000 px = 1 m
+    const EQUIL_Y  = H/2;
+    const WALL_Y   = 40;
+    const BLOCK_W  = 54, BLOCK_H = 40;
+
+    let paused = false;
+    let dragging = false;
+    let lastTime = null;
+    let animId;
+
+    // History for trailing graph on canvas bottom
+    const xHist=[], vHist=[], tHist=[];
+    const MAX_HIST = 400;
+
+    function physX() { return x / PX_PER_M; }    // metres
+    function pxToM(px) { return px / PX_PER_M; }
+
+    function updateReadouts(){
+      const xM  = physX();
+      const vMs = v / PX_PER_M;
+      const F   = -k * xM;
+      const acc = F / m;
+      const Ep  = 0.5 * k * xM * xM;
+      const Ek  = 0.5 * m * vMs * vMs;
+      const T   = 2*Math.PI*Math.sqrt(m/k);
+      document.getElementById('rd-x').textContent  = xM.toFixed(3)+' m';
+      document.getElementById('rd-v').textContent  = vMs.toFixed(3)+' m/s';
+      document.getElementById('rd-F').textContent  = F.toFixed(2)+' N';
+      document.getElementById('rd-a').textContent  = acc.toFixed(2)+' m/s²';
+      document.getElementById('rd-Ep').textContent = Ep.toFixed(3)+' J';
+      document.getElementById('rd-Ek').textContent = Ek.toFixed(3)+' J';
+      document.getElementById('rd-T').textContent  = T.toFixed(3)+' s';
+    }
+
+    /* ── Draw coil spring ── */
+    function drawSpring(x1,y1,x2,y2,coils,r){
+      const dx=x2-x1, dy=y2-y1;
+      const len=Math.sqrt(dx*dx+dy*dy);
+      const ux=dx/len, uy=dy/len;
+      const px=-uy, py=ux;
+      const pts=[];
+      const N=coils*6;
+      for(let i=0;i<=N;i++){
+        const t=i/N;
+        const along=x1+ux*len*t;
+        const across=y1+uy*len*t;
+        const phase=i/N*coils*Math.PI*2;
+        const amp=(i===0||i===N)?0:r*Math.sin(phase);
+        pts.push([along+px*amp, across+py*amp]);
+      }
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0],pts[0][1]);
+      for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
+      ctx.strokeStyle='rgba(110,219,176,0.85)';
+      ctx.lineWidth=2.5;
+      ctx.lineJoin='round';
+      ctx.stroke();
+    }
+
+    function draw(ts){
+      if(!lastTime) lastTime=ts;
+      const dt=Math.min((ts-lastTime)/1000, 0.025); // cap at 25ms
+      lastTime=ts;
+
+      if(!paused && !dragging){
+        const xM=physX();
+        const F=-k*xM - b*(v/PX_PER_M);
+        const a=(F/m)*PX_PER_M;
+        v+=a*dt;
+        x+=v*dt;
+      }
+
+      ctx.clearRect(0,0,W,H);
+
+      // Background grid lines
+      ctx.strokeStyle='rgba(251,244,228,0.04)';
+      ctx.lineWidth=1;
+      for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+      // Wall (ceiling)
+      ctx.fillStyle='rgba(251,244,228,0.12)';
+      ctx.fillRect(0,0,W,WALL_Y);
+      // Hatch marks
+      ctx.strokeStyle='rgba(251,244,228,0.18)'; ctx.lineWidth=1;
+      for(let xi=0;xi<W;xi+=20){ctx.beginPath();ctx.moveTo(xi,WALL_Y);ctx.lineTo(xi-12,WALL_Y-14);ctx.stroke();}
+
+      // Equilibrium dashed line
+      ctx.setLineDash([6,4]);
+      ctx.strokeStyle='rgba(251,244,228,0.2)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(50,EQUIL_Y); ctx.lineTo(W-20,EQUIL_Y); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='rgba(251,244,228,0.35)'; ctx.font='11px monospace'; ctx.textAlign='left';
+      ctx.fillText('x = 0 (cân bằng)', 54, EQUIL_Y-5);
+
+      // Spring
+      const blockCY = EQUIL_Y + x;
+      const springBottom = blockCY - BLOCK_H/2;
+      drawSpring(W/2, WALL_Y, W/2, springBottom, 10, 18);
+
+      // Block
+      const bx = W/2 - BLOCK_W/2;
+      const by = blockCY - BLOCK_H/2;
+      const bgrad=ctx.createLinearGradient(bx,by,bx,by+BLOCK_H);
+      bgrad.addColorStop(0,'rgba(100,200,160,0.9)');
+      bgrad.addColorStop(1,'rgba(30,100,70,0.85)');
+      ctx.fillStyle=bgrad;
+      ctx.beginPath(); ctx.roundRect(bx,by,BLOCK_W,BLOCK_H,6);
+      ctx.fill();
+      ctx.strokeStyle='rgba(110,219,176,0.6)'; ctx.lineWidth=1.5; ctx.stroke();
+      // Mass label
+      ctx.fillStyle='#FBF4E4'; ctx.font='bold 13px serif'; ctx.textAlign='center';
+      ctx.fillText('m', W/2, blockCY+5);
+
+      // Displacement arrow
+      if(Math.abs(x)>4){
+        const aColor = x>0 ? 'rgba(242,181,68,0.8)' : 'rgba(100,180,255,0.8)';
+        ctx.strokeStyle=aColor; ctx.fillStyle=aColor; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.moveTo(W/2+36, EQUIL_Y); ctx.lineTo(W/2+36, blockCY);
+        ctx.stroke();
+        const dir = x>0 ? 1 : -1;
+        ctx.beginPath(); ctx.moveTo(W/2+36, blockCY); ctx.lineTo(W/2+30, blockCY-dir*10); ctx.lineTo(W/2+42, blockCY-dir*10); ctx.closePath(); ctx.fill();
+        const xM=physX();
+        ctx.font='12px monospace'; ctx.textAlign='left';
+        ctx.fillText(`x=${xM.toFixed(3)}m`, W/2+46, (EQUIL_Y+blockCY)/2+4);
+      }
+
+      // Force arrow
+      const F=-k*physX();
+      if(Math.abs(F)>0.05){
+        const fScale=120/k;
+        const fLen=Math.min(F*fScale, 90);
+        const fCol='rgba(255,120,90,0.85)';
+        ctx.strokeStyle=fCol; ctx.fillStyle=fCol; ctx.lineWidth=2.5;
+        ctx.beginPath(); ctx.moveTo(W/2-46, blockCY); ctx.lineTo(W/2-46, blockCY-fLen); ctx.stroke();
+        const dir2=fLen>0?1:-1;
+        ctx.beginPath(); ctx.moveTo(W/2-46, blockCY-fLen); ctx.lineTo(W/2-52, blockCY-fLen+dir2*10); ctx.lineTo(W/2-40, blockCY-fLen+dir2*10); ctx.closePath(); ctx.fill();
+        ctx.font='11px monospace'; ctx.textAlign='right';
+        ctx.fillText(`F=${F.toFixed(1)}N`, W/2-56, blockCY-fLen/2+4);
+      }
+
+      // Mini x(t) graph at bottom of canvas
+      const GRAPH_Y=H-80, GRAPH_H=60;
+      ctx.strokeStyle='rgba(251,244,228,0.06)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(0,GRAPH_Y+GRAPH_H/2); ctx.lineTo(W,GRAPH_Y+GRAPH_H/2); ctx.stroke();
+      ctx.fillStyle='rgba(8,12,10,0.5)'; ctx.fillRect(0,GRAPH_Y-2,W,GRAPH_H+4);
+      ctx.fillStyle='rgba(251,244,228,0.15)'; ctx.font='10px monospace'; ctx.textAlign='left';
+      ctx.fillText('x(t)', 4, GRAPH_Y+12);
+
+      if(!paused && !dragging) xHist.push(x);
+      if(xHist.length>MAX_HIST) xHist.shift();
+
+      const A_px_cur = A_px || 80;
+      if(xHist.length>1){
+        ctx.beginPath();
+        xHist.forEach((xv,i)=>{
+          const gx=i*(W/MAX_HIST);
+          const gy=GRAPH_Y+GRAPH_H/2 + xv*(GRAPH_H*0.45/A_px_cur);
+          i===0?ctx.moveTo(gx,gy):ctx.lineTo(gx,gy);
+        });
+        ctx.strokeStyle='rgba(110,219,176,0.7)'; ctx.lineWidth=1.5; ctx.stroke();
+      }
+
+      updateReadouts();
+      animId=requestAnimationFrame(draw);
+    }
+
+    // Start
+    x=A_px; v=0;
+    animId=requestAnimationFrame(draw);
+
+    // Slider bindings
+    const slK=document.getElementById('sl-k');
+    const slM=document.getElementById('sl-m');
+    const slB=document.getElementById('sl-b');
+    const slA=document.getElementById('sl-A');
+
+    slK.addEventListener('input',()=>{k=+slK.value;document.getElementById('v-k').textContent=k+' N/m';});
+    slM.addEventListener('input',()=>{m=+slM.value;document.getElementById('v-m').textContent=(+slM.value).toFixed(1)+' kg';});
+    slB.addEventListener('input',()=>{
+      b=+slB.value;
+      document.getElementById('v-b').textContent=b===0?'0 (lý tưởng)':b.toFixed(1)+' kg/s';
+    });
+    slA.addEventListener('input',()=>{
+      A_px=+slA.value;
+      document.getElementById('v-A').textContent=(A_px/PX_PER_M).toFixed(2)+' m';
+    });
+
+    // Buttons
+    document.getElementById('btn-pause').addEventListener('click',function(){
+      paused=!paused;
+      this.textContent=paused?'▶ Play':'⏸ Pause';
+    });
+    document.getElementById('btn-reset').addEventListener('click',()=>{
+      x=A_px; v=0; xHist.length=0; lastTime=null;
+    });
+
+    // Drag interaction
+    let dragStartY=0, dragStartX=0;
+    cv.addEventListener('mousedown',e=>{
+      const rect=cv.getBoundingClientRect();
+      const my=e.clientY-rect.top;
+      const blockCY=EQUIL_Y+x;
+      if(Math.abs(my-blockCY)<40){dragging=true;dragStartY=e.clientY;dragStartX=x;v=0;}
+    });
+    window.addEventListener('mousemove',e=>{
+      if(!dragging)return;
+      const rect=cv.getBoundingClientRect();
+      const dy=e.clientY-dragStartY;
+      x=Math.max(-A_px*1.8,Math.min(A_px*1.8,dragStartX+dy));
+    });
+    window.addEventListener('mouseup',()=>{if(dragging){dragging=false;}});
+    // Touch
+    cv.addEventListener('touchstart',e=>{
+      const rect=cv.getBoundingClientRect();
+      const my=e.touches[0].clientY-rect.top;
+      const blockCY=EQUIL_Y+x;
+      if(Math.abs(my-blockCY)<50){dragging=true;dragStartY=e.touches[0].clientY;dragStartX=x;v=0;}
+    },{passive:true});
+    window.addEventListener('touchmove',e=>{
+      if(!dragging)return;
+      const dy=e.touches[0].clientY-dragStartY;
+      x=Math.max(-A_px*1.8,Math.min(A_px*1.8,dragStartX+dy));
+    },{passive:true});
+    window.addEventListener('touchend',()=>{if(dragging)dragging=false;});
+  })();
+
+  /* ════════════════════════════════════════════
+     GRAPH VIZ
+  ════════════════════════════════════════════ */
+  let currentGraph='xvt';
+  function setGraph(name){
+    currentGraph=name;
+    document.querySelectorAll('.viz-btn').forEach(b=>{
+      const map={xvt:'x, v, a theo t',energy:'Năng lượng theo t',phase:'Không gian pha (x,v)',damped:'Tắt dần'};
+      b.classList.toggle('active',b.textContent.trim()===map[name]);
+    });
+  }
+
+  (function(){
+    const cv=document.getElementById('graph-canvas');
+    const ctx=cv.getContext('2d');
+    const W=cv.width, H=cv.height;
+    let t=0;
+
+    // Read live params from sliders
+    function params(){
+      const k=+document.getElementById('sl-k').value;
+      const m=+document.getElementById('sl-m').value;
+      const b=+document.getElementById('sl-b').value;
+      const A=+document.getElementById('sl-A').value/1000; // metres
+      const w=Math.sqrt(k/m);
+      return {k,m,b,A,w};
+    }
+
+    function axis(label,color,x1,y,x2){
+      ctx.strokeStyle=color; ctx.lineWidth=1;
+      ctx.setLineDash([4,3]);
+      ctx.beginPath(); ctx.moveTo(x1,y); ctx.lineTo(x2,y); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle=color; ctx.font='11px monospace'; ctx.textAlign='left';
+      ctx.fillText(label,x1+2,y-4);
+    }
+
+    function drawXVT(){
+      const {k,m,b,A,w}=params();
+      const pad=30, gW=W-pad*2, gH=(H-pad*2)/3;
+      const T=2*Math.PI/w;
+      const cycles=4;
+      const tMax=T*cycles;
+      // Axis labels
+      ctx.fillStyle='rgba(251,244,228,0.35)'; ctx.font='11px monospace';
+      const colors=['#6DDBB0','#F2B544','#FF8C5A'];
+      const labels=['x(t) — vị trí','v(t) — vận tốc','a(t) — gia tốc'];
+      [0,1,2].forEach(row=>{
+        const yBase=pad+row*gH+gH/2;
+        axis('',colors[row],pad,yBase,W-pad);
+        ctx.fillStyle=colors[row]; ctx.font='bold 11px monospace'; ctx.textAlign='left';
+        ctx.fillText(labels[row],pad+4,pad+row*gH+14);
+        ctx.beginPath();
+        for(let i=0;i<=gW;i++){
+          const tt=i/gW*tMax;
+          const decay=Math.exp(-b*tt/(2*m));
+          let val;
+          if(row===0) val=A*Math.cos(w*tt)*decay;
+          else if(row===1) val=-A*w*Math.sin(w*tt)*decay;
+          else val=-A*w*w*Math.cos(w*tt)*decay;
+          const norm=(row===0)?A:(row===1?A*w:A*w*w);
+          const py=yBase-val/norm*(gH*0.44);
+          i===0?ctx.moveTo(pad+i,py):ctx.lineTo(pad+i,py);
+        }
+        ctx.strokeStyle=colors[row]; ctx.lineWidth=2; ctx.stroke();
+      });
+      // Time axis
+      ctx.fillStyle='rgba(251,244,228,0.3)'; ctx.font='10px monospace'; ctx.textAlign='center';
+      for(let c=0;c<=cycles;c++){
+        const px=pad+c/cycles*gW;
+        ctx.fillText(`${c}T`,px,H-4);
+        ctx.strokeStyle='rgba(251,244,228,0.08)'; ctx.lineWidth=1;
+        ctx.beginPath(); ctx.moveTo(px,pad); ctx.lineTo(px,H-pad); ctx.stroke();
+      }
+    }
+
+    function drawEnergy(){
+      const {k,m,b,A,w}=params();
+      const pad=30, gW=W-pad*2, gH=H-pad*2;
+      const T=2*Math.PI/w, tMax=T*5;
+      const E0=0.5*k*A*A;
+
+      // Total energy line
+      ctx.setLineDash([5,3]);
+      ctx.strokeStyle='rgba(251,244,228,0.25)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(pad,pad+gH*(1-1)); ctx.lineTo(W-pad,pad); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='rgba(251,244,228,0.3)'; ctx.font='10px monospace'; ctx.textAlign='left';
+      ctx.fillText('E = ½kA²',pad+2,pad+12);
+
+      // Ep
+      ctx.beginPath();
+      for(let i=0;i<=gW;i++){
+        const tt=i/gW*tMax;
+        const decay=b>0?Math.exp(-b*tt/m):1;
+        const xv=A*Math.cos(w*tt)*Math.sqrt(decay);
+        const Ep=0.5*k*xv*xv;
+        const py=pad+gH*(1-Ep/E0);
+        i===0?ctx.moveTo(pad+i,py):ctx.lineTo(pad+i,py);
+      }
+      ctx.strokeStyle='rgba(242,181,68,0.85)'; ctx.lineWidth=2; ctx.stroke();
+      ctx.fillStyle='rgba(242,181,68,0.7)'; ctx.fillText('Thế năng W_đh',pad+2,pad+28);
+
+      // Ek
+      ctx.beginPath();
+      for(let i=0;i<=gW;i++){
+        const tt=i/gW*tMax;
+        const decay=b>0?Math.exp(-b*tt/m):1;
+        const xv=A*Math.cos(w*tt)*Math.sqrt(decay);
+        const vv=-A*w*Math.sin(w*tt)*Math.sqrt(decay);
+        const Ek=0.5*m*vv*vv;
+        const py=pad+gH*(1-Ek/E0);
+        i===0?ctx.moveTo(pad+i,py):ctx.lineTo(pad+i,py);
+      }
+      ctx.strokeStyle='rgba(110,219,176,0.85)'; ctx.lineWidth=2; ctx.stroke();
+      ctx.fillStyle='rgba(110,219,176,0.7)'; ctx.fillText('Động năng W_đ',pad+2,pad+42);
+
+      // Total E
+      if(b>0){
+        ctx.beginPath();
+        for(let i=0;i<=gW;i++){
+          const tt=i/gW*tMax;
+          const decay=Math.exp(-b*tt/m);
+          const E=E0*decay;
+          const py=pad+gH*(1-E/E0);
+          i===0?ctx.moveTo(pad+i,py):ctx.lineTo(pad+i,py);
+        }
+        ctx.setLineDash([4,2]);
+        ctx.strokeStyle='rgba(255,120,90,0.6)'; ctx.lineWidth=1.5; ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle='rgba(255,120,90,0.6)'; ctx.fillText('Cơ năng E (tắt dần)',pad+2,pad+56);
+      }
+
+      ctx.fillStyle='rgba(251,244,228,0.2)'; ctx.font='10px monospace'; ctx.textAlign='center';
+      ctx.fillText('Thời gian →',W/2,H-4);
+    }
+
+    function drawPhase(){
+      const {k,m,b,A,w}=params();
+      const cx=W/2, cy=H/2;
+      const rX=Math.min(cx,cy)*0.72;
+      const rY=rX;
+      // Axes
+      ctx.strokeStyle='rgba(251,244,228,0.15)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(cx-rX-20,cy); ctx.lineTo(cx+rX+20,cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx,cy-rY-20); ctx.lineTo(cx,cy+rY+20); ctx.stroke();
+      ctx.fillStyle='rgba(251,244,228,0.35)'; ctx.font='12px monospace'; ctx.textAlign='center';
+      ctx.fillText('x →',cx+rX+10,cy-6);
+      ctx.textAlign='left'; ctx.fillText('v ↑',cx+6,cy-rY-6);
+
+      // Ellipse trajectory (x vs v, parametric)
+      ctx.beginPath();
+      const steps=500;
+      for(let i=0;i<=steps;i++){
+        const tt=i/steps*2*Math.PI/w;
+        const decay=b>0?Math.exp(-b*tt/(2*m)):1;
+        const xv=A*Math.cos(w*tt)*decay;
+        const vv=-A*w*Math.sin(w*tt)*decay;
+        const px=cx+xv/A*rX;
+        const py=cy-vv/(A*w)*rY;
+        i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+      }
+      ctx.strokeStyle='rgba(110,219,176,0.85)'; ctx.lineWidth=2; ctx.stroke();
+
+      // Current point (animated)
+      const phase=t*0.8;
+      const curX=A*Math.cos(phase);
+      const curV=-A*w*Math.sin(phase);
+      const px=cx+curX/A*rX, py=cy-curV/(A*w)*rY;
+      ctx.beginPath(); ctx.arc(px,py,7,0,Math.PI*2);
+      ctx.fillStyle='#F2B544'; ctx.fill();
+
+      // Labels
+      ctx.fillStyle='rgba(251,244,228,0.3)'; ctx.font='11px monospace'; ctx.textAlign='center';
+      ctx.fillText(`x=±${A.toFixed(2)}m`, cx+rX+2, cy+14);
+      ctx.fillText(`v=±${(A*w).toFixed(2)}m/s`, cx-4, cy-rY+14);
+    }
+
+    function drawDamped(){
+      const {k,m,A,w}=params();
+      const pad=28, gW=W-pad*2;
+      const T=2*Math.PI/w, tMax=T*8;
+      const cy=H/2;
+
+      // Zero line
+      ctx.strokeStyle='rgba(251,244,228,0.15)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(pad,cy); ctx.lineTo(W-pad,cy); ctx.stroke();
+
+      const dampValues=[0,1,4,8];
+      const dampColors=['rgba(110,219,176,0.85)','rgba(242,181,68,0.85)','rgba(255,150,80,0.85)','rgba(255,80,80,0.75)'];
+      const dampLabels=['b=0 (lý tưởng)','b=1 (tắt dần nhẹ)','b=4 (tắt dần trung bình)','b=8 (tắt dần mạnh)'];
+
+      dampValues.forEach((bv,di)=>{
+        ctx.beginPath();
+        for(let i=0;i<=gW;i++){
+          const tt=i/gW*tMax;
+          const decay=Math.exp(-bv*tt/(2*m));
+          const xv=A*Math.cos(w*tt)*decay;
+          const py=cy-xv/A*(H/2-pad-4);
+          i===0?ctx.moveTo(pad+i,py):ctx.lineTo(pad+i,py);
+        }
+        ctx.strokeStyle=dampColors[di]; ctx.lineWidth=di===0?2:1.5; ctx.stroke();
+
+        // Envelope
+        if(bv>0){
+          ctx.setLineDash([4,3]);
+          ctx.beginPath();
+          for(let i=0;i<=gW;i++){
+            const tt=i/gW*tMax;
+            const env=A*Math.exp(-bv*tt/(2*m));
+            const py=cy-env/A*(H/2-pad-4);
+            i===0?ctx.moveTo(pad+i,py):ctx.lineTo(pad+i,py);
+          }
+          ctx.strokeStyle=dampColors[di].replace('0.85','0.3'); ctx.lineWidth=1; ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        ctx.fillStyle=dampColors[di]; ctx.font='11px monospace'; ctx.textAlign='left';
+        ctx.fillText(dampLabels[di], pad+4, pad+18+di*16);
+      });
+
+      ctx.fillStyle='rgba(251,244,228,0.2)'; ctx.font='10px monospace'; ctx.textAlign='center';
+      ctx.fillText('Thời gian (× chu kỳ T)',W/2,H-4);
+    }
+
+    const graphFns={xvt:drawXVT,energy:drawEnergy,phase:drawPhase,damped:drawDamped};
+
+    function loop(){
+      ctx.clearRect(0,0,W,H);
+      // Subtle background grid
+      ctx.strokeStyle='rgba(251,244,228,0.03)'; ctx.lineWidth=1;
+      for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+      graphFns[currentGraph]();
+      t+=0.03;
+      requestAnimationFrame(loop);
+    }
+    loop();
+  })();
+
+  </script>
+</body>
+</html>

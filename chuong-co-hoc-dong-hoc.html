@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vật lý · Cơ học — Động học</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SKETCHBOOK / NOTEBOOK STYLE
+    ══════════════════════════════════════ */
+
+    /* Google Font — handwritten feel */
+    @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Caveat:wght@400;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── CSS custom properties ── */
+    :root {
+      --paper:        #F5F0E0;
+      --paper-dark:   #EDE5CC;
+      --ink:          #1A1208;
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #C44010;
+      --accent-blue:  #1A4FA0;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-g:  rgba(80, 180, 100, 0.30);
+      --line-h:       30px;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #8B7355;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #9E8565 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #6B5540 0%, transparent 50%),
+        repeating-linear-gradient(
+          45deg,
+          transparent, transparent 3px,
+          rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px
+        );
+      color: var(--ink);
+      font-family: 'Kalam', cursive;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    /* ══ Fixed nav ══ */
+    .theme-toggle {
+      position: fixed; top: 14px; right: 194px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 13px; border-radius: 4px;
+      background: var(--paper); color: var(--ink);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 13px; font-weight: 700;
+      cursor: pointer; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(-1deg);
+      transition: transform 0.1s;
+    }
+    .theme-toggle:hover { transform: rotate(0deg); border-color: var(--accent); }
+
+    .back-link {
+      position: fixed; top: 14px; right: 20px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent-blue);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(0.8deg);
+      transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent-blue); }
+
+    /* ══ Notebook page shell ══ */
+    .content-wrap {
+      width: min(1060px, 100%);
+      margin: 0 auto;
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.25),
+         6px 0 18px rgba(0,0,0,0.20),
+         0  12px 32px rgba(0,0,0,0.35);
+    }
+
+    /* ══ Ruled-paper background (pure CSS) ══ */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(
+          90deg,
+          transparent 71px,
+          var(--red-margin) 71px,
+          var(--red-margin) 73px,
+          transparent 73px
+        ),
+        repeating-linear-gradient(
+          180deg,
+          transparent 0px,
+          transparent calc(var(--line-h) - 1px),
+          var(--blue-line) calc(var(--line-h) - 1px),
+          var(--blue-line) var(--line-h)
+        );
+      background-attachment: local;
+    }
+
+    /* ══ Hero ══ */
+    .hero {
+      padding: 72px 40px 40px 96px;
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+    }
+    .crumb {
+      font-size: 12px; letter-spacing: 0.06em;
+      color: var(--ink-light); margin-bottom: 10px;
+      font-family: 'Kalam', cursive;
+    }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+
+    .title {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(40px, 6vw, 78px);
+      line-height: 1.0; color: var(--ink);
+      margin-bottom: 6px; font-weight: 700;
+    }
+    .title-stroke {
+      width: clamp(160px, 38vw, 400px); height: 3px;
+      background: var(--accent);
+      border-radius: 2px; margin-bottom: 14px;
+      transform: rotate(-0.4deg);
+    }
+    .subtitle {
+      font-family: 'Kalam', cursive;
+      font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent-blue); margin-bottom: 16px;
+    }
+    .intro {
+      max-width: 800px; font-size: 16px;
+      line-height: var(--line-h);
+      color: var(--ink-mid);
+    }
+
+    /* ══ Layout ══ */
+    .layout {
+      display: grid; grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    /* ══ Card ══ */
+    .card {
+      padding: 28px 36px 32px 96px;
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+
+    .card:nth-child(even) { background-color: var(--paper-dark); }
+    .card.ruled-page:nth-child(even) {
+      background-color: var(--paper-dark);
+    }
+
+    /* ── Punched holes strip ── */
+    .card::before,
+    .hero::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #8B7355 0%, #8B7355 55%,
+        transparent 56%
+      );
+      background-size: 36px 80px;
+      background-repeat: repeat-y;
+      background-position: 0 20px;
+    }
+
+    .card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .card-title {
+      font-family: 'Caveat', cursive;
+      font-size: 26px; color: var(--ink); line-height: 1.1;
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 2px; display: inline;
+    }
+    .tag {
+      font-family: 'Kalam', cursive;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 700; padding: 3px 10px; border-radius: 3px;
+      background: var(--highlight-y);
+      color: var(--ink); border: 1px solid rgba(26,18,8,0.18);
+      flex-shrink: 0;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.15);
+      transform: rotate(1.2deg);
+    }
+
+    .card-body {
+      font-size: 15px;
+      line-height: var(--line-h);
+      color: var(--ink-mid); margin-bottom: 16px;
+    }
+    .card-body strong { color: var(--ink); }
+    .card-body em { color: var(--accent); font-style: italic; }
+
+    /* ── Formula chips ── */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+    .chip {
+      font-family: 'Caveat', cursive;
+      font-size: 17px; padding: 3px 16px;
+      background: rgba(26,79,160,0.07);
+      border: 2px solid rgba(26,79,160,0.40);
+      border-radius: 3px; color: var(--accent-blue);
+    }
+
+    /* ── Sub-panels ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .bond {
+      background: rgba(0,0,0,0.03);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px 12px;
+      border-radius: 0 4px 4px 0;
+    }
+    .bond-name {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .bond-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Slider controls ── */
+    .controls { display: flex; flex-wrap: wrap; gap: 18px; margin: 12px 0 10px; }
+    .ctrl { display: flex; flex-direction: column; gap: 4px; }
+    .ctrl label {
+      font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-light); font-family: 'Kalam', cursive;
+    }
+    .ctrl input[type=range] { width: 150px; accent-color: var(--accent); }
+    .ctrl .val {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; color: var(--accent); font-weight: 700;
+    }
+
+    /* ── Readouts ── */
+    .readouts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .readout {
+      font-family: 'Caveat', cursive; font-size: 15px;
+      background: rgba(196,64,16,0.07);
+      border: 1.5px solid rgba(196,64,16,0.28);
+      border-radius: 3px; padding: 4px 12px;
+      color: var(--ink-mid);
+    }
+    .readout span { color: var(--accent); font-weight: 700; }
+
+    /* ── Viz toolbar ── */
+    .viz-toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .viz-btn {
+      font-family: 'Kalam', cursive;
+      padding: 5px 13px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.22);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background 0.12s, transform 0.1s;
+    }
+    .viz-btn:hover { background: var(--highlight-y); color: var(--ink); transform: translateY(-1px); }
+    .viz-btn.active {
+      background: var(--highlight-y); color: var(--ink);
+      border-color: var(--accent);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .viz-stage {
+      background: #151C14;
+      border: 2px solid rgba(26,18,8,0.30);
+      border-radius: 4px; overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .viz-stage canvas { display: block; }
+
+    /* ── Highlight box ── */
+    .aero-card {
+      background: var(--highlight-g);
+      border-left: 3px solid var(--accent-blue);
+      border-radius: 0 4px 4px 0;
+      padding: 16px 18px 14px; margin-top: 4px;
+    }
+    .aero-title {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent-blue); margin-bottom: 7px;
+    }
+    .aero-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Compare table ── */
+    .compare { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .compare th {
+      padding: 8px 12px; text-align: left;
+      background: rgba(196,64,16,0.10); color: var(--accent);
+      font-weight: 700; letter-spacing: 0.05em; font-size: 11px;
+      text-transform: uppercase;
+      border-bottom: 2px solid rgba(196,64,16,0.28);
+    }
+    .compare td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--blue-line);
+      color: var(--ink-mid); vertical-align: top;
+    }
+    .compare tr:last-child td { border-bottom: none; }
+    .compare tr:hover td { background: var(--highlight-y); }
+
+    /* ── Spring / interactive controls (for spring page) ── */
+    .spring-demo { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+    .spring-canvas-wrap canvas { display: block; border-radius: 4px; background: #0E1410; border: 2px solid rgba(26,18,8,0.30); cursor: grab; }
+    .spring-canvas-wrap canvas:active { cursor: grabbing; }
+    .spring-controls { display: flex; flex-direction: column; gap: 14px; }
+    .ctrl-group {
+      background: rgba(0,0,0,0.04);
+      border: 1px solid rgba(26,18,8,0.12);
+      border-radius: 4px; padding: 14px;
+    }
+    .ctrl-label {
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); font-weight: 700; margin-bottom: 8px;
+      font-family: 'Kalam', cursive;
+    }
+    .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .slider-row label { font-size: 13px; color: var(--ink-mid); width: 100px; flex-shrink: 0; }
+    .slider-row input[type=range] { flex: 1; accent-color: var(--accent); }
+    .slider-row .val { font-size: 13px; color: var(--accent-blue); width: 54px; text-align: right; font-family: 'Caveat', cursive; }
+    .btn-row { display: flex; gap: 8px; margin-top: 4px; }
+    .ctrl-btn {
+      flex: 1; padding: 7px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.20);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      font-family: 'Kalam', cursive;
+      transition: background 0.12s;
+    }
+    .ctrl-btn:hover { background: var(--highlight-y); color: var(--ink); }
+    .ctrl-btn.active { background: var(--highlight-y); border-color: var(--accent); color: var(--ink); }
+
+    /* ══ Dark mode ══ */
+    body.dark-mode {
+      background: #3A3020;
+      --paper:      #1C1810;
+      --paper-dark: #211E12;
+      --ink:        #EDE0C0;
+      --ink-mid:    #C4AE82;
+      --ink-light:  #8A7658;
+      --blue-line:  rgba(80, 110, 180, 0.18);
+      --red-margin: rgba(200, 70, 70, 0.5);
+      --highlight-y: rgba(180, 150, 30, 0.35);
+      --highlight-g: rgba(50, 130, 70, 0.20);
+    }
+    body.dark-mode .content-wrap {
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.5),
+         6px 0 18px rgba(0,0,0,0.4),
+         0  12px 32px rgba(0,0,0,0.6);
+    }
+    body.dark-mode .card::before,
+    body.dark-mode .hero::before {
+      background-color: rgba(0,0,0,0.15);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #3A3020 0%, #3A3020 55%,
+        transparent 56%
+      );
+    }
+
+    /* animations */
+    .slide-linear { animation: slideLinear 2.4s linear infinite; }
+    .slide-accel  { animation: slideAccel  2.4s ease-in infinite; }
+    .arc          { animation: arcPath     2.4s ease-in infinite; }
+    .spin         { animation: spin        3.6s linear  infinite; transform-origin: 400px 140px; }
+
+    @keyframes slideLinear { 0% { transform: translateX(0); } 100% { transform: translateX(460px); } }
+    @keyframes slideAccel  { 0% { transform: translateX(0); } 100% { transform: translateX(480px); } }
+    @keyframes arcPath {
+      0%   { transform: translate(0,   0); }
+      40%  { transform: translate(220px, -70px); }
+      100% { transform: translate(460px, 60px); }
+    }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* nav between sub-chapters */
+    .sub-nav {
+      width: min(1060px, 100%);
+      margin: 0 auto 40px;
+      padding: 0 24px;
+      display: flex; justify-content: space-between; gap: 12px;
+    }
+    .sub-nav a {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 16px; border-radius: 10px;
+      border: 1px solid rgba(26,18,8,0.12);
+      background: var(--paper-dark);
+      color: var(--ink-mid); font-size: 13px; font-weight: 600;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .sub-nav a:hover { border-color: var(--accent); color: var(--ink); background: var(--highlight-y); }
+    .sub-nav a.next { margin-left: auto; }
+
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .spring-demo { grid-template-columns: 1fr; }
+      .theme-toggle { right: 172px; }
+    }
+    @media (max-width: 640px) {
+      .theme-toggle, .back-link { position: absolute; top: 10px; }
+      .theme-toggle { right: 148px; } .back-link { right: 12px; }
+      .hero, .card { padding-left: 56px; }
+      .card::before, .hero::before { width: 28px; background-size: 28px 80px; }
+    }
+  </style>
+</head>
+<body>
+  <button id="themeBtn" class="theme-toggle" type="button">☽ Tối</button>
+  <a class="back-link" href="chuong-co-hoc.html">← Cơ học</a>
+
+  <div class="content-wrap">
+    <header class="hero ruled-page">
+        <div class="crumb">
+          <a href="Learning Resources Hub v4.html">Vật lý</a>
+          <span>›</span>
+          <a href="chuong-co-hoc.html">Cơ học</a>
+          <span>›</span>
+          <span>Động học</span>
+        </div>
+        <h1 class="title">Động học</h1>
+        <div class="title-stroke"></div>
+        <p class="subtitle">Chủ đề 1 · Mô tả chuyển động</p>
+        <p class="intro">
+          Động học mô tả <em>cách</em> vật chuyển động — vị trí, vận tốc, gia tốc —
+          mà không cần quan tâm đến nguyên nhân lực nào gây ra nó.
+          Đây là bước đầu tiên để phân tích bất kỳ bài toán cơ học nào.
+        </p>
+    </header>
+
+    <main class="layout">
+
+      <section class="card ruled-page">
+        <h2>1. Bốn dạng chuyển động cơ bản</h2>
+        <div class="grid-2">
+          <article class="bond">
+            <h3>Chuyển động thẳng đều <span class="tag">a = 0</span></h3>
+            <ul>
+              <li>Vận tốc không đổi theo thời gian.</li>
+              <li>Quãng đường tỉ lệ thuận với thời gian: <em>s = v·t</em>.</li>
+              <li>Đồ thị v–t là đường nằm ngang; s–t là đường thẳng nghiêng.</li>
+              <li>Ví dụ: xe chạy ổn định trên đường cao tốc thẳng.</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Chuyển động thẳng biến đổi đều <span class="tag">a = hằng số</span></h3>
+            <ul>
+              <li>Gia tốc không đổi, vận tốc thay đổi đều theo thời gian.</li>
+              <li>Phương trình: <em>v = v₀ + a·t</em> và <em>s = v₀t + ½a·t²</em>.</li>
+              <li>Hệ thức bổ sung (không có t): <em>v² = v₀² + 2a·s</em>.</li>
+              <li>Ví dụ: xe thắng đều, vật rơi tự do (a = g ≈ 9,8 m/s²).</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Chuyển động ném ngang <span class="tag">parabol</span></h3>
+            <ul>
+              <li>Theo ngang (x): chuyển động đều — <em>x = v₀·t</em>.</li>
+              <li>Theo đứng (y): rơi tự do — <em>y = ½g·t²</em>.</li>
+              <li>Quỹ đạo là đường parabol, kết hợp hai chuyển động độc lập.</li>
+              <li>Ví dụ: viên đạn bắn ngang, bóng ném từ độ cao.</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Chuyển động tròn đều <span class="tag">|v| = hằng số</span></h3>
+            <ul>
+              <li>Tốc độ không đổi nhưng hướng vận tốc luôn thay đổi.</li>
+              <li>Gia tốc hướng tâm: <em>aₕₜ = v²/r = ω²·r</em>, hướng vào tâm.</li>
+              <li>Chu kỳ <em>T</em>, tần số <em>f = 1/T</em>, vận tốc góc <em>ω = 2πf</em>.</li>
+              <li>Ví dụ: vệ tinh quỹ đạo tròn, vật gắn trên bàn quay.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="card ruled-page">
+        <h2>2. Mô phỏng trực quan</h2>
+        <p>Chọn dạng chuyển động để xem hoạt hình minh họa:</p>
+        <div class="viz-toolbar" role="tablist">
+          <button class="viz-btn active" type="button" data-viz="uniform" role="tab" aria-selected="true">Thẳng đều</button>
+          <button class="viz-btn" type="button" data-viz="accel" role="tab" aria-selected="false">Biến đổi đều</button>
+          <button class="viz-btn" type="button" data-viz="projectile" role="tab" aria-selected="false">Ném ngang</button>
+          <button class="viz-btn" type="button" data-viz="circular" role="tab" aria-selected="false">Tròn đều</button>
+        </div>
+        <div class="viz-stage" id="viz-stage" aria-live="polite"></div>
+        <div class="viz-info">
+          <div class="mini"><h4>Đặc điểm</h4><p id="viz-feature"></p></div>
+          <div class="mini"><h4>Công thức chính</h4><p id="viz-formula"></p></div>
+        </div>
+      </section>
+
+      <section class="card ruled-page">
+        <h2>3. Công thức cần nhớ</h2>
+        <div class="formula-block">
+          <div class="formula-chip">
+            <strong>v = v₀ + at</strong>
+            <small>Vận tốc theo thời gian</small>
+          </div>
+          <div class="formula-chip">
+            <strong>s = v₀t + ½at²</strong>
+            <small>Quãng đường biến đổi đều</small>
+          </div>
+          <div class="formula-chip">
+            <strong>v² − v₀² = 2as</strong>
+            <small>Hệ thức không có t</small>
+          </div>
+          <div class="formula-chip">
+            <strong>g ≈ 9,8 m/s²</strong>
+            <small>Gia tốc rơi tự do</small>
+          </div>
+          <div class="formula-chip">
+            <strong>aₕₜ = v²/r</strong>
+            <small>Gia tốc hướng tâm</small>
+          </div>
+          <div class="formula-chip">
+            <strong>ω = 2π/T = 2πf</strong>
+            <small>Vận tốc góc</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="card ruled-page">
+        <h2>4. Tự kiểm tra</h2>
+        <div class="quiz">
+          <article class="quiz-item">
+            <h4>Câu 1</h4>
+            <p>Một vật ném ngang từ độ cao 20 m với v₀ = 10 m/s. Hỏi vật chạm đất sau bao lâu và cách điểm ném theo phương ngang bao nhiêu mét? (Lấy g = 10 m/s²)</p>
+          </article>
+          <article class="quiz-item">
+            <h4>Câu 2</h4>
+            <p>Một xe đang chạy 72 km/h thắng đều và dừng lại trong 4 giây. Tính gia tốc và quãng đường hãm phanh. Dùng cả ba phương trình động học để kiểm tra.</p>
+          </article>
+          <article class="quiz-item">
+            <h4>Câu 3</h4>
+            <p>Vệ tinh bay quanh Trái Đất ở độ cao để chu kỳ T = 90 phút. Nếu r = 6600 km, hãy tính tốc độ vệ tinh và gia tốc hướng tâm của nó.</p>
+          </article>
+          <article class="quiz-item">
+            <h4>Câu 4</h4>
+            <p>Đồ thị v–t của một vật là đường thẳng đi qua (0, 4) và (6, 16). Xác định gia tốc và quãng đường vật đi được trong 6 giây đầu.</p>
+          </article>
+        </div>
+      </section>
+
+    </main>
+
+    <nav class="sub-nav">
+      <a href="chuong-co-hoc.html">← Tổng quan Cơ học</a>
+      <a class="next" href="chuong-co-hoc-luc-newton.html">Lực &amp; Định luật Newton →</a>
+    </nav>
+  </div>
+
+  <script>
+    (function () {
+      const vizStage = document.getElementById('viz-stage');
+      const vizButtons = Array.from(document.querySelectorAll('.viz-btn'));
+      const vizFeature = document.getElementById('viz-feature');
+      const vizFormula = document.getElementById('viz-formula');
+
+      const vizData = {
+        uniform: {
+          feature: 'Vận tốc không đổi, gia tốc bằng 0. Đồ thị s–t là đường thẳng nghiêng đều.',
+          formula: 's = v·t (không phụ thuộc vào thời điểm bắt đầu)',
+          svg: `<svg viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg">
+            <line x1="60" y1="180" x2="740" y2="180" stroke="rgba(251,244,228,0.2)" stroke-width="3"/>
+            <g class="slide-linear">
+              <rect x="60" y="138" width="68" height="42" rx="8" fill="#2F8F6F"/>
+              <text x="94" y="164" text-anchor="middle" fill="#1E1B18" font-size="15" font-weight="700">m</text>
+              <circle cx="78" cy="180" r="9" fill="#6FB8D1"/>
+              <circle cx="110" cy="180" r="9" fill="#6FB8D1"/>
+            </g>
+            <text x="400" y="42" text-anchor="middle" fill="#FBF4E4" font-size="16">v = hằng số — không có lực tổng hợp</text>
+            <text x="60" y="218" fill="rgba(251,244,228,0.45)" font-size="13">a = 0</text>
+          </svg>`,
+        },
+        accel: {
+          feature: 'Gia tốc không đổi, vận tốc tăng đều. Đồ thị s–t là nửa parabol.',
+          formula: 'v = v₀ + at · · · s = v₀t + ½at²',
+          svg: `<svg viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrA" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto">
+                <polygon points="0 0, 9 4, 0 8" fill="#F2B544"/>
+              </marker>
+            </defs>
+            <line x1="60" y1="180" x2="740" y2="180" stroke="rgba(251,244,228,0.2)" stroke-width="3"/>
+            <g class="slide-accel">
+              <rect x="60" y="138" width="72" height="42" rx="8" fill="#D9633B"/>
+              <text x="96" y="164" text-anchor="middle" fill="#1E1B18" font-size="15" font-weight="700">m</text>
+              <circle cx="79" cy="180" r="9" fill="#6FB8D1"/>
+              <circle cx="111" cy="180" r="9" fill="#6FB8D1"/>
+              <line x1="132" y1="159" x2="186" y2="159" stroke="#F2B544" stroke-width="4" marker-end="url(#arrA)"/>
+              <text x="160" y="148" text-anchor="middle" fill="#F2B544" font-size="13">a</text>
+            </g>
+            <text x="400" y="42" text-anchor="middle" fill="#FBF4E4" font-size="16">Lực không đổi → gia tốc không đổi → vận tốc tăng đều</text>
+          </svg>`,
+        },
+        projectile: {
+          feature: 'Tổ hợp ngang đều + rơi tự do thẳng đứng. Hai chiều hoàn toàn độc lập nhau.',
+          formula: 'x = v₀t · · · y = ½gt² · · · quỹ đạo: y = gx²/(2v₀²)',
+          svg: `<svg viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrP" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto">
+                <polygon points="0 0, 8 3.5, 0 7" fill="#F2B544"/>
+              </marker>
+            </defs>
+            <path d="M80 50 Q400 50 700 210" stroke="rgba(47,143,111,0.45)" stroke-width="2" stroke-dasharray="8 5" fill="none"/>
+            <line x1="60" y1="210" x2="740" y2="210" stroke="rgba(251,244,228,0.18)" stroke-width="2"/>
+            <g class="arc">
+              <circle cx="80" cy="50" r="14" fill="#F2B544"/>
+              <line x1="94" y1="50" x2="130" y2="50" stroke="#6FB8D1" stroke-width="3" marker-end="url(#arrP)"/>
+              <line x1="80" y1="64" x2="80" y2="96" stroke="#D9633B" stroke-width="3" marker-end="url(#arrP)"/>
+              <text x="138" y="46" fill="#6FB8D1" font-size="12">v₀</text>
+              <text x="87" y="104" fill="#D9633B" font-size="12">g</text>
+            </g>
+            <text x="400" y="232" text-anchor="middle" fill="rgba(251,244,228,0.45)" font-size="13">Quỹ đạo parabol</text>
+          </svg>`,
+        },
+        circular: {
+          feature: 'Tốc độ không đổi nhưng hướng vận tốc luôn thay đổi → có gia tốc hướng tâm.',
+          formula: 'aₕₜ = v²/r = ω²r · · · v = ωr · · · T = 2πr/v',
+          svg: `<svg viewBox="0 0 800 260" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrC" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto">
+                <polygon points="0 0, 8 3.5, 0 7" fill="#6FB8D1"/>
+              </marker>
+              <marker id="arrCt" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto">
+                <polygon points="0 0, 8 3.5, 0 7" fill="#F2B544"/>
+              </marker>
+            </defs>
+            <circle cx="400" cy="130" r="90" fill="none" stroke="rgba(47,143,111,0.35)" stroke-width="2"/>
+            <circle cx="400" cy="130" r="6" fill="#2F8F6F"/>
+            <g class="spin">
+              <circle cx="490" cy="130" r="14" fill="#D9633B"/>
+              <line x1="490" y1="116" x2="490" y2="76" stroke="#F2B544" stroke-width="3" marker-end="url(#arrCt)"/>
+              <line x1="476" y1="130" x2="424" y2="130" stroke="#6FB8D1" stroke-width="3" marker-end="url(#arrC)"/>
+              <text x="500" y="72" fill="#F2B544" font-size="13">v</text>
+              <text x="430" y="126" fill="#6FB8D1" font-size="13">aₕₜ</text>
+            </g>
+            <text x="400" y="248" text-anchor="middle" fill="rgba(251,244,228,0.5)" font-size="13">Gia tốc hướng tâm luôn chỉ vào tâm quỹ đạo</text>
+          </svg>`,
+        },
+      };
+
+      const render = (key) => {
+        const d = vizData[key] || vizData.uniform;
+        if (vizStage) vizStage.innerHTML = d.svg;
+        if (vizFeature) vizFeature.textContent = d.feature;
+        if (vizFormula) vizFormula.textContent = d.formula;
+      };
+
+      vizButtons.forEach((b) => {
+        b.addEventListener('click', () => {
+          vizButtons.forEach((x) => { x.classList.remove('active'); x.setAttribute('aria-selected','false'); });
+          b.classList.add('active'); b.setAttribute('aria-selected','true');
+          render(b.dataset.viz);
+        });
+      });
+      render('uniform');
+
+    })();
+  </script>
+  <script>
+    (function(){
+      const body = document.body;
+      const btn  = document.getElementById('themeBtn');
+      const saved = localStorage.getItem('bewy-theme');
+      if (saved === 'dark') { body.classList.add('dark-mode'); btn.textContent = '☀ Sáng'; }
+      btn.addEventListener('click', () => {
+        const dark = body.classList.toggle('dark-mode');
+        btn.textContent = dark ? '☀ Sáng' : '☽ Tối';
+        localStorage.setItem('bewy-theme', dark ? 'dark' : 'light');
+      });
+    })();
+  </script>
+</body>
+</html>

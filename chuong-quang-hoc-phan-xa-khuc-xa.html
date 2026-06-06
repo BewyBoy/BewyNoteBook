@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vật lý · Quang học — Phản xạ &amp; Khúc xạ</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SKETCHBOOK / NOTEBOOK STYLE
+    ══════════════════════════════════════ */
+
+    /* Google Font — handwritten feel */
+    @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Caveat:wght@400;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── CSS custom properties ── */
+    :root {
+      --paper:        #F5F0E0;
+      --paper-dark:   #EDE5CC;
+      --ink:          #1A1208;
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #C44010;
+      --accent-blue:  #1A4FA0;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-g:  rgba(80, 180, 100, 0.30);
+      --line-h:       30px;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #8B7355;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #9E8565 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #6B5540 0%, transparent 50%),
+        repeating-linear-gradient(
+          45deg,
+          transparent, transparent 3px,
+          rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px
+        );
+      color: var(--ink);
+      font-family: 'Kalam', cursive;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    /* ══ Fixed nav ══ */
+    .theme-toggle {
+      position: fixed; top: 14px; right: 194px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 13px; border-radius: 4px;
+      background: var(--paper); color: var(--ink);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 13px; font-weight: 700;
+      cursor: pointer; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(-1deg);
+      transition: transform 0.1s;
+    }
+    .theme-toggle:hover { transform: rotate(0deg); border-color: var(--accent); }
+
+    .back-link {
+      position: fixed; top: 14px; right: 20px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent-blue);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(0.8deg);
+      transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent-blue); }
+
+    /* ══ Notebook page shell ══ */
+    .content-wrap {
+      width: min(1060px, 100%);
+      margin: 0 auto;
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.25),
+         6px 0 18px rgba(0,0,0,0.20),
+         0  12px 32px rgba(0,0,0,0.35);
+    }
+
+    /* ══ Ruled-paper background (pure CSS) ══ */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(
+          90deg,
+          transparent 71px,
+          var(--red-margin) 71px,
+          var(--red-margin) 73px,
+          transparent 73px
+        ),
+        repeating-linear-gradient(
+          180deg,
+          transparent 0px,
+          transparent calc(var(--line-h) - 1px),
+          var(--blue-line) calc(var(--line-h) - 1px),
+          var(--blue-line) var(--line-h)
+        );
+      background-attachment: local;
+    }
+
+    /* ══ Hero ══ */
+    .hero {
+      padding: 72px 40px 40px 96px;
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+    }
+    .crumb {
+      font-size: 12px; letter-spacing: 0.06em;
+      color: var(--ink-light); margin-bottom: 10px;
+      font-family: 'Kalam', cursive;
+    }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+
+    .title {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(40px, 6vw, 78px);
+      line-height: 1.0; color: var(--ink);
+      margin-bottom: 6px; font-weight: 700;
+    }
+    .title-stroke {
+      width: clamp(160px, 38vw, 400px); height: 3px;
+      background: var(--accent);
+      border-radius: 2px; margin-bottom: 14px;
+      transform: rotate(-0.4deg);
+    }
+    .subtitle {
+      font-family: 'Kalam', cursive;
+      font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent-blue); margin-bottom: 16px;
+    }
+    .intro {
+      max-width: 800px; font-size: 16px;
+      line-height: var(--line-h);
+      color: var(--ink-mid);
+    }
+
+    /* ══ Layout ══ */
+    .layout {
+      display: grid; grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    /* ══ Card ══ */
+    .card {
+      padding: 28px 36px 32px 96px;
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+
+    .card:nth-child(even) { background-color: var(--paper-dark); }
+    .card.ruled-page:nth-child(even) {
+      background-color: var(--paper-dark);
+    }
+
+    /* ── Punched holes strip ── */
+    .card::before,
+    .hero::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #8B7355 0%, #8B7355 55%,
+        transparent 56%
+      );
+      background-size: 36px 80px;
+      background-repeat: repeat-y;
+      background-position: 0 20px;
+    }
+
+    .card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .card-title {
+      font-family: 'Caveat', cursive;
+      font-size: 26px; color: var(--ink); line-height: 1.1;
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 2px; display: inline;
+    }
+    .tag {
+      font-family: 'Kalam', cursive;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 700; padding: 3px 10px; border-radius: 3px;
+      background: var(--highlight-y);
+      color: var(--ink); border: 1px solid rgba(26,18,8,0.18);
+      flex-shrink: 0;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.15);
+      transform: rotate(1.2deg);
+    }
+
+    .card-body {
+      font-size: 15px;
+      line-height: var(--line-h);
+      color: var(--ink-mid); margin-bottom: 16px;
+    }
+    .card-body strong { color: var(--ink); }
+    .card-body em { color: var(--accent); font-style: italic; }
+
+    /* ── Formula chips ── */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+    .chip {
+      font-family: 'Caveat', cursive;
+      font-size: 17px; padding: 3px 16px;
+      background: rgba(26,79,160,0.07);
+      border: 2px solid rgba(26,79,160,0.40);
+      border-radius: 3px; color: var(--accent-blue);
+    }
+
+    /* ── Sub-panels ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .bond {
+      background: rgba(0,0,0,0.03);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px 12px;
+      border-radius: 0 4px 4px 0;
+    }
+    .bond-name {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .bond-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Slider controls ── */
+    .controls { display: flex; flex-wrap: wrap; gap: 18px; margin: 12px 0 10px; }
+    .ctrl { display: flex; flex-direction: column; gap: 4px; }
+    .ctrl label {
+      font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-light); font-family: 'Kalam', cursive;
+    }
+    .ctrl input[type=range] { width: 150px; accent-color: var(--accent); }
+    .ctrl .val {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; color: var(--accent); font-weight: 700;
+    }
+
+    /* ── Readouts ── */
+    .readouts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .readout {
+      font-family: 'Caveat', cursive; font-size: 15px;
+      background: rgba(196,64,16,0.07);
+      border: 1.5px solid rgba(196,64,16,0.28);
+      border-radius: 3px; padding: 4px 12px;
+      color: var(--ink-mid);
+    }
+    .readout span { color: var(--accent); font-weight: 700; }
+
+    /* ── Viz toolbar ── */
+    .viz-toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .viz-btn {
+      font-family: 'Kalam', cursive;
+      padding: 5px 13px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.22);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background 0.12s, transform 0.1s;
+    }
+    .viz-btn:hover { background: var(--highlight-y); color: var(--ink); transform: translateY(-1px); }
+    .viz-btn.active {
+      background: var(--highlight-y); color: var(--ink);
+      border-color: var(--accent);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .viz-stage {
+      background: #151C14;
+      border: 2px solid rgba(26,18,8,0.30);
+      border-radius: 4px; overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .viz-stage canvas { display: block; }
+
+    /* ── Highlight box ── */
+    .aero-card {
+      background: var(--highlight-g);
+      border-left: 3px solid var(--accent-blue);
+      border-radius: 0 4px 4px 0;
+      padding: 16px 18px 14px; margin-top: 4px;
+    }
+    .aero-title {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent-blue); margin-bottom: 7px;
+    }
+    .aero-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Compare table ── */
+    .compare { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .compare th {
+      padding: 8px 12px; text-align: left;
+      background: rgba(196,64,16,0.10); color: var(--accent);
+      font-weight: 700; letter-spacing: 0.05em; font-size: 11px;
+      text-transform: uppercase;
+      border-bottom: 2px solid rgba(196,64,16,0.28);
+    }
+    .compare td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--blue-line);
+      color: var(--ink-mid); vertical-align: top;
+    }
+    .compare tr:last-child td { border-bottom: none; }
+    .compare tr:hover td { background: var(--highlight-y); }
+
+    /* ── Spring / interactive controls (for spring page) ── */
+    .spring-demo { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+    .spring-canvas-wrap canvas { display: block; border-radius: 4px; background: #0E1410; border: 2px solid rgba(26,18,8,0.30); cursor: grab; }
+    .spring-canvas-wrap canvas:active { cursor: grabbing; }
+    .spring-controls { display: flex; flex-direction: column; gap: 14px; }
+    .ctrl-group {
+      background: rgba(0,0,0,0.04);
+      border: 1px solid rgba(26,18,8,0.12);
+      border-radius: 4px; padding: 14px;
+    }
+    .ctrl-label {
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); font-weight: 700; margin-bottom: 8px;
+      font-family: 'Kalam', cursive;
+    }
+    .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .slider-row label { font-size: 13px; color: var(--ink-mid); width: 100px; flex-shrink: 0; }
+    .slider-row input[type=range] { flex: 1; accent-color: var(--accent); }
+    .slider-row .val { font-size: 13px; color: var(--accent-blue); width: 54px; text-align: right; font-family: 'Caveat', cursive; }
+    .btn-row { display: flex; gap: 8px; margin-top: 4px; }
+    .ctrl-btn {
+      flex: 1; padding: 7px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.20);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      font-family: 'Kalam', cursive;
+      transition: background 0.12s;
+    }
+    .ctrl-btn:hover { background: var(--highlight-y); color: var(--ink); }
+    .ctrl-btn.active { background: var(--highlight-y); border-color: var(--accent); color: var(--ink); }
+
+    /* ══ Dark mode ══ */
+    body.dark-mode {
+      background: #3A3020;
+      --paper:      #1C1810;
+      --paper-dark: #211E12;
+      --ink:        #EDE0C0;
+      --ink-mid:    #C4AE82;
+      --ink-light:  #8A7658;
+      --blue-line:  rgba(80, 110, 180, 0.18);
+      --red-margin: rgba(200, 70, 70, 0.5);
+      --highlight-y: rgba(180, 150, 30, 0.35);
+      --highlight-g: rgba(50, 130, 70, 0.20);
+    }
+    body.dark-mode .content-wrap {
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.5),
+         6px 0 18px rgba(0,0,0,0.4),
+         0  12px 32px rgba(0,0,0,0.6);
+    }
+    body.dark-mode .card::before,
+    body.dark-mode .hero::before {
+      background-color: rgba(0,0,0,0.15);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #3A3020 0%, #3A3020 55%,
+        transparent 56%
+      );
+    }
+
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .spring-demo { grid-template-columns: 1fr; }
+      .theme-toggle { right: 172px; }
+    }
+    @media (max-width: 640px) {
+      .theme-toggle, .back-link { position: absolute; top: 10px; }
+      .theme-toggle { right: 148px; } .back-link { right: 12px; }
+      .hero, .card { padding-left: 56px; }
+      .card::before, .hero::before { width: 28px; background-size: 28px 80px; }
+    }
+  </style>
+</head>
+<body>
+  <button id="themeBtn" class="theme-toggle" type="button">☽ Tối</button>
+  <a class="back-link" href="chuong-quang-hoc.html">← Quang học</a>
+
+  <div class="content-wrap">
+    <header class="hero ruled-page">
+        <div class="crumb">
+          <a href="Learning Resources Hub v4.html">Vật lý</a>
+          <span>›</span>
+          <a href="chuong-quang-hoc.html">Quang học</a>
+          <span>›</span>
+          <span>Chủ đề 1</span>
+        </div>
+        <h1 class="title">Phản xạ &amp; Khúc xạ</h1>
+        <div class="title-stroke"></div>
+        <p class="subtitle">Quang học · Chủ đề 1 / 3</p>
+        <p class="intro">
+          Khi ánh sáng gặp mặt phân cách giữa hai môi trường, nó có thể phản xạ (bật lại) hoặc khúc xạ (đổi hướng khi đi qua). Hai hiện tượng này là nền tảng của toàn bộ quang học hình học.
+        </p>
+    </header>
+
+    <main class="layout">
+
+      <!-- Phản xạ -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Định luật phản xạ ánh sáng</h2>
+          <span class="tag">Phản xạ</span>
+        </div>
+        <p class="card-body">
+          Tia phản xạ nằm trong mặt phẳng tới (mặt phẳng chứa tia tới và pháp tuyến). Góc phản xạ luôn bằng góc tới, tính từ pháp tuyến tại điểm tới.
+        </p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Góc tới = Góc phản xạ</div>
+            <div class="bond-body">θᵣ = θᵢ<br>Pháp tuyến vuông góc với mặt phản xạ tại điểm tới.</div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Phản xạ gương vs khuếch tán</div>
+            <div class="bond-body">Gương phẳng: phản xạ theo một hướng xác định.<br>Bề mặt nhám: tán xạ theo mọi hướng.</div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">θᵣ = θᵢ</span>
+          <span class="chip">Tia tới — pháp tuyến — tia phản xạ đồng phẳng</span>
+        </div>
+      </section>
+
+      <!-- Khúc xạ -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Định luật Snell — Khúc xạ ánh sáng</h2>
+          <span class="tag">Khúc xạ</span>
+        </div>
+        <p class="card-body">
+          Khi ánh sáng đi từ môi trường có chiết suất n₁ sang môi trường chiết suất n₂, góc khúc xạ θ₂ thay đổi theo định luật Snell. Chiết suất tuyệt đối n = c/v, với c = 3×10⁸ m/s là tốc độ ánh sáng trong chân không.
+        </p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Định luật Snell</div>
+            <div class="bond-body">n₁ sin θ₁ = n₂ sin θ₂<br>Môi trường đặc hơn → n lớn hơn → ánh sáng bị bẻ lại gần pháp tuyến hơn.</div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Chiết suất thường gặp</div>
+            <div class="bond-body">Chân không: n = 1<br>Không khí: n ≈ 1.0003<br>Nước: n ≈ 1.33<br>Thủy tinh: n ≈ 1.5<br>Kim cương: n ≈ 2.42</div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">n₁ sinθ₁ = n₂ sinθ₂</span>
+          <span class="chip">n = c/v</span>
+          <span class="chip">n₂₁ = n₂/n₁</span>
+        </div>
+      </section>
+
+      <!-- Phản xạ toàn phần -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Phản xạ toàn phần</h2>
+          <span class="tag">Toàn phần</span>
+        </div>
+        <p class="card-body">
+          Khi ánh sáng đi từ môi trường đặc sang môi trường loãng hơn (n₁ &gt; n₂) và góc tới vượt quá góc giới hạn θ_gh, toàn bộ ánh sáng bị phản xạ lại — không có tia khúc xạ nào thoát ra ngoài. Đây là nguyên lý hoạt động của cáp quang.
+        </p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Góc giới hạn</div>
+            <div class="bond-body">sin θ_gh = n₂/n₁<br>Điều kiện: n₁ &gt; n₂ (đi từ môi trường đặc sang loãng).<br>Ví dụ nước→không khí: θ_gh ≈ 48.8°</div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Ứng dụng thực tế</div>
+            <div class="bond-body">
+              <strong>Cáp quang:</strong> tín hiệu ánh sáng truyền trong lõi thủy tinh không thoát ra.<br>
+              <strong>Kim cương:</strong> n ≈ 2.42, θ_gh ≈ 24° — ánh sáng bị bẫy, tạo lấp lánh.
+            </div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">sin θ_gh = n₂/n₁</span>
+          <span class="chip">θᵢ &gt; θ_gh → phản xạ toàn phần</span>
+          <span class="chip">n₁ &gt; n₂ (bắt buộc)</span>
+        </div>
+      </section>
+
+      <!-- Visualization -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Mô phỏng</h2>
+          <span class="tag">Viz</span>
+        </div>
+        <div class="viz-toolbar">
+          <button class="viz-btn active" onclick="setViz('reflect')">Phản xạ</button>
+          <button class="viz-btn" onclick="setViz('refract')">Khúc xạ</button>
+          <button class="viz-btn" onclick="setViz('total')">Toàn phần</button>
+          <button class="viz-btn" onclick="setViz('fiber')">Cáp quang</button>
+        </div>
+        <div class="viz-stage" id="viz-stage">
+          <svg id="viz-svg" viewBox="0 0 600 260" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+      </section>
+
+      <!-- So sánh -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">So sánh các hiện tượng</h2>
+          <span class="tag">Bảng</span>
+        </div>
+        <table class="compare">
+          <thead>
+            <tr>
+              <th>Hiện tượng</th>
+              <th>Điều kiện xảy ra</th>
+              <th>Công thức</th>
+              <th>Ứng dụng</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Phản xạ</td>
+              <td>Mọi mặt phân cách</td>
+              <td>θᵣ = θᵢ</td>
+              <td>Gương, kính tiềm vọng</td>
+            </tr>
+            <tr>
+              <td>Khúc xạ</td>
+              <td>Hai môi trường khác n, θᵢ &lt; θ_gh</td>
+              <td>n₁sinθ₁ = n₂sinθ₂</td>
+              <td>Thấu kính, lăng kính</td>
+            </tr>
+            <tr>
+              <td>Phản xạ toàn phần</td>
+              <td>n₁ &gt; n₂ và θᵢ &gt; θ_gh</td>
+              <td>sinθ_gh = n₂/n₁</td>
+              <td>Cáp quang, kim cương</td>
+            </tr>
+            <tr>
+              <td>Tán sắc</td>
+              <td>Ánh sáng trắng + lăng kính</td>
+              <td>n phụ thuộc λ</td>
+              <td>Lăng kính, cầu vồng</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Quiz -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Tự kiểm tra</h2>
+          <span class="tag">Quiz</span>
+        </div>
+        <div class="quiz" id="quiz"></div>
+      </section>
+
+    </main>
+
+    <nav class="sub-nav">
+      <a href="chuong-quang-hoc.html">← Tổng quan Quang học</a>
+      <a href="chuong-quang-hoc-tan-sac-mau-sac.html">Tán sắc &amp; Màu sắc →</a>
+    </nav>
+  </div>
+
+  <script>
+    /* ── Theme ── */
+    (function () {
+      const KEY = 'bewy-theme';
+      const btn = document.getElementById('theme-toggle');
+      const apply = m => {
+        document.body.classList.toggle('light-mode', m === 'light');
+        if (btn) btn.textContent = m === 'light' ? '🌙 Dark' : '☀ Light';
+      };
+      apply(localStorage.getItem(KEY) === 'light' ? 'light' : 'dark');
+      if (btn) btn.addEventListener('click', () => {
+        const next = document.body.classList.contains('light-mode') ? 'dark' : 'light';
+        localStorage.setItem(KEY, next); apply(next);
+      });
+    })();
+
+    /* ── Viz ── */
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    let activeViz = 'reflect';
+
+    function el(tag, attrs, txt) {
+      const e = document.createElementNS(SVG_NS, tag);
+      for (const [k,v] of Object.entries(attrs || {})) e.setAttribute(k, v);
+      if (txt !== undefined) e.textContent = txt;
+      return e;
+    }
+
+    function drawReflect(svg) {
+      // Surface
+      svg.appendChild(el('line', {x1:0,y1:130,x2:600,y2:130, stroke:'rgba(90,120,200,0.5)', 'stroke-width':2}));
+      svg.appendChild(el('text', {x:10,y:124, fill:'rgba(251,244,228,0.4)', 'font-size':11},'n = 1 (không khí)'));
+      // Normal
+      svg.appendChild(el('line', {x1:250,y1:20,x2:250,y2:240, stroke:'rgba(251,244,228,0.2)', 'stroke-width':1, 'stroke-dasharray':'6 4'}));
+      svg.appendChild(el('text', {x:255,y:24, fill:'rgba(251,244,228,0.35)', 'font-size':10},'Pháp tuyến'));
+      // Incident ray
+      svg.appendChild(el('line', {x1:80,y1:20,x2:250,y2:130, stroke:'#F2B544', 'stroke-width':2.5}));
+      const arrowI = el('polygon', {points:'250,130 238,118 244,128', fill:'#F2B544'});
+      svg.appendChild(arrowI);
+      svg.appendChild(el('text', {x:120,y:55, fill:'#F2B544', 'font-size':12},'Tia tới'));
+      // Angle i label
+      svg.appendChild(el('text', {x:200,y:118, fill:'#A8BCEE', 'font-size':12},'θᵢ'));
+      // Reflected ray
+      svg.appendChild(el('line', {x1:250,y1:130,x2:420,y2:20, stroke:'#7B96E0', 'stroke-width':2.5}));
+      svg.appendChild(el('text', {x:350,y:55, fill:'#7B96E0', 'font-size':12},'Tia phản xạ'));
+      svg.appendChild(el('text', {x:256,y:118, fill:'#A8BCEE', 'font-size':12},'θᵣ'));
+      // Equation
+      svg.appendChild(el('text', {x:440,y:200, fill:'rgba(251,244,228,0.6)', 'font-size':14},'θᵣ = θᵢ'));
+    }
+
+    function drawRefract(svg) {
+      svg.appendChild(el('rect', {x:0,y:130,width:600,height:130, fill:'rgba(90,120,200,0.08)'}));
+      svg.appendChild(el('line', {x1:0,y1:130,x2:600,y2:130, stroke:'rgba(90,120,200,0.5)', 'stroke-width':2}));
+      svg.appendChild(el('text', {x:10,y:124, fill:'rgba(251,244,228,0.4)', 'font-size':11},'n₁ = 1.0 (không khí)'));
+      svg.appendChild(el('text', {x:10,y:150, fill:'rgba(251,244,228,0.4)', 'font-size':11},'n₂ = 1.5 (thủy tinh)'));
+      // Normal
+      svg.appendChild(el('line', {x1:260,y1:20,x2:260,y2:250, stroke:'rgba(251,244,228,0.2)', 'stroke-width':1, 'stroke-dasharray':'6 4'}));
+      // Incident
+      svg.appendChild(el('line', {x1:80,y1:20,x2:260,y2:130, stroke:'#F2B544', 'stroke-width':2.5}));
+      svg.appendChild(el('text', {x:100,y:55, fill:'#F2B544', 'font-size':12},'Tia tới'));
+      svg.appendChild(el('text', {x:210,y:118, fill:'#A8BCEE', 'font-size':12},'θ₁≈40°'));
+      // Refracted (bends toward normal since n2>n1)
+      svg.appendChild(el('line', {x1:260,y1:130,x2:340,y2:250, stroke:'#6DDBB0', 'stroke-width':2.5}));
+      svg.appendChild(el('text', {x:300,y:200, fill:'#6DDBB0', 'font-size':12},'Tia khúc xạ'));
+      svg.appendChild(el('text', {x:262,y:155, fill:'#A8BCEE', 'font-size':12},'θ₂≈25°'));
+      // Partial reflection
+      svg.appendChild(el('line', {x1:260,y1:130,x2:420,y2:30, stroke:'#7B96E0', 'stroke-width':1.5, 'stroke-dasharray':'5 3'}));
+      svg.appendChild(el('text', {x:340,y:50, fill:'#7B96E0', 'font-size':11},'(phản xạ một phần)'));
+      svg.appendChild(el('text', {x:400,y:210, fill:'rgba(251,244,228,0.6)', 'font-size':13},'n₁sinθ₁=n₂sinθ₂'));
+    }
+
+    function drawTotal(svg) {
+      svg.appendChild(el('rect', {x:0,y:130,width:600,height:130, fill:'rgba(90,120,200,0.08)'}));
+      svg.appendChild(el('line', {x1:0,y1:130,x2:600,y2:130, stroke:'rgba(90,120,200,0.5)', 'stroke-width':2}));
+      svg.appendChild(el('text', {x:10,y:124, fill:'rgba(251,244,228,0.4)', 'font-size':11},'n₁ = 1.5 (thủy tinh)  — môi trường đặc hơn'}));
+      svg.appendChild(el('text', {x:10,y:148, fill:'rgba(251,244,228,0.4)', 'font-size':11},'n₂ = 1.0 (không khí) — môi trường loãng hơn'));
+      // Normal
+      svg.appendChild(el('line', {x1:260,y1:20,x2:260,y2:250, stroke:'rgba(251,244,228,0.2)', 'stroke-width':1, 'stroke-dasharray':'6 4'}));
+      // Incident ray from below at large angle
+      svg.appendChild(el('line', {x1:50,y1:245,x2:260,y2:130, stroke:'#F2B544', 'stroke-width':2.5}));
+      svg.appendChild(el('text', {x:60,y:220, fill:'#F2B544', 'font-size':12},'Tia tới (θ>θ_gh)'));
+      svg.appendChild(el('text', {x:180,y:125, fill:'#A8BCEE', 'font-size':12},'θᵢ>θ_gh'));
+      // Total reflected ray (stays in dense medium)
+      svg.appendChild(el('line', {x1:260,y1:130,x2:470,y2:245, stroke:'#FF8C5A', 'stroke-width':2.5}));
+      svg.appendChild(el('text', {x:360,y:215, fill:'#FF8C5A', 'font-size':12},'Phản xạ toàn phần'));
+      // No refracted ray label
+      svg.appendChild(el('text', {x:270,y:70, fill:'rgba(251,244,228,0.4)', 'font-size':11},'Không có tia khúc xạ'));
+      svg.appendChild(el('line', {x1:265,y1:75,x2:265,y2:100, stroke:'rgba(251,244,228,0.2)', 'stroke-width':1, 'stroke-dasharray':'3 2'}));
+      svg.appendChild(el('text', {x:380,y:110, fill:'rgba(251,244,228,0.6)', 'font-size':13},'sinθ_gh = n₂/n₁'));
+    }
+
+    function drawFiber(svg) {
+      // Optical fiber cross-section
+      const coreY = 100, coreH = 60;
+      svg.appendChild(el('rect', {x:40,y:coreY,width:520,height:coreH, fill:'rgba(30,40,80,0.9)', stroke:'rgba(90,120,200,0.5)', 'stroke-width':1.5, rx:6}));
+      svg.appendChild(el('text', {x:50,y:coreY-8, fill:'rgba(251,244,228,0.5)', 'font-size':11},'Vỏ: n₂=1.46 (thủy tinh loãng)'));
+      svg.appendChild(el('text', {x:50,y:coreY+coreH+16, fill:'rgba(251,244,228,0.5)', 'font-size':11},'Lõi: n₁=1.50 (thủy tinh đặc)'}));
+      // Light ray bouncing inside
+      const pts = [[40,130],[130,105],[220,155],[310,105],[400,155],[490,105],[560,130]];
+      const d = pts.map((p,i)=>(i===0?`M${p[0]},${p[1]}`:`L${p[0]},${p[1]}`)).join(' ');
+      const path = el('path', {d, stroke:'#F2B544', 'stroke-width':2, fill:'none',
+        'stroke-dasharray':'400', 'stroke-dashoffset':'400'});
+      svg.appendChild(path);
+      // Animate
+      const anim = document.createElementNS(SVG_NS, 'animate');
+      anim.setAttribute('attributeName','stroke-dashoffset');
+      anim.setAttribute('from','400'); anim.setAttribute('to','0');
+      anim.setAttribute('dur','2s'); anim.setAttribute('repeatCount','indefinite');
+      path.appendChild(anim);
+      // Reflection angle labels
+      svg.appendChild(el('text', {x:110,y:95, fill:'#A8BCEE', 'font-size':10},'θ>θ_gh'));
+      svg.appendChild(el('text', {x:290,y:95, fill:'#A8BCEE', 'font-size':10},'θ>θ_gh'));
+      svg.appendChild(el('text', {x:180,y:190, fill:'rgba(251,244,228,0.7)', 'font-size':12},'Ánh sáng bị giữ lại hoàn toàn bên trong lõi cáp quang'));
+    }
+
+    const vizFns = { reflect: drawReflect, refract: drawRefract, total: drawTotal, fiber: drawFiber };
+
+    function setViz(name) {
+      activeViz = name;
+      document.querySelectorAll('.viz-btn').forEach(b => b.classList.toggle('active', b.textContent.trim() === {
+        reflect:'Phản xạ', refract:'Khúc xạ', total:'Toàn phần', fiber:'Cáp quang'
+      }[name]));
+      const svg = document.getElementById('viz-svg');
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      vizFns[name](svg);
+    }
+    setViz('reflect');
+
+    /* ── Quiz ── */
+    const questions = [
+      {
+        q: 'Ánh sáng đi từ nước (n=1.33) sang không khí (n=1). Chiều nào đúng?',
+        opts: ['Bị bẻ xa pháp tuyến hơn','Bị bẻ gần pháp tuyến hơn','Không đổi hướng','Phản xạ toàn phần luôn xảy ra'],
+        ans: 0
+      },
+      {
+        q: 'Góc giới hạn phản xạ toàn phần của nước-không khí (n=1.33→1) là bao nhiêu?',
+        opts: ['48.8°','30°','60°','90°'],
+        ans: 0
+      },
+      {
+        q: 'Định luật Snell: n₁=1, θ₁=30°, n₂=1.5. Tính sinθ₂?',
+        opts: ['sin30°/1.5 = 0.333','sin30°×1.5 = 0.75','1.5×sin30° = 1.5','Không xác định'],
+        ans: 0
+      },
+      {
+        q: 'Tại sao cáp quang có thể truyền ánh sáng qua bán kính cong?',
+        opts: ['Phản xạ toàn phần liên tục bên trong lõi','Khúc xạ tại mỗi điểm uốn','Ánh sáng đi thẳng qua lõi','Phản xạ gương từ vỏ cáp'],
+        ans: 0
+      },
+    ];
+    const quizEl = document.getElementById('quiz');
+    questions.forEach((q, qi) => {
+      const art = document.createElement('article');
+      art.className = 'quiz-item';
+      art.innerHTML = `<div class="quiz-q">${qi+1}. ${q.q}</div>
+        <ul class="quiz-opts">${q.opts.map((o,i)=>`<li data-qi="${qi}" data-i="${i}">${o}</li>`).join('')}</ul>`;
+      quizEl.appendChild(art);
+    });
+    quizEl.addEventListener('click', e => {
+      const li = e.target.closest('li[data-qi]');
+      if (!li) return;
+      const qi = +li.dataset.qi, i = +li.dataset.i;
+      const siblings = quizEl.querySelectorAll(`li[data-qi="${qi}"]`);
+      if ([...siblings].some(s => s.classList.contains('correct') || s.classList.contains('wrong'))) return;
+      siblings.forEach(s => {
+        if (+s.dataset.i === questions[qi].ans) s.classList.add('correct');
+        else if (+s.dataset.i === i) s.classList.add('wrong');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vật lý · Nhiệt học — Nhiệt động lực học</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SKETCHBOOK / NOTEBOOK STYLE
+    ══════════════════════════════════════ */
+
+    /* Google Font — handwritten feel */
+    @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Caveat:wght@400;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── CSS custom properties ── */
+    :root {
+      --paper:        #F5F0E0;
+      --paper-dark:   #EDE5CC;
+      --ink:          #1A1208;
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #C44010;
+      --accent-blue:  #1A4FA0;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-g:  rgba(80, 180, 100, 0.30);
+      --line-h:       30px;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #8B7355;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #9E8565 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #6B5540 0%, transparent 50%),
+        repeating-linear-gradient(
+          45deg,
+          transparent, transparent 3px,
+          rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px
+        );
+      color: var(--ink);
+      font-family: 'Kalam', cursive;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    /* ══ Fixed nav ══ */
+    .theme-toggle {
+      position: fixed; top: 14px; right: 194px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 13px; border-radius: 4px;
+      background: var(--paper); color: var(--ink);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 13px; font-weight: 700;
+      cursor: pointer; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(-1deg);
+      transition: transform 0.1s;
+    }
+    .theme-toggle:hover { transform: rotate(0deg); border-color: var(--accent); }
+
+    .back-link {
+      position: fixed; top: 14px; right: 20px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent-blue);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(0.8deg);
+      transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent-blue); }
+
+    /* ══ Notebook page shell ══ */
+    .content-wrap {
+      width: min(1060px, 100%);
+      margin: 0 auto;
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.25),
+         6px 0 18px rgba(0,0,0,0.20),
+         0  12px 32px rgba(0,0,0,0.35);
+    }
+
+    /* ══ Ruled-paper background (pure CSS) ══ */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(
+          90deg,
+          transparent 71px,
+          var(--red-margin) 71px,
+          var(--red-margin) 73px,
+          transparent 73px
+        ),
+        repeating-linear-gradient(
+          180deg,
+          transparent 0px,
+          transparent calc(var(--line-h) - 1px),
+          var(--blue-line) calc(var(--line-h) - 1px),
+          var(--blue-line) var(--line-h)
+        );
+      background-attachment: local;
+    }
+
+    /* ══ Hero ══ */
+    .hero {
+      padding: 72px 40px 40px 96px;
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+    }
+    .crumb {
+      font-size: 12px; letter-spacing: 0.06em;
+      color: var(--ink-light); margin-bottom: 10px;
+      font-family: 'Kalam', cursive;
+    }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+
+    .title {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(40px, 6vw, 78px);
+      line-height: 1.0; color: var(--ink);
+      margin-bottom: 6px; font-weight: 700;
+    }
+    .title-stroke {
+      width: clamp(160px, 38vw, 400px); height: 3px;
+      background: var(--accent);
+      border-radius: 2px; margin-bottom: 14px;
+      transform: rotate(-0.4deg);
+    }
+    .subtitle {
+      font-family: 'Kalam', cursive;
+      font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent-blue); margin-bottom: 16px;
+    }
+    .intro {
+      max-width: 800px; font-size: 16px;
+      line-height: var(--line-h);
+      color: var(--ink-mid);
+    }
+
+    /* ══ Layout ══ */
+    .layout {
+      display: grid; grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    /* ══ Card ══ */
+    .card {
+      padding: 28px 36px 32px 96px;
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+
+    .card:nth-child(even) { background-color: var(--paper-dark); }
+    .card.ruled-page:nth-child(even) {
+      background-color: var(--paper-dark);
+    }
+
+    /* ── Punched holes strip ── */
+    .card::before,
+    .hero::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #8B7355 0%, #8B7355 55%,
+        transparent 56%
+      );
+      background-size: 36px 80px;
+      background-repeat: repeat-y;
+      background-position: 0 20px;
+    }
+
+    .card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .card-title {
+      font-family: 'Caveat', cursive;
+      font-size: 26px; color: var(--ink); line-height: 1.1;
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 2px; display: inline;
+    }
+    .tag {
+      font-family: 'Kalam', cursive;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 700; padding: 3px 10px; border-radius: 3px;
+      background: var(--highlight-y);
+      color: var(--ink); border: 1px solid rgba(26,18,8,0.18);
+      flex-shrink: 0;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.15);
+      transform: rotate(1.2deg);
+    }
+
+    .card-body {
+      font-size: 15px;
+      line-height: var(--line-h);
+      color: var(--ink-mid); margin-bottom: 16px;
+    }
+    .card-body strong { color: var(--ink); }
+    .card-body em { color: var(--accent); font-style: italic; }
+
+    /* ── Formula chips ── */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+    .chip {
+      font-family: 'Caveat', cursive;
+      font-size: 17px; padding: 3px 16px;
+      background: rgba(26,79,160,0.07);
+      border: 2px solid rgba(26,79,160,0.40);
+      border-radius: 3px; color: var(--accent-blue);
+    }
+
+    /* ── Sub-panels ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .bond {
+      background: rgba(0,0,0,0.03);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px 12px;
+      border-radius: 0 4px 4px 0;
+    }
+    .bond-name {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .bond-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Slider controls ── */
+    .controls { display: flex; flex-wrap: wrap; gap: 18px; margin: 12px 0 10px; }
+    .ctrl { display: flex; flex-direction: column; gap: 4px; }
+    .ctrl label {
+      font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-light); font-family: 'Kalam', cursive;
+    }
+    .ctrl input[type=range] { width: 150px; accent-color: var(--accent); }
+    .ctrl .val {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; color: var(--accent); font-weight: 700;
+    }
+
+    /* ── Readouts ── */
+    .readouts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .readout {
+      font-family: 'Caveat', cursive; font-size: 15px;
+      background: rgba(196,64,16,0.07);
+      border: 1.5px solid rgba(196,64,16,0.28);
+      border-radius: 3px; padding: 4px 12px;
+      color: var(--ink-mid);
+    }
+    .readout span { color: var(--accent); font-weight: 700; }
+
+    /* ── Viz toolbar ── */
+    .viz-toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .viz-btn {
+      font-family: 'Kalam', cursive;
+      padding: 5px 13px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.22);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background 0.12s, transform 0.1s;
+    }
+    .viz-btn:hover { background: var(--highlight-y); color: var(--ink); transform: translateY(-1px); }
+    .viz-btn.active {
+      background: var(--highlight-y); color: var(--ink);
+      border-color: var(--accent);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .viz-stage {
+      background: #151C14;
+      border: 2px solid rgba(26,18,8,0.30);
+      border-radius: 4px; overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .viz-stage canvas { display: block; }
+
+    /* ── Highlight box ── */
+    .aero-card {
+      background: var(--highlight-g);
+      border-left: 3px solid var(--accent-blue);
+      border-radius: 0 4px 4px 0;
+      padding: 16px 18px 14px; margin-top: 4px;
+    }
+    .aero-title {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent-blue); margin-bottom: 7px;
+    }
+    .aero-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Compare table ── */
+    .compare { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .compare th {
+      padding: 8px 12px; text-align: left;
+      background: rgba(196,64,16,0.10); color: var(--accent);
+      font-weight: 700; letter-spacing: 0.05em; font-size: 11px;
+      text-transform: uppercase;
+      border-bottom: 2px solid rgba(196,64,16,0.28);
+    }
+    .compare td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--blue-line);
+      color: var(--ink-mid); vertical-align: top;
+    }
+    .compare tr:last-child td { border-bottom: none; }
+    .compare tr:hover td { background: var(--highlight-y); }
+
+    /* ── Spring / interactive controls (for spring page) ── */
+    .spring-demo { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+    .spring-canvas-wrap canvas { display: block; border-radius: 4px; background: #0E1410; border: 2px solid rgba(26,18,8,0.30); cursor: grab; }
+    .spring-canvas-wrap canvas:active { cursor: grabbing; }
+    .spring-controls { display: flex; flex-direction: column; gap: 14px; }
+    .ctrl-group {
+      background: rgba(0,0,0,0.04);
+      border: 1px solid rgba(26,18,8,0.12);
+      border-radius: 4px; padding: 14px;
+    }
+    .ctrl-label {
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); font-weight: 700; margin-bottom: 8px;
+      font-family: 'Kalam', cursive;
+    }
+    .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .slider-row label { font-size: 13px; color: var(--ink-mid); width: 100px; flex-shrink: 0; }
+    .slider-row input[type=range] { flex: 1; accent-color: var(--accent); }
+    .slider-row .val { font-size: 13px; color: var(--accent-blue); width: 54px; text-align: right; font-family: 'Caveat', cursive; }
+    .btn-row { display: flex; gap: 8px; margin-top: 4px; }
+    .ctrl-btn {
+      flex: 1; padding: 7px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.20);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      font-family: 'Kalam', cursive;
+      transition: background 0.12s;
+    }
+    .ctrl-btn:hover { background: var(--highlight-y); color: var(--ink); }
+    .ctrl-btn.active { background: var(--highlight-y); border-color: var(--accent); color: var(--ink); }
+
+    /* ══ Dark mode ══ */
+    body.dark-mode {
+      background: #3A3020;
+      --paper:      #1C1810;
+      --paper-dark: #211E12;
+      --ink:        #EDE0C0;
+      --ink-mid:    #C4AE82;
+      --ink-light:  #8A7658;
+      --blue-line:  rgba(80, 110, 180, 0.18);
+      --red-margin: rgba(200, 70, 70, 0.5);
+      --highlight-y: rgba(180, 150, 30, 0.35);
+      --highlight-g: rgba(50, 130, 70, 0.20);
+    }
+    body.dark-mode .content-wrap {
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.5),
+         6px 0 18px rgba(0,0,0,0.4),
+         0  12px 32px rgba(0,0,0,0.6);
+    }
+    body.dark-mode .card::before,
+    body.dark-mode .hero::before {
+      background-color: rgba(0,0,0,0.15);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #3A3020 0%, #3A3020 55%,
+        transparent 56%
+      );
+    }
+
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .spring-demo { grid-template-columns: 1fr; }
+      .theme-toggle { right: 172px; }
+    }
+    @media (max-width: 640px) {
+      .theme-toggle, .back-link { position: absolute; top: 10px; }
+      .theme-toggle { right: 148px; } .back-link { right: 12px; }
+      .hero, .card { padding-left: 56px; }
+      .card::before, .hero::before { width: 28px; background-size: 28px 80px; }
+    }
+  </style>
+</head>
+<body>
+  <button id="themeBtn" class="theme-toggle" type="button">☽ Tối</button>
+  <a class="back-link" href="chuong-nhiet-hoc.html">← Nhiệt học</a>
+
+  <div class="content-wrap">
+    <header class="hero ruled-page">
+        <div class="crumb">
+          <a href="Learning Resources Hub v4.html">Vật lý</a>
+          <span>›</span>
+          <a href="chuong-nhiet-hoc.html">Nhiệt học</a>
+          <span>›</span>
+          <span>Nhiệt động lực học</span>
+        </div>
+        <h1 class="title">Nhiệt động lực học</h1>
+        <div class="title-stroke"></div>
+        <p class="subtitle">Chủ đề 3 · Nguyên lý và máy nhiệt</p>
+        <p class="intro">
+          Nhiệt động lực học nghiên cứu quan hệ giữa nhiệt, công và năng lượng nội.
+          Hai nguyên lý cốt lõi xác định giới hạn hiệu suất của mọi máy nhiệt — từ động cơ xe đến nhà máy điện.
+        </p>
+    </header>
+
+    <main class="layout">
+
+      <section class="card ruled-page">
+        <h2>1. Hai nguyên lý nhiệt động lực học</h2>
+        <div class="grid-2">
+          <article class="bond">
+            <h3>Nguyên lý I <span class="tag">ΔU = Q + A</span></h3>
+            <ul>
+              <li>Năng lượng nội của hệ thay đổi bằng tổng nhiệt nhận được và công nhận được.</li>
+              <li>Quy ước: Q > 0 khi hệ <em>nhận</em> nhiệt; A > 0 khi hệ <em>nhận</em> công (bị nén).</li>
+              <li>Đây là bảo toàn năng lượng áp dụng cho hệ nhiệt động.</li>
+              <li>Không thể tạo ra năng lượng từ không có gì (động cơ vĩnh cửu loại I là bất khả thi).</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Nguyên lý II <span class="tag">chiều tự nhiên</span></h3>
+            <ul>
+              <li>Nhiệt tự nhiên chỉ truyền từ vật nóng hơn sang vật lạnh hơn, không bao giờ ngược lại.</li>
+              <li>Không thể chuyển hoàn toàn nhiệt thành công trong một chu trình (máy nhiệt luôn có tổn thất).</li>
+              <li>Entropy (độ hỗn loạn) của hệ cô lập luôn tăng hoặc không đổi: ΔS ≥ 0.</li>
+              <li>Động cơ vĩnh cửu loại II — hoạt động chỉ từ một nguồn nhiệt — là bất khả thi.</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Công của khí trong các quá trình</h3>
+            <ul>
+              <li>Đẳng tích: A = 0 (thể tích không đổi, không có công cơ học).</li>
+              <li>Đẳng áp: A = P·ΔV (áp suất nhân biến thiên thể tích).</li>
+              <li>Đẳng nhiệt: A = nRT·ln(V₂/V₁).</li>
+              <li>Chu trình: công toàn phần = diện tích vùng khép kín trên đồ thị P–V.</li>
+            </ul>
+          </article>
+          <article class="bond">
+            <h3>Entropy <span class="tag">S — độ hỗn loạn</span></h3>
+            <ul>
+              <li>Entropy đo mức độ hỗn loạn hoặc số trạng thái vi mô có thể có.</li>
+              <li>Quá trình thuận nghịch: ΔS = Q/T.</li>
+              <li>Quá trình bất thuận nghịch (thực tế): ΔS > 0 cho hệ vũ trụ.</li>
+              <li>Giải thích: tại sao mực nước không tự tách, khói không tự tụ lại — xác suất vi mô.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="formula-block">
+          <div class="formula-chip">
+            <strong>ΔU = Q + A</strong>
+            <small>Nguyên lý I nhiệt động lực học</small>
+          </div>
+          <div class="formula-chip">
+            <strong>A = P·ΔV</strong>
+            <small>Công khí đẳng áp</small>
+          </div>
+          <div class="formula-chip">
+            <strong>ΔS = Q/T</strong>
+            <small>Biến thiên entropy thuận nghịch</small>
+          </div>
+          <div class="formula-chip">
+            <strong>η = 1 − T_lạnh/T_nóng</strong>
+            <small>Hiệu suất Carnot cực đại</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="card ruled-page">
+        <h2>2. Mô phỏng máy nhiệt và chu trình</h2>
+        <p>Chọn mô hình để xem sơ đồ năng lượng:</p>
+        <div class="viz-toolbar" role="tablist">
+          <button class="viz-btn active" type="button" data-viz="heatengine" role="tab" aria-selected="true">Máy nhiệt</button>
+          <button class="viz-btn" type="button" data-viz="refrigerator" role="tab" aria-selected="false">Máy lạnh</button>
+          <button class="viz-btn" type="button" data-viz="carnot" role="tab" aria-selected="false">Chu trình Carnot</button>
+          <button class="viz-btn" type="button" data-viz="entropy" role="tab" aria-selected="false">Entropy</button>
+        </div>
+        <div class="viz-stage" id="viz-stage" aria-live="polite"></div>
+        <div class="viz-info">
+          <div class="mini"><h4>Nguyên lý</h4><p id="viz-principle"></p></div>
+          <div class="mini"><h4>Ứng dụng</h4><p id="viz-application"></p></div>
+        </div>
+      </section>
+
+      <section class="card ruled-page">
+        <h2>3. Bảng tổng hợp các quá trình nhiệt động</h2>
+        <table class="compare">
+          <thead>
+            <tr><th>Quá trình</th><th>ΔU</th><th>Q</th><th>A (công khí sinh ra)</th><th>Đặc điểm</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Đẳng tích</td><td>Q</td><td>≠ 0</td><td>0</td><td>Toàn bộ nhiệt → thay đổi năng lượng nội</td></tr>
+            <tr><td>Đẳng áp</td><td>Q − PΔV</td><td>≠ 0</td><td>PΔV</td><td>Khí vừa nhận nhiệt vừa sinh/nhận công</td></tr>
+            <tr><td>Đẳng nhiệt</td><td>0 (khí lý tưởng)</td><td>= −A_khí</td><td>nRT·ln(V₂/V₁)</td><td>Nhiệt nhận = công sinh ra, U không đổi</td></tr>
+            <tr><td>Đoạn nhiệt</td><td>A (nhận)</td><td>0</td><td>−ΔU</td><td>Không trao đổi nhiệt; nén → nóng lên</td></tr>
+          </tbody>
+        </table>
+        <p class="note">
+          <strong>Dấu quy ước thống nhất trong sách Việt Nam:</strong> ΔU = Q + A (A là công <em>nhận</em> vào hệ).
+          Một số sách quốc tế dùng ΔU = Q − W (W là công <em>hệ sinh ra</em>) — hai cách tương đương, chỉ khác dấu.
+        </p>
+      </section>
+
+      <section class="card ruled-page">
+        <h2>4. Tự kiểm tra</h2>
+        <div class="quiz">
+          <article class="quiz-item">
+            <h4>Câu 1</h4>
+            <p>Khí nhận 500 J nhiệt và bị nén, nhận thêm 200 J công. Tính biến thiên năng lượng nội ΔU. Nếu thay vào đó khí giãn nở và sinh ra 200 J công, ΔU bằng bao nhiêu?</p>
+          </article>
+          <article class="quiz-item">
+            <h4>Câu 2</h4>
+            <p>Máy nhiệt lý tưởng (Carnot) hoạt động giữa nguồn nóng 500 K và nguồn lạnh 300 K. Tính hiệu suất cực đại. Nếu T_nóng tăng lên 600 K, hiệu suất thay đổi như thế nào?</p>
+          </article>
+          <article class="quiz-item">
+            <h4>Câu 3</h4>
+            <p>Giải thích bằng nguyên lý II tại sao tủ lạnh cần điện để hoạt động — tại sao nhiệt không tự chuyển từ lạnh sang nóng mà không cần tác nhân bên ngoài?</p>
+          </article>
+          <article class="quiz-item">
+            <h4>Câu 4</h4>
+            <p>Một chu trình khép kín trên đồ thị P–V có diện tích vùng khép kín là 800 J. Hỏi chu trình đó sinh công hay nhận công? Tổng nhiệt lượng trao đổi trong chu trình bằng bao nhiêu?</p>
+          </article>
+        </div>
+      </section>
+
+    </main>
+
+    <nav class="sub-nav">
+      <a href="chuong-nhiet-hoc-khi-ly-tuong.html">← Khí lý tưởng</a>
+      <a href="chuong-nhiet-hoc.html">Tổng quan Nhiệt học →</a>
+    </nav>
+  </div>
+
+  <script>
+    (function(){
+      const body = document.body;
+      const btn  = document.getElementById('themeBtn');
+      const saved = localStorage.getItem('bewy-theme');
+      if (saved === 'dark') { body.classList.add('dark-mode'); btn.textContent = '☀ Sáng'; }
+      btn.addEventListener('click', () => {
+        const dark = body.classList.toggle('dark-mode');
+        btn.textContent = dark ? '☀ Sáng' : '☽ Tối';
+        localStorage.setItem('bewy-theme', dark ? 'dark' : 'light');
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      const vizStage = document.getElementById('viz-stage');
+      const vizButtons = Array.from(document.querySelectorAll('.viz-btn'));
+      const vizPrinciple = document.getElementById('viz-principle');
+      const vizApplication = document.getElementById('viz-application');
+
+      const vizData = {
+        heatengine: {
+          principle: 'Máy nhiệt nhận nhiệt Q_H từ nguồn nóng, chuyển một phần thành công W, phần còn lại Q_C thải ra nguồn lạnh. η = W/Q_H = 1 − Q_C/Q_H.',
+          application: 'Động cơ đốt trong (xe hơi), tua-bin hơi nước (nhà máy điện), động cơ tên lửa — tất cả đều hoạt động theo nguyên lý máy nhiệt.',
+          svg: `<svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrH" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto">
+                <polygon points="0 0, 8 3.5, 0 7" fill="#D9633B"/>
+              </marker>
+              <marker id="arrC" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto">
+                <polygon points="0 0, 8 3.5, 0 7" fill="#6FB8D1"/>
+              </marker>
+              <marker id="arrW" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto">
+                <polygon points="0 0, 8 3.5, 0 7" fill="#F2B544"/>
+              </marker>
+            </defs>
+            <rect x="60" y="40" width="180" height="70" rx="12" fill="#D9633B" opacity="0.85"/>
+            <text x="150" y="80" text-anchor="middle" fill="#1E1B18" font-size="16" font-weight="700">NGUỒN NÓNG T_H</text>
+            <rect x="60" y="200" width="180" height="60" rx="12" fill="#6FB8D1" opacity="0.85"/>
+            <text x="150" y="235" text-anchor="middle" fill="#1E1B18" font-size="16" font-weight="700">NGUỒN LẠNH T_C</text>
+            <rect x="320" y="110" width="160" height="80" rx="12" fill="rgba(251,244,228,0.12)" stroke="rgba(251,244,228,0.4)" stroke-width="2"/>
+            <text x="400" y="152" text-anchor="middle" fill="#FBF4E4" font-size="15" font-weight="700">MÁY NHIỆT</text>
+            <line x1="240" y1="90" x2="320" y2="140" stroke="#D9633B" stroke-width="4" marker-end="url(#arrH)"/>
+            <text x="265" y="108" fill="#D9633B" font-size="13">Q_H</text>
+            <line x1="320" y1="170" x2="240" y2="215" stroke="#6FB8D1" stroke-width="4" marker-end="url(#arrC)"/>
+            <text x="263" y="208" fill="#6FB8D1" font-size="13">Q_C</text>
+            <line x1="480" y1="150" x2="560" y2="150" stroke="#F2B544" stroke-width="5" marker-end="url(#arrW)"/>
+            <text x="515" y="138" text-anchor="middle" fill="#F2B544" font-size="14">W</text>
+            <text x="400" y="268" text-anchor="middle" fill="rgba(251,244,228,0.55)" font-size="13">η = W/Q_H = 1 − Q_C/Q_H ≤ 1 − T_C/T_H</text>
+          </svg>`,
+        },
+        refrigerator: {
+          principle: 'Máy lạnh (tủ lạnh, điều hòa) dùng công W để chuyển nhiệt Q_C từ nguồn lạnh sang nguồn nóng — ngược chiều tự nhiên. Hệ số làm lạnh COP = Q_C/W.',
+          application: 'Tủ lạnh: môi chất lạnh bay hơi trong buồng lạnh (hút nhiệt Q_C), ngưng tụ bên ngoài (thải nhiệt Q_H). Điều hòa hoạt động tương tự nhưng làm lạnh không gian lớn hơn.',
+          svg: `<svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrRH" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto">
+                <polygon points="0 0, 8 3.5, 0 7" fill="#D9633B"/>
+              </marker>
+              <marker id="arrRC" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto">
+                <polygon points="0 0, 8 3.5, 0 7" fill="#6FB8D1"/>
+              </marker>
+              <marker id="arrRW" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto">
+                <polygon points="0 0, 8 3.5, 0 7" fill="#F2B544"/>
+              </marker>
+            </defs>
+            <rect x="60" y="40" width="180" height="70" rx="12" fill="#D9633B" opacity="0.85"/>
+            <text x="150" y="72" text-anchor="middle" fill="#1E1B18" font-size="14" font-weight="700">MÔI TRƯỜNG</text>
+            <text x="150" y="92" text-anchor="middle" fill="#1E1B18" font-size="14">(NÓNG HƠN)</text>
+            <rect x="60" y="200" width="180" height="60" rx="12" fill="#6FB8D1" opacity="0.85"/>
+            <text x="150" y="233" text-anchor="middle" fill="#1E1B18" font-size="14" font-weight="700">BUỒNG LẠNH T_C</text>
+            <rect x="320" y="110" width="160" height="80" rx="12" fill="rgba(251,244,228,0.12)" stroke="rgba(251,244,228,0.4)" stroke-width="2"/>
+            <text x="400" y="152" text-anchor="middle" fill="#FBF4E4" font-size="15" font-weight="700">MÁY LẠNH</text>
+            <line x1="320" y1="135" x2="245" y2="95" stroke="#D9633B" stroke-width="4" marker-end="url(#arrRH)"/>
+            <text x="265" y="108" fill="#D9633B" font-size="13">Q_H</text>
+            <line x1="240" y1="215" x2="318" y2="175" stroke="#6FB8D1" stroke-width="4" marker-end="url(#arrRC)"/>
+            <text x="258" y="212" fill="#6FB8D1" font-size="13">Q_C</text>
+            <line x1="560" y1="150" x2="482" y2="150" stroke="#F2B544" stroke-width="5" marker-end="url(#arrRW)"/>
+            <text x="518" y="138" text-anchor="middle" fill="#F2B544" font-size="14">W (điện)</text>
+            <text x="400" y="268" text-anchor="middle" fill="rgba(251,244,228,0.55)" font-size="13">Q_H = Q_C + W · · · COP = Q_C / W</text>
+          </svg>`,
+        },
+        carnot: {
+          principle: 'Chu trình Carnot là chu trình lý tưởng gồm: giãn đẳng nhiệt → giãn đoạn nhiệt → nén đẳng nhiệt → nén đoạn nhiệt. Hiệu suất chỉ phụ thuộc nhiệt độ hai nguồn.',
+          application: 'Hiệu suất Carnot là giới hạn lý thuyết của mọi máy nhiệt: η_Carnot = 1 − T_C/T_H. Máy thực tế luôn kém hiệu quả hơn do ma sát, truyền nhiệt bất thuận nghịch.',
+          svg: `<svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrPV" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto">
+                <polygon points="0 0, 8 3.5, 0 7" fill="#F2B544"/>
+              </marker>
+            </defs>
+            <line x1="80" y1="240" x2="720" y2="240" stroke="rgba(251,244,228,0.3)" stroke-width="2"/>
+            <line x1="80" y1="240" x2="80" y2="30" stroke="rgba(251,244,228,0.3)" stroke-width="2"/>
+            <text x="720" y="258" fill="rgba(251,244,228,0.5)" font-size="14">V</text>
+            <text x="68" y="28" fill="rgba(251,244,228,0.5)" font-size="14">P</text>
+            <path d="M160 80 Q280 90 380 160" stroke="#D9633B" stroke-width="3" fill="none" marker-end="url(#arrPV)"/>
+            <text x="240" y="100" fill="#D9633B" font-size="12">① Giãn đẳng nhiệt (T_H)</text>
+            <path d="M380 160 Q440 200 480 220" stroke="#F2B544" stroke-width="3" fill="none" marker-end="url(#arrPV)"/>
+            <text x="430" y="210" fill="#F2B544" font-size="12">② Giãn đoạn nhiệt</text>
+            <path d="M480 220 Q380 215 280 190" stroke="#6FB8D1" stroke-width="3" fill="none" marker-end="url(#arrPV)"/>
+            <text x="330" y="232" fill="#6FB8D1" font-size="12">③ Nén đẳng nhiệt (T_C)</text>
+            <path d="M280 190 Q220 155 160 80" stroke="#2F8F6F" stroke-width="3" fill="none" marker-end="url(#arrPV)"/>
+            <text x="148" y="150" fill="#2F8F6F" font-size="12">④ Nén đoạn nhiệt</text>
+            <text x="400" y="268" text-anchor="middle" fill="rgba(251,244,228,0.5)" font-size="13">η_Carnot = 1 − T_C / T_H · Diện tích vùng khép = công sinh ra</text>
+          </svg>`,
+        },
+        entropy: {
+          principle: 'Entropy đo độ hỗn loạn. Trong quá trình tự nhiên, entropy tổng hệ vũ trụ luôn tăng. Quá trình thuận nghịch là giới hạn lý tưởng (ΔS_vũ trụ = 0).',
+          application: 'Mực nước tự hòa vào nhau (entropy tăng), khói tự khuếch tán (entropy tăng). Sắp xếp lại (giảm entropy cục bộ) đòi hỏi công từ bên ngoài — giải thích tại sao phòng tự bừa bãi còn tự gọn thì không.',
+          svg: `<svg viewBox="0 0 800 260" xmlns="http://www.w3.org/2000/svg">
+            <rect x="80" y="60" width="240" height="160" rx="10" fill="rgba(217,99,59,0.12)" stroke="rgba(251,244,228,0.25)" stroke-width="2"/>
+            <rect x="480" y="60" width="240" height="160" rx="10" fill="rgba(111,184,209,0.08)" stroke="rgba(251,244,228,0.25)" stroke-width="2"/>
+            <g fill="#D9633B">
+              <circle cx="130" cy="100" r="7"/><circle cx="160" cy="150" r="7"/><circle cx="200" cy="90" r="7"/>
+              <circle cx="240" cy="170" r="7"/><circle cx="280" cy="120" r="7"/><circle cx="150" cy="200" r="7"/>
+            </g>
+            <g fill="#6FB8D1">
+              <circle cx="530" cy="110" r="7"/><circle cx="580" cy="80" r="7"/><circle cx="620" cy="170" r="7"/>
+              <circle cx="660" cy="100" r="7"/><circle cx="560" cy="200" r="7"/><circle cx="680" cy="160" r="7"/>
+            </g>
+            <text x="200" y="244" text-anchor="middle" fill="#D9633B" font-size="13">Trước: trật tự hơn · S thấp</text>
+            <text x="600" y="244" text-anchor="middle" fill="#6FB8D1" font-size="13">Sau khi trộn: hỗn loạn · S cao</text>
+            <line x1="325" y1="140" x2="475" y2="140" stroke="#F2B544" stroke-width="3">
+              <animate attributeName="stroke-dashoffset" values="10;0" dur="0.8s" repeatCount="indefinite"/>
+            </line>
+            <polygon points="468,133 480,140 468,147" fill="#F2B544"/>
+            <text x="400" y="128" text-anchor="middle" fill="#F2B544" font-size="12">Tự nhiên</text>
+          </svg>`,
+        },
+      };
+
+      const render = (key) => {
+        const d = vizData[key] || vizData.heatengine;
+        if (vizStage) vizStage.innerHTML = d.svg;
+        if (vizPrinciple) vizPrinciple.textContent = d.principle;
+        if (vizApplication) vizApplication.textContent = d.application;
+      };
+
+      vizButtons.forEach((b) => {
+        b.addEventListener('click', () => {
+          vizButtons.forEach((x) => { x.classList.remove('active'); x.setAttribute('aria-selected','false'); });
+          b.classList.add('active'); b.setAttribute('aria-selected','true');
+          render(b.dataset.viz);
+        });
+      });
+      render('heatengine');
+    })();
+  </script>
+</body>
+</html>

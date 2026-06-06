@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vật lý · Lực Hấp Dẫn</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SKETCHBOOK / NOTEBOOK STYLE
+    ══════════════════════════════════════ */
+
+    /* Google Font — handwritten feel */
+    @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Caveat:wght@400;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── CSS custom properties ── */
+    :root {
+      --paper:        #F5F0E0;
+      --paper-dark:   #EDE5CC;
+      --ink:          #1A1208;
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #C44010;
+      --accent-blue:  #1A4FA0;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-g:  rgba(80, 180, 100, 0.30);
+      --line-h:       30px;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #8B7355;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #9E8565 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #6B5540 0%, transparent 50%),
+        repeating-linear-gradient(
+          45deg,
+          transparent, transparent 3px,
+          rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px
+        );
+      color: var(--ink);
+      font-family: 'Kalam', cursive;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    /* ══ Fixed nav ══ */
+    .theme-toggle {
+      position: fixed; top: 14px; right: 194px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 13px; border-radius: 4px;
+      background: var(--paper); color: var(--ink);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 13px; font-weight: 700;
+      cursor: pointer; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(-1deg);
+      transition: transform 0.1s;
+    }
+    .theme-toggle:hover { transform: rotate(0deg); border-color: var(--accent); }
+
+    .back-link {
+      position: fixed; top: 14px; right: 20px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent-blue);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(0.8deg);
+      transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent-blue); }
+
+    /* ══ Notebook page shell ══ */
+    .content-wrap {
+      width: min(1060px, 100%);
+      margin: 0 auto;
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.25),
+         6px 0 18px rgba(0,0,0,0.20),
+         0  12px 32px rgba(0,0,0,0.35);
+    }
+
+    /* ══ Ruled-paper background (pure CSS) ══ */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(
+          90deg,
+          transparent 71px,
+          var(--red-margin) 71px,
+          var(--red-margin) 73px,
+          transparent 73px
+        ),
+        repeating-linear-gradient(
+          180deg,
+          transparent 0px,
+          transparent calc(var(--line-h) - 1px),
+          var(--blue-line) calc(var(--line-h) - 1px),
+          var(--blue-line) var(--line-h)
+        );
+      background-attachment: local;
+    }
+
+    /* ══ Hero ══ */
+    .hero {
+      padding: 72px 40px 40px 96px;
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+    }
+    .crumb {
+      font-size: 12px; letter-spacing: 0.06em;
+      color: var(--ink-light); margin-bottom: 10px;
+      font-family: 'Kalam', cursive;
+    }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+
+    .title {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(40px, 6vw, 78px);
+      line-height: 1.0; color: var(--ink);
+      margin-bottom: 6px; font-weight: 700;
+    }
+    .title-stroke {
+      width: clamp(160px, 38vw, 400px); height: 3px;
+      background: var(--accent);
+      border-radius: 2px; margin-bottom: 14px;
+      transform: rotate(-0.4deg);
+    }
+    .subtitle {
+      font-family: 'Kalam', cursive;
+      font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent-blue); margin-bottom: 16px;
+    }
+    .intro {
+      max-width: 800px; font-size: 16px;
+      line-height: var(--line-h);
+      color: var(--ink-mid);
+    }
+
+    /* ══ Layout ══ */
+    .layout {
+      display: grid; grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    /* ══ Card ══ */
+    .card {
+      padding: 28px 36px 32px 96px;
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+
+    .card:nth-child(even) { background-color: var(--paper-dark); }
+    .card.ruled-page:nth-child(even) {
+      background-color: var(--paper-dark);
+    }
+
+    /* ── Punched holes strip ── */
+    .card::before,
+    .hero::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #8B7355 0%, #8B7355 55%,
+        transparent 56%
+      );
+      background-size: 36px 80px;
+      background-repeat: repeat-y;
+      background-position: 0 20px;
+    }
+
+    .card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .card-title {
+      font-family: 'Caveat', cursive;
+      font-size: 26px; color: var(--ink); line-height: 1.1;
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 2px; display: inline;
+    }
+    .tag {
+      font-family: 'Kalam', cursive;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 700; padding: 3px 10px; border-radius: 3px;
+      background: var(--highlight-y);
+      color: var(--ink); border: 1px solid rgba(26,18,8,0.18);
+      flex-shrink: 0;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.15);
+      transform: rotate(1.2deg);
+    }
+
+    .card-body {
+      font-size: 15px;
+      line-height: var(--line-h);
+      color: var(--ink-mid); margin-bottom: 16px;
+    }
+    .card-body strong { color: var(--ink); }
+    .card-body em { color: var(--accent); font-style: italic; }
+
+    /* ── Formula chips ── */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+    .chip {
+      font-family: 'Caveat', cursive;
+      font-size: 17px; padding: 3px 16px;
+      background: rgba(26,79,160,0.07);
+      border: 2px solid rgba(26,79,160,0.40);
+      border-radius: 3px; color: var(--accent-blue);
+    }
+
+    /* ── Sub-panels ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .bond {
+      background: rgba(0,0,0,0.03);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px 12px;
+      border-radius: 0 4px 4px 0;
+    }
+    .bond-name {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .bond-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Slider controls ── */
+    .controls { display: flex; flex-wrap: wrap; gap: 18px; margin: 12px 0 10px; }
+    .ctrl { display: flex; flex-direction: column; gap: 4px; }
+    .ctrl label {
+      font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-light); font-family: 'Kalam', cursive;
+    }
+    .ctrl input[type=range] { width: 150px; accent-color: var(--accent); }
+    .ctrl .val {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; color: var(--accent); font-weight: 700;
+    }
+
+    /* ── Readouts ── */
+    .readouts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .readout {
+      font-family: 'Caveat', cursive; font-size: 15px;
+      background: rgba(196,64,16,0.07);
+      border: 1.5px solid rgba(196,64,16,0.28);
+      border-radius: 3px; padding: 4px 12px;
+      color: var(--ink-mid);
+    }
+    .readout span { color: var(--accent); font-weight: 700; }
+
+    /* ── Viz toolbar ── */
+    .viz-toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .viz-btn {
+      font-family: 'Kalam', cursive;
+      padding: 5px 13px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.22);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background 0.12s, transform 0.1s;
+    }
+    .viz-btn:hover { background: var(--highlight-y); color: var(--ink); transform: translateY(-1px); }
+    .viz-btn.active {
+      background: var(--highlight-y); color: var(--ink);
+      border-color: var(--accent);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .viz-stage {
+      background: #151C14;
+      border: 2px solid rgba(26,18,8,0.30);
+      border-radius: 4px; overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .viz-stage canvas { display: block; }
+
+    /* ── Highlight box ── */
+    .aero-card {
+      background: var(--highlight-g);
+      border-left: 3px solid var(--accent-blue);
+      border-radius: 0 4px 4px 0;
+      padding: 16px 18px 14px; margin-top: 4px;
+    }
+    .aero-title {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent-blue); margin-bottom: 7px;
+    }
+    .aero-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Compare table ── */
+    .compare { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .compare th {
+      padding: 8px 12px; text-align: left;
+      background: rgba(196,64,16,0.10); color: var(--accent);
+      font-weight: 700; letter-spacing: 0.05em; font-size: 11px;
+      text-transform: uppercase;
+      border-bottom: 2px solid rgba(196,64,16,0.28);
+    }
+    .compare td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--blue-line);
+      color: var(--ink-mid); vertical-align: top;
+    }
+    .compare tr:last-child td { border-bottom: none; }
+    .compare tr:hover td { background: var(--highlight-y); }
+
+    /* ── Spring / interactive controls (for spring page) ── */
+    .spring-demo { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+    .spring-canvas-wrap canvas { display: block; border-radius: 4px; background: #0E1410; border: 2px solid rgba(26,18,8,0.30); cursor: grab; }
+    .spring-canvas-wrap canvas:active { cursor: grabbing; }
+    .spring-controls { display: flex; flex-direction: column; gap: 14px; }
+    .ctrl-group {
+      background: rgba(0,0,0,0.04);
+      border: 1px solid rgba(26,18,8,0.12);
+      border-radius: 4px; padding: 14px;
+    }
+    .ctrl-label {
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); font-weight: 700; margin-bottom: 8px;
+      font-family: 'Kalam', cursive;
+    }
+    .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .slider-row label { font-size: 13px; color: var(--ink-mid); width: 100px; flex-shrink: 0; }
+    .slider-row input[type=range] { flex: 1; accent-color: var(--accent); }
+    .slider-row .val { font-size: 13px; color: var(--accent-blue); width: 54px; text-align: right; font-family: 'Caveat', cursive; }
+    .btn-row { display: flex; gap: 8px; margin-top: 4px; }
+    .ctrl-btn {
+      flex: 1; padding: 7px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.20);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      font-family: 'Kalam', cursive;
+      transition: background 0.12s;
+    }
+    .ctrl-btn:hover { background: var(--highlight-y); color: var(--ink); }
+    .ctrl-btn.active { background: var(--highlight-y); border-color: var(--accent); color: var(--ink); }
+
+    /* ══ Dark mode ══ */
+    body.dark-mode {
+      background: #3A3020;
+      --paper:      #1C1810;
+      --paper-dark: #211E12;
+      --ink:        #EDE0C0;
+      --ink-mid:    #C4AE82;
+      --ink-light:  #8A7658;
+      --blue-line:  rgba(80, 110, 180, 0.18);
+      --red-margin: rgba(200, 70, 70, 0.5);
+      --highlight-y: rgba(180, 150, 30, 0.35);
+      --highlight-g: rgba(50, 130, 70, 0.20);
+    }
+    body.dark-mode .content-wrap {
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.5),
+         6px 0 18px rgba(0,0,0,0.4),
+         0  12px 32px rgba(0,0,0,0.6);
+    }
+    body.dark-mode .card::before,
+    body.dark-mode .hero::before {
+      background-color: rgba(0,0,0,0.15);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #3A3020 0%, #3A3020 55%,
+        transparent 56%
+      );
+    }
+
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .spring-demo { grid-template-columns: 1fr; }
+      .theme-toggle { right: 172px; }
+    }
+    @media (max-width: 640px) {
+      .theme-toggle, .back-link { position: absolute; top: 10px; }
+      .theme-toggle { right: 148px; } .back-link { right: 12px; }
+      .hero, .card { padding-left: 56px; }
+      .card::before, .hero::before { width: 28px; background-size: 28px 80px; }
+    }
+  </style>
+</head>
+<body>
+  <button id="themeBtn" class="theme-toggle" type="button">☽ Tối</button>
+  <a class="back-link" href="Learning Resources Hub v4.html">← Thư viện</a>
+
+  <div class="content-wrap">
+    <header class="hero ruled-page">
+        <div class="crumb"><a href="Learning Resources Hub v4.html">Vật lý</a> › <span>Cơ học</span> › <span>Lực hấp dẫn</span></div>
+        <h1 class="title">Lực Hấp Dẫn</h1>
+        <div class="title-stroke"></div>
+        <p class="subtitle">Định luật Newton · Trọng lực · Chuyển động quỹ đạo</p>
+        <p class="intro">
+          Mọi vật có khối lượng đều hút nhau. Từ quả táo rơi xuống đất đến hành trình của các hành tinh quanh Mặt Trời — tất cả đều tuân theo cùng một định luật được Newton viết ra năm 1687.
+        </p>
+    </header>
+
+    <main class="layout">
+
+      <!-- ══ 1. Định luật vạn vật hấp dẫn ══ -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Định luật vạn vật hấp dẫn</h2>
+          <span class="tag">Newton 1687</span>
+        </div>
+        <p class="card-body">
+          Hai vật bất kỳ có khối lượng m₁ và m₂ đặt cách nhau một khoảng r sẽ hút nhau bằng một lực dọc theo đường nối hai vật, tỉ lệ thuận với tích hai khối lượng và tỉ lệ nghịch với bình phương khoảng cách.
+        </p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Công thức</div>
+            <div class="bond-body">
+              <strong style="color:#C878E8;font-size:18px;">F = G·m₁m₂ / r²</strong><br><br>
+              F: lực hấp dẫn (N)<br>
+              G: hằng số hấp dẫn = 6.674 × 10⁻¹¹ N·m²/kg²<br>
+              m₁, m₂: khối lượng hai vật (kg)<br>
+              r: khoảng cách tâm–tâm (m)
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Tính chất</div>
+            <div class="bond-body">
+              Luôn là lực hút (không có hấp dẫn đẩy)<br>
+              Tác dụng qua lại: F₁₂ = F₂₁<br>
+              Giảm theo 1/r² (bình phương nghịch đảo)<br><br>
+              r tăng 2× → F giảm 4×<br>
+              r tăng 10× → F giảm 100×
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Trọng lực trên bề mặt Trái Đất</div>
+            <div class="bond-body">
+              P = mg = G·M_E·m / R_E²<br>
+              → g = G·M_E / R_E²<br><br>
+              M_E = 5.972 × 10²⁴ kg<br>
+              R_E = 6.371 × 10⁶ m<br>
+              g ≈ 9.81 m/s²
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">g thay đổi theo độ cao</div>
+            <div class="bond-body">
+              g(h) = G·M_E / (R_E + h)²<br>
+              = g₀ · (R_E / (R_E + h))²<br><br>
+              h = 400 km (ISS): g ≈ 8.69 m/s²<br>
+              h = R_E: g giảm còn ¼g₀ ≈ 2.45 m/s²
+            </div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">F = Gm₁m₂/r²</span>
+          <span class="chip">G = 6.674×10⁻¹¹</span>
+          <span class="chip">g = GM_E/R_E²</span>
+          <span class="chip">F ∝ 1/r²</span>
+        </div>
+      </section>
+
+      <!-- ══ 2. Viz ══ -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Minh họa</h2>
+          <span class="tag">Viz</span>
+        </div>
+        <div class="viz-toolbar">
+          <button class="viz-btn active" onclick="setViz('inverse')">Lực theo khoảng cách</button>
+          <button class="viz-btn" onclick="setViz('orbit')">Quỹ đạo hành tinh</button>
+          <button class="viz-btn" onclick="setViz('field')">Trường hấp dẫn</button>
+          <button class="viz-btn" onclick="setViz('tidal')">Lực thủy triều</button>
+        </div>
+        <div class="viz-stage" id="viz-stage">
+          <canvas id="viz-canvas" width="1000" height="320" style="width:100%;height:320px;"></canvas>
+        </div>
+      </section>
+
+      <!-- ══ 3. Chuyển động quỹ đạo ══ -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Chuyển động quỹ đạo</h2>
+          <span class="tag">Quỹ đạo</span>
+        </div>
+        <p class="card-body">
+          Khi vật chuyển động đủ nhanh, lực hấp dẫn đóng vai trò lực hướng tâm — vật "rơi" liên tục nhưng bề mặt Trái Đất cũng cong theo, tạo ra quỹ đạo. Đây là trực giác mà Newton đã có khi nghĩ đến quả táo và Mặt Trăng.
+        </p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Vận tốc quỹ đạo tròn</div>
+            <div class="bond-body">
+              Lực hấp dẫn = Lực hướng tâm:<br>
+              GMm/r² = mv²/r<br>
+              → v = √(GM/r)<br><br>
+              v tăng khi r giảm (quỹ đạo thấp → nhanh hơn)<br>
+              ISS (r≈6771 km): v ≈ 7.66 km/s
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Chu kỳ quỹ đạo</div>
+            <div class="bond-body">
+              T = 2πr/v = 2π√(r³/GM)<br><br>
+              ISS: T ≈ 92 phút<br>
+              Mặt Trăng: T ≈ 27.3 ngày<br>
+              Trái Đất quanh Mặt Trời: T = 365.25 ngày
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Định luật Kepler 3</div>
+            <div class="bond-body">
+              T² ∝ r³ (quỹ đạo tròn)<br>
+              T² / r³ = 4π² / (GM) = const<br><br>
+              Áp dụng cho mọi vật thể quanh cùng một thiên thể mẹ.<br>
+              Dùng để tính khối lượng thiên thể từ quỹ đạo vệ tinh.
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Vận tốc vũ trụ cấp 1 &amp; 2</div>
+            <div class="bond-body">
+              v₁ = √(gR_E) ≈ 7.9 km/s<br>
+              Đưa vật vào quỹ đạo thấp quanh Trái Đất<br><br>
+              v₂ = v₁√2 ≈ 11.2 km/s<br>
+              Thoát hoàn toàn khỏi trường hấp dẫn Trái Đất
+            </div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">v = √(GM/r)</span>
+          <span class="chip">T = 2π√(r³/GM)</span>
+          <span class="chip">T² ∝ r³</span>
+          <span class="chip">v₁ ≈ 7.9 km/s</span>
+          <span class="chip">v₂ ≈ 11.2 km/s</span>
+        </div>
+      </section>
+
+      <!-- ══ 4. Thế năng hấp dẫn ══ -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Thế năng hấp dẫn &amp; Năng lượng quỹ đạo</h2>
+          <span class="tag">Năng lượng</span>
+        </div>
+        <p class="card-body">
+          Thế năng hấp dẫn được quy ước bằng 0 ở vô cực và âm ở mọi điểm hữu hạn — phản ánh việc cần phải cung cấp năng lượng để đưa vật ra xa.
+        </p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Thế năng hấp dẫn</div>
+            <div class="bond-body">
+              U = −GMm / r<br><br>
+              Âm và tiến về 0 khi r → ∞<br>
+              Càng gần → U càng âm → hệ bền vững hơn<br><br>
+              Gần mặt đất (h &lt;&lt; R_E):<br>
+              ΔU ≈ mgh (công thức gần đúng)
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Cơ năng quỹ đạo tròn</div>
+            <div class="bond-body">
+              E_k = ½mv² = GMm/(2r)<br>
+              E_p = −GMm/r<br>
+              E = E_k + E_p = −GMm/(2r)<br><br>
+              E âm → vật bị ràng buộc (quỹ đạo khép kín)<br>
+              E = 0 → vận tốc thoát (parabol)<br>
+              E &gt; 0 → quỹ đạo hypecbol (thoát)
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Vệ tinh địa tĩnh</div>
+            <div class="bond-body">
+              T_vệ tinh = T_Trái Đất = 24 h<br>
+              r_GEO = (GM_E·T²/4π²)^(1/3)<br>
+              r_GEO ≈ 42 164 km từ tâm Trái Đất<br>
+              ≈ 35 786 km trên bề mặt<br><br>
+              Luôn đứng yên trên một điểm → viễn thông, TV
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Lỗ đen &amp; Bán kính Schwarzschild</div>
+            <div class="bond-body">
+              Nếu toàn bộ khối lượng M nằm trong bán kính:<br>
+              r_s = 2GM/c²<br>
+              c = 3×10⁸ m/s (vận tốc ánh sáng)<br><br>
+              Trái Đất: r_s ≈ 9 mm<br>
+              Mặt Trời: r_s ≈ 3 km
+            </div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">U = −GMm/r</span>
+          <span class="chip">E = −GMm/2r</span>
+          <span class="chip">r_GEO ≈ 42 164 km</span>
+          <span class="chip">r_s = 2GM/c²</span>
+        </div>
+      </section>
+
+      <!-- ══ 5. Các định luật Kepler ══ -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">Ba định luật Kepler</h2>
+          <span class="tag">Quỹ đạo ellipse</span>
+        </div>
+        <p class="card-body">
+          Johannes Kepler (1609–1619) rút ra ba định luật từ quan sát thiên văn của Tycho Brahe. Newton sau đó chứng minh cả ba đều là hệ quả của định luật vạn vật hấp dẫn.
+        </p>
+        <div class="grid-2">
+          <article class="bond">
+            <div class="bond-name">Định luật 1 — Quỹ đạo ellipse</div>
+            <div class="bond-body">
+              Mỗi hành tinh chuyển động trên một <em>ellipse</em> với Mặt Trời nằm tại một tiêu điểm.<br><br>
+              Ellipse có hai tiêu điểm F₁, F₂.<br>
+              Khoảng cách: F₁P + F₂P = 2a (a: bán trục lớn)<br>
+              Đặc biệt: quỹ đạo tròn là ellipse có e = 0.
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Định luật 2 — Diện tích quét</div>
+            <div class="bond-body">
+              Đường nối hành tinh–Mặt Trời quét <em>diện tích bằng nhau</em> trong thời gian bằng nhau.<br><br>
+              Hệ quả: hành tinh chuyển động <em>nhanh hơn</em> khi gần Mặt Trời (điểm cận nhật) và <em>chậm hơn</em> khi ở xa (điểm viễn nhật).<br>
+              Tương đương với bảo toàn mô men động lượng.
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Định luật 3 — Chu kỳ &amp; Bán trục</div>
+            <div class="bond-body">
+              T² / a³ = 4π² / (GM_☉) = const<br><br>
+              T: chu kỳ quỹ đạo<br>
+              a: bán trục lớn của ellipse<br><br>
+              Trái Đất: a=1 AU, T=1 năm<br>
+              Sao Hỏa: a≈1.52 AU → T≈1.88 năm
+            </div>
+          </article>
+          <article class="bond">
+            <div class="bond-name">Độ lệch tâm ellipse</div>
+            <div class="bond-body">
+              e = c/a (c: khoảng cách tiêu điểm → tâm)<br>
+              e = 0: hình tròn<br>
+              0 &lt; e &lt; 1: ellipse<br>
+              e = 1: parabol (thoát)<br>
+              e &gt; 1: hypecbol (thoát nhanh)<br><br>
+              Trái Đất: e ≈ 0.017 (gần tròn)<br>
+              Sao Chổi Halley: e ≈ 0.967
+            </div>
+          </article>
+        </div>
+        <div class="chips">
+          <span class="chip">Ellipse, tiêu điểm</span>
+          <span class="chip">Diện tích quét đều</span>
+          <span class="chip">T²/a³ = const</span>
+          <span class="chip">e = c/a</span>
+        </div>
+      </section>
+
+      <!-- ══ 6. So sánh ══ -->
+      <section class="card ruled-page">
+        <div class="card-head">
+          <h2 class="card-title">So sánh g trên các thiên thể</h2>
+          <span class="tag">Dữ liệu</span>
+        </div>
+        <table class="compare">
+          <thead>
+            <tr><th>Thiên thể</th><th>Khối lượng (kg)</th><th>Bán kính (km)</th><th>g (m/s²)</th><th>So với g_Trái Đất</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Mặt Trăng</td><td>7.34 × 10²²</td><td>1 737</td><td>1.62</td><td>≈ 1/6</td></tr>
+            <tr><td>Sao Hỏa</td><td>6.39 × 10²³</td><td>3 390</td><td>3.72</td><td>≈ 0.38</td></tr>
+            <tr><td>Trái Đất</td><td>5.97 × 10²⁴</td><td>6 371</td><td>9.81</td><td>1 (chuẩn)</td></tr>
+            <tr><td>Sao Thổ</td><td>5.68 × 10²⁶</td><td>58 232</td><td>10.44</td><td>≈ 1.06</td></tr>
+            <tr><td>Sao Mộc</td><td>1.90 × 10²⁷</td><td>69 911</td><td>24.79</td><td>≈ 2.53</td></tr>
+            <tr><td>Mặt Trời</td><td>1.99 × 10³⁰</td><td>695 700</td><td>274</td><td>≈ 28</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const body = document.body;
+      const btn  = document.getElementById('themeBtn');
+      const saved = localStorage.getItem('bewy-theme');
+      if (saved === 'dark') { body.classList.add('dark-mode'); btn.textContent = '☀ Sáng'; }
+      btn.addEventListener('click', () => {
+        const dark = body.classList.toggle('dark-mode');
+        btn.textContent = dark ? '☀ Sáng' : '☽ Tối';
+        localStorage.setItem('bewy-theme', dark ? 'dark' : 'light');
+      });
+    })();
+
+  /* ════════════════════════════════════════════
+     VIZ ENGINE
+  ════════════════════════════════════════════ */
+  let currentViz = 'inverse';
+  function setViz(name){
+    currentViz = name;
+    document.querySelectorAll('.viz-btn').forEach(b=>{
+      const map = {inverse:'Lực theo khoảng cách', orbit:'Quỹ đạo hành tinh', field:'Trường hấp dẫn', tidal:'Lực thủy triều'};
+      b.classList.toggle('active', b.textContent.trim() === map[name]);
+    });
+  }
+
+  (function(){
+    const cv  = document.getElementById('viz-canvas');
+    const ctx = cv.getContext('2d');
+    const W   = cv.width, H = cv.height;
+    let t = 0;
+
+    /* ── accent colours ── */
+    const PUR  = 'rgba(200,120,232,';
+    const PURB = 'rgba(138,80,200,';
+    const YELL = 'rgba(242,181,68,';
+    const TEAL = 'rgba(110,219,176,';
+    const TEXT = 'rgba(251,244,228,';
+
+    /* ────────────────────────────────────────
+       1. Inverse-square law: F vs r graph
+    ──────────────────────────────────────── */
+    function drawInverse(){
+      const pad = 60, gW = W - pad - 40, gH = H - pad - 40;
+      const ox = pad, oy = H - pad;
+
+      // Axes
+      ctx.strokeStyle = TEXT+'0.3)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox+gW, oy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox, oy-gH); ctx.stroke();
+
+      // Labels
+      ctx.fillStyle = TEXT+'0.5)'; ctx.font = '13px monospace'; ctx.textAlign='center';
+      ctx.fillText('Khoảng cách r →', ox + gW/2, oy+32);
+      ctx.save(); ctx.translate(ox-40, oy-gH/2); ctx.rotate(-Math.PI/2);
+      ctx.fillText('Lực F →', 0, 0); ctx.restore();
+
+      // Tick marks at r = 1,2,3,4,5
+      ctx.fillStyle = TEXT+'0.35)'; ctx.font='11px monospace'; ctx.textAlign='center';
+      for(let ri=1;ri<=5;ri++){
+        const px = ox + ri/5*gW;
+        ctx.beginPath(); ctx.moveTo(px,oy); ctx.lineTo(px,oy+5); ctx.stroke();
+        ctx.fillText(ri+'r₀', px, oy+18);
+      }
+
+      // F = 1/r² curve (normalised so F(r=r₀)=top)
+      ctx.beginPath();
+      for(let i=1;i<=gW;i++){
+        const r = i/gW * 5; // 0..5
+        const F = 1/(r*r);
+        const px = ox+i;
+        const py = oy - Math.min(F, 1) * gH;
+        i===1 ? ctx.moveTo(px,py) : ctx.lineTo(px,py);
+      }
+      ctx.strokeStyle = PUR+'0.9)'; ctx.lineWidth=2.5; ctx.stroke();
+
+      // Animated point sliding along curve
+      const rAnim = 0.5 + 4.5*(0.5 - 0.5*Math.cos(t*0.4)); // oscillates 0.5..5
+      const Fanim = 1/(rAnim*rAnim);
+      const px_a = ox + rAnim/5*gW;
+      const py_a = oy - Math.min(Fanim,1)*gH;
+      ctx.beginPath(); ctx.arc(px_a, py_a, 7, 0, Math.PI*2);
+      ctx.fillStyle = YELL+'0.9)'; ctx.fill();
+
+      // Drop lines
+      ctx.setLineDash([4,3]); ctx.strokeStyle=YELL+'0.35)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(px_a,py_a); ctx.lineTo(px_a,oy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px_a,py_a); ctx.lineTo(ox,py_a); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Labels
+      ctx.fillStyle=YELL+'0.85)'; ctx.font='12px monospace'; ctx.textAlign='left';
+      ctx.fillText(`r = ${rAnim.toFixed(2)} r₀`, px_a+10, py_a-8);
+      ctx.fillText(`F = ${Fanim.toFixed(3)} F₀`, ox+6, py_a-4);
+
+      // Formula
+      ctx.fillStyle=PUR+'0.8)'; ctx.font='bold 16px serif'; ctx.textAlign='right';
+      ctx.fillText('F = Gm₁m₂/r²', W-30, 36);
+      ctx.fillStyle=TEXT+'0.45)'; ctx.font='12px monospace';
+      ctx.fillText('r tăng 2× → F giảm 4×', W-30, 56);
+    }
+
+    /* ────────────────────────────────────────
+       2. Orbital simulation (3 planets)
+    ──────────────────────────────────────── */
+    const planets = [
+      {a:90,  b:90,  speed:0.9,  color:TEAL,  name:'Hành tinh A', trail:[]},
+      {a:160, b:130, speed:0.45, color:PUR,   name:'Hành tinh B', trail:[]},
+      {a:240, b:190, speed:0.22, color:YELL,  name:'Hành tinh C', trail:[]},
+    ];
+    const SUN_X = W/2 - 30, SUN_Y = H/2;
+
+    function drawOrbit(){
+      // Sun
+      const sunGrad = ctx.createRadialGradient(SUN_X,SUN_Y,4,SUN_X,SUN_Y,28);
+      sunGrad.addColorStop(0,'rgba(255,240,140,1)');
+      sunGrad.addColorStop(0.5,'rgba(242,181,68,0.9)');
+      sunGrad.addColorStop(1,'rgba(200,100,20,0)');
+      ctx.beginPath(); ctx.arc(SUN_X,SUN_Y,22,0,Math.PI*2);
+      ctx.fillStyle=sunGrad; ctx.fill();
+      ctx.fillStyle=YELL+'0.6)'; ctx.font='11px monospace'; ctx.textAlign='center';
+      ctx.fillText('Mặt Trời', SUN_X, SUN_Y+36);
+
+      planets.forEach(p=>{
+        // Orbit ellipse (approximate with circle scaled)
+        ctx.beginPath(); ctx.ellipse(SUN_X+18,SUN_Y,p.a,p.b,0,0,Math.PI*2);
+        ctx.strokeStyle=p.color+'0.15)'; ctx.lineWidth=1; ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
+
+        // Position
+        const angle = p.speed * t;
+        const px = SUN_X+18 + p.a*Math.cos(angle);
+        const py = SUN_Y + p.b*Math.sin(angle);
+
+        // Trail
+        p.trail.push([px,py]);
+        if(p.trail.length > 120) p.trail.shift();
+        ctx.beginPath();
+        p.trail.forEach(([tx,ty],i)=>{
+          i===0?ctx.moveTo(tx,ty):ctx.lineTo(tx,ty);
+        });
+        ctx.strokeStyle=p.color+'0.5)'; ctx.lineWidth=1.5; ctx.stroke();
+
+        // Planet
+        ctx.beginPath(); ctx.arc(px,py,7,0,Math.PI*2);
+        ctx.fillStyle=p.color+'0.9)'; ctx.fill();
+
+        // Name label
+        ctx.fillStyle=p.color+'0.75)'; ctx.font='11px monospace'; ctx.textAlign='center';
+        ctx.fillText(p.name, px, py-13);
+      });
+
+      // Kepler annotation
+      ctx.fillStyle=TEXT+'0.4)'; ctx.font='12px monospace'; ctx.textAlign='left';
+      ctx.fillText('T²/a³ = const (Kepler 3)', 16, H-16);
+      ctx.fillStyle=PUR+'0.7)'; ctx.font='bold 13px serif'; ctx.textAlign='right';
+      ctx.fillText('v = √(GM/r)', W-16, H-16);
+    }
+
+    /* ────────────────────────────────────────
+       3. Gravitational field lines
+    ──────────────────────────────────────── */
+    function drawField(){
+      const cx = W/2, cy = H/2;
+      const N_LINES = 16;
+
+      // Central body
+      const bodyGrad = ctx.createRadialGradient(cx,cy,5,cx,cy,30);
+      bodyGrad.addColorStop(0,'rgba(200,120,232,1)');
+      bodyGrad.addColorStop(1,'rgba(138,80,200,0)');
+      ctx.beginPath(); ctx.arc(cx,cy,26,0,Math.PI*2);
+      ctx.fillStyle=bodyGrad; ctx.fill();
+      ctx.fillStyle=TEXT+'0.8)'; ctx.font='bold 13px serif'; ctx.textAlign='center';
+      ctx.fillText('M', cx, cy+5);
+
+      // Field lines (radial, inward arrows)
+      for(let i=0;i<N_LINES;i++){
+        const angle = i/N_LINES * Math.PI*2;
+        const cos=Math.cos(angle), sin=Math.sin(angle);
+
+        // Draw from r=240 → r=36 with 4 arrow segments
+        const R_OUT=230, R_IN=36;
+        ctx.strokeStyle=PUR+'0.35)'; ctx.lineWidth=1;
+        ctx.beginPath();
+        ctx.moveTo(cx+cos*R_OUT, cy+sin*R_OUT);
+        ctx.lineTo(cx+cos*R_IN, cy+sin*R_IN);
+        ctx.stroke();
+
+        // Arrowheads at r=180, 120, 70
+        [180,120,70].forEach(r=>{
+          const hx=cx+cos*r, hy=cy+sin*r;
+          const sz=5;
+          ctx.beginPath();
+          ctx.moveTo(hx, hy);
+          ctx.lineTo(hx+(-cos+sin*0.5)*sz, hy+(-sin-cos*0.5)*sz);
+          ctx.lineTo(hx+(-cos-sin*0.5)*sz, hy+(-sin+cos*0.5)*sz);
+          ctx.closePath();
+          ctx.fillStyle=PUR+'0.6)'; ctx.fill();
+        });
+      }
+
+      // Field strength rings (equipotential-ish)
+      [80,140,200].forEach((r,i)=>{
+        ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+        ctx.strokeStyle=PURB+`${0.2-i*0.04})`; ctx.lineWidth=1; ctx.setLineDash([3,6]); ctx.stroke(); ctx.setLineDash([]);
+      });
+
+      // Animated test particle orbiting
+      const orb_r = 160, orb_speed = 0.6;
+      const ox2 = cx + orb_r*Math.cos(t*orb_speed);
+      const oy2 = cy + orb_r*Math.sin(t*orb_speed);
+      ctx.beginPath(); ctx.arc(ox2,oy2,6,0,Math.PI*2);
+      ctx.fillStyle=TEAL+'0.9)'; ctx.fill();
+
+      // Arrow showing F direction (toward center)
+      const fx=cx-ox2, fy=cy-oy2;
+      const flen=Math.sqrt(fx*fx+fy*fy);
+      const fux=fx/flen, fuy=fy/flen;
+      ctx.strokeStyle=TEAL+'0.6)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(ox2,oy2); ctx.lineTo(ox2+fux*28,oy2+fuy*28); ctx.stroke();
+      // arrowhead
+      ctx.beginPath();
+      ctx.moveTo(ox2+fux*28,oy2+fuy*28);
+      ctx.lineTo(ox2+fux*28+(-fux+fuy*0.5)*7, oy2+fuy*28+(-fuy-fux*0.5)*7);
+      ctx.lineTo(ox2+fux*28+(-fux-fuy*0.5)*7, oy2+fuy*28+(-fuy+fux*0.5)*7);
+      ctx.closePath(); ctx.fillStyle=TEAL+'0.7)'; ctx.fill();
+
+      ctx.fillStyle=TEXT+'0.4)'; ctx.font='12px monospace'; ctx.textAlign='left';
+      ctx.fillText('g = GM/r² (hướng vào tâm)', 14, H-16);
+      ctx.fillStyle=PUR+'0.7)'; ctx.font='bold 13px serif'; ctx.textAlign='right';
+      ctx.fillText('Trường hấp dẫn', W-14, H-16);
+    }
+
+    /* ────────────────────────────────────────
+       4. Tidal forces
+    ──────────────────────────────────────── */
+    function drawTidal(){
+      // Earth on left, Moon on right
+      const E_X = W*0.3, E_Y = H/2, E_R = 60;
+      const M_X = W*0.78, M_Y = H/2, M_R = 20;
+
+      // Line between
+      ctx.strokeStyle=TEXT+'0.1)'; ctx.lineWidth=1; ctx.setLineDash([6,4]);
+      ctx.beginPath(); ctx.moveTo(E_X,E_Y); ctx.lineTo(M_X,M_Y); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Moon
+      ctx.beginPath(); ctx.arc(M_X,M_Y,M_R,0,Math.PI*2);
+      ctx.fillStyle='rgba(200,190,180,0.7)'; ctx.fill();
+      ctx.fillStyle=TEXT+'0.5)'; ctx.font='12px monospace'; ctx.textAlign='center';
+      ctx.fillText('Mặt Trăng', M_X, M_Y+M_R+16);
+
+      // Earth — draw as ellipse (tidal distortion animated)
+      const stretch = 1 + 0.12*Math.sin(t*0.5+Math.PI)*0.5 + 0.06; // slight oscillation
+      ctx.save();
+      ctx.translate(E_X, E_Y);
+      ctx.scale(stretch, 1/Math.sqrt(stretch)); // conserve area roughly
+      ctx.beginPath(); ctx.arc(0,0,E_R,0,Math.PI*2);
+      const eGrad=ctx.createRadialGradient(0,0,10,0,0,E_R);
+      eGrad.addColorStop(0,'rgba(60,120,220,0.9)');
+      eGrad.addColorStop(0.6,'rgba(40,160,100,0.8)');
+      eGrad.addColorStop(1,'rgba(30,80,160,0.7)');
+      ctx.fillStyle=eGrad; ctx.fill();
+      ctx.restore();
+      ctx.fillStyle=TEXT+'0.6)'; ctx.font='12px monospace'; ctx.textAlign='center';
+      ctx.fillText('Trái Đất', E_X, E_Y+E_R*1.15+16);
+
+      // Tidal force arrows on surface of Earth
+      // Points on Earth surface + tidal differential force
+      const D = M_X - E_X; // centre-to-centre
+      const points = 8;
+      for(let i=0;i<points;i++){
+        const a = i/points * Math.PI*2;
+        const sx = E_X + E_R*Math.cos(a);
+        const sy = E_Y + E_R*Math.sin(a);
+
+        // Tidal acceleration: 2GMd/D³ along line between bodies
+        // Simplified: component along x (toward Moon)
+        const dx_norm = Math.cos(a); // +1 = toward Moon, -1 = away
+        const tidal_x = dx_norm * 22; // exaggerated
+        const tidal_y = -Math.sin(a) * 9; // compressive in perpendicular
+
+        const arrowX = sx + tidal_x;
+        const arrowY = sy + tidal_y;
+
+        ctx.strokeStyle=YELL+'0.6)'; ctx.lineWidth=1.5;
+        ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(arrowX,arrowY); ctx.stroke();
+        // tiny arrowhead
+        const flen=Math.sqrt(tidal_x*tidal_x+tidal_y*tidal_y)+0.001;
+        const ux=tidal_x/flen, uy=tidal_y/flen;
+        ctx.beginPath();
+        ctx.moveTo(arrowX,arrowY);
+        ctx.lineTo(arrowX+(-ux+uy*0.5)*5, arrowY+(-uy-ux*0.5)*5);
+        ctx.lineTo(arrowX+(-ux-uy*0.5)*5, arrowY+(-uy+ux*0.5)*5);
+        ctx.closePath(); ctx.fillStyle=YELL+'0.7)'; ctx.fill();
+      }
+
+      // Labels
+      ctx.fillStyle=YELL+'0.7)'; ctx.font='11px monospace'; ctx.textAlign='left';
+      ctx.fillText('Lực thủy triều vi sai', E_X-50, E_Y - E_R - 18);
+      ctx.fillStyle=TEXT+'0.35)'; ctx.font='12px monospace'; ctx.textAlign='left';
+      ctx.fillText('Δg = 2GMr/D³  →  Nước phồng về phía Mặt Trăng VÀ phía đối diện', 14, H-16);
+    }
+
+    /* ── Main loop ── */
+    const vizFns = {inverse:drawInverse, orbit:drawOrbit, field:drawField, tidal:drawTidal};
+
+    function loop(){
+      ctx.clearRect(0,0,W,H);
+      // subtle grid
+      ctx.strokeStyle='rgba(251,244,228,0.025)'; ctx.lineWidth=1;
+      for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+      vizFns[currentViz]();
+      t += 0.02;
+      requestAnimationFrame(loop);
+    }
+    loop();
+  })();
+  </script>
+</body>
+</html>

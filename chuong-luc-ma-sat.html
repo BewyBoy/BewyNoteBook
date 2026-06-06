@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vật lý · Lực Ma Sát & Lực Cản</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SKETCHBOOK / NOTEBOOK STYLE
+    ══════════════════════════════════════ */
+
+    /* Google Font — handwritten feel */
+    @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Caveat:wght@400;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── CSS custom properties ── */
+    :root {
+      --paper:        #F5F0E0;   /* warm ivory */
+      --paper-dark:   #EDE5CC;   /* slightly darker for alternating */
+      --ink:          #1A1208;   /* near-black ink */
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;   /* classic red margin line */
+      --blue-line:    rgba(100, 140, 210, 0.30);  /* ruled lines */
+      --accent:       #C44010;   /* orange-red pen */
+      --accent-blue:  #1A4FA0;   /* blue pen */
+      --highlight-y:  rgba(255, 218, 50, 0.50);   /* yellow marker */
+      --highlight-g:  rgba(80, 180, 100, 0.30);   /* green marker */
+      --line-h:       30px;      /* ruled line spacing */
+    }
+
+    html, body {
+      min-height: 100%;
+      /* Desk surface behind the notebook */
+      background: #8B7355;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #9E8565 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #6B5540 0%, transparent 50%),
+        repeating-linear-gradient(
+          45deg,
+          transparent, transparent 3px,
+          rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px
+        );
+      color: var(--ink);
+      font-family: 'Kalam', cursive;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    /* ══ Fixed nav ══ */
+    .theme-toggle {
+      position: fixed; top: 14px; right: 194px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 13px; border-radius: 4px;
+      background: var(--paper); color: var(--ink);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 13px; font-weight: 700;
+      cursor: pointer; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(-1deg);
+      transition: transform 0.1s;
+    }
+    .theme-toggle:hover { transform: rotate(0deg); border-color: var(--accent); }
+
+    .back-link {
+      position: fixed; top: 14px; right: 20px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent-blue);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(0.8deg);
+      transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent-blue); }
+
+    /* ══ Notebook page shell — wraps everything ══ */
+    .content-wrap {
+      width: min(1060px, 100%);
+      margin: 0 auto;
+      /* Drop shadow = notebook sitting on desk */
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.25),
+         6px 0 18px rgba(0,0,0,0.20),
+         0  12px 32px rgba(0,0,0,0.35);
+    }
+
+    /* ══ The ruled-paper background ══
+       Applied to hero + every card via CSS background-image.
+       No extra HTML, no JS, pure CSS.
+    ══ */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        /* ① Red margin line at 72px from left */
+        linear-gradient(
+          90deg,
+          transparent 71px,
+          var(--red-margin) 71px,
+          var(--red-margin) 73px,
+          transparent 73px
+        ),
+        /* ② Horizontal ruled lines every --line-h */
+        repeating-linear-gradient(
+          180deg,
+          transparent 0px,
+          transparent calc(var(--line-h) - 1px),
+          var(--blue-line) calc(var(--line-h) - 1px),
+          var(--blue-line) var(--line-h)
+        );
+      background-attachment: local;
+    }
+
+    /* ══ Hero ══ */
+    .hero {
+      padding: 72px 40px 40px 96px;  /* left padding clears margin line */
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+    }
+    .crumb {
+      font-size: 12px; letter-spacing: 0.06em;
+      color: var(--ink-light); margin-bottom: 10px;
+      font-family: 'Kalam', cursive;
+    }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+
+    .title {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(40px, 6vw, 78px);
+      line-height: 1.0; color: var(--ink);
+      margin-bottom: 6px; font-weight: 700;
+    }
+    /* Hand-drawn underline beneath title */
+    .title-stroke {
+      width: clamp(160px, 38vw, 400px); height: 3px;
+      background: var(--accent);
+      border-radius: 2px; margin-bottom: 14px;
+      transform: rotate(-0.4deg);
+    }
+    .subtitle {
+      font-family: 'Kalam', cursive;
+      font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent-blue); margin-bottom: 16px;
+    }
+    .intro {
+      max-width: 800px; font-size: 16px;
+      /* Line-height matches ruled lines exactly so text sits on lines */
+      line-height: var(--line-h);
+      color: var(--ink-mid);
+    }
+
+    /* ══ Layout ══ */
+    .layout {
+      display: grid; grid-template-columns: 1fr;
+      /* No gaps — cards stack like pages in a pad */
+      gap: 0;
+    }
+
+    /* ══ Card = one ruled notebook page ══ */
+    .card {
+      padding: 28px 36px 32px 96px;
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    /* Last card gets bottom border */
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+
+    /* Alternating very-subtle tint to differentiate sections */
+    .card:nth-child(even) { background-color: var(--paper-dark); }
+    /* Must override ruled-page bg-color for even cards */
+    .card.ruled-page:nth-child(even) {
+      background-color: var(--paper-dark);
+    }
+
+    /* ── Punched holes strip on the left ── */
+    .card::before,
+    .hero::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 36px;
+      /* Punch holes: white circles on a slightly darker strip */
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #8B7355 0%, #8B7355 55%,
+        transparent 56%
+      );
+      background-size: 36px 80px;
+      background-repeat: repeat-y;
+      background-position: 0 20px;
+    }
+
+    .card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .card-title {
+      font-family: 'Caveat', cursive;
+      font-size: 26px; color: var(--ink); line-height: 1.1;
+      font-weight: 700;
+      /* Title underlined like a heading in a real notebook */
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 2px; display: inline;
+    }
+    .tag {
+      font-family: 'Kalam', cursive;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 700; padding: 3px 10px; border-radius: 3px;
+      background: var(--highlight-y);
+      color: var(--ink); border: 1px solid rgba(26,18,8,0.18);
+      flex-shrink: 0;
+      /* Tape-on-page look */
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.15);
+      transform: rotate(1.2deg);
+    }
+
+    .card-body {
+      font-size: 15px;
+      line-height: var(--line-h);
+      color: var(--ink-mid); margin-bottom: 16px;
+    }
+    .card-body strong { color: var(--ink); }
+    .card-body em { color: var(--accent); font-style: italic; }
+
+    /* ── Formula chips — look like box drawn in blue pen ── */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+    .chip {
+      font-family: 'Caveat', cursive;
+      font-size: 17px; padding: 3px 16px;
+      background: rgba(26,79,160,0.07);
+      border: 2px solid rgba(26,79,160,0.40);
+      border-radius: 3px; color: var(--accent-blue);
+    }
+
+    /* ── Sub-panels ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .bond {
+      background: rgba(0,0,0,0.03);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px 12px;
+      border-radius: 0 4px 4px 0;
+    }
+    .bond-name {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .bond-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Slider controls ── */
+    .controls { display: flex; flex-wrap: wrap; gap: 18px; margin: 12px 0 10px; }
+    .ctrl { display: flex; flex-direction: column; gap: 4px; }
+    .ctrl label {
+      font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-light); font-family: 'Kalam', cursive;
+    }
+    .ctrl input[type=range] { width: 150px; accent-color: var(--accent); }
+    .ctrl .val {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; color: var(--accent); font-weight: 700;
+    }
+
+    /* ── Readouts ── */
+    .readouts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .readout {
+      font-family: 'Caveat', cursive; font-size: 15px;
+      background: rgba(196,64,16,0.07);
+      border: 1.5px solid rgba(196,64,16,0.28);
+      border-radius: 3px; padding: 4px 12px;
+      color: var(--ink-mid);
+    }
+    .readout span { color: var(--accent); font-weight: 700; }
+
+    /* ── Viz toolbar ── */
+    .viz-toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .viz-btn {
+      font-family: 'Kalam', cursive;
+      padding: 5px 13px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.22);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background 0.12s, transform 0.1s;
+    }
+    .viz-btn:hover { background: var(--highlight-y); color: var(--ink); transform: translateY(-1px); }
+    .viz-btn.active {
+      background: var(--highlight-y); color: var(--ink);
+      border-color: var(--accent);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+    }
+    /* Canvas container — dark slate like a chalkboard inset in the notebook */
+    .viz-stage {
+      background: #151C14;
+      border: 2px solid rgba(26,18,8,0.30);
+      border-radius: 4px; overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .viz-stage canvas { display: block; }
+
+    /* ── Aero highlight box ── */
+    .aero-card {
+      background: var(--highlight-g);
+      border-left: 3px solid var(--accent-blue);
+      border-radius: 0 4px 4px 0;
+      padding: 16px 18px 14px; margin-top: 4px;
+    }
+    .aero-title {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent-blue); margin-bottom: 7px;
+    }
+    .aero-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Compare table ── */
+    .compare { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .compare th {
+      padding: 8px 12px; text-align: left;
+      background: rgba(196,64,16,0.10); color: var(--accent);
+      font-weight: 700; letter-spacing: 0.05em; font-size: 11px;
+      text-transform: uppercase;
+      border-bottom: 2px solid rgba(196,64,16,0.28);
+    }
+    .compare td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--blue-line);
+      color: var(--ink-mid); vertical-align: top;
+    }
+    .compare tr:last-child td { border-bottom: none; }
+    .compare tr:hover td { background: var(--highlight-y); }
+
+    /* ══ Dark mode ══ */
+    body.dark-mode {
+      background: #3A3020;
+      --paper:      #1C1810;
+      --paper-dark: #211E12;
+      --ink:        #EDE0C0;
+      --ink-mid:    #C4AE82;
+      --ink-light:  #8A7658;
+      --blue-line:  rgba(80, 110, 180, 0.18);
+      --red-margin: rgba(200, 70, 70, 0.5);
+      --highlight-y: rgba(180, 150, 30, 0.35);
+      --highlight-g: rgba(50, 130, 70, 0.20);
+    }
+    body.dark-mode .content-wrap {
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.5),
+         6px 0 18px rgba(0,0,0,0.4),
+         0  12px 32px rgba(0,0,0,0.6);
+    }
+    body.dark-mode .card::before,
+    body.dark-mode .hero::before {
+      background-color: rgba(0,0,0,0.15);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #3A3020 0%, #3A3020 55%,
+        transparent 56%
+      );
+    }
+
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .theme-toggle { right: 172px; }
+    }
+    @media (max-width: 640px) {
+      .theme-toggle, .back-link { position: absolute; top: 10px; }
+      .theme-toggle { right: 148px; } .back-link { right: 12px; }
+      .hero, .card { padding-left: 56px; }
+      .card::before, .hero::before { width: 28px; background-size: 28px 80px; }
+    }
+  </style>
+</head>
+<body>
+<div class="content-wrap">
+
+<button class="theme-toggle" id="themeBtn">☽ Tối</button>
+<a class="back-link" href="Learning Resources Hub v4.html">← Trang chủ</a>
+
+<!-- ══ Hero ══ -->
+<div class="hero ruled-page">
+  <div class="crumb"><a href="Learning Resources Hub v4.html">Vật Lý</a> › Lực Ma Sát & Lực Cản</div>
+  <h1 class="title">Lực Ma Sát &amp; Lực Cản</h1>
+  <div class="title-stroke"></div>
+  <div class="subtitle">Friction · Drag · Aerodynamics</div>
+  <p class="intro">
+    Mọi chuyển động trong thực tế đều bị cản trở bởi ma sát và lực cản. Hai lực này tiêu hao cơ năng thành nhiệt, định hình hình dáng máy bay, và cho phép bánh xe bám đường. Hiểu chúng là nền tảng để thiết kế mọi phương tiện, máy móc, và công trình kỹ thuật.
+  </p>
+</div>
+
+<div class="layout">
+
+<!-- ══ Card 1: Ma sát ══ -->
+<div class="card ruled-page">
+  <div class="card-head">
+    <h2 class="card-title">Lực Ma Sát</h2>
+    <span class="tag">Friction</span>
+  </div>
+  <div class="card-body">
+    Lực ma sát xuất hiện tại bề mặt tiếp xúc giữa hai vật, chống lại sự trượt tương đối. Có hai loại chính:
+    <br><br>
+    <strong>Ma sát tĩnh</strong> — giữ vật đứng yên, có giá trị cực đại:
+    <div class="chips"><span class="chip">f<sub>s</sub> ≤ μ<sub>s</sub> · N</span></div>
+    <br>
+    <strong>Ma sát động</strong> — xuất hiện khi vật đang trượt, gần như hằng số:
+    <div class="chips"><span class="chip">f<sub>k</sub> = μ<sub>k</sub> · N</span></div>
+    <br>
+    Trong đó <em>N</em> là phản lực pháp tuyến (N), μ là hệ số ma sát (không thứ nguyên).
+    Thông thường μ<sub>s</sub> > μ<sub>k</sub> — khởi động khó hơn duy trì chuyển động.
+    <br><br>
+    <strong>Nguồn gốc vi mô:</strong> Bề mặt vật thể dù trơn đến đâu cũng có nhấp nhô ở cấp độ nguyên tử. Ma sát sinh ra từ tương tác điện từ giữa các nguyên tử tại những điểm tiếp xúc thực sự — diện tích tiếp xúc thực tế nhỏ hơn nhiều so với diện tích hình học.
+  </div>
+  <div class="grid-2">
+    <div class="bond">
+      <div class="bond-name">Ma sát lăn</div>
+      <div class="bond-body">Bánh xe không trượt mà lăn: μ<sub>lăn</sub> ≪ μ<sub>k</sub>. Xe đạp μ ≈ 0.001–0.003 trên bê tông, so với đi bộ μ ≈ 0.3–0.5. Đây là lý do bánh xe được phát minh.</div>
+    </div>
+    <div class="bond">
+      <div class="bond-name">Lực pháp tuyến N</div>
+      <div class="bond-body">Trên mặt phẳng ngang: N = mg. Trên mặt nghiêng góc θ: N = mg·cosθ. Điều đó giải thích vì sao xe tải nặng cần phanh mạnh hơn — N lớn hơn nên f lớn hơn.</div>
+    </div>
+  </div>
+  <br>
+  <div class="aero-card">
+    <div class="aero-title">Góc ma sát & điều kiện trượt</div>
+    <div class="aero-body">
+      Vật trên mặt phẳng nghiêng góc θ bắt đầu trượt khi tan θ > μ<sub>s</sub>. Góc này gọi là <em>góc ma sát</em> φ = arctan(μ<sub>s</sub>). Đo góc này là cách thực nghiệm đơn giản nhất để xác định μ.
+    </div>
+  </div>
+</div>
+
+<!-- ══ Card 2: Sim ma sát ══ -->
+<div class="card ruled-page">
+  <div class="card-head">
+    <h2 class="card-title">Mô phỏng: Khối trượt trên mặt phẳng</h2>
+    <span class="tag">Interactive</span>
+  </div>
+  <div class="card-body">
+    Kéo thanh trượt để thay đổi lực đẩy và hệ số ma sát. Quan sát khi nào khối bắt đầu di chuyển.
+  </div>
+
+  <div class="controls">
+    <div class="ctrl">
+      <label>Lực đẩy F (N)</label>
+      <input type="range" id="sFpush" min="0" max="60" value="20" step="1">
+      <div class="val" id="sFpushVal">20 N</div>
+    </div>
+    <div class="ctrl">
+      <label>Khối lượng m (kg)</label>
+      <input type="range" id="sMass" min="1" max="10" value="4" step="0.5">
+      <div class="val" id="sMassVal">4 kg</div>
+    </div>
+    <div class="ctrl">
+      <label>μ<sub>s</sub> tĩnh</label>
+      <input type="range" id="sMus" min="0.05" max="1.0" value="0.4" step="0.01">
+      <div class="val" id="sMusVal">0.40</div>
+    </div>
+    <div class="ctrl">
+      <label>μ<sub>k</sub> động</label>
+      <input type="range" id="sMuk" min="0.02" max="0.9" value="0.28" step="0.01">
+      <div class="val" id="sMukVal">0.28</div>
+    </div>
+  </div>
+
+  <div class="viz-stage">
+    <canvas id="frictionCanvas" width="1000" height="260" style="width:100%;height:auto"></canvas>
+  </div>
+
+  <div class="readouts" style="margin-top:14px">
+    <div class="readout">N = <span id="rN">39.2</span> N</div>
+    <div class="readout">f<sub>s,max</sub> = <span id="rFsmax">15.7</span> N</div>
+    <div class="readout">f<sub>k</sub> = <span id="rFk">11.0</span> N</div>
+    <div class="readout">a = <span id="rA">0.00</span> m/s²</div>
+    <div class="readout">v = <span id="rV">0.00</span> m/s</div>
+    <div class="readout">Trạng thái: <span id="rState">Tĩnh</span></div>
+  </div>
+</div>
+
+<!-- ══ Card 3: Lực cản chất lỏng ══ -->
+<div class="card ruled-page">
+  <div class="card-head">
+    <h2 class="card-title">Lực Cản Chất Lỏng (Nước & Không khí)</h2>
+    <span class="tag">Drag</span>
+  </div>
+  <div class="card-body">
+    Khi vật chuyển động trong chất lỏng (khí hoặc lỏng), lực cản phụ thuộc vào vận tốc theo hai chế độ:
+    <br><br>
+    <strong>Cản Stokes</strong> (vận tốc thấp, dòng chảy tầng — Reynolds thấp):
+    <div class="chips"><span class="chip">F<sub>cản</sub> = 6πηrv</span></div>
+    η là độ nhớt động lực (Pa·s), r bán kính cầu, v vận tốc. Lực tỉ lệ <em>tuyến tính</em> với v.
+    <br><br>
+    <strong>Cản áp suất</strong> (vận tốc cao, dòng rối — Reynolds cao):
+    <div class="chips"><span class="chip">F<sub>D</sub> = ½ · C<sub>D</sub> · ρ · A · v²</span></div>
+    C<sub>D</sub> là hệ số cản (không thứ nguyên), ρ mật độ chất lỏng (kg/m³), A diện tích mặt cắt ngang (m²), v vận tốc (m/s). Lực tỉ lệ với <em>v²</em> — tăng vận tốc gấp đôi thì lực cản tăng gấp 4.
+    <br><br>
+    <strong>Số Reynolds:</strong> Re = ρvL/η, phân biệt hai chế độ. Re &lt; 1: Stokes. Re > 1000: cản áp suất chiếm ưu thế.
+  </div>
+  <div class="grid-2">
+    <div class="bond">
+      <div class="bond-name">Vận tốc giới hạn</div>
+      <div class="bond-body">Khi F<sub>D</sub> = mg, vật đạt vận tốc giới hạn:<br><br>v<sub>gh</sub> = √(2mg / C<sub>D</sub>ρA)<br><br>Người nhảy dù: ~55 m/s (thân nằm ngang). Cầu lông con: ~6 m/s vì tiết diện lớn &amp; C<sub>D</sub> cao.</div>
+    </div>
+    <div class="bond">
+      <div class="bond-name">So sánh môi trường</div>
+      <div class="bond-body">Nước: ρ = 1000 kg/m³, η = 0.001 Pa·s<br>Không khí: ρ = 1.225 kg/m³, η = 1.8×10⁻⁵ Pa·s<br><br>Nước đặc gấp 800× không khí → lực cản trong nước lớn hơn rất nhiều ở cùng tốc độ.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Card 4: Viz lực cản ══ -->
+<div class="card ruled-page">
+  <div class="card-head">
+    <h2 class="card-title">Mô phỏng: Lực cản & Rơi tự do</h2>
+    <span class="tag">Interactive</span>
+  </div>
+  <div class="card-body">Chọn chế độ xem để khám phá các khía cạnh khác nhau của lực cản.</div>
+
+  <div class="viz-toolbar">
+    <button class="viz-btn active" onclick="setViz('fall')">Rơi có cản</button>
+    <button class="viz-btn" onclick="setViz('cd')">Hệ số C<sub>D</sub></button>
+    <button class="viz-btn" onclick="setViz('terminal')">Vận tốc giới hạn</button>
+    <button class="viz-btn" onclick="setViz('flow')">Dòng chảy quanh vật</button>
+  </div>
+  <div class="viz-stage">
+    <canvas id="dragCanvas" width="1000" height="340" style="width:100%;height:auto"></canvas>
+  </div>
+
+  <div class="controls" style="margin-top:14px">
+    <div class="ctrl">
+      <label>Khối lượng m (kg)</label>
+      <input type="range" id="dMass" min="0.5" max="20" value="5" step="0.5">
+      <div class="val" id="dMassVal">5 kg</div>
+    </div>
+    <div class="ctrl">
+      <label>C<sub>D</sub></label>
+      <input type="range" id="dCd" min="0.05" max="2.0" value="0.47" step="0.01">
+      <div class="val" id="dCdVal">0.47</div>
+    </div>
+    <div class="ctrl">
+      <label>Diện tích A (m²)</label>
+      <input type="range" id="dArea" min="0.01" max="2.0" value="0.1" step="0.01">
+      <div class="val" id="dAreaVal">0.10 m²</div>
+    </div>
+    <div class="ctrl">
+      <label>Môi trường</label>
+      <input type="range" id="dRho" min="1" max="3" value="1" step="1">
+      <div class="val" id="dRhoVal">Không khí</div>
+    </div>
+  </div>
+  <div class="readouts">
+    <div class="readout">v<sub>gh</sub> = <span id="dVterm">—</span> m/s</div>
+    <div class="readout">F<sub>D</sub>(v<sub>gh</sub>) = <span id="dFD">—</span> N</div>
+    <div class="readout">Re = <span id="dRe">—</span></div>
+  </div>
+</div>
+
+<!-- ══ Card 5: Aerodynamics ══ -->
+<div class="card ruled-page">
+  <div class="card-head">
+    <h2 class="card-title">Khí Động Lực Học</h2>
+    <span class="tag">Aerodynamics</span>
+  </div>
+  <div class="card-body">
+    Aerodynamics nghiên cứu lực tác dụng lên vật chuyển động trong không khí. Hai lực chính:
+    <ul style="margin: 10px 0 0 20px; line-height: 2;">
+      <li><strong>Lực cản (Drag)</strong> — song song với dòng chảy, cản chuyển động.</li>
+      <li><strong>Lực nâng (Lift)</strong> — vuông góc với dòng chảy, nâng vật lên.</li>
+    </ul>
+  </div>
+
+  <div class="grid-2">
+    <div class="bond">
+      <div class="bond-name">Hiệu ứng Bernoulli & Lift</div>
+      <div class="bond-body">
+        Cánh máy bay có biên dạng (airfoil) khiến không khí phía trên chạy nhanh hơn phía dưới. Theo phương trình Bernoulli, nơi nào vận tốc cao hơn thì áp suất thấp hơn → áp suất dưới cánh > trên cánh → lực nâng:
+        <br><br>
+        L = ½ · C<sub>L</sub> · ρ · A · v²
+        <br><br>
+        C<sub>L</sub> phụ thuộc vào góc tấn (angle of attack) và hình dạng airfoil.
+      </div>
+    </div>
+    <div class="bond">
+      <div class="bond-name">Tỉ số nâng/cản (L/D)</div>
+      <div class="bond-body">
+        Chỉ số hiệu quả của cánh. Máy bay thương mại: L/D ≈ 17–20. Tàu lượn: L/D ≈ 40–60. Đại bàng: L/D ≈ 10. Ô tô đua F1: L/D ≈ −3 (cánh lộn ngược tạo lực ép xuống đường).
+        <br><br>
+        Góc tấn tăng → C<sub>L</sub> tăng → nhưng nếu quá lớn, dòng chảy tách rời → mất lực nâng đột ngột (stall).
+      </div>
+    </div>
+    <div class="bond">
+      <div class="bond-name">Hình dạng & cản</div>
+      <div class="bond-body">
+        C<sub>D</sub> tiêu biểu:<br>
+        • Tấm phẳng vuông góc: ~1.17<br>
+        • Hình cầu: ~0.47<br>
+        • Xe con: ~0.25–0.35<br>
+        • Airfoil NACA 0012: ~0.006<br>
+        • Cá heo: ~0.004<br><br>
+        Hình giọt nước (teardrop) có C<sub>D</sub> thấp nhất vì dòng chảy không tách rời.
+      </div>
+    </div>
+    <div class="bond">
+      <div class="bond-name">Lớp biên & nhiễu loạn</div>
+      <div class="bond-body">
+        Sát bề mặt vật, vận tốc dòng chảy giảm về 0 (no-slip condition), tạo ra <em>lớp biên</em>. Lớp biên tầng (laminar) → rối (turbulent) khi Re tăng. Bề mặt nhám như lông cừu làm dòng rối sớm hơn — ngược lý nhưng thực ra giảm C<sub>D</sub> vì vùng wake nhỏ hơn (lý do quả golf có lõm).
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Card 6: Bảng so sánh ══ -->
+<div class="card ruled-page">
+  <div class="card-head">
+    <h2 class="card-title">Hệ số ma sát & cản tiêu biểu</h2>
+    <span class="tag">Dữ liệu</span>
+  </div>
+  <table class="compare">
+    <thead>
+      <tr>
+        <th>Vật / Bề mặt</th>
+        <th>μ<sub>s</sub></th>
+        <th>μ<sub>k</sub></th>
+        <th>Ghi chú</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Gỗ trên gỗ</td><td>0.25–0.5</td><td>0.2–0.4</td><td>Tùy loại gỗ, độ ẩm</td></tr>
+      <tr><td>Thép trên thép</td><td>0.74</td><td>0.57</td><td>Khô; dầu giảm còn ~0.1</td></tr>
+      <tr><td>Cao su trên bê tông khô</td><td>0.6–0.8</td><td>0.5–0.7</td><td>Lốp xe; ướt giảm mạnh</td></tr>
+      <tr><td>Băng trên băng</td><td>0.05–0.15</td><td>0.03–0.05</td><td>Lớp nước mỏng bôi trơn</td></tr>
+      <tr><td>Teflon trên Teflon</td><td>0.04</td><td>0.04</td><td>Ma sát thấp nhất vật liệu thông dụng</td></tr>
+      <tr><td>Khớp xương người</td><td>~0.003</td><td>~0.003</td><td>Dịch khớp, thấp hơn cả Teflon</td></tr>
+    </tbody>
+  </table>
+  <br>
+  <table class="compare">
+    <thead>
+      <tr>
+        <th>Vật thể</th>
+        <th>C<sub>D</sub></th>
+        <th>Môi trường</th>
+        <th>Ghi chú</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Hình cầu</td><td>0.47</td><td>Không khí</td><td>Re ~ 10⁵</td></tr>
+      <tr><td>Xe sedan</td><td>0.28–0.34</td><td>Không khí</td><td>Tesla Model 3: 0.23</td></tr>
+      <tr><td>Xe SUV vuông</td><td>0.35–0.45</td><td>Không khí</td><td>Hình hộp chữ nhật</td></tr>
+      <tr><td>Người đứng thẳng</td><td>~1.0–1.3</td><td>Không khí</td><td>Diện tích A ≈ 0.6 m²</td></tr>
+      <tr><td>Người cuộn đạp xe</td><td>~0.88</td><td>Không khí</td><td>Tư thế aero</td></tr>
+      <tr><td>Cá ngừ (tuna)</td><td>~0.0013</td><td>Nước</td><td>Tiến hóa tối ưu hóa hình dạng</td></tr>
+      <tr><td>Tàu ngầm (laminar)</td><td>~0.04</td><td>Nước</td><td>Hình giọt nước dài</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- /layout -->
+</div><!-- /content-wrap -->
+
+<script>
+/* ══════════════════════════════════════════
+   THEME
+══════════════════════════════════════════ */
+(function() {
+  const btn = document.getElementById('themeBtn');
+  const body = document.body;
+  const saved = localStorage.getItem('bewy-theme');
+  if (saved === 'dark') { body.classList.add('dark-mode'); btn.textContent = '☀ Sáng'; }
+  btn.addEventListener('click', () => {
+    const dark = body.classList.toggle('dark-mode');
+    btn.textContent = dark ? '☀ Sáng' : '☽ Tối';
+    localStorage.setItem('bewy-theme', dark ? 'dark' : 'light');
+  });
+})();
+
+/* ══════════════════════════════════════════
+   FRICTION SIM
+══════════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('frictionCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = 1000, H = 260;
+
+  const slFpush = document.getElementById('sFpush');
+  const slMass  = document.getElementById('sMass');
+  const slMus   = document.getElementById('sMus');
+  const slMuk   = document.getElementById('sMuk');
+
+  let Fpush = 20, mass = 4, mus = 0.4, muk = 0.28;
+  let blockX = 200, vel = 0;
+  const g = 9.8;
+  const GROUND_Y = 180;
+  const BLOCK_W = 80, BLOCK_H = 60;
+  const SCALE = 5; // px per m/s
+
+  const OR  = 'rgba(232,106,42,';
+  const YEL = 'rgba(242,181,68,';
+  const TEA = 'rgba(110,219,176,';
+  const RED = 'rgba(220,80,60,';
+  const TEXT= 'rgba(251,244,228,';
+
+  function updateLabels() {
+    document.getElementById('sFpushVal').textContent = Fpush + ' N';
+    document.getElementById('sMassVal').textContent = mass + ' kg';
+    document.getElementById('sMusVal').textContent = mus.toFixed(2);
+    document.getElementById('sMukVal').textContent = muk.toFixed(2);
+  }
+
+  slFpush.addEventListener('input', () => { Fpush = +slFpush.value; updateLabels(); });
+  slMass .addEventListener('input', () => { mass  = +slMass.value;  updateLabels(); });
+  slMus  .addEventListener('input', () => { mus   = +slMus.value;   updateLabels(); });
+  slMuk  .addEventListener('input', () => { muk   = +slMuk.value;   updateLabels(); });
+  updateLabels();
+
+  let lastT = null;
+  function tick(ts) {
+    if (!lastT) lastT = ts;
+    const dt = Math.min((ts - lastT) / 1000, 0.025);
+    lastT = ts;
+
+    const N = mass * g;
+    const fsMax = mus * N;
+    const fk    = muk * N;
+
+    let moving = Math.abs(vel) > 0.001;
+    let accel;
+    if (!moving) {
+      if (Math.abs(Fpush) > fsMax) {
+        moving = true;
+        accel = (Fpush - fk) / mass;
+      } else {
+        accel = 0;
+        vel = 0;
+      }
+    }
+    if (moving) {
+      const fDir = vel >= 0 ? 1 : -1;
+      accel = (Fpush - fDir * fk) / mass;
+      vel += accel * dt;
+      blockX += vel * SCALE;
+      if (blockX < 60) { blockX = 60; vel = 0; }
+      if (blockX > W - 60 - BLOCK_W) { blockX = W - 60 - BLOCK_W; vel = 0; }
+    }
+
+    // Update readouts
+    document.getElementById('rN').textContent    = N.toFixed(1);
+    document.getElementById('rFsmax').textContent = fsMax.toFixed(1);
+    document.getElementById('rFk').textContent   = fk.toFixed(1);
+    document.getElementById('rA').textContent    = (moving ? accel : 0).toFixed(2);
+    document.getElementById('rV').textContent    = vel.toFixed(2);
+    document.getElementById('rState').textContent = moving ? 'Đang trượt' : (Fpush >= fsMax * 0.9 ? 'Gần trượt' : 'Tĩnh');
+
+    draw(N, fsMax, fk, moving);
+    requestAnimationFrame(tick);
+  }
+
+  function arrow(ctx, x1, y1, x2, y2, color, label) {
+    ctx.save();
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    const ang = Math.atan2(y2 - y1, x2 - x1);
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - 10 * Math.cos(ang - 0.3), y2 - 10 * Math.sin(ang - 0.3));
+    ctx.lineTo(x2 - 10 * Math.cos(ang + 0.3), y2 - 10 * Math.sin(ang + 0.3));
+    ctx.closePath(); ctx.fill();
+    if (label) {
+      ctx.font = '13px Times New Roman'; ctx.textAlign = 'center';
+      ctx.fillText(label, x2 + (x2 > x1 ? 18 : -18), y2);
+    }
+    ctx.restore();
+  }
+
+  function draw(N, fsMax, fk, moving) {
+    ctx.clearRect(0, 0, W, H);
+
+    // Ground
+    ctx.fillStyle = 'rgba(60,40,20,0.7)';
+    ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
+    ctx.strokeStyle = OR + '0.5)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(W, GROUND_Y); ctx.stroke();
+
+    // Block
+    const bx = blockX, by = GROUND_Y - BLOCK_H;
+    ctx.fillStyle = moving ? OR + '0.22)' : 'rgba(180,120,60,0.18)';
+    ctx.strokeStyle = moving ? OR + '0.8)' : 'rgba(180,120,60,0.6)';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.roundRect(bx, by, BLOCK_W, BLOCK_H, 6); ctx.fill(); ctx.stroke();
+
+    // Block label m
+    ctx.fillStyle = TEXT + '0.9)'; ctx.font = 'bold 14px Times New Roman'; ctx.textAlign = 'center';
+    ctx.fillText(mass + ' kg', bx + BLOCK_W / 2, by + BLOCK_H / 2 + 5);
+
+    // Force arrow: push
+    const bCX = bx + BLOCK_W / 2, bCY = by + BLOCK_H / 2;
+    if (Fpush > 0) arrow(ctx, bCX - BLOCK_W / 2 - 4, bCY, bCX - BLOCK_W / 2 - 4 + Math.min(Fpush * 3, 120), bCY, YEL + '1)', 'F=' + Fpush + 'N');
+    // Friction arrow
+    const fMag = moving ? fk : Math.min(Fpush, fsMax);
+    if (fMag > 0.5) arrow(ctx, bCX + BLOCK_W / 2 + 4, bCY, bCX + BLOCK_W / 2 + 4 + fMag * (-3), bCY, RED + '1)', moving ? 'fₖ' : 'f_s');
+    // N arrow (upward)
+    arrow(ctx, bCX, by, bCX, by - 60, TEA + '1)', 'N');
+    // Weight arrow (downward)
+    arrow(ctx, bCX, by + BLOCK_H + 4, bCX, by + BLOCK_H + 4 + 50, 'rgba(200,160,60,1)', 'mg');
+
+    // Static/kinetic friction bar chart
+    const barX = W - 200, barY = 30, barW = 22, barMaxH = 120;
+    const scale = barMaxH / Math.max(fsMax * 1.2, Fpush * 1.2, 1);
+    ctx.font = '11px Times New Roman'; ctx.textAlign = 'center'; ctx.fillStyle = TEXT + '0.5)';
+    ctx.fillText('Biểu đồ lực (N)', barX + 60, barY - 8);
+
+    const bars = [
+      { label: 'F đẩy', val: Fpush, color: YEL + '0.8)' },
+      { label: 'fs,max', val: fsMax, color: TEA + '0.8)' },
+      { label: 'fk', val: fk, color: RED + '0.7)' },
+    ];
+    bars.forEach((b, i) => {
+      const h = b.val * scale;
+      const x = barX + i * (barW + 14);
+      ctx.fillStyle = b.color;
+      ctx.fillRect(x, barY + barMaxH - h, barW, h);
+      ctx.strokeStyle = b.color.replace('0.8)', '1)').replace('0.7)', '1)');
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x, barY + barMaxH - h, barW, h);
+      ctx.fillStyle = TEXT + '0.7)'; ctx.font = '10px Times New Roman';
+      ctx.fillText(b.label, x + barW / 2, barY + barMaxH + 14);
+      ctx.fillText(b.val.toFixed(1), x + barW / 2, barY + barMaxH - h - 4);
+    });
+
+    // Moving status indicator
+    ctx.font = '13px Times New Roman'; ctx.textAlign = 'left';
+    ctx.fillStyle = moving ? OR + '1)' : TEA + '1)';
+    ctx.fillText(moving ? '▶ Đang trượt' : '■ Tĩnh', 20, 20);
+
+    // Velocity indicator
+    if (moving && Math.abs(vel) > 0.05) {
+      const vBarW = Math.min(Math.abs(vel) * 30, 180);
+      ctx.fillStyle = OR + '0.3)';
+      ctx.fillRect(bCX, GROUND_Y + 14, vBarW * Math.sign(vel), 10);
+      ctx.fillStyle = OR + '1)'; ctx.font = '11px Times New Roman'; ctx.textAlign = 'center';
+      ctx.fillText('v = ' + vel.toFixed(2) + ' m/s', bCX + vBarW / 2 * Math.sign(vel), GROUND_Y + 36);
+    }
+  }
+
+  requestAnimationFrame(tick);
+})();
+
+/* ══════════════════════════════════════════
+   DRAG VIZ
+══════════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('dragCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = 1000, H = 340;
+
+  let vizMode = 'fall';
+  let fallY = 40, fallV = 0;
+
+  const RHOVALS = [1.225, 1000, 0.08]; // air, water, hydrogen (low)
+  const RHONAMES = ['Không khí', 'Nước', 'Hydro (thấp)'];
+  const ETAVALS  = [1.8e-5, 1e-3, 8.5e-6];
+
+  let mass = 5, Cd = 0.47, area = 0.1, rhoIdx = 0;
+
+  const OR  = 'rgba(232,106,42,';
+  const YEL = 'rgba(242,181,68,';
+  const TEA = 'rgba(110,219,176,';
+  const BLU = 'rgba(100,160,240,';
+  const RED = 'rgba(220,80,60,';
+  const TEXT= 'rgba(251,244,228,';
+
+  document.getElementById('dMass').addEventListener('input', e => {
+    mass = +e.target.value; document.getElementById('dMassVal').textContent = mass + ' kg'; updateDragReadouts();
+  });
+  document.getElementById('dCd').addEventListener('input', e => {
+    Cd = +e.target.value; document.getElementById('dCdVal').textContent = Cd.toFixed(2); updateDragReadouts();
+  });
+  document.getElementById('dArea').addEventListener('input', e => {
+    area = +e.target.value; document.getElementById('dAreaVal').textContent = area.toFixed(2) + ' m²'; updateDragReadouts();
+  });
+  document.getElementById('dRho').addEventListener('input', e => {
+    rhoIdx = (+e.target.value) - 1;
+    document.getElementById('dRhoVal').textContent = RHONAMES[rhoIdx]; updateDragReadouts();
+    fallY = 40; fallV = 0;
+  });
+
+  function updateDragReadouts() {
+    const rho = RHOVALS[rhoIdx];
+    const eta = ETAVALS[rhoIdx];
+    const g = 9.8;
+    const vt = Math.sqrt(2 * mass * g / (Cd * rho * area));
+    const FD = 0.5 * Cd * rho * area * vt * vt;
+    const L = 0.1; // characteristic length ~31cm diameter sphere
+    const Re = rho * vt * L / eta;
+    document.getElementById('dVterm').textContent = vt.toFixed(1);
+    document.getElementById('dFD').textContent = FD.toFixed(1);
+    document.getElementById('dRe').textContent = Re.toExponential(2);
+  }
+  updateDragReadouts();
+
+  window.setViz = function(name) {
+    vizMode = name;
+    document.querySelectorAll('.viz-btn').forEach(b => b.classList.toggle('active', b.textContent.trim().startsWith(
+      name === 'fall' ? 'Rơi' : name === 'cd' ? 'Hệ' : name === 'terminal' ? 'Vận' : 'Dòng'
+    )));
+    fallY = 40; fallV = 0;
+  };
+
+  let t = 0;
+  let lastT = null;
+
+  function tick(ts) {
+    if (!lastT) lastT = ts;
+    const dt = Math.min((ts - lastT) / 1000, 0.025);
+    lastT = ts;
+    t += dt;
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#080C0A'; ctx.fillRect(0, 0, W, H);
+
+    if (vizMode === 'fall')     drawFall(dt);
+    else if (vizMode === 'cd')  drawCdCompare();
+    else if (vizMode === 'terminal') drawVtermGraph();
+    else if (vizMode === 'flow') drawFlowLines();
+
+    requestAnimationFrame(tick);
+  }
+
+  /* ── Fall simulation ── */
+  function drawFall(dt) {
+    const rho = RHOVALS[rhoIdx];
+    const g = 9.8;
+    const SCALE = 10; // px per m/s
+
+    // Physics: no drag version and drag version
+    const FD = 0.5 * Cd * rho * area * fallV * fallV;
+    const accel = g - FD / mass;
+    fallV += accel * dt;
+    const vt = Math.sqrt(2 * mass * g / (Cd * rho * area));
+
+    const PX_PER_S = 40; // pixels per m/s for display of speed
+    const Y_MAX = H - 60;
+
+    // Object
+    fallY += fallV * PX_PER_S * dt;
+    if (fallY > Y_MAX) { fallY = 40; fallV = 0; }
+
+    // Background gradient (fluid)
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    if (rhoIdx === 1) { // water
+      grad.addColorStop(0, 'rgba(20,60,120,0.3)');
+      grad.addColorStop(1, 'rgba(10,30,70,0.5)');
+    } else {
+      grad.addColorStop(0, 'rgba(30,50,80,0.1)');
+      grad.addColorStop(1, 'rgba(20,30,50,0.05)');
+    }
+    ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
+
+    // Object circle
+    ctx.beginPath(); ctx.arc(W * 0.25, fallY + 20, 22, 0, Math.PI * 2);
+    ctx.fillStyle = OR + '0.8)'; ctx.fill();
+    ctx.strokeStyle = OR + '1)'; ctx.lineWidth = 2; ctx.stroke();
+
+    // Velocity arrow
+    const vArrow = Math.min(fallV * 6, 120);
+    if (vArrow > 2) {
+      ctx.strokeStyle = YEL + '1)'; ctx.fillStyle = YEL + '1)'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(W * 0.25, fallY + 44); ctx.lineTo(W * 0.25, fallY + 44 + vArrow); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(W * 0.25, fallY + 44 + vArrow);
+      ctx.lineTo(W * 0.25 - 6, fallY + 44 + vArrow - 10);
+      ctx.lineTo(W * 0.25 + 6, fallY + 44 + vArrow - 10);
+      ctx.closePath(); ctx.fill();
+    }
+    // Drag arrow (up)
+    const dArrow = Math.min(FD * 2, 100);
+    if (dArrow > 2) {
+      ctx.strokeStyle = BLU + '1)'; ctx.fillStyle = BLU + '1)'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(W * 0.25, fallY - 2); ctx.lineTo(W * 0.25, fallY - 2 - dArrow); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(W * 0.25, fallY - 2 - dArrow);
+      ctx.lineTo(W * 0.25 - 6, fallY - 2 - dArrow + 10);
+      ctx.lineTo(W * 0.25 + 6, fallY - 2 - dArrow + 10);
+      ctx.closePath(); ctx.fill();
+    }
+
+    // Speed gauge
+    const gaugeX = W * 0.55, gaugeY = 30, gaugeH = H - 60;
+    ctx.strokeStyle = TEXT + '0.15)'; ctx.lineWidth = 1;
+    ctx.strokeRect(gaugeX, gaugeY, 30, gaugeH);
+
+    const fillRatio = Math.min(fallV / (vt * 1.2), 1);
+    const fillH = fillRatio * gaugeH;
+    const gGrad = ctx.createLinearGradient(0, gaugeY + gaugeH - fillH, 0, gaugeY + gaugeH);
+    gGrad.addColorStop(0, OR + '0.9)');
+    gGrad.addColorStop(1, YEL + '0.9)');
+    ctx.fillStyle = gGrad;
+    ctx.fillRect(gaugeX, gaugeY + gaugeH - fillH, 30, fillH);
+
+    // Terminal velocity line
+    const vtY = gaugeY + gaugeH - gaugeH * Math.min(vt / (vt * 1.2), 1);
+    ctx.strokeStyle = TEA + '0.7)'; ctx.lineWidth = 1.5; ctx.setLineDash([5, 5]);
+    ctx.beginPath(); ctx.moveTo(gaugeX - 10, vtY); ctx.lineTo(gaugeX + 40, vtY); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = TEA + '1)'; ctx.font = '12px Times New Roman'; ctx.textAlign = 'left';
+    ctx.fillText('v_gh = ' + vt.toFixed(1) + ' m/s', gaugeX + 44, vtY + 4);
+
+    ctx.fillStyle = YEL + '1)'; ctx.textAlign = 'center';
+    ctx.fillText('v = ' + fallV.toFixed(1) + ' m/s', gaugeX + 15, gaugeY + gaugeH + 18);
+    ctx.fillStyle = TEXT + '0.5)';
+    ctx.fillText('tốc độ', gaugeX + 15, gaugeY - 8);
+
+    // Text info panel
+    ctx.font = '14px Times New Roman'; ctx.textAlign = 'left';
+    ctx.fillStyle = TEXT + '0.7)';
+    ctx.fillText('Môi trường: ' + RHONAMES[rhoIdx], W * 0.68, 50);
+    ctx.fillText('m = ' + mass + ' kg', W * 0.68, 72);
+    ctx.fillText('Cₐ = ' + Cd, W * 0.68, 94);
+    ctx.fillText('A = ' + area.toFixed(2) + ' m²', W * 0.68, 116);
+    ctx.fillStyle = OR + '1)';
+    ctx.fillText('FD = ' + FD.toFixed(1) + ' N', W * 0.68, 146);
+    ctx.fillText('a = ' + (accel > 0 ? '+' : '') + accel.toFixed(2) + ' m/s²', W * 0.68, 168);
+
+    // Labels for arrows
+    ctx.font = '12px Times New Roman';
+    ctx.fillStyle = YEL + '1)'; ctx.textAlign = 'left';
+    ctx.fillText('v (vận tốc)', W * 0.25 + 30, fallY + 54);
+    ctx.fillStyle = BLU + '1)';
+    ctx.fillText('FD (lực cản)', W * 0.25 + 30, fallY - 10);
+  }
+
+  /* ── CD compare bars ── */
+  function drawCdCompare() {
+    const objects = [
+      { name: 'Tấm phẳng', cd: 1.17, color: RED },
+      { name: 'Hình cầu', cd: 0.47, color: OR },
+      { name: 'Xe SUV', cd: 0.40, color: YEL },
+      { name: 'Xe con', cd: 0.30, color: YEL },
+      { name: 'Tesla M3', cd: 0.23, color: TEA },
+      { name: 'Airfoil', cd: 0.006, color: BLU },
+      { name: 'Cá heo', cd: 0.004, color: BLU },
+    ];
+
+    const maxCD = 1.4;
+    const barH = 36;
+    const startY = 28;
+    const labelW = 100;
+    const barMaxW = W - labelW - 120;
+
+    ctx.font = '13px Times New Roman'; ctx.textAlign = 'left';
+    ctx.fillStyle = TEXT + '0.4)';
+    ctx.fillText('Hệ số cản C_D (tỉ lệ = kích thước thanh)', labelW, startY - 8);
+
+    objects.forEach((o, i) => {
+      const y = startY + i * (barH + 8);
+      const bw = (o.cd / maxCD) * barMaxW;
+
+      ctx.fillStyle = o.color + '0.15)';
+      ctx.fillRect(labelW, y, barMaxW, barH);
+      ctx.fillStyle = o.color + '0.8)';
+      ctx.fillRect(labelW, y, bw, barH);
+
+      ctx.fillStyle = TEXT + '0.85)'; ctx.textAlign = 'right';
+      ctx.fillText(o.name, labelW - 8, y + barH / 2 + 5);
+      ctx.fillStyle = TEXT + '0.9)'; ctx.textAlign = 'left';
+      ctx.fillText(o.cd, labelW + bw + 8, y + barH / 2 + 5);
+    });
+
+    // Animated marker
+    const markerX = labelW + ((Cd / maxCD) * barMaxW);
+    ctx.strokeStyle = TEXT + '0.6)'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(markerX, startY - 4); ctx.lineTo(markerX, startY + objects.length * (barH + 8)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = TEXT + '0.8)'; ctx.textAlign = 'center'; ctx.font = '11px Times New Roman';
+    ctx.fillText('C_D = ' + Cd, markerX, startY + objects.length * (barH + 8) + 16);
+  }
+
+  /* ── Vterm graph ── */
+  function drawVtermGraph() {
+    const rho = RHOVALS[rhoIdx];
+    const massRange = [0.5, 20];
+    const plotX = 80, plotY = 30, plotW = W - 160, plotH = H - 80;
+
+    ctx.strokeStyle = TEXT + '0.12)'; ctx.lineWidth = 1;
+    // Grid
+    for (let i = 0; i <= 5; i++) {
+      const x = plotX + (i / 5) * plotW;
+      ctx.beginPath(); ctx.moveTo(x, plotY); ctx.lineTo(x, plotY + plotH); ctx.stroke();
+    }
+    for (let i = 0; i <= 5; i++) {
+      const y = plotY + (i / 5) * plotH;
+      ctx.beginPath(); ctx.moveTo(plotX, y); ctx.lineTo(plotX + plotW, y); ctx.stroke();
+    }
+
+    // Axes labels
+    ctx.fillStyle = TEXT + '0.5)'; ctx.font = '11px Times New Roman'; ctx.textAlign = 'center';
+    ctx.fillText('Khối lượng m (kg)', plotX + plotW / 2, plotY + plotH + 30);
+    ctx.save(); ctx.translate(plotX - 45, plotY + plotH / 2);
+    ctx.rotate(-Math.PI / 2); ctx.fillText('v_gh (m/s)', 0, 0); ctx.restore();
+
+    // Curve for current Cd/area
+    const vtMax = Math.sqrt(2 * massRange[1] * 9.8 / (Cd * rho * area));
+    const vtMin = Math.sqrt(2 * massRange[0] * 9.8 / (Cd * rho * area));
+    const yTop = Math.max(vtMax, vtMin);
+
+    function toXY(m, vt) {
+      const px = plotX + ((m - massRange[0]) / (massRange[1] - massRange[0])) * plotW;
+      const py = plotY + plotH - (vt / (yTop * 1.1)) * plotH;
+      return [px, py];
+    }
+
+    ctx.beginPath(); ctx.strokeStyle = OR + '0.9)'; ctx.lineWidth = 2.5;
+    for (let mi = 0; mi <= 100; mi++) {
+      const m = massRange[0] + (mi / 100) * (massRange[1] - massRange[0]);
+      const vt = Math.sqrt(2 * m * 9.8 / (Cd * rho * area));
+      const [px, py] = toXY(m, vt);
+      mi === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    // Current mass marker
+    const vtCurrent = Math.sqrt(2 * mass * 9.8 / (Cd * rho * area));
+    const [mx, my] = toXY(mass, vtCurrent);
+    ctx.beginPath(); ctx.arc(mx, my, 7, 0, Math.PI * 2);
+    ctx.fillStyle = YEL + '1)'; ctx.fill();
+    ctx.fillStyle = YEL + '1)'; ctx.font = 'bold 12px Times New Roman'; ctx.textAlign = 'left';
+    ctx.fillText('m=' + mass + 'kg, v_gh=' + vtCurrent.toFixed(1) + ' m/s', mx + 12, my - 4);
+
+    // Y-axis tick values
+    ctx.fillStyle = TEXT + '0.5)'; ctx.font = '11px Times New Roman'; ctx.textAlign = 'right';
+    for (let i = 0; i <= 5; i++) {
+      const v = (i / 5) * yTop * 1.1;
+      const [, py] = toXY(massRange[0], v);
+      ctx.fillText(v.toFixed(0), plotX - 6, py + 4);
+    }
+    ctx.textAlign = 'center';
+    for (let i = 0; i <= 5; i++) {
+      const m = massRange[0] + (i / 5) * (massRange[1] - massRange[0]);
+      const px = plotX + (i / 5) * plotW;
+      ctx.fillText(m.toFixed(0), px, plotY + plotH + 14);
+    }
+
+    ctx.fillStyle = TEXT + '0.4)'; ctx.font = '12px Times New Roman'; ctx.textAlign = 'left';
+    ctx.fillText('v_gh = √(2mg / C_D·ρ·A)   — Môi trường: ' + RHONAMES[rhoIdx], plotX, plotY - 8);
+  }
+
+  /* ── Flow lines ── */
+  function drawFlowLines() {
+    const cx = W * 0.42, cy = H / 2;
+    const isStreamlined = Cd < 0.25;
+    const R = 48;
+
+    // Streamlines
+    const numLines = 12;
+    for (let i = 0; i < numLines; i++) {
+      const y0 = (i / (numLines - 1)) * H;
+      const dy = y0 - cy;
+      const tooClose = Math.abs(dy) < R + 12;
+
+      ctx.beginPath(); ctx.strokeStyle = BLU + (tooClose ? '0.18)' : '0.45)');
+      ctx.lineWidth = 1.5;
+
+      let px = 0;
+      let py = y0;
+      ctx.moveTo(px, py);
+
+      for (let xStep = 1; xStep <= 200; xStep++) {
+        px = xStep * (W / 200);
+        const dx2 = px - cx, dy2 = py - cy;
+        const r2 = dx2 * dx2 + dy2 * dy2;
+        const rEff = Math.sqrt(r2);
+        // Deflection around cylinder (simplified potential flow)
+        if (rEff > R + 4) {
+          const ratio = (R * R) / r2;
+          const vyDeflect = (dy2 / rEff) * ratio * 12;
+          py += vyDeflect * (tooClose ? 1.4 : 0.8);
+          py = Math.max(4, Math.min(H - 4, py));
+        }
+        ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+
+    // Separation wake (high drag)
+    if (!isStreamlined) {
+      ctx.fillStyle = RED + '0.08)';
+      ctx.beginPath(); ctx.ellipse(cx + R + 60, cy, 120, R + 8, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = RED + '0.3)'; ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.ellipse(cx + R + 60, cy, 120, R + 8, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = RED + '0.8)'; ctx.font = '12px Times New Roman'; ctx.textAlign = 'center';
+      ctx.fillText('Vùng rối (wake)', cx + R + 60, cy + R + 22);
+    }
+
+    // Object shape
+    if (isStreamlined) {
+      // Teardrop
+      ctx.beginPath();
+      ctx.save(); ctx.translate(cx - 20, cy);
+      ctx.moveTo(-40, 0);
+      ctx.bezierCurveTo(-40, -32, 20, -20, 60, 0);
+      ctx.bezierCurveTo(20, 20, -40, 32, -40, 0);
+      ctx.fillStyle = TEA + '0.25)'; ctx.fill();
+      ctx.strokeStyle = TEA + '0.8)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.restore();
+      ctx.fillStyle = TEA + '1)'; ctx.font = '12px Times New Roman'; ctx.textAlign = 'center';
+      ctx.fillText('Airfoil/Giọt nước', cx, cy + R + 22);
+    } else {
+      // Cylinder
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.fillStyle = OR + '0.2)'; ctx.fill();
+      ctx.strokeStyle = OR + '0.8)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = OR + '1)'; ctx.font = '12px Times New Roman'; ctx.textAlign = 'center';
+      ctx.fillText('Hình trụ', cx, cy + R + 16);
+    }
+
+    // Flow direction arrow
+    ctx.fillStyle = BLU + '0.7)'; ctx.font = '13px Times New Roman'; ctx.textAlign = 'left';
+    ctx.fillText('Dòng chảy ➜', 12, 22);
+    ctx.fillStyle = TEXT + '0.45)'; ctx.font = '11px Times New Roman';
+    ctx.fillText('C_D = ' + Cd + ' → ' + (isStreamlined ? 'dòng lưu thông (dùng airfoil)' : 'tách rời (drag cao)'), 12, H - 14);
+  }
+
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

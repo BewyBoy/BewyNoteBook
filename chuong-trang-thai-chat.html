@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ba trạng thái của chất</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SKETCHBOOK / NOTEBOOK STYLE
+    ══════════════════════════════════════ */
+
+    /* Google Font — handwritten feel */
+    @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Caveat:wght@400;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── CSS custom properties ── */
+    :root {
+      --paper:        #F5F0E0;
+      --paper-dark:   #EDE5CC;
+      --ink:          #1A1208;
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #C44010;
+      --accent-blue:  #1A4FA0;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-g:  rgba(80, 180, 100, 0.30);
+      --line-h:       30px;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #8B7355;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #9E8565 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #6B5540 0%, transparent 50%),
+        repeating-linear-gradient(
+          45deg,
+          transparent, transparent 3px,
+          rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px
+        );
+      color: var(--ink);
+      font-family: 'Kalam', cursive;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    /* ══ Fixed nav ══ */
+    .theme-toggle {
+      position: fixed; top: 14px; right: 194px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 13px; border-radius: 4px;
+      background: var(--paper); color: var(--ink);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 13px; font-weight: 700;
+      cursor: pointer; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(-1deg);
+      transition: transform 0.1s;
+    }
+    .theme-toggle:hover { transform: rotate(0deg); border-color: var(--accent); }
+
+    .back-link {
+      position: fixed; top: 14px; right: 20px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent-blue);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(0.8deg);
+      transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent-blue); }
+
+    /* ══ Notebook page shell ══ */
+    .content-wrap {
+      width: min(1060px, 100%);
+      margin: 0 auto;
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.25),
+         6px 0 18px rgba(0,0,0,0.20),
+         0  12px 32px rgba(0,0,0,0.35);
+    }
+
+    /* ══ Ruled-paper background (pure CSS) ══ */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(
+          90deg,
+          transparent 71px,
+          var(--red-margin) 71px,
+          var(--red-margin) 73px,
+          transparent 73px
+        ),
+        repeating-linear-gradient(
+          180deg,
+          transparent 0px,
+          transparent calc(var(--line-h) - 1px),
+          var(--blue-line) calc(var(--line-h) - 1px),
+          var(--blue-line) var(--line-h)
+        );
+      background-attachment: local;
+    }
+
+    /* ══ Hero ══ */
+    .hero {
+      padding: 72px 40px 40px 96px;
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+    }
+    .crumb {
+      font-size: 12px; letter-spacing: 0.06em;
+      color: var(--ink-light); margin-bottom: 10px;
+      font-family: 'Kalam', cursive;
+    }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+
+    .title {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(40px, 6vw, 78px);
+      line-height: 1.0; color: var(--ink);
+      margin-bottom: 6px; font-weight: 700;
+    }
+    .title-stroke {
+      width: clamp(160px, 38vw, 400px); height: 3px;
+      background: var(--accent);
+      border-radius: 2px; margin-bottom: 14px;
+      transform: rotate(-0.4deg);
+    }
+    .subtitle {
+      font-family: 'Kalam', cursive;
+      font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent-blue); margin-bottom: 16px;
+    }
+    .intro {
+      max-width: 800px; font-size: 16px;
+      line-height: var(--line-h);
+      color: var(--ink-mid);
+    }
+
+    /* ══ Layout ══ */
+    .layout {
+      display: grid; grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    /* ══ Card ══ */
+    .card {
+      padding: 28px 36px 32px 96px;
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+
+    .card:nth-child(even) { background-color: var(--paper-dark); }
+    .card.ruled-page:nth-child(even) {
+      background-color: var(--paper-dark);
+    }
+
+    /* ── Punched holes strip ── */
+    .card::before,
+    .hero::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #8B7355 0%, #8B7355 55%,
+        transparent 56%
+      );
+      background-size: 36px 80px;
+      background-repeat: repeat-y;
+      background-position: 0 20px;
+    }
+
+    .card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .card-title {
+      font-family: 'Caveat', cursive;
+      font-size: 26px; color: var(--ink); line-height: 1.1;
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 2px; display: inline;
+    }
+    .tag {
+      font-family: 'Kalam', cursive;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 700; padding: 3px 10px; border-radius: 3px;
+      background: var(--highlight-y);
+      color: var(--ink); border: 1px solid rgba(26,18,8,0.18);
+      flex-shrink: 0;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.15);
+      transform: rotate(1.2deg);
+    }
+
+    .card-body {
+      font-size: 15px;
+      line-height: var(--line-h);
+      color: var(--ink-mid); margin-bottom: 16px;
+    }
+    .card-body strong { color: var(--ink); }
+    .card-body em { color: var(--accent); font-style: italic; }
+
+    /* ── Formula chips ── */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+    .chip {
+      font-family: 'Caveat', cursive;
+      font-size: 17px; padding: 3px 16px;
+      background: rgba(26,79,160,0.07);
+      border: 2px solid rgba(26,79,160,0.40);
+      border-radius: 3px; color: var(--accent-blue);
+    }
+
+    /* ── Sub-panels ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .bond {
+      background: rgba(0,0,0,0.03);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px 12px;
+      border-radius: 0 4px 4px 0;
+    }
+    .bond-name {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .bond-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Slider controls ── */
+    .controls { display: flex; flex-wrap: wrap; gap: 18px; margin: 12px 0 10px; }
+    .ctrl { display: flex; flex-direction: column; gap: 4px; }
+    .ctrl label {
+      font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-light); font-family: 'Kalam', cursive;
+    }
+    .ctrl input[type=range] { width: 150px; accent-color: var(--accent); }
+    .ctrl .val {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; color: var(--accent); font-weight: 700;
+    }
+
+    /* ── Readouts ── */
+    .readouts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .readout {
+      font-family: 'Caveat', cursive; font-size: 15px;
+      background: rgba(196,64,16,0.07);
+      border: 1.5px solid rgba(196,64,16,0.28);
+      border-radius: 3px; padding: 4px 12px;
+      color: var(--ink-mid);
+    }
+    .readout span { color: var(--accent); font-weight: 700; }
+
+    /* ── Viz toolbar ── */
+    .viz-toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .viz-btn {
+      font-family: 'Kalam', cursive;
+      padding: 5px 13px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.22);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background 0.12s, transform 0.1s;
+    }
+    .viz-btn:hover { background: var(--highlight-y); color: var(--ink); transform: translateY(-1px); }
+    .viz-btn.active {
+      background: var(--highlight-y); color: var(--ink);
+      border-color: var(--accent);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .viz-stage {
+      background: #151C14;
+      border: 2px solid rgba(26,18,8,0.30);
+      border-radius: 4px; overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .viz-stage canvas { display: block; }
+
+    /* ── Highlight box ── */
+    .aero-card {
+      background: var(--highlight-g);
+      border-left: 3px solid var(--accent-blue);
+      border-radius: 0 4px 4px 0;
+      padding: 16px 18px 14px; margin-top: 4px;
+    }
+    .aero-title {
+      font-family: 'Caveat', cursive;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent-blue); margin-bottom: 7px;
+    }
+    .aero-body { font-size: 14px; line-height: 1.72; color: var(--ink-mid); }
+
+    /* ── Compare table ── */
+    .compare { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .compare th {
+      padding: 8px 12px; text-align: left;
+      background: rgba(196,64,16,0.10); color: var(--accent);
+      font-weight: 700; letter-spacing: 0.05em; font-size: 11px;
+      text-transform: uppercase;
+      border-bottom: 2px solid rgba(196,64,16,0.28);
+    }
+    .compare td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--blue-line);
+      color: var(--ink-mid); vertical-align: top;
+    }
+    .compare tr:last-child td { border-bottom: none; }
+    .compare tr:hover td { background: var(--highlight-y); }
+
+    /* ── Spring / interactive controls (for spring page) ── */
+    .spring-demo { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+    .spring-canvas-wrap canvas { display: block; border-radius: 4px; background: #0E1410; border: 2px solid rgba(26,18,8,0.30); cursor: grab; }
+    .spring-canvas-wrap canvas:active { cursor: grabbing; }
+    .spring-controls { display: flex; flex-direction: column; gap: 14px; }
+    .ctrl-group {
+      background: rgba(0,0,0,0.04);
+      border: 1px solid rgba(26,18,8,0.12);
+      border-radius: 4px; padding: 14px;
+    }
+    .ctrl-label {
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); font-weight: 700; margin-bottom: 8px;
+      font-family: 'Kalam', cursive;
+    }
+    .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .slider-row label { font-size: 13px; color: var(--ink-mid); width: 100px; flex-shrink: 0; }
+    .slider-row input[type=range] { flex: 1; accent-color: var(--accent); }
+    .slider-row .val { font-size: 13px; color: var(--accent-blue); width: 54px; text-align: right; font-family: 'Caveat', cursive; }
+    .btn-row { display: flex; gap: 8px; margin-top: 4px; }
+    .ctrl-btn {
+      flex: 1; padding: 7px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.20);
+      background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      font-family: 'Kalam', cursive;
+      transition: background 0.12s;
+    }
+    .ctrl-btn:hover { background: var(--highlight-y); color: var(--ink); }
+    .ctrl-btn.active { background: var(--highlight-y); border-color: var(--accent); color: var(--ink); }
+
+    /* ══ Dark mode ══ */
+    body.dark-mode {
+      background: #3A3020;
+      --paper:      #1C1810;
+      --paper-dark: #211E12;
+      --ink:        #EDE0C0;
+      --ink-mid:    #C4AE82;
+      --ink-light:  #8A7658;
+      --blue-line:  rgba(80, 110, 180, 0.18);
+      --red-margin: rgba(200, 70, 70, 0.5);
+      --highlight-y: rgba(180, 150, 30, 0.35);
+      --highlight-g: rgba(50, 130, 70, 0.20);
+    }
+    body.dark-mode .content-wrap {
+      box-shadow:
+        -6px 0 18px rgba(0,0,0,0.5),
+         6px 0 18px rgba(0,0,0,0.4),
+         0  12px 32px rgba(0,0,0,0.6);
+    }
+    body.dark-mode .card::before,
+    body.dark-mode .hero::before {
+      background-color: rgba(0,0,0,0.15);
+      background-image: radial-gradient(
+        circle 10px at 18px 50%,
+        #3A3020 0%, #3A3020 55%,
+        transparent 56%
+      );
+    }
+
+    /* ── Preserve original state-row / phase-card styles ── */
+    /* ── State row ── */
+    .state-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(26,18,8,0.12);
+    }
+
+    /* Left: macro shape */
+    .macro-pane {
+      padding: 28px 32px 24px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      border-right: 1px solid rgba(26,18,8,0.10);
+    }
+    .macro-pane svg { display: block; margin: 0 auto 20px; }
+
+    /* Right: atomic viz */
+    .atomic-pane {
+      padding: 28px 32px 24px;
+      display: flex; flex-direction: column;
+    }
+    .atomic-pane canvas {
+      display: block; margin: 0 auto 20px;
+      border-radius: 12px;
+    }
+
+    /* Pane labels */
+    .pane-label {
+      font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      font-weight: 700; color: var(--ink-light); margin-bottom: 10px;
+    }
+
+    .state-name { font-size: 32px; color: var(--ink); margin-bottom: 6px; }
+    .state-sub  { font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; margin-bottom: 12px; }
+    .state-desc { font-size: 14px; line-height: 1.7; color: var(--ink-mid); }
+    .state-props { list-style: none; margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+    .state-props li {
+      font-size: 13px; color: var(--ink-mid);
+      padding: 5px 0; border-bottom: 1px solid rgba(26,18,8,0.08);
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .state-props li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+
+    .atomic-label {
+      font-size: 13px; line-height: 1.65; color: var(--ink-mid); margin-top: 4px;
+    }
+    .atomic-tag {
+      display: inline-block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 700; padding: 3px 9px; border-radius: 6px; margin-bottom: 12px;
+    }
+
+    /* ── State colours ── */
+    /* Solid — blue */
+    .solid .macro-pane { background: rgba(90,120,200,0.06); }
+    .solid .atomic-pane { background: rgba(90,120,200,0.04); }
+    .solid .state-sub,
+    .solid .pane-label { color: #7B96E0; }
+    .solid .state-props li::before { background: #5A78C8; }
+    .solid .atomic-tag { background: rgba(90,120,200,0.2); color: #7B96E0; border: 1px solid rgba(90,120,200,0.35); }
+
+    /* Liquid — teal */
+    .liquid .macro-pane { background: rgba(47,143,111,0.06); }
+    .liquid .atomic-pane { background: rgba(47,143,111,0.04); }
+    .liquid .state-sub,
+    .liquid .pane-label { color: #3AAE85; }
+    .liquid .state-props li::before { background: #2F8F6F; }
+    .liquid .atomic-tag { background: rgba(47,143,111,0.2); color: #3AAE85; border: 1px solid rgba(47,143,111,0.35); }
+
+    /* Gas — orange */
+    .gas .macro-pane { background: rgba(217,99,59,0.06); }
+    .gas .atomic-pane { background: rgba(217,99,59,0.04); }
+    .gas .state-sub,
+    .gas .pane-label { color: #E0845A; }
+    .gas .state-props li::before { background: #D9633B; }
+    .gas .atomic-tag { background: rgba(217,99,59,0.2); color: #E0845A; border: 1px solid rgba(217,99,59,0.35); }
+
+    /* ── Compare table original colors ── */
+    .compare .col-solid { color: #7B96E0; }
+    .compare .col-liquid { color: #3AAE85; }
+    .compare .col-gas { color: #E0845A; }
+
+    /* ── Phase transitions section ── */
+    .phase-section { margin-top: 8px; }
+    .phase-section-title { font-size: 22px; color: var(--ink); margin-bottom: 8px; font-family: 'Caveat', cursive; font-weight: 700; }
+    .phase-section-intro { font-size: 14px; color: var(--ink-mid); line-height: 1.65; margin-bottom: 20px; }
+
+    .phase-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 16px;
+    }
+
+    .phase-card {
+      background: rgba(0,0,0,0.03);
+      border: 1px solid rgba(26,18,8,0.10);
+      border-radius: 18px;
+      padding: 20px 20px 16px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .phase-card-wide {
+      grid-column: 1 / -1;
+    }
+    .phase-card canvas {
+      display: block; border-radius: 10px;
+      width: 100%; height: auto;
+      background: rgba(8,10,12,0.7);
+    }
+
+    .phase-header { display: flex; flex-direction: column; gap: 6px; }
+    .phase-arrow-wrap {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .phase-label {
+      font-size: 15px; font-weight: 700; letter-spacing: 0.04em;
+    }
+    .phase-arrows { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+    .arrow-row {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px;
+    }
+    .arr { color: var(--ink-light); font-size: 16px; }
+    .arr-label { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; }
+
+    .solid-col  { color: #7B96E0; }
+    .liquid-col { color: #3AAE85; }
+    .gas-col    { color: #E0845A; }
+    .melt-col   { color: #C4880A; }
+    .evap-col   { color: #C47020; }
+    .sub-col    { color: #8040B0; }
+
+    .phase-ctrl {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .play-btn {
+      padding: 7px 16px; border-radius: 8px; border: 1.5px solid rgba(26,18,8,0.20);
+      background: var(--paper-dark); color: var(--ink);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      font-family: 'Kalam', cursive;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .play-btn:hover { background: var(--highlight-y); }
+    .phase-info { font-size: 13px; color: var(--ink-mid); line-height: 1.5; }
+
+    /* ── Main layout ── */
+    .page { width: min(1100px, 100%); margin: 0 auto; padding: 36px 24px 60px; display: flex; flex-direction: column; gap: 20px; }
+
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .spring-demo { grid-template-columns: 1fr; }
+      .theme-toggle { right: 172px; }
+      .phase-grid { grid-template-columns: 1fr; }
+      .phase-card-wide { grid-column: 1; }
+    }
+    @media (max-width: 720px) {
+      .state-row { grid-template-columns: 1fr; }
+      .macro-pane { border-right: none; border-bottom: 1px solid rgba(26,18,8,0.08); }
+      .theme-toggle { right: 172px; }
+    }
+    @media (max-width: 640px) {
+      .theme-toggle, .back-link { position: absolute; top: 10px; }
+      .theme-toggle { right: 148px; } .back-link { right: 12px; }
+      .hero, .card { padding-left: 56px; }
+      .card::before, .hero::before { width: 28px; background-size: 28px 80px; }
+    }
+    @media (max-width: 560px) {
+      .hero { padding: 68px 14px 24px 56px; }
+      .page { padding: 20px 12px 48px; }
+    }
+  </style>
+</head>
+<body>
+  <button id="themeBtn" class="theme-toggle" type="button">☽ Tối</button>
+  <a class="back-link" href="Learning Resources Hub v4.html">← Thư viện</a>
+
+  <div class="content-wrap">
+    <header class="hero ruled-page">
+      <div class="crumb"><a href="Learning Resources Hub v4.html">Vật lý</a> › <span>Cấu tạo chất</span></div>
+      <h1 class="title">Ba trạng thái của chất</h1>
+      <div class="title-stroke"></div>
+      <p class="subtitle">Rắn · Lỏng · Khí</p>
+      <p class="intro">Cùng một chất có thể tồn tại ở ba trạng thái khác nhau tuỳ theo nhiệt độ và áp suất. Sự khác biệt cốt lõi nằm ở cách các nguyên tử/phân tử sắp xếp và chuyển động.</p>
+    </header>
+
+    <main class="page">
+
+      <!-- ══════════════ SOLID ══════════════ -->
+      <div class="state-row solid">
+        <!-- Left: macro shape -->
+        <div class="macro-pane">
+          <div>
+            <div class="pane-label">Hình dạng vĩ mô</div>
+            <div class="state-name">Chất rắn</div>
+            <div class="state-sub">Solid</div>
+            <svg width="220" height="160" viewBox="0 0 220 160" xmlns="http://www.w3.org/2000/svg" id="solid-macro">
+              <!-- 3D cube isometric -->
+              <!-- Top face -->
+              <polygon points="110,18 190,58 110,98 30,58" fill="rgba(90,120,200,0.22)" stroke="rgba(90,120,200,0.7)" stroke-width="1.5"/>
+              <!-- Left face -->
+              <polygon points="30,58 110,98 110,148 30,108" fill="rgba(90,120,200,0.12)" stroke="rgba(90,120,200,0.6)" stroke-width="1.5"/>
+              <!-- Right face -->
+              <polygon points="190,58 110,98 110,148 190,108" fill="rgba(90,120,200,0.18)" stroke="rgba(90,120,200,0.6)" stroke-width="1.5"/>
+              <!-- Dimension lines -->
+              <line x1="110" y1="148" x2="110" y2="160" stroke="rgba(123,150,224,0.4)" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="110" y="158" fill="rgba(123,150,224,0.5)" font-size="10" text-anchor="middle" dy="0">giữ nguyên hình dạng</text>
+            </svg>
+            <p class="state-desc">Chất rắn có hình dạng và thể tích xác định. Không bị nén hoặc biến dạng khi đặt vào bình chứa — luôn giữ nguyên hình dáng của nó.</p>
+            <ul class="state-props">
+              <li>Hình dạng: <strong>cố định</strong></li>
+              <li>Thể tích: <strong>cố định</strong></li>
+              <li>Khả năng nén: <strong>rất khó nén</strong></li>
+              <li>Khối lượng riêng: <strong>cao nhất</strong></li>
+            </ul>
+          </div>
+        </div>
+        <!-- Right: atomic -->
+        <div class="atomic-pane">
+          <div class="pane-label">Cấu trúc nguyên tử</div>
+          <span class="atomic-tag">Mạng tinh thể — dao động tại chỗ</span>
+          <canvas id="canvas-solid" width="320" height="200"></canvas>
+          <p class="atomic-label">Các nguyên tử xếp thành <strong>mạng tinh thể có trật tự</strong>. Mỗi nguyên tử chỉ dao động nhẹ quanh vị trí cân bằng cố định, không thể tự do di chuyển. Lực liên kết rất mạnh.</p>
+        </div>
+      </div>
+
+      <!-- ══════════════ LIQUID ══════════════ -->
+      <div class="state-row liquid">
+        <!-- Left: macro shape -->
+        <div class="macro-pane">
+          <div>
+            <div class="pane-label">Hình dạng vĩ mô</div>
+            <div class="state-name">Chất lỏng</div>
+            <div class="state-sub">Liquid</div>
+            <svg width="220" height="160" viewBox="0 0 220 160" xmlns="http://www.w3.org/2000/svg" id="liquid-macro">
+              <!-- Container -->
+              <path d="M55,10 L55,140 Q55,150 65,150 L155,150 Q165,150 165,140 L165,10" fill="none" stroke="rgba(251,244,228,0.2)" stroke-width="2"/>
+              <!-- Liquid body with wave top -->
+              <clipPath id="glass-clip">
+                <rect x="56" y="11" width="108" height="138" rx="0"/>
+              </clipPath>
+              <g clip-path="url(#glass-clip)">
+                <path id="wave-path" d="M56,65 Q76,55 96,65 Q116,75 136,65 Q156,55 164,60 L164,150 L56,150 Z" fill="rgba(47,143,111,0.35)"/>
+                <path d="M56,65 Q76,55 96,65 Q116,75 136,65 Q156,55 164,60" fill="none" stroke="rgba(47,143,111,0.8)" stroke-width="1.5"/>
+              </g>
+              <!-- Reflection glint -->
+              <line x1="72" y1="80" x2="72" y2="130" stroke="rgba(110,219,176,0.15)" stroke-width="5" stroke-linecap="round"/>
+              <!-- Arrow: takes shape of container -->
+              <text x="110" y="155" fill="rgba(58,174,133,0.5)" font-size="10" text-anchor="middle">lấy hình dạng bình chứa</text>
+            </svg>
+            <p class="state-desc">Chất lỏng có thể tích xác định nhưng <em>không có hình dạng cố định</em> — nó chảy và lấy theo hình dạng của bình chứa, nhưng bề mặt luôn nằm ngang.</p>
+            <ul class="state-props">
+              <li>Hình dạng: <strong>theo bình chứa</strong></li>
+              <li>Thể tích: <strong>cố định</strong></li>
+              <li>Khả năng nén: <strong>khó nén</strong></li>
+              <li>Khối lượng riêng: <strong>trung bình</strong></li>
+            </ul>
+          </div>
+        </div>
+        <!-- Right: atomic -->
+        <div class="atomic-pane">
+          <div class="pane-label">Cấu trúc nguyên tử</div>
+          <span class="atomic-tag">Trật tự ngắn hạn — trượt lên nhau</span>
+          <canvas id="canvas-liquid" width="320" height="200"></canvas>
+          <p class="atomic-label">Các phân tử ở gần nhau nhưng <strong>không xếp thành mạng cố định</strong>. Chúng trượt lên nhau liên tục, tạo ra tính lưu động. Lực liên kết vừa phải.</p>
+        </div>
+      </div>
+
+      <!-- ══════════════ GAS ══════════════ -->
+      <div class="state-row gas">
+        <!-- Left: macro shape -->
+        <div class="macro-pane">
+          <div>
+            <div class="pane-label">Hình dạng vĩ mô</div>
+            <div class="state-name">Chất khí</div>
+            <div class="state-sub">Gas</div>
+            <svg width="220" height="160" viewBox="0 0 220 160" xmlns="http://www.w3.org/2000/svg">
+              <!-- Container (dashed = gas fills it) -->
+              <rect x="30" y="15" width="160" height="130" rx="8" fill="rgba(217,99,59,0.06)" stroke="rgba(217,99,59,0.45)" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <!-- Gas particles spread out -->
+              <circle cx="65"  cy="45"  r="7" fill="rgba(217,99,59,0.55)" stroke="rgba(224,132,90,0.8)" stroke-width="1"/>
+              <circle cx="155" cy="35"  r="7" fill="rgba(217,99,59,0.55)" stroke="rgba(224,132,90,0.8)" stroke-width="1"/>
+              <circle cx="90"  cy="100" r="7" fill="rgba(217,99,59,0.55)" stroke="rgba(224,132,90,0.8)" stroke-width="1"/>
+              <circle cx="160" cy="115" r="7" fill="rgba(217,99,59,0.55)" stroke="rgba(224,132,90,0.8)" stroke-width="1"/>
+              <circle cx="50"  cy="130" r="7" fill="rgba(217,99,59,0.55)" stroke="rgba(224,132,90,0.8)" stroke-width="1"/>
+              <circle cx="120" cy="65"  r="7" fill="rgba(217,99,59,0.55)" stroke="rgba(224,132,90,0.8)" stroke-width="1"/>
+              <!-- Motion arrows -->
+              <line x1="65" y1="45" x2="80" y2="35" stroke="rgba(217,99,59,0.5)" stroke-width="1.2"/>
+              <polygon points="80,35 71,36 74,44" fill="rgba(217,99,59,0.5)"/>
+              <line x1="155" y1="35" x2="140" y2="50" stroke="rgba(217,99,59,0.5)" stroke-width="1.2"/>
+              <polygon points="140,50 148,42 153,50" fill="rgba(217,99,59,0.5)"/>
+              <line x1="90" y1="100" x2="105" y2="90" stroke="rgba(217,99,59,0.5)" stroke-width="1.2"/>
+              <polygon points="105,90 96,93 99,102" fill="rgba(217,99,59,0.5)"/>
+              <text x="110" y="155" fill="rgba(224,132,90,0.5)" font-size="10" text-anchor="middle">lấp đầy toàn bộ bình chứa</text>
+            </svg>
+            <p class="state-desc">Chất khí không có hình dạng lẫn thể tích xác định — nó <em>giãn nở lấp đầy</em> toàn bộ thể tích của bình chứa và có thể bị nén đáng kể.</p>
+            <ul class="state-props">
+              <li>Hình dạng: <strong>theo bình chứa</strong></li>
+              <li>Thể tích: <strong>theo bình chứa</strong></li>
+              <li>Khả năng nén: <strong>dễ nén</strong></li>
+              <li>Khối lượng riêng: <strong>rất thấp</strong></li>
+            </ul>
+          </div>
+        </div>
+        <!-- Right: atomic -->
+        <div class="atomic-pane">
+          <div class="pane-label">Cấu trúc nguyên tử</div>
+          <span class="atomic-tag">Hỗn loạn — va chạm liên tục</span>
+          <canvas id="canvas-gas" width="320" height="200"></canvas>
+          <p class="atomic-label">Các phân tử <strong>cách xa nhau</strong>, di chuyển với tốc độ lớn theo mọi hướng và va chạm với nhau và thành bình. Lực liên kết gần như bằng không.</p>
+        </div>
+      </div>
+
+      <!--
+      ══════════════ COMPARE TABLE (ẩn) ══════════════
+      <div class="compare-wrap">
+        <h2 class="compare-title">So sánh tổng hợp</h2>
+        <table class="compare">
+          <thead>
+            <tr>
+              <th>Đặc điểm</th>
+              <th class="col-solid">Rắn</th>
+              <th class="col-liquid">Lỏng</th>
+              <th class="col-gas">Khí</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Sắp xếp phân tử</td>
+              <td class="col-solid">Mạng tinh thể, trật tự cao</td>
+              <td class="col-liquid">Gần nhau, trật tự ngắn hạn</td>
+              <td class="col-gas">Xa nhau, hỗn loạn</td>
+            </tr>
+            <tr>
+              <td>Chuyển động phân tử</td>
+              <td class="col-solid">Dao động tại chỗ</td>
+              <td class="col-liquid">Trượt, di chuyển giới hạn</td>
+              <td class="col-gas">Chuyển động tự do, tốc độ cao</td>
+            </tr>
+            <tr>
+              <td>Lực liên kết</td>
+              <td class="col-solid">Rất mạnh</td>
+              <td class="col-liquid">Trung bình</td>
+              <td class="col-gas">Gần như không có</td>
+            </tr>
+            <tr>
+              <td>Khoảng cách phân tử</td>
+              <td class="col-solid">Rất gần (~d phân tử)</td>
+              <td class="col-liquid">Gần (~vài d)</td>
+              <td class="col-gas">Rất xa (~10–100 d)</td>
+            </tr>
+            <tr>
+              <td>Hình dạng</td>
+              <td class="col-solid">Cố định</td>
+              <td class="col-liquid">Theo bình chứa</td>
+              <td class="col-gas">Theo bình chứa</td>
+            </tr>
+            <tr>
+              <td>Thể tích</td>
+              <td class="col-solid">Cố định</td>
+              <td class="col-liquid">Cố định</td>
+              <td class="col-gas">Theo bình chứa</td>
+            </tr>
+            <tr>
+              <td>Khả năng nén</td>
+              <td class="col-solid">Không đáng kể</td>
+              <td class="col-liquid">Rất nhỏ</td>
+              <td class="col-gas">Lớn</td>
+            </tr>
+            <tr>
+              <td>Ví dụ</td>
+              <td class="col-solid">Đá, kim loại, đá muối</td>
+              <td class="col-liquid">Nước, dầu, thuỷ ngân</td>
+              <td class="col-gas">Không khí, hơi nước, CO₂</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      -->
+
+      <!-- ══════════════ PHASE TRANSITIONS ══════════════ -->
+      <div class="phase-section">
+        <h2 class="phase-section-title">Chuyển pha giữa các trạng thái</h2>
+        <p class="phase-section-intro">Các quá trình chuyển đổi xảy ra khi nhiệt độ hoặc áp suất thay đổi. Nhấn <strong>Play / Pause</strong> trên mỗi ô để quan sát mô phỏng phân tử.</p>
+
+        <div class="phase-grid">
+
+          <!-- Nóng chảy / Đông đặc -->
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-arrow-wrap">
+                <span class="phase-label solid-col">Rắn</span>
+                <div class="phase-arrows">
+                  <div class="arrow-row"><span class="arr-label melt-col">Nóng chảy ↗ nhiệt</span><span class="arr">→</span></div>
+                  <div class="arrow-row"><span class="arr">←</span><span class="arr-label solid-col">Đông đặc ↘ nhiệt</span></div>
+                </div>
+                <span class="phase-label liquid-col">Lỏng</span>
+              </div>
+            </div>
+            <canvas id="canvas-melt" width="440" height="180"></canvas>
+            <div class="phase-ctrl">
+              <button class="play-btn" data-target="melt">⏸ Pause</button>
+              <span class="phase-info" id="info-melt">Đang nóng chảy — liên kết tinh thể đứt dần</span>
+            </div>
+          </div>
+
+          <!-- Bay hơi / Ngưng tụ -->
+          <div class="phase-card">
+            <div class="phase-header">
+              <div class="phase-arrow-wrap">
+                <span class="phase-label liquid-col">Lỏng</span>
+                <div class="phase-arrows">
+                  <div class="arrow-row"><span class="arr-label evap-col">Bay hơi ↗ nhiệt</span><span class="arr">→</span></div>
+                  <div class="arrow-row"><span class="arr">←</span><span class="arr-label liquid-col">Ngưng tụ ↘ nhiệt</span></div>
+                </div>
+                <span class="phase-label gas-col">Khí</span>
+              </div>
+            </div>
+            <canvas id="canvas-evap" width="440" height="180"></canvas>
+            <div class="phase-ctrl">
+              <button class="play-btn" data-target="evap">⏸ Pause</button>
+              <span class="phase-info" id="info-evap">Đang bay hơi — phân tử thoát khỏi bề mặt lỏng</span>
+            </div>
+          </div>
+
+          <!-- Thăng hoa -->
+          <div class="phase-card phase-card-wide">
+            <div class="phase-header">
+              <div class="phase-arrow-wrap">
+                <span class="phase-label solid-col">Rắn</span>
+                <div class="phase-arrows">
+                  <div class="arrow-row"><span class="arr-label sub-col">Thăng hoa ↗ nhiệt / ↘ áp</span><span class="arr">→</span></div>
+                  <div class="arrow-row"><span class="arr">←</span><span class="arr-label solid-col">Kết tinh ngược ↘ nhiệt / ↗ áp</span></div>
+                </div>
+                <span class="phase-label gas-col">Khí</span>
+              </div>
+            </div>
+            <canvas id="canvas-sub" width="640" height="180"></canvas>
+            <div class="phase-ctrl">
+              <button class="play-btn" data-target="sub">⏸ Pause</button>
+              <span class="phase-info" id="info-sub">Đang thăng hoa — bỏ qua trạng thái lỏng</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const body = document.body;
+      const btn  = document.getElementById('themeBtn');
+      const saved = localStorage.getItem('bewy-theme');
+      if (saved === 'dark') { body.classList.add('dark-mode'); btn.textContent = '☀ Sáng'; }
+      btn.addEventListener('click', () => {
+        const dark = body.classList.toggle('dark-mode');
+        btn.textContent = dark ? '☀ Sáng' : '☽ Tối';
+        localStorage.setItem('bewy-theme', dark ? 'dark' : 'light');
+      });
+    })();
+
+    /* ══════════════════════════════════════════
+       SOLID canvas — grid lattice with vibration
+    ══════════════════════════════════════════ */
+    (function(){
+      const canvas = document.getElementById('canvas-solid');
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      const COLS = 6, ROWS = 4;
+      const SPACING_X = W / (COLS + 1);
+      const SPACING_Y = H / (ROWS + 1);
+      const R = 20;
+      const VIBR = 1.5; // max vibration amplitude in px
+
+      // Build grid positions
+      const atoms = [];
+      for(let row=0;row<ROWS;row++){
+        for(let col=0;col<COLS;col++){
+          atoms.push({
+            x0: SPACING_X*(col+1),
+            y0: SPACING_Y*(row+1),
+            phase: Math.random()*Math.PI*2,
+            freq: 0.8 + Math.random()*0.4,
+          });
+        }
+      }
+
+      let t=0;
+      function draw(){
+        ctx.clearRect(0,0,W,H);
+
+        // Draw bonds first
+        for(let i=0;i<atoms.length;i++){
+          const a=atoms[i];
+          const ax=a.x0+Math.sin(t*a.freq+a.phase)*VIBR;
+          const ay=a.y0+Math.cos(t*a.freq*1.1+a.phase)*VIBR;
+
+          for(let j=i+1;j<atoms.length;j++){
+            const b=atoms[j];
+            const dx=Math.abs(b.x0-a.x0), dy=Math.abs(b.y0-a.y0);
+            if(dx<=SPACING_X*1.1 && dy<=SPACING_Y*1.1 && !(dx>1 && dy>1)){
+              const bx=b.x0+Math.sin(t*b.freq+b.phase)*VIBR;
+              const by=b.y0+Math.cos(t*b.freq*1.1+b.phase)*VIBR;
+              ctx.beginPath();
+              ctx.moveTo(ax,ay); ctx.lineTo(bx,by);
+              ctx.strokeStyle='rgba(90,120,200,0.3)';
+              ctx.lineWidth=1;
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Draw atoms
+        atoms.forEach(a=>{
+          const ax=a.x0+Math.sin(t*a.freq+a.phase)*VIBR;
+          const ay=a.y0+Math.cos(t*a.freq*1.1+a.phase)*VIBR;
+          const grad=ctx.createRadialGradient(ax-2,ay-2,1,ax,ay,R);
+          grad.addColorStop(0,'rgba(160,185,255,0.95)');
+          grad.addColorStop(1,'rgba(60,90,180,0.7)');
+          ctx.beginPath();
+          ctx.arc(ax,ay,R,0,Math.PI*2);
+          ctx.fillStyle=grad;
+          ctx.fill();
+          ctx.strokeStyle='rgba(90,120,200,0.5)';
+          ctx.lineWidth=1;
+          ctx.stroke();
+        });
+
+        t+=0.04;
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    /* ══════════════════════════════════════════
+       LIQUID canvas — molecules sliding past each other
+    ══════════════════════════════════════════ */
+    (function(){
+      const canvas = document.getElementById('canvas-liquid');
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      const R = 18;
+      const COUNT = 18;
+
+      const molecules = Array.from({length:COUNT},()=>({
+        x: R + Math.random()*(W-2*R),
+        y: R + Math.random()*(H-2*R),
+        vx: (Math.random()-0.5)*0.8,
+        vy: (Math.random()-0.5)*0.8,
+        phase: Math.random()*Math.PI*2,
+      }));
+
+      function draw(){
+        ctx.clearRect(0,0,W,H);
+
+        // Draw weak bonds between close molecules
+        for(let i=0;i<molecules.length;i++){
+          for(let j=i+1;j<molecules.length;j++){
+            const a=molecules[i],b=molecules[j];
+            const dx=b.x-a.x,dy=b.y-a.y;
+            const dist=Math.sqrt(dx*dx+dy*dy);
+            if(dist<80){
+              const alpha=(1-dist/80)*0.35;
+              ctx.beginPath();
+              ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+              ctx.strokeStyle=`rgba(47,143,111,${alpha})`;
+              ctx.lineWidth=1;
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Update + draw molecules
+        molecules.forEach(m=>{
+          m.x+=m.vx; m.y+=m.vy; m.phase+=0.05;
+          // Bounce off walls
+          if(m.x<R){m.x=R;m.vx=Math.abs(m.vx);}
+          if(m.x>W-R){m.x=W-R;m.vx=-Math.abs(m.vx);}
+          if(m.y<R){m.y=R;m.vy=Math.abs(m.vy);}
+          if(m.y>H-R){m.y=H-R;m.vy=-Math.abs(m.vy);}
+
+          const wobble=Math.sin(m.phase)*1.5;
+          const grad=ctx.createRadialGradient(m.x-2+wobble,m.y-2,1,m.x,m.y,R);
+          grad.addColorStop(0,'rgba(110,220,176,0.95)');
+          grad.addColorStop(1,'rgba(30,120,90,0.7)');
+          ctx.beginPath();
+          ctx.arc(m.x,m.y,R+wobble*0.3,0,Math.PI*2);
+          ctx.fillStyle=grad;
+          ctx.fill();
+          ctx.strokeStyle='rgba(47,143,111,0.5)';
+          ctx.lineWidth=1;
+          ctx.stroke();
+        });
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    /* ══════════════════════════════════════════
+       GAS canvas — fast-moving particles with collisions
+    ══════════════════════════════════════════ */
+    (function(){
+      const canvas = document.getElementById('canvas-gas');
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      const R = 14;
+      const COUNT = 22;
+      const SPEED = 2.4;
+
+      const particles = Array.from({length:COUNT},()=>{
+        const angle=Math.random()*Math.PI*2;
+        const speed=SPEED*(0.6+Math.random()*0.8);
+        return {
+          x: R + Math.random()*(W-2*R),
+          y: R + Math.random()*(H-2*R),
+          vx: Math.cos(angle)*speed,
+          vy: Math.sin(angle)*speed,
+          trail: [],
+        };
+      });
+
+      function draw(){
+        ctx.clearRect(0,0,W,H);
+
+        particles.forEach(p=>{
+          // Store trail
+          p.trail.push({x:p.x,y:p.y});
+          if(p.trail.length>8) p.trail.shift();
+
+          // Draw trail
+          for(let i=1;i<p.trail.length;i++){
+            const alpha=(i/p.trail.length)*0.2;
+            ctx.beginPath();
+            ctx.moveTo(p.trail[i-1].x,p.trail[i-1].y);
+            ctx.lineTo(p.trail[i].x,p.trail[i].y);
+            ctx.strokeStyle=`rgba(217,99,59,${alpha})`;
+            ctx.lineWidth=2;
+            ctx.stroke();
+          }
+
+          // Move
+          p.x+=p.vx; p.y+=p.vy;
+
+          // Wall collision
+          if(p.x<R){p.x=R;p.vx=Math.abs(p.vx);}
+          if(p.x>W-R){p.x=W-R;p.vx=-Math.abs(p.vx);}
+          if(p.y<R){p.y=R;p.vy=Math.abs(p.vy);}
+          if(p.y>H-R){p.y=H-R;p.vy=-Math.abs(p.vy);}
+        });
+
+        // Particle-particle collision (elastic approximation)
+        for(let i=0;i<particles.length;i++){
+          for(let j=i+1;j<particles.length;j++){
+            const a=particles[i],b=particles[j];
+            const dx=b.x-a.x,dy=b.y-a.y;
+            const dist=Math.sqrt(dx*dx+dy*dy);
+            if(dist<R*2.2 && dist>0){
+              // Swap velocity components along collision axis
+              const nx=dx/dist,ny=dy/dist;
+              const dvx=b.vx-a.vx,dvy=b.vy-a.vy;
+              const dot=dvx*nx+dvy*ny;
+              if(dot<0){
+                a.vx+=dot*nx; a.vy+=dot*ny;
+                b.vx-=dot*nx; b.vy-=dot*ny;
+              }
+              // Separate overlapping particles
+              const overlap=(R*2.2-dist)/2;
+              a.x-=nx*overlap; a.y-=ny*overlap;
+              b.x+=nx*overlap; b.y+=ny*overlap;
+            }
+          }
+        }
+
+        // Draw particles
+        particles.forEach(p=>{
+          const speed=Math.sqrt(p.vx*p.vx+p.vy*p.vy);
+          const heat=Math.min(speed/4,1);
+          const grad=ctx.createRadialGradient(p.x-2,p.y-2,1,p.x,p.y,R);
+          grad.addColorStop(0,`rgba(255,${200-heat*80},${150-heat*100},0.95)`);
+          grad.addColorStop(1,`rgba(180,${60-heat*20},20,0.65)`);
+          ctx.beginPath();
+          ctx.arc(p.x,p.y,R,0,Math.PI*2);
+          ctx.fillStyle=grad;
+          ctx.fill();
+          ctx.strokeStyle='rgba(217,99,59,0.5)';
+          ctx.lineWidth=1;
+          ctx.stroke();
+
+          // Velocity arrow
+          const vlen=Math.sqrt(p.vx*p.vx+p.vy*p.vy);
+          const scale=6/vlen;
+          const ex=p.x+p.vx*scale, ey=p.y+p.vy*scale;
+          ctx.beginPath();
+          ctx.moveTo(p.x,p.y);ctx.lineTo(ex,ey);
+          ctx.strokeStyle='rgba(242,181,68,0.55)';
+          ctx.lineWidth=1.5;
+          ctx.stroke();
+        });
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    /* ── Liquid macro wave animation ── */
+    (function(){
+      let t=0;
+      const path=document.getElementById('wave-path');
+      function animWave(){
+        const s=Math.sin(t)*5;
+        path.setAttribute('d',
+          `M56,${65+s} Q76,${55-s} 96,${65+s} Q116,${75-s} 136,${65+s} Q156,${55-s} 164,${60+s*0.5} L164,150 L56,150 Z`
+        );
+        t+=0.03;
+        requestAnimationFrame(animWave);
+      }
+      animWave();
+    })();
+
+    /* ══════════════════════════════════════════════════════
+       PHASE TRANSITION CANVASES
+       Shared helpers
+    ══════════════════════════════════════════════════════ */
+
+    const paused = { melt: false, evap: false, sub: false };
+
+    document.querySelectorAll('.play-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const t = btn.dataset.target;
+        paused[t] = !paused[t];
+        btn.textContent = paused[t] ? '▶ Play' : '⏸ Pause';
+      });
+    });
+
+    /* ─── 1. Nóng chảy / Đông đặc ─────────────────────────
+       Left half: solid lattice. Right half: liquid.
+       Phân tử ở biên trái dần "thoát" sang phải.
+       Chu kỳ: 6s nóng chảy → 6s đông đặc (reverse).
+    ────────────────────────────────────────────────────── */
+    (function(){
+      const cv = document.getElementById('canvas-melt');
+      const ctx = cv.getContext('2d');
+      const W = cv.width, H = cv.height; // 440 × 180
+      const R = 11;
+      const PERIOD = 360; // frames per half-cycle
+      let frame = 0;
+      let melting = true; // true = solid→liquid
+
+      // Build solid lattice (left region)
+      const COLS = 7, ROWS = 4;
+      const SX = 10, EX = W * 0.55;
+      const spX = (EX - SX) / (COLS - 1);
+      const spY = (H - 20) / (ROWS - 1);
+
+      const lattice = [];
+      for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+        lattice.push({
+          x0: SX + c*spX, y0: 10 + r*spY,
+          x: SX + c*spX, y: 10 + r*spY,
+          vx:0, vy:0,
+          phase: Math.random()*Math.PI*2,
+          freq: 0.7+Math.random()*0.5,
+          freed: false,   // became liquid
+          freeing: false, // mid-transition
+        });
+      }
+
+      // Liquid particles (right region, start empty)
+      const liquids = [];
+
+      function freeMolecule(a) {
+        a.freed = true; a.freeing = false;
+        a.vx = (Math.random()-0.5)*1.2;
+        a.vy = (Math.random()-0.5)*1.2;
+        liquids.push(a);
+      }
+
+      function refreezeAll() {
+        liquids.length = 0;
+        lattice.forEach(a => {
+          a.freed = false; a.freeing = false;
+          a.x = a.x0; a.y = a.y0; a.vx=0; a.vy=0;
+        });
+      }
+
+      function draw(){
+        if(!paused.melt) frame++;
+        ctx.clearRect(0,0,W,H);
+
+        const progress = (frame % PERIOD) / PERIOD; // 0→1
+        const halfCycle = Math.floor(frame / PERIOD) % 2;
+        melting = (halfCycle === 0);
+
+        // Update info label
+        document.getElementById('info-melt').textContent =
+          melting ? 'Đang nóng chảy — liên kết tinh thể đứt dần'
+                  : 'Đang đông đặc — phân tử trở về mạng tinh thể';
+
+        // Trigger freeing at MELT phase
+        if(melting && !paused.melt) {
+          const shouldFree = Math.floor(progress * lattice.length);
+          const notFreed = lattice.filter(a=>!a.freed && !a.freeing);
+          const toFree = shouldFree - lattice.filter(a=>a.freed).length;
+          for(let i=0;i<toFree && i<notFreed.length;i++){
+            notFreed[i].freeing = true;
+            setTimeout(()=>freeMolecule(notFreed[i]), 300);
+          }
+        }
+
+        // FREEZE phase: snap back
+        if(!melting && !paused.melt) {
+          const shouldFreeze = Math.floor(progress * liquids.length);
+          if(shouldFreeze >= liquids.length && liquids.length>0) {
+            refreezeAll();
+          } else {
+            for(let i=0;i<shouldFreeze;i++){
+              if(liquids[i] && liquids[i].freed){
+                liquids[i].freed = false;
+                liquids[i].x = liquids[i].x0; liquids[i].y = liquids[i].y0;
+                liquids[i].vx=0; liquids[i].vy=0;
+              }
+            }
+          }
+        }
+
+        // Divider line (fuzzy boundary)
+        const divX = W * 0.55;
+        const grad = ctx.createLinearGradient(divX-30,0,divX+30,0);
+        grad.addColorStop(0,'rgba(90,120,200,0.15)');
+        grad.addColorStop(0.5,'rgba(47,143,111,0.15)');
+        grad.addColorStop(1,'rgba(47,143,111,0.0)');
+        ctx.fillStyle=grad; ctx.fillRect(divX-30,0,60,H);
+
+        // Zone labels
+        ctx.font='bold 11px monospace';
+        ctx.fillStyle='rgba(90,120,200,0.5)'; ctx.textAlign='center';
+        ctx.fillText('RẮN', divX*0.4, 15);
+        ctx.fillStyle='rgba(47,143,111,0.5)';
+        ctx.fillText('LỎNG', divX + (W-divX)*0.5, 15);
+
+        // Draw lattice bonds + solid atoms
+        const solidAtoms = lattice.filter(a=>!a.freed);
+        for(let i=0;i<solidAtoms.length;i++){
+          const a=solidAtoms[i];
+          for(let j=i+1;j<solidAtoms.length;j++){
+            const b=solidAtoms[j];
+            if(Math.abs(b.x0-a.x0)<=spX*1.1 && Math.abs(b.y0-a.y0)<=spY*1.1 && !(Math.abs(b.x0-a.x0)>1 && Math.abs(b.y0-a.y0)>1)){
+              ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+              ctx.strokeStyle='rgba(90,120,200,0.35)'; ctx.lineWidth=1; ctx.stroke();
+            }
+          }
+        }
+        solidAtoms.forEach(a=>{
+          if(!paused.melt){ a.x=a.x0+Math.sin(frame*a.freq+a.phase)*1.5; a.y=a.y0+Math.cos(frame*a.freq*1.1+a.phase)*1.5; }
+          const g=ctx.createRadialGradient(a.x-2,a.y-2,1,a.x,a.y,R);
+          g.addColorStop(0,'rgba(160,185,255,0.95)'); g.addColorStop(1,'rgba(60,90,180,0.7)');
+          ctx.beginPath(); ctx.arc(a.x,a.y,R,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+          ctx.strokeStyle='rgba(90,120,200,0.5)'; ctx.lineWidth=1; ctx.stroke();
+        });
+
+        // Draw liquid molecules
+        for(let i=0;i<liquids.length;i++){
+          const m=liquids[i];
+          if(!m.freed) continue;
+          if(!paused.melt){
+            m.x+=m.vx; m.y+=m.vy;
+            if(m.x<divX+R){m.x=divX+R; m.vx=Math.abs(m.vx);}
+            if(m.x>W-R){m.x=W-R; m.vx=-Math.abs(m.vx);}
+            if(m.y<R){m.y=R; m.vy=Math.abs(m.vy);}
+            if(m.y>H-R){m.y=H-R; m.vy=-Math.abs(m.vy);}
+          }
+          // Soft bonds between close liquid molecules
+          for(let j=i+1;j<liquids.length;j++){
+            const n=liquids[j]; if(!n.freed) continue;
+            const dx=n.x-m.x,dy=n.y-m.y,d=Math.sqrt(dx*dx+dy*dy);
+            if(d<55){const a=(1-d/55)*0.3; ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(n.x,n.y); ctx.strokeStyle=`rgba(47,143,111,${a})`; ctx.lineWidth=1; ctx.stroke();}
+          }
+          const g=ctx.createRadialGradient(m.x-2,m.y-2,1,m.x,m.y,R);
+          g.addColorStop(0,'rgba(110,220,176,0.95)'); g.addColorStop(1,'rgba(30,120,90,0.7)');
+          ctx.beginPath(); ctx.arc(m.x,m.y,R,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+          ctx.strokeStyle='rgba(47,143,111,0.5)'; ctx.lineWidth=1; ctx.stroke();
+        }
+
+        // Heat arrow
+        if(melting){
+          ctx.fillStyle='rgba(242,181,68,0.55)'; ctx.font='12px serif'; ctx.textAlign='left';
+          ctx.fillText('🔥 Nhiệt →', divX-60, H-8);
+        } else {
+          ctx.fillStyle='rgba(90,180,220,0.55)'; ctx.textAlign='right';
+          ctx.fillText('← ❄ Làm nguội', divX+60, H-8);
+        }
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    /* ─── 2. Bay hơi / Ngưng tụ ────────────────────────────
+       Bottom: liquid pool. Top: gas region.
+       Phân tử bốc lên từ mặt lỏng rồi quay lại ngưng tụ.
+    ────────────────────────────────────────────────────── */
+    (function(){
+      const cv = document.getElementById('canvas-evap');
+      const ctx = cv.getContext('2d');
+      const W = cv.width, H = cv.height; // 440 × 180
+      const R = 10;
+      const LIQUID_Y = H * 0.55; // surface line
+      const PERIOD = 300;
+      let frame = 0;
+
+      // Liquid pool molecules (below surface)
+      const pool = Array.from({length:14},()=>({
+        x: R + Math.random()*(W-2*R),
+        y: LIQUID_Y + R + Math.random()*(H - LIQUID_Y - 2*R),
+        vx:(Math.random()-0.5)*0.5, vy:(Math.random()-0.5)*0.4,
+        phase: Math.random()*Math.PI*2,
+        gasified: false,
+      }));
+
+      // Gas molecules (above surface), start empty
+      const gasParticles = [];
+
+      function evaporate(m){
+        m.gasified=true;
+        m.vy = -(1.2 + Math.random()*1.0);
+        m.vx = (Math.random()-0.5)*1.5;
+        gasParticles.push(m);
+      }
+      function condense(m){
+        m.gasified=false;
+        m.y = LIQUID_Y + R + Math.random()*(H-LIQUID_Y-2*R);
+        m.x = R + Math.random()*(W-2*R);
+        m.vx=(Math.random()-0.5)*0.5; m.vy=(Math.random()-0.5)*0.4;
+        gasParticles.splice(gasParticles.indexOf(m),1);
+      }
+
+      function draw(){
+        if(!paused.evap) frame++;
+        ctx.clearRect(0,0,W,H);
+
+        const halfCycle = Math.floor(frame/PERIOD)%2;
+        const evaporating = (halfCycle===0);
+        document.getElementById('info-evap').textContent =
+          evaporating ? 'Đang bay hơi — phân tử thoát khỏi bề mặt lỏng'
+                      : 'Đang ngưng tụ — phân tử khí trở lại pha lỏng';
+
+        // Liquid surface gradient
+        const surfGrad = ctx.createLinearGradient(0,LIQUID_Y-20,0,H);
+        surfGrad.addColorStop(0,'rgba(47,143,111,0.0)');
+        surfGrad.addColorStop(0.15,'rgba(47,143,111,0.18)');
+        surfGrad.addColorStop(1,'rgba(47,143,111,0.35)');
+        ctx.fillStyle=surfGrad; ctx.fillRect(0,LIQUID_Y,W,H-LIQUID_Y);
+
+        // Wavy surface
+        ctx.beginPath();
+        for(let x=0;x<=W;x+=4){
+          const y=LIQUID_Y+Math.sin(x*0.04+frame*0.06)*3;
+          x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+        }
+        ctx.strokeStyle='rgba(47,143,111,0.7)'; ctx.lineWidth=1.5; ctx.stroke();
+
+        // Zone labels
+        ctx.font='bold 11px monospace'; ctx.textAlign='center';
+        ctx.fillStyle='rgba(217,99,59,0.45)'; ctx.fillText('KHÍ', W/2, 16);
+        ctx.fillStyle='rgba(47,143,111,0.55)'; ctx.fillText('LỎNG', W/2, LIQUID_Y+18);
+
+        // Randomly evaporate / condense
+        if(!paused.evap){
+          if(evaporating && Math.random()<0.012){
+            const candidates=pool.filter(m=>!m.gasified);
+            if(candidates.length>2) evaporate(candidates[Math.floor(Math.random()*candidates.length)]);
+          }
+          if(!evaporating && Math.random()<0.015 && gasParticles.length>0){
+            condense(gasParticles[Math.floor(Math.random()*gasParticles.length)]);
+          }
+        }
+
+        // Draw liquid pool
+        pool.filter(m=>!m.gasified).forEach(m=>{
+          if(!paused.evap){
+            m.x+=m.vx; m.y+=m.vy; m.phase+=0.05;
+            if(m.x<R){m.x=R;m.vx=Math.abs(m.vx);}
+            if(m.x>W-R){m.x=W-R;m.vx=-Math.abs(m.vx);}
+            if(m.y<LIQUID_Y+R){m.y=LIQUID_Y+R;m.vy=Math.abs(m.vy);}
+            if(m.y>H-R){m.y=H-R;m.vy=-Math.abs(m.vy);}
+          }
+          const g=ctx.createRadialGradient(m.x-2,m.y-2,1,m.x,m.y,R);
+          g.addColorStop(0,'rgba(110,220,176,0.95)'); g.addColorStop(1,'rgba(30,120,90,0.7)');
+          ctx.beginPath(); ctx.arc(m.x,m.y,R,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+          ctx.strokeStyle='rgba(47,143,111,0.5)'; ctx.lineWidth=1; ctx.stroke();
+        });
+
+        // Draw gas particles
+        gasParticles.forEach(m=>{
+          if(!paused.evap){
+            m.x+=m.vx; m.y+=m.vy;
+            if(m.x<R){m.x=R;m.vx=Math.abs(m.vx);}
+            if(m.x>W-R){m.x=W-R;m.vx=-Math.abs(m.vx);}
+            if(m.y<R){m.y=R;m.vy=Math.abs(m.vy)*0.9;}
+            // Drift horizontally
+            m.vx+=(Math.random()-0.5)*0.08;
+            m.vy+=(Math.random()-0.5)*0.04;
+            m.vx=Math.max(-2,Math.min(2,m.vx));
+            m.vy=Math.max(-2,Math.min(0.3,m.vy)); // tendency to rise
+          }
+          const g=ctx.createRadialGradient(m.x-2,m.y-2,1,m.x,m.y,R);
+          g.addColorStop(0,'rgba(255,180,100,0.9)'); g.addColorStop(1,'rgba(180,80,20,0.6)');
+          ctx.beginPath(); ctx.arc(m.x,m.y,R,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+          ctx.strokeStyle='rgba(217,99,59,0.5)'; ctx.lineWidth=1; ctx.stroke();
+          // Rising trail
+          ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(m.x-m.vx*4,m.y-m.vy*4);
+          ctx.strokeStyle='rgba(242,181,68,0.25)'; ctx.lineWidth=2; ctx.stroke();
+        });
+
+        // Arrow indicator
+        ctx.textAlign='right'; ctx.font='12px serif';
+        if(evaporating){ ctx.fillStyle='rgba(242,181,68,0.6)'; ctx.fillText('🔥 Bay hơi ↑', W-8, LIQUID_Y-8); }
+        else { ctx.fillStyle='rgba(100,200,255,0.6)'; ctx.fillText('↓ Ngưng tụ ❄', W-8, LIQUID_Y-8); }
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    /* ─── 3. Thăng hoa / Kết tinh ngược ────────────────────
+       Left: solid lattice. Right: gas particles.
+       Phân tử đột ngột rời mạng → bay thẳng vào vùng khí.
+       Không có vùng lỏng ở giữa.
+    ────────────────────────────────────────────────────── */
+    (function(){
+      const cv = document.getElementById('canvas-sub');
+      const ctx = cv.getContext('2d');
+      const W = cv.width, H = cv.height; // 640 × 180
+      const R = 11;
+      const DIVX = W * 0.42;
+      const PERIOD = 400;
+      let frame = 0;
+
+      const COLS=6, ROWS=4;
+      const SX=12, EX=DIVX-8;
+      const spX=(EX-SX)/(COLS-1), spY=(H-20)/(ROWS-1);
+
+      const lattice=[];
+      for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+        lattice.push({
+          x0:SX+c*spX, y0:10+r*spY,
+          x:SX+c*spX, y:10+r*spY,
+          vx:0, vy:0,
+          phase:Math.random()*Math.PI*2, freq:0.7+Math.random()*0.4,
+          freed:false,
+        });
+      }
+      const gasParticles=[];
+
+      function sublime(a){
+        a.freed=true;
+        a.vx=1.2+Math.random()*1.5;
+        a.vy=(Math.random()-0.5)*1.5;
+        gasParticles.push(a);
+      }
+      function recrystallize(a){
+        a.freed=false;
+        a.x=a.x0; a.y=a.y0; a.vx=0; a.vy=0;
+        const idx=gasParticles.indexOf(a);
+        if(idx>=0) gasParticles.splice(idx,1);
+      }
+
+      function draw(){
+        if(!paused.sub) frame++;
+        ctx.clearRect(0,0,W,H);
+
+        const halfCycle=Math.floor(frame/PERIOD)%2;
+        const subliming=(halfCycle===0);
+        document.getElementById('info-sub').textContent=
+          subliming ? 'Đang thăng hoa — phân tử rắn thoát thẳng thành khí (bỏ qua pha lỏng)'
+                    : 'Đang kết tinh ngược — phân tử khí trở thành rắn trực tiếp';
+
+        // Background regions
+        ctx.fillStyle='rgba(90,120,200,0.05)'; ctx.fillRect(0,0,DIVX,H);
+        ctx.fillStyle='rgba(217,99,59,0.04)'; ctx.fillRect(DIVX,0,W-DIVX,H);
+
+        // Fuzzy boundary
+        const bGrad=ctx.createLinearGradient(DIVX-20,0,DIVX+40,0);
+        bGrad.addColorStop(0,'rgba(90,120,200,0.12)');
+        bGrad.addColorStop(0.4,'rgba(200,120,240,0.10)');
+        bGrad.addColorStop(1,'rgba(217,99,59,0.05)');
+        ctx.fillStyle=bGrad; ctx.fillRect(DIVX-20,0,60,H);
+
+        // "NO LIQUID" label in boundary
+        ctx.save(); ctx.translate(DIVX+10,H/2); ctx.rotate(-Math.PI/2);
+        ctx.font='bold 9px monospace'; ctx.fillStyle='rgba(200,120,240,0.5)'; ctx.textAlign='center';
+        ctx.fillText('KHÔNG CÓ PHA LỎNG',0,0); ctx.restore();
+
+        // Zone labels
+        ctx.font='bold 11px monospace'; ctx.textAlign='center';
+        ctx.fillStyle='rgba(90,120,200,0.5)'; ctx.fillText('RẮN', DIVX*0.4, 15);
+        ctx.fillStyle='rgba(217,99,59,0.45)'; ctx.fillText('KHÍ', DIVX+(W-DIVX)*0.5, 15);
+
+        // Solid lattice
+        const solidAtoms=lattice.filter(a=>!a.freed);
+        for(let i=0;i<solidAtoms.length;i++){
+          const a=solidAtoms[i];
+          for(let j=i+1;j<solidAtoms.length;j++){
+            const b=solidAtoms[j];
+            if(Math.abs(b.x0-a.x0)<=spX*1.1 && Math.abs(b.y0-a.y0)<=spY*1.1 && !(Math.abs(b.x0-a.x0)>1&&Math.abs(b.y0-a.y0)>1)){
+              ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+              ctx.strokeStyle='rgba(90,120,200,0.35)'; ctx.lineWidth=1; ctx.stroke();
+            }
+          }
+        }
+        solidAtoms.forEach(a=>{
+          if(!paused.sub){ a.x=a.x0+Math.sin(frame*a.freq+a.phase)*1.5; a.y=a.y0+Math.cos(frame*a.freq*1.1+a.phase)*1.5; }
+          const g=ctx.createRadialGradient(a.x-2,a.y-2,1,a.x,a.y,R);
+          g.addColorStop(0,'rgba(160,185,255,0.95)'); g.addColorStop(1,'rgba(60,90,180,0.7)');
+          ctx.beginPath(); ctx.arc(a.x,a.y,R,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+          ctx.strokeStyle='rgba(90,120,200,0.5)'; ctx.lineWidth=1; ctx.stroke();
+        });
+
+        // Trigger sublimation / recrystallization
+        if(!paused.sub){
+          if(subliming && Math.random()<0.008){
+            const candidates=lattice.filter(a=>!a.freed);
+            if(candidates.length>4){
+              const pick=candidates[Math.floor(Math.random()*candidates.length)];
+              sublime(pick);
+            }
+          }
+          if(!subliming && Math.random()<0.01 && gasParticles.length>0){
+            recrystallize(gasParticles[Math.floor(Math.random()*gasParticles.length)]);
+          }
+          // Auto-refill solid when fully frozen
+          if(!subliming && lattice.every(a=>!a.freed) && gasParticles.length===0){
+            frame=0; // restart cycle
+          }
+        }
+
+        // Gas particles
+        gasParticles.forEach(m=>{
+          if(!paused.sub){
+            m.x+=m.vx; m.y+=m.vy;
+            if(m.x<DIVX+R){m.x=DIVX+R; m.vx=Math.abs(m.vx);}
+            if(m.x>W-R){m.x=W-R; m.vx=-Math.abs(m.vx);}
+            if(m.y<R){m.y=R; m.vy=Math.abs(m.vy);}
+            if(m.y>H-R){m.y=H-R; m.vy=-Math.abs(m.vy);}
+            m.vx+=(Math.random()-0.5)*0.1;
+            m.vy+=(Math.random()-0.5)*0.1;
+            const spd=Math.sqrt(m.vx*m.vx+m.vy*m.vy);
+            if(spd>2.5){m.vx*=2.5/spd; m.vy*=2.5/spd;}
+          }
+          // Trail
+          ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(m.x-m.vx*5,m.y-m.vy*5);
+          ctx.strokeStyle='rgba(200,120,240,0.3)'; ctx.lineWidth=2; ctx.stroke();
+
+          const g=ctx.createRadialGradient(m.x-2,m.y-2,1,m.x,m.y,R);
+          g.addColorStop(0,'rgba(230,160,255,0.95)'); g.addColorStop(1,'rgba(140,50,200,0.65)');
+          ctx.beginPath(); ctx.arc(m.x,m.y,R,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+          ctx.strokeStyle='rgba(180,80,240,0.5)'; ctx.lineWidth=1; ctx.stroke();
+        });
+
+        // Direction arrow
+        ctx.textAlign='center'; ctx.font='12px serif';
+        if(subliming){ ctx.fillStyle='rgba(200,120,240,0.65)'; ctx.fillText('⇒ Thăng hoa (áp thấp / nhiệt cao)', DIVX+160, H-8); }
+        else { ctx.fillStyle='rgba(140,180,255,0.65)'; ctx.fillText('⇐ Kết tinh ngược (áp cao / nhiệt thấp)', DIVX+160, H-8); }
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+  </script>
+</body>
+</html>
