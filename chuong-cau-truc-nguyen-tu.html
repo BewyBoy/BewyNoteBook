@@ -6,13 +6,15 @@
   <title>Hóa học · Chương 1 — Cấu trúc nguyên tử</title>
   <link rel="stylesheet" href="colors_and_type.css" />
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Caveat:wght@400;600;700&display=swap');
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       height: 100vh; width: 100vw; overflow: hidden;
       background: #0F1411; color: #FBF4E4;
-      font-family: 'Times New Roman', Times, serif;
+      font-family: 'Kalam', cursive;
     }
-    ::selection { background: #2F8F6F; color: #1E1B18; }
+    ::selection { background: rgba(255,218,50,0.5); color: #1A1208; }
 
     .app {
       position: fixed; inset: 0;
@@ -40,14 +42,14 @@
     .crumb a:hover { color: #3AAE85; }
 
     h1.title {
-      font-family: 'Times New Roman', Times, serif; font-weight: 700;
+      font-family: 'Caveat', cursive; font-weight: 700;
       font-size: 42px; line-height: 1.0; color: #FBF4E4;
       margin: 0 0 4px;
     }
     .subtitle {
-      font-family: 'Times New Roman', Times, serif;
+      font-family: 'Kalam', cursive;
       font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase;
-      color: #2F8F6F; margin-bottom: 22px;
+      color: #3AAE85; margin-bottom: 22px;
     }
 
     .section { margin-top: 22px; }
@@ -232,28 +234,28 @@
     }
 
     .back-link {
-      position: fixed; top: 18px; right: 24px; z-index: 50;
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 8px 14px; border-radius: 10px;
-      background: rgba(15,20,17,0.7); backdrop-filter: blur(8px);
-      border: 1px solid rgba(251,244,228,0.12);
-      color: #FBF4E4; font-size: 13px; font-weight: 600;
-      text-decoration: none;
-      font-family: 'Times New Roman', Times, serif;
+      position: fixed; top: 14px; right: 20px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: #F5F0E0; color: #1A4FA0;
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.4);
+      transform: rotate(0.8deg); transition: transform 0.1s;
     }
-    .back-link:hover { background: rgba(47,143,111,0.2); border-color: #2F8F6F; }
+    .back-link:hover { transform: rotate(0deg); border-color: #1A4FA0; }
 
     .theme-toggle {
-      position: fixed; top: 18px; right: 200px; z-index: 50;
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 8px 12px; border-radius: 10px;
-      border: 1px solid rgba(251,244,228,0.12);
-      background: rgba(15,20,17,0.7); backdrop-filter: blur(8px);
-      color: #FBF4E4; font-size: 12px; font-weight: 700;
-      letter-spacing: 0.04em; cursor: pointer;
-      font-family: 'Times New Roman', Times, serif;
+      position: fixed; top: 14px; right: 194px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 13px; border-radius: 4px;
+      background: #F5F0E0; color: #1A1208;
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 13px; font-weight: 700;
+      cursor: pointer; box-shadow: 2px 3px 7px rgba(0,0,0,0.4);
+      transform: rotate(-1deg); transition: transform 0.1s;
     }
-    .theme-toggle:hover { background: rgba(47,143,111,0.2); border-color: #2F8F6F; }
+    .theme-toggle:hover { transform: rotate(0deg); border-color: #C44010; }
 
     .pt-modal {
       position: fixed;
@@ -352,11 +354,11 @@
       box-shadow: 0 0 0 2px rgba(47,143,111,0.8) inset;
     }
 
-    body.light-mode .app {
+    body.dark-mode .app {
       filter: invert(1) hue-rotate(180deg);
     }
-    body.light-mode .app canvas,
-    body.light-mode .app svg {
+    body.dark-mode .app canvas,
+    body.dark-mode .app svg {
       filter: invert(1) hue-rotate(180deg);
     }
 
@@ -371,8 +373,8 @@
 </head>
 <body>
 
-  <a class="back-link" href="Learning Resources Hub v4.html">← Quay lại thư viện</a>
-  <button id="theme-toggle" class="theme-toggle" type="button">☀ Light</button>
+  <a class="back-link" href="Learning Resources Hub v4.html">← Trang chủ</a>
+  <button id="theme-toggle" class="theme-toggle" type="button">☽ Tối</button>
 
   <div id="pt-modal" class="pt-modal hidden" aria-hidden="true">
     <div class="pt-panel">
@@ -964,17 +966,13 @@
     (function () {
       const KEY = 'bewy-theme';
       const btn = document.getElementById('theme-toggle');
-      const applyTheme = (mode) => {
-        document.body.classList.toggle('light-mode', mode === 'light');
-        if (btn) btn.textContent = mode === 'light' ? '🌙 Dark' : '☀ Light';
-      };
       const saved = localStorage.getItem(KEY);
-      applyTheme(saved === 'light' ? 'light' : 'dark');
+      if (saved === 'dark') { document.body.classList.add('dark-mode'); if (btn) btn.textContent = '☀ Sáng'; }
       if (btn) {
         btn.addEventListener('click', () => {
-          const next = document.body.classList.contains('light-mode') ? 'dark' : 'light';
-          localStorage.setItem(KEY, next);
-          applyTheme(next);
+          const dark = document.body.classList.toggle('dark-mode');
+          btn.textContent = dark ? '☀ Sáng' : '☽ Tối';
+          localStorage.setItem(KEY, dark ? 'dark' : 'light');
         });
       }
     })();

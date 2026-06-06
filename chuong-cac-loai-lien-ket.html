@@ -6,370 +6,212 @@
   <title>Hóa học · Chương 3 — Các loại liên kết hóa học</title>
   <link rel="stylesheet" href="colors_and_type.css" />
   <style>
+    /* ══════════════════════════════════════
+       SKETCHBOOK / NOTEBOOK STYLE
+    ══════════════════════════════════════ */
+    @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Caveat:wght@400;600;700&display=swap');
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:        #F5F0E0;
+      --paper-dark:   #EDE5CC;
+      --ink:          #1A1208;
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #C44010;
+      --accent-blue:  #1A4FA0;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-g:  rgba(80, 180, 100, 0.30);
+      --line-h:       30px;
+    }
+
     html, body {
       min-height: 100%;
-      background: #0F1411;
-      color: #FBF4E4;
-      font-family: 'Times New Roman', Times, serif;
+      background: #8B7355;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #9E8565 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #6B5540 0%, transparent 50%),
+        repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+      color: var(--ink);
+      font-family: 'Kalam', cursive;
       overflow-x: hidden;
     }
-    ::selection { background: #F2B544; color: #1E1B18; }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
 
     .theme-toggle {
-      position: fixed;
-      top: 18px;
-      right: 190px;
-      z-index: 20;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(251,244,228,0.12);
-      background: rgba(15,20,17,0.7);
-      backdrop-filter: blur(8px);
-      color: #FBF4E4;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      cursor: pointer;
-      font-family: 'Times New Roman', Times, serif;
+      position: fixed; top: 14px; right: 194px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 13px; border-radius: 4px;
+      background: var(--paper); color: var(--ink);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 13px; font-weight: 700;
+      cursor: pointer; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(-1deg); transition: transform 0.1s;
     }
-    .theme-toggle:hover { background: rgba(47,143,111,0.2); border-color: #2F8F6F; }
+    .theme-toggle:hover { transform: rotate(0deg); border-color: var(--accent); }
 
     .back-link {
-      position: fixed;
-      top: 18px;
-      right: 24px;
-      z-index: 20;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border-radius: 10px;
-      background: rgba(15,20,17,0.7);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(251,244,228,0.12);
-      color: #FBF4E4;
-      font-size: 13px;
-      font-weight: 600;
-      text-decoration: none;
-      font-family: 'Times New Roman', Times, serif;
+      position: fixed; top: 14px; right: 20px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent-blue);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Kalam', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.22);
+      transform: rotate(0.8deg); transition: transform 0.1s;
     }
-    .back-link:hover { background: rgba(47,143,111,0.2); border-color: #2F8F6F; }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent-blue); }
 
-    .hero {
-      padding: 88px 24px 28px;
-      background:
-        radial-gradient(circle at 15% 15%, rgba(242,181,68,0.12), transparent 45%),
-        radial-gradient(circle at 82% 0%, rgba(47,143,111,0.16), transparent 40%),
-        linear-gradient(180deg, #1A2520 0%, #0F1411 68%);
-      border-bottom: 1px solid rgba(251,244,228,0.08);
-    }
-    .hero-inner {
+    .content-wrap {
       width: min(1060px, 100%);
       margin: 0 auto;
-    }
-    .crumb {
-      display: inline-flex;
-      gap: 8px;
-      align-items: center;
-      font-size: 12px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(251,244,228,0.56);
-      margin-bottom: 16px;
-    }
-    .crumb a { color: #2F8F6F; text-decoration: none; }
-    .crumb a:hover { color: #3AAE85; }
-
-    .title {
-      font-family: 'Times New Roman', Times, serif;
-      font-size: clamp(44px, 6.5vw, 76px);
-      line-height: 0.95;
-      color: #FBF4E4;
-      margin-bottom: 8px;
-    }
-    .subtitle {
-      font-family: 'Times New Roman', Times, serif;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      font-size: 13px;
-      color: #2F8F6F;
-      margin-bottom: 16px;
-    }
-    .intro {
-      max-width: 840px;
-      font-size: 16px;
-      line-height: 1.7;
-      color: rgba(251,244,228,0.82);
+      box-shadow: -6px 0 18px rgba(0,0,0,0.25), 6px 0 18px rgba(0,0,0,0.20), 0 12px 32px rgba(0,0,0,0.35);
     }
 
-    .layout {
-      width: min(1060px, 100%);
-      margin: 24px auto 52px;
-      padding: 0 24px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(90deg, transparent 71px, var(--red-margin) 71px, var(--red-margin) 73px, transparent 73px),
+        repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
+      background-attachment: local;
     }
+
+    .hero {
+      padding: 72px 40px 40px 96px;
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #8B7355 0%, #8B7355 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+    .crumb { font-size: 12px; letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: 10px; font-family: 'Kalam', cursive; }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+    .title { font-family: 'Caveat', cursive; font-size: clamp(40px, 6vw, 78px); line-height: 1.0; color: var(--ink); margin-bottom: 6px; font-weight: 700; }
+    .title-stroke { width: clamp(160px, 38vw, 400px); height: 3px; background: var(--accent); border-radius: 2px; margin-bottom: 14px; transform: rotate(-0.4deg); }
+    .subtitle { font-family: 'Kalam', cursive; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-blue); margin-bottom: 16px; }
+    .intro { max-width: 800px; font-size: 16px; line-height: var(--line-h); color: var(--ink-mid); }
+
+    .layout { display: grid; grid-template-columns: 1fr; gap: 0; }
+
     .card {
-      background: rgba(251,244,228,0.04);
-      border: 1px solid rgba(251,244,228,0.08);
-      border-radius: 16px;
-      padding: 18px 18px 16px;
+      padding: 28px 36px 32px 96px;
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative; overflow: hidden;
     }
-    .card h2 {
-      font-family: 'Times New Roman', Times, serif;
-      font-size: 36px;
-      line-height: 1;
-      color: #FBF4E4;
-      margin-bottom: 10px;
-    }
-    .card p {
-      color: rgba(251,244,228,0.78);
-      font-size: 15px;
-      line-height: 1.7;
-      margin-bottom: 10px;
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+    .card:nth-child(even) { background-color: var(--paper-dark); }
+    .card.ruled-page:nth-child(even) { background-color: var(--paper-dark); }
+    .card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #8B7355 0%, #8B7355 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
     }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 10px;
-    }
+    .card h2 { font-family: 'Caveat', cursive; font-size: 26px; color: var(--ink); line-height: 1.1; font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 2px; display: inline; margin-bottom: 16px; }
+    .card > h2 { display: block; margin-bottom: 16px; }
+    .card p { font-size: 15px; line-height: var(--line-h); color: var(--ink-mid); margin-bottom: 10px; }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 10px; }
+
     .bond {
-      border: 1px solid rgba(251,244,228,0.1);
-      border-radius: 12px;
-      padding: 12px;
-      background: rgba(15,20,17,0.45);
+      background: rgba(0,0,0,0.03);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px 12px;
+      border-radius: 0 4px 4px 0;
     }
-    .bond h3 {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 16px;
-      margin-bottom: 7px;
-      color: #FBF4E4;
-    }
-    .tag {
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 3px 7px;
-      border-radius: 999px;
-      font-weight: 700;
-      color: #1E1B18;
-      background: #F2B544;
-    }
-    .bond ul {
-      margin-left: 16px;
-      color: rgba(251,244,228,0.8);
-      line-height: 1.65;
-      font-size: 14px;
-    }
+    .bond h3 { font-family: 'Caveat', cursive; font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .tag { font-family: 'Kalam', cursive; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; padding: 2px 8px; border-radius: 3px; background: var(--highlight-y); color: var(--ink); border: 1px solid rgba(26,18,8,0.18); box-shadow: 1px 1px 4px rgba(0,0,0,0.15); }
+    .bond ul { margin-left: 16px; color: var(--ink-mid); line-height: 1.72; font-size: 14px; }
     .bond ul li { margin-bottom: 4px; }
 
-    .viz-toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 10px 0 12px;
-    }
+    .viz-toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 12px; }
     .viz-btn {
-      border: 1px solid rgba(251,244,228,0.2);
-      background: rgba(251,244,228,0.04);
-      color: #FBF4E4;
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 12px;
-      letter-spacing: 0.04em;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      font-family: 'Kalam', cursive; padding: 5px 13px; border-radius: 3px;
+      border: 1.5px solid rgba(26,18,8,0.22); background: var(--paper-dark); color: var(--ink-mid);
+      font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.12s, transform 0.1s;
     }
-    .viz-btn:hover {
-      border-color: rgba(47,143,111,0.55);
-      background: rgba(47,143,111,0.15);
-      transform: translateY(-1px);
-    }
-    .viz-btn.active {
-      background: #2F8F6F;
-      border-color: #2F8F6F;
-      color: #1E1B18;
-    }
+    .viz-btn:hover { background: var(--highlight-y); color: var(--ink); transform: translateY(-1px); }
+    .viz-btn.active { background: var(--highlight-y); color: var(--ink); border-color: var(--accent); box-shadow: inset 0 1px 3px rgba(0,0,0,0.12); }
+
     .viz-stage {
-      border: 1px solid rgba(251,244,228,0.12);
-      border-radius: 14px;
-      background:
-        radial-gradient(circle at 20% 10%, rgba(47,143,111,0.2), transparent 42%),
-        radial-gradient(circle at 80% 85%, rgba(242,181,68,0.14), transparent 44%),
-        rgba(15,20,17,0.58);
-      padding: 10px;
-      overflow: hidden;
+      background: #151C14; border: 2px solid rgba(26,18,8,0.30); border-radius: 4px; overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.35); padding: 10px;
     }
-    .viz-stage svg {
-      width: 100%;
-      height: auto;
-      display: block;
+    .viz-stage svg { width: 100%; height: auto; display: block; }
+
+    .viz-info { margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .viz-info .mini { border: 1px solid rgba(26,18,8,0.12); border-radius: 4px; background: rgba(0,0,0,0.03); padding: 10px; }
+    .viz-info .mini h4 { color: var(--accent); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; font-family: 'Kalam', cursive; font-weight: 700; }
+    .viz-info .mini p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--ink-mid); }
+
+    .float { animation: float 2.8s ease-in-out infinite; }
+    .flow { animation: flow 1.6s linear infinite; }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    @keyframes flow { from { stroke-dashoffset: 16; } to { stroke-dashoffset: 0; } }
+
+    .compare { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14px; }
+    .compare th { padding: 8px 12px; text-align: left; background: rgba(196,64,16,0.10); color: var(--accent); font-weight: 700; letter-spacing: 0.05em; font-size: 11px; text-transform: uppercase; border-bottom: 2px solid rgba(196,64,16,0.28); }
+    .compare td { padding: 8px 12px; border-bottom: 1px solid var(--blue-line); color: var(--ink-mid); vertical-align: top; }
+    .compare tr:last-child td { border-bottom: none; }
+    .compare tr:hover td { background: var(--highlight-y); }
+
+    .note { margin-top: 10px; padding: 14px 16px; border-radius: 0 4px 4px 0; border-left: 3px solid var(--accent-blue); background: var(--highlight-g); color: var(--ink-mid); font-size: 14px; line-height: 1.72; }
+
+    .quiz { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 10px; }
+    .quiz-item { border: 1px solid rgba(26,18,8,0.12); border-radius: 4px; padding: 12px; background: rgba(0,0,0,0.03); }
+    .quiz-item h4 { font-family: 'Caveat', cursive; font-size: 14px; color: var(--accent); margin-bottom: 6px; font-weight: 700; }
+    .quiz-item p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--ink-mid); }
+
+    body.dark-mode {
+      background: #3A3020;
+      --paper: #1C1810; --paper-dark: #211E12; --ink: #EDE0C0; --ink-mid: #C4AE82; --ink-light: #8A7658;
+      --blue-line: rgba(80,110,180,0.18); --red-margin: rgba(200,70,70,0.5);
+      --highlight-y: rgba(180,150,30,0.35); --highlight-g: rgba(50,130,70,0.20);
     }
-    .viz-info {
-      margin-top: 10px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .viz-info .mini {
-      border: 1px solid rgba(251,244,228,0.1);
-      border-radius: 10px;
-      background: rgba(15,20,17,0.45);
-      padding: 10px;
-    }
-    .viz-info .mini h4 {
-      color: #F2B544;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 4px;
-    }
-    .viz-info .mini p {
-      margin: 0;
-      font-size: 13px;
-      line-height: 1.6;
-      color: rgba(251,244,228,0.84);
+    body.dark-mode .content-wrap { box-shadow: -6px 0 18px rgba(0,0,0,0.5), 6px 0 18px rgba(0,0,0,0.4), 0 12px 32px rgba(0,0,0,0.6); }
+    body.dark-mode .card::before, body.dark-mode .hero::before {
+      background-color: rgba(0,0,0,0.15);
+      background-image: radial-gradient(circle 10px at 18px 50%, #3A3020 0%, #3A3020 55%, transparent 56%);
     }
 
-    .float {
-      animation: float 2.8s ease-in-out infinite;
-    }
-    .flow {
-      animation: flow 1.6s linear infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
-    }
-    @keyframes flow {
-      from { stroke-dashoffset: 16; }
-      to { stroke-dashoffset: 0; }
-    }
-
-    .compare {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 8px;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .compare th,
-    .compare td {
-      border: 1px solid rgba(251,244,228,0.1);
-      padding: 10px;
-      text-align: left;
-      vertical-align: top;
-      font-size: 14px;
-      color: rgba(251,244,228,0.85);
-    }
-    .compare th {
-      background: rgba(47,143,111,0.22);
-      color: #FBF4E4;
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .note {
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(242,181,68,0.26);
-      background: rgba(242,181,68,0.11);
-      color: rgba(251,244,228,0.9);
-      font-size: 14px;
-      line-height: 1.65;
-    }
-
-    .quiz {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 10px;
-    }
-    .quiz-item {
-      border: 1px solid rgba(251,244,228,0.1);
-      border-radius: 12px;
-      padding: 12px;
-      background: rgba(15,20,17,0.45);
-    }
-    .quiz-item h4 {
-      font-size: 14px;
-      color: #F2B544;
-      margin-bottom: 6px;
-      letter-spacing: 0.04em;
-    }
-    .quiz-item p {
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    body.light-mode .content-wrap {
-      filter: invert(1) hue-rotate(180deg);
-    }
-    body.light-mode .content-wrap img,
-    body.light-mode .content-wrap svg {
-      filter: invert(1) hue-rotate(180deg);
-    }
-
-    @media (max-width: 920px) {
-      .theme-toggle { right: 172px; }
-      .grid-2,
-      .quiz,
-      .viz-info { grid-template-columns: 1fr; }
-      .hero { padding-top: 80px; }
-    }
-
+    @media (max-width: 920px) { .theme-toggle { right: 172px; } .grid-2, .quiz, .viz-info { grid-template-columns: 1fr; } }
     @media (max-width: 640px) {
-      .theme-toggle,
-      .back-link {
-        position: absolute;
-        top: 10px;
-      }
-      .theme-toggle { right: 152px; }
-      .back-link { right: 12px; }
-      .layout { padding: 0 12px; }
-      .hero { padding: 68px 14px 24px; }
-      .title { line-height: 0.9; }
+      .theme-toggle, .back-link { position: absolute; top: 10px; }
+      .theme-toggle { right: 148px; } .back-link { right: 12px; }
+      .hero, .card { padding-left: 56px; }
+      .card::before, .hero::before { width: 28px; background-size: 28px 80px; }
     }
   </style>
 </head>
 <body>
-  <button id="theme-toggle" class="theme-toggle" type="button">☀ Light</button>
-  <a class="back-link" href="Learning Resources Hub v4.html">← Quay lại thư viện</a>
+  <button id="theme-toggle" class="theme-toggle" type="button">☽ Tối</button>
+  <a class="back-link" href="Learning Resources Hub v4.html">← Trang chủ</a>
 
   <div class="content-wrap">
-    <header class="hero">
-      <div class="hero-inner">
-        <div class="crumb">
-          <a href="Learning Resources Hub v4.html">Hóa học</a>
-          <span>›</span>
-          <span>Chương 3</span>
-        </div>
-        <h1 class="title">Các loại liên kết hóa học</h1>
-        <p class="subtitle">Ion · cộng hóa trị · kim loại · liên kết yếu</p>
-        <p class="intro">
-          Liên kết hóa học là "chất keo" giữ các nguyên tử lại với nhau để tạo nên phân tử,
-          tinh thể và vật liệu. Chương này tóm tắt trực quan các loại liên kết quan trọng,
-          cách nhận biết nhanh, ví dụ điển hình và sự khác biệt về tính chất vật lý.
-        </p>
+    <header class="hero ruled-page">
+      <div class="crumb">
+        <a href="Learning Resources Hub v4.html">Hóa học</a> › Chương 3
       </div>
+      <h1 class="title">Các loại liên kết hóa học</h1>
+      <div class="title-stroke"></div>
+      <p class="subtitle">Ion · cộng hóa trị · kim loại · liên kết yếu</p>
+      <p class="intro">
+        Liên kết hóa học là "chất keo" giữ các nguyên tử lại với nhau để tạo nên phân tử,
+        tinh thể và vật liệu. Chương này tóm tắt trực quan các loại liên kết quan trọng,
+        cách nhận biết nhanh, ví dụ điển hình và sự khác biệt về tính chất vật lý.
+      </p>
     </header>
 
     <main class="layout">
-      <section class="card">
+      <section class="card ruled-page">
         <h2>1. Ba liên kết chính</h2>
         <div class="grid-2">
           <article class="bond">
@@ -411,7 +253,7 @@
         </div>
       </section>
 
-      <section class="card">
+      <section class="card ruled-page">
         <h2>2. Các loại liên kết khác và tương tác yếu</h2>
         <p>Chọn loại liên kết để xem mô phỏng trực quan cơ chế electron:</p>
         <div class="viz-toolbar" role="tablist" aria-label="Bộ chọn mô phỏng liên kết">
@@ -467,7 +309,7 @@
         </div>
       </section>
 
-      <section class="card">
+      <section class="card ruled-page">
         <h2>3. Bảng so sánh nhanh</h2>
         <table class="compare" aria-label="Bảng so sánh các loại liên kết">
           <thead>
@@ -511,7 +353,7 @@
         </p>
       </section>
 
-      <section class="card">
+      <section class="card ruled-page">
         <h2>4. Tự kiểm tra nhanh</h2>
         <div class="quiz">
           <article class="quiz-item">
@@ -654,17 +496,13 @@
 
       renderViz('ionic');
 
-      const applyTheme = (mode) => {
-        document.body.classList.toggle('light-mode', mode === 'light');
-        if (btn) btn.textContent = mode === 'light' ? '🌙 Dark' : '☀ Light';
-      };
       const saved = localStorage.getItem(KEY);
-      applyTheme(saved === 'light' ? 'light' : 'dark');
+      if (saved === 'dark') { document.body.classList.add('dark-mode'); if (btn) btn.textContent = '☀ Sáng'; }
       if (btn) {
         btn.addEventListener('click', () => {
-          const next = document.body.classList.contains('light-mode') ? 'dark' : 'light';
-          localStorage.setItem(KEY, next);
-          applyTheme(next);
+          const dark = document.body.classList.toggle('dark-mode');
+          btn.textContent = dark ? '☀ Sáng' : '☽ Tối';
+          localStorage.setItem(KEY, dark ? 'dark' : 'light');
         });
       }
     })();
