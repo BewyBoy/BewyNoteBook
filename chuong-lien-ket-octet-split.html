@@ -1175,9 +1175,6 @@
       atomDescText.textContent = atom.desc;
     }
 
-    // Hook up elements to grid
-    const LEWIS_ATOMS_NODE = document.getElementById('lewis-el-grid');
-    LEWIS_ATOMS_NODE.innerHTML = '';
     ATOMS.forEach((atom, idx) => {
       const btn = document.createElement('button');
       btn.className = 'el-btn' + (atom.sym === 'O' ? ' active' : '');
@@ -1188,7 +1185,7 @@
         btn.classList.add('active');
         drawLewisAtom(atom);
       });
-      LEWIS_ATOMS_NODE.appendChild(btn);
+      atomGrid.appendChild(btn);
     });
 
     // Draw initial atom (Oxygen)
@@ -1296,9 +1293,15 @@
           addLine(svg, 122, 102, 198, 102, 'Liên kết thứ ba là liên kết pi (π).', onSelect);
           // Lone pairs
           addDotPair(svg, 64, 90, 'Cặp electron tự do ngoài cùng của Nitơ trái.', onSelect, true);
+          addDotPair(svg, 256, 90, 'Cặp electron tự do ngoài cùng của Nitơ phải.', onSelect, true);
         }
       }
     };
+
+    const lewisMolGrid = document.getElementById('lewis-mol-grid');
+    const svgMol = document.getElementById('svg-lewis-mol');
+    const molNameText = document.getElementById('lewis-mol-name');
+    const molDescText = document.getElementById('lewis-mol-desc');
 
     function addText(svg, x, y, symbol) {
       const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -1364,12 +1367,6 @@
       mol.draw(svgMol, displayMolDetail);
       displayMolDetail(mol.name, mol.desc);
     }
-
-    const lewisMolGrid = document.getElementById('lewis-mol-grid');
-    lewisMolGrid.innerHTML = '';
-    const svgMol = document.getElementById('svg-lewis-mol');
-    const molNameText = document.getElementById('lewis-mol-name');
-    const molDescText = document.getElementById('lewis-mol-desc');
 
     Object.keys(MOLECULES).forEach((key, idx) => {
       const btn = document.createElement('button');

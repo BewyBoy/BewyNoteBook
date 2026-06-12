@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Itim&family=Pacifico&display=swap');
+
 /* =========================================================
    Vietnam Walkable City — Colors & Type
    A warm, hand-drawn doodle system for the Đi Bộ campaign.
@@ -78,10 +80,10 @@
   --shadow-paper:  0 2px 0 var(--paper-shadow), 0 8px 24px -10px rgba(42,37,32,0.2);
 
   /* Type families */
-  --font-doodle:   'Times New Roman', Times, serif;
-  --font-hand:     'Times New Roman', Times, serif;
-  --font-hand-sc:  'Times New Roman', Times, serif;
-  --font-body:     'Times New Roman', Times, serif;
+  --font-doodle:   'Pacifico', cursive;
+  --font-hand:     'Itim', cursive;
+  --font-hand-sc:  'Itim', cursive;
+  --font-body:     'Itim', cursive;
 
   /* Type scale */
   --t-display:  clamp(48px, 8vw, 96px);
@@ -209,7 +211,7 @@ small, .t-small {
 
 /* Code / mono — kept for completeness, not a campaign focus */
 code, kbd, samp {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Itim', cursive;
   background: var(--paper-deep);
   padding: 0.15em 0.35em;
   border-radius: 4px;

@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chương: Cấu trúc Tinh thể Kim loại</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SPLIT NOTEBOOK & LAB BENCH SYSTEM
+       ══════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:        #FBF4E4;
+      --paper-dark:   #F2E7CE;
+      --ink:          #2A2520;
+      --ink-mid:      #4D4439;
+      --ink-light:    #8A7E6C;
+      --red-margin:   #C73C2E;
+      --blue-line:    rgba(111, 184, 209, 0.25);
+      --accent:       #D9633B;       /* terracotta */
+      --accent-blue:  #1F6A52;       /* jade deep */
+      --highlight-y:  rgba(242, 181, 68, 0.40);
+      --highlight-g:  rgba(47, 143, 111, 0.25);
+      --line-h:       30px;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #556B2F;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #708090 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #3F4F2F 0%, transparent 50%),
+        repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+      color: var(--ink);
+      font-family: 'Itim', cursive;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    .scrolly-container {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Left Side - School Notebook */
+    .notebook-panel {
+      width: 50%;
+      position: relative;
+      background-color: var(--paper);
+      box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+      z-index: 5;
+    }
+
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(90deg, transparent 71px, var(--red-margin) 71px, var(--red-margin) 73px, transparent 73px),
+        repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
+      background-attachment: local;
+      background-position: 0 0, 0 22px;
+    }
+
+    .hero {
+      padding: 90px 40px 40px 96px;
+      border-bottom: 2px solid rgba(42,37,32,0.12);
+      position: relative; overflow: hidden;
+      scroll-snap-align: start;
+    }
+    .hero::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #556B2F 0%, #556B2F 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+    .crumb { font-size: 12px; letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: 30px; line-height: 30px; }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+    .title { font-family: 'Pacifico', cursive; font-size: clamp(30px, 4vw, 55px); line-height: 60px; color: var(--ink); margin-bottom: 30px; font-weight: 700; }
+    .title-stroke { width: clamp(140px, 30vw, 300px); height: 3px; background: var(--accent); border-radius: 2px; margin-top: -15px; margin-bottom: 12px; }
+    .subtitle { font-family: 'Itim', cursive; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-blue); margin-bottom: 30px; line-height: 30px; }
+    .intro { max-width: 800px; font-size: 15px; line-height: var(--line-h); color: var(--ink-mid); }
+
+    .card {
+      padding: 90px 36px 90px 96px;
+      border-top: 1px solid rgba(42,37,32,0.08);
+      position: relative; overflow: hidden;
+      min-height: 100vh;
+      box-sizing: border-box;
+      scroll-snap-align: start;
+      transition: background-color 0.3s;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(42,37,32,0.08); }
+    .card.ruled-page:nth-child(even) { background-color: var(--paper-dark); }
+    .card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #556B2F 0%, #556B2F 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+
+    .card.active-section {
+      background-color: rgba(242, 231, 206, 0.45);
+    }
+
+    @media (min-width: 921px) {
+      .scrolly-container {
+        height: 100vh;
+        overflow: hidden;
+      }
+      .notebook-panel {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scrollbar-width: none;
+      }
+      .notebook-panel::-webkit-scrollbar {
+        display: none;
+      }
+      .lab-panel {
+        position: relative;
+        right: auto;
+        top: auto;
+        height: 100vh;
+      }
+      .card > *:not(.mobile-demo-placeholder) {
+        opacity: 0.15;
+        transition: opacity 0.4s ease;
+      }
+      .card.active-section > *:not(.mobile-demo-placeholder) {
+        opacity: 1;
+      }
+      .hero > * {
+        opacity: 0.15;
+        transition: opacity 0.4s ease;
+      }
+      .hero.active-section > * {
+        opacity: 1;
+      }
+    }
+
+    .card h2 { font-family: 'Pacifico', cursive; font-size: 24px; color: var(--ink); line-height: 30px; font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 0px; margin-bottom: 30px; display: inline-block; }
+    .card p { font-size: 15px; line-height: var(--line-h); color: var(--ink-mid); margin-bottom: 20px; }
+    .card p:last-child { margin-bottom: 0; }
+    .card .key { color: var(--accent); font-weight: bold; }
+
+    .tag {
+      font-family: 'Itim', cursive;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 700; padding: 3px 10px; border-radius: 4px;
+      background: #e2c07a;
+      color: var(--ink); border: 1.5px solid rgba(42,37,32,0.18);
+      flex-shrink: 0;
+      box-shadow: 1px 1.5px 4px rgba(0,0,0,0.15);
+      transform: rotate(1.2deg);
+    }
+    .card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+
+    /* ══════════════════════════════════════
+       Right Side - Elegant Lab Bench / Chalkboard
+       ══════════════════════════════════════ */
+    .lab-panel {
+      width: 50%;
+      background: #141913;
+      background-image: 
+        radial-gradient(ellipse at 50% 20%, #1c261e 0%, transparent 65%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px);
+      position: fixed;
+      right: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    .lab-sticky-wrapper {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    /* Demonstration containers on the right */
+    .desk-demo-slot {
+      position: absolute;
+      top: 50px;
+      bottom: 30px;
+      left: 40px;
+      right: 40px;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .demo-panel {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.96) translateY(15px);
+      pointer-events: none;
+      transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+    }
+    .demo-panel.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Blackboard/Lab bench card overlay */
+    .glass-bench {
+      background: rgba(30, 42, 34, 0.65);
+      border: 1.5px solid rgba(144, 184, 154, 0.25);
+      border-radius: 12px;
+      box-shadow: 
+        0 15px 35px rgba(0,0,0,0.5), 
+        inset 0 0 20px rgba(144, 184, 154, 0.1);
+      padding: 20px;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(10px);
+      color: #eaeaea;
+      box-sizing: border-box;
+    }
+
+    .bench-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 20px;
+      color: #e2c07a;
+      margin-bottom: 12px;
+      text-align: center;
+      border-bottom: 1px dashed rgba(144, 184, 154, 0.2);
+      padding-bottom: 6px;
+    }
+
+    .canvas-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0b0f0a; /* Restored black background */
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      flex-grow: 1;
+      margin-bottom: 12px;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+      position: relative;
+    }
+    .canvas-wrap canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Interactive Elements & controls */
+    .ctrl-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .ctrl-btn {
+      font-family: 'Itim', cursive;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #b0c0a8;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: bold;
+      transition: all 0.2s;
+      flex: 1;
+      text-align: center;
+    }
+    .ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    .ctrl-btn.active {
+      background: #e2c07a;
+      color: #1a2517;
+      border-color: #e2c07a;
+    }
+
+    /* Description Box Card */
+    .info-display-card {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(144, 184, 154, 0.15);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 70px;
+    }
+    .info-display-card h4 {
+      color: #e2c07a;
+      font-family: 'Pacifico', cursive;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+    .info-display-card p {
+      color: #b0c0a8;
+      margin: 0;
+    }
+
+    .stage-overlay {
+      position: absolute; left: 16px; top: 12px; z-index: 5;
+      display: flex; flex-direction: column; gap: 2px;
+      pointer-events: none;
+      background: transparent; /* Fully transparent background as requested */
+      padding: 0;
+      border: none;
+    }
+    .stage-overlay h2 {
+      font-family: 'Pacifico', cursive; font-size: 18px; color: #e2c07a; line-height: 1.2;
+    }
+    .stage-overlay .detail-info {
+      font-size: 11px; color: #a5b59e;
+    }
+    .stage-hint {
+      position: absolute; right: 12px; bottom: 8px; font-size: 10px; color: rgba(255,255,255,0.45);
+      pointer-events: none;
+    }
+
+    /* Quiz Elements */
+    .quiz-card {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .quiz-progress {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #a5b59e;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+    }
+    .quiz-bar-outer {
+      width: 100px;
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .quiz-bar-inner {
+      height: 100%;
+      width: 0%;
+      background: #e2c07a;
+      transition: width 0.3s ease;
+    }
+    .quiz-question-card {
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 16px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .quiz-question {
+      font-size: 15px;
+      font-weight: bold;
+      color: #fff;
+      margin-bottom: 12px;
+      line-height: 1.45;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .quiz-opt-btn {
+      font-family: 'Itim', cursive;
+      text-align: left;
+      padding: 9px 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 6px;
+      color: #eaeaea;
+      cursor: pointer;
+      font-size: 13.5px;
+      transition: all 0.2s;
+    }
+    .quiz-opt-btn:hover:not(.checked) {
+      background: rgba(255,255,255,0.1);
+      border-color: #e2c07a;
+    }
+    .quiz-opt-btn.correct {
+      background: rgba(80, 180, 100, 0.25);
+      border-color: #8be0a0;
+      color: #8be0a0;
+      font-weight: bold;
+    }
+    .quiz-opt-btn.incorrect {
+      background: rgba(217, 99, 59, 0.2);
+      border-color: #fca088;
+      color: #fca088;
+    }
+    .quiz-explanation {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #b8c8b0;
+      background: rgba(144, 184, 154, 0.1);
+      border-left: 3.5px solid #e2c07a;
+      padding: 6px 10px;
+      border-radius: 0 4px 4px 0;
+      display: none;
+      line-height: 1.4;
+    }
+    .quiz-nav-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+    .quiz-next-btn {
+      font-family: 'Itim', cursive;
+      padding: 8px 18px;
+      background: #e2c07a;
+      color: #1a2517;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+    .quiz-next-btn:hover { background: #ffd993; }
+    .quiz-next-btn:disabled { background: rgba(255,255,255,0.1); color: #888; cursor: not-allowed; }
+
+    .quiz-results {
+      text-align: center;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      padding: 20px 0;
+      flex-grow: 1;
+    }
+    .score-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 4px solid #e2c07a;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: rgba(226, 192, 122, 0.15);
+      box-shadow: 0 0 20px rgba(226, 192, 122, 0.2);
+    }
+    .score-val { font-size: 32px; font-weight: bold; color: #e2c07a; font-family: 'Pacifico', cursive; line-height: 1; }
+    .score-label { font-size: 10px; color: #a5b59e; text-transform: uppercase; letter-spacing: 0.1em; }
+    .result-text { font-size: 18px; font-weight: bold; color: #fff; }
+    .result-sub { font-size: 13px; color: #a5b59e; max-width: 250px; line-height: 1.45; }
+    .replay-btn {
+      font-family: 'Itim', cursive;
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .replay-btn:hover { background: #e2c07a; color: #1a2517; border-color: #e2c07a; }
+
+    /* ══════════════════════════════════════
+       Mobile responsiveness (max-width: 920px)
+       ══════════════════════════════════════ */
+    @media (max-width: 920px) {
+      .scrolly-container { flex-direction: column; }
+      .notebook-panel { width: 100%; }
+      .lab-panel { display: none; }
+      .mobile-demo-placeholder { display: block; width: 100%; margin-top: 20px; }
+      .card { min-height: auto; padding-top: 40px; padding-bottom: 40px; }
+      .demo-panel { opacity: 1 !important; visibility: visible !important; transform: none !important; pointer-events: auto !important; height: auto; padding: 0; margin-top: 15px; }
+      .glass-bench { height: auto; min-height: 400px; padding: 16px; }
+      .canvas-wrap { aspect-ratio: 1.3; height: 320px; flex-grow: 0; }
+    }
+
+    @media (max-width: 640px) {
+      .hero, .card { padding-left: 56px; }
+      .card::before, .hero::before { width: 28px; background-size: 28px 80px; }
+    }
+
+    @media (max-height: 760px) and (min-width: 921px) {
+      .lab-sticky-wrapper { padding: 20px; }
+      .glass-bench { padding: 14px; }
+      .canvas-wrap { margin-bottom: 6px; }
+      .info-display-card { min-height: 50px; padding: 6px 10px; font-size: 12px; }
+      .ctrl-row { margin-bottom: 6px; }
+      .quiz-question-card { padding: 10px; }
+      .quiz-question { font-size: 13.5px; margin-bottom: 8px; }
+      .quiz-opt-btn { padding: 6px 10px; font-size: 12px; }
+      .quiz-explanation { padding: 4px 8px; font-size: 11.5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scrolly-container">
+    
+    <!-- LEFT SIDE: NOTEBOOK COLUMN -->
+    <div class="notebook-panel">
+      
+      <!-- Hero / Header Section -->
+      <header class="hero ruled-page" data-demo="0">
+        <div class="crumb">
+          <a href="Learning Resources Hub v4.html">Hóa học</a> › Chuyên đề nâng cao
+        </div>
+        <h1 class="title">Cấu trúc Tinh thể Kim loại</h1>
+        <div class="title-stroke"></div>
+        <p class="subtitle">Mạng SC · Mạng BCC · Mạng FCC · Mạng HCP</p>
+        <p class="intro">
+          Các kim loại trong tự nhiên thường tồn tại ở trạng thái rắn tinh thể. Ở trạng thái này, các nguyên tử (hoặc ion) kim loại được sắp xếp tuần hoàn, chặt khít theo các hình học không gian xác định được gọi là mạng tinh thể. Sự sắp xếp này trực tiếp quyết định khối lượng riêng, độ dẻo, khả năng dẫn nhiệt, dẫn điện cũng như độ bền cơ học của mỗi kim loại.
+        </p>
+      </header>
+
+      <main class="layout">
+        
+        <!-- SECTION 1: SIMPLE CUBIC (SC) -->
+        <section id="sec-notebook-1" class="card ruled-page" data-demo="1">
+          <div class="card-head">
+            <h2>1. Mạng Lập phương đơn giản (SC)</h2>
+            <span class="tag">Simple Cubic</span>
+          </div>
+          <p>
+            Mạng <span class="key">Lập phương đơn giản (Simple Cubic - SC)</span> là cấu trúc tinh thể đơn giản nhất, trong đó các nguyên tử chỉ nằm ở 8 đỉnh của một ô cơ sở hình lập phương.
+          </p>
+          <p>
+            <strong>Đặc điểm cấu trúc:</strong>
+            <ul style="list-style: disc; margin-left: 20px; margin-bottom: 15px;">
+              <li><strong>Số phối trí (Coordination Number):</strong> <span class="key">6</span> (mỗi nguyên tử tiếp xúc trực tiếp với 6 nguyên tử lân cận gần nhất).</li>
+              <li><strong>Độ chặt khít (Packing Efficiency):</strong> <span class="key">52.4%</span> (độ chặt khít rất thấp, 47.6% còn lại là khoảng trống trống).</li>
+              <li><strong>Số nguyên tử hiệu dụng trong một ô:</strong> <span class="key">1</span> nguyên tử. Tính toán:
+                <div style="margin: 10px 0; font-weight: bold; text-align: center; color: var(--accent);">
+                  8 (đỉnh) &times; <sup>1</sup>&frasl;<sub>8</sub> = 1 nguyên tử
+                </div>
+              </li>
+            </ul>
+          </p>
+          <p>
+            Vì có khoảng trống lớn và liên kết yếu hơn do số phối trí thấp, cấu trúc lập phương đơn giản rất không bền vững về mặt năng lượng. Hầu hết các kim loại sẽ tự sắp xếp lại để tạo ra các cấu trúc chặt khít hơn như BCC, FCC hay HCP.
+          </p>
+          
+          <div id="mob-demo-1" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 2: BODY-CENTERED CUBIC (BCC) -->
+        <section id="sec-notebook-2" class="card ruled-page" data-demo="2">
+          <div class="card-head">
+            <h2>2. Mạng Lập phương tâm khối (BCC)</h2>
+            <span class="tag">Body-Centered Cubic</span>
+          </div>
+          <p>
+            Mạng <span class="key">Lập phương tâm khối (Body-Centered Cubic - BCC)</span> có cấu trúc gồm các nguyên tử nằm ở 8 đỉnh và thêm 1 nguyên tử nằm hoàn toàn ở chính giữa tâm của hình hộp lập phương.
+          </p>
+          <p>
+            <strong>Đặc điểm cấu trúc:</strong>
+            <ul style="list-style: disc; margin-left: 20px; margin-bottom: 15px;">
+              <li><strong>Số phối trí (Coordination Number):</strong> <span class="key">8</span> (mỗi nguyên tử ở góc tiếp xúc với nguyên tử ở tâm, và nguyên tử tâm tiếp xúc với cả 8 nguyên tử góc).</li>
+              <li><strong>Độ chặt khít (Packing Efficiency):</strong> <span class="key">68.0%</span>.</li>
+              <li><strong>Số nguyên tử hiệu dụng trong một ô:</strong> <span class="key">2</span> nguyên tử. Tính toán:
+                <div style="margin: 10px 0; font-weight: bold; text-align: center; color: var(--accent);">
+                  8 (đỉnh) &times; <sup>1</sup>&frasl;<sub>8</sub> + 1 (tâm) = 2 nguyên tử
+                </div>
+              </li>
+              <li><strong>Ví dụ điển hình:</strong> Sắt ở nhiệt độ thường (&alpha;-Fe), Natri (Na), Kali (K), Crom (Cr), Wolfram (W), và Barium (Ba).</li>
+            </ul>
+          </p>
+          <p>
+            Cấu trúc BCC tuy có độ chặt khít trung bình nhưng lại có liên kết rất bền bỉ nhờ sự tương tác từ tâm đến 8 góc. Các kim loại BCC thường có độ cứng khá tốt và nhiệt độ nóng chảy tương đối cao (như Crom và Wolfram).
+          </p>
+          
+          <div id="mob-demo-2" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 3: FACE-CENTERED CUBIC (FCC) -->
+        <section id="sec-notebook-3" class="card ruled-page" data-demo="3">
+          <div class="card-head">
+            <h2>3. Mạng Lập phương tâm diện (FCC)</h2>
+            <span class="tag">Face-Centered Cubic</span>
+          </div>
+          <p>
+            Mạng <span class="key">Lập phương tâm diện (Face-Centered Cubic - FCC)</span> gồm các nguyên tử định vị tại 8 đỉnh lập phương và tại tâm của cả 6 mặt hình lập phương.
+          </p>
+          <p>
+            <strong>Đặc điểm cấu trúc:</strong>
+            <ul style="list-style: disc; margin-left: 20px; margin-bottom: 15px;">
+              <li><strong>Số phối trí (Coordination Number):</strong> <span class="key">12</span> (độ phối trí cực đại đối với các quả cầu đồng kích thước).</li>
+              <li><strong>Độ chặt khít (Packing Efficiency):</strong> <span class="key">74.0%</span> (đây là cách xếp chặt khít lý thuyết cao nhất có thể đạt được).</li>
+              <li><strong>Số nguyên tử hiệu dụng trong một ô:</strong> <span class="key">4</span> nguyên tử. Tính toán:
+                <div style="margin: 10px 0; font-weight: bold; text-align: center; color: var(--accent);">
+                  8 (đỉnh) &times; <sup>1</sup>&frasl;<sub>8</sub> + 6 (tâm mặt) &times; <sup>1</sup>&frasl;<sub>2</sub> = 4 nguyên tử
+                </div>
+              </li>
+            </ul>
+          </p>
+          <p>
+            Nhờ mật độ sắp xếp chặt khít và cấu trúc đối xứng lập phương cao, mạng tinh thể FCC cung cấp nhiều hệ mặt trượt chéo góc dễ dàng. Điều này giải thích tại sao nhóm kim loại FCC (như Đồng, Nhôm, Vàng) đều rất dẻo, dễ kéo sợi và dát mỏng một cách kỳ diệu.
+          </p>
+          
+          <div id="mob-demo-3" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 4: HEXAGONAL CLOSE-PACKED (HCP) -->
+        <section id="sec-notebook-4" class="card ruled-page" data-demo="4">
+          <div class="card-head">
+            <h2>4. Mạng Lục phương chặt khít (HCP)</h2>
+            <span class="tag">Hexagonal Close-Packed</span>
+          </div>
+          <p>
+            Mạng <span class="key">Lục phương chặt khít (Hexagonal Close-Packed - HCP)</span> có ô cơ sở là một lăng trụ lục giác đứng. Các nguyên tử nằm ở 12 đỉnh, 2 tâm mặt đáy (trên và dưới) và có 3 nguyên tử nằm hoàn toàn trong khoảng không gian giữa hai mặt đáy.
+          </p>
+          <p>
+            <strong>Đặc điểm cấu trúc:</strong>
+            <ul style="list-style: disc; margin-left: 20px; margin-bottom: 15px;">
+              <li><strong>Số phối trí (Coordination Number):</strong> <span class="key">12</span> (tương tự mạng FCC, đều là sự xếp quả cầu chặt khít).</li>
+              <li><strong>Độ chặt khít (Packing Efficiency):</strong> <span class="key">74.0%</span>.</li>
+              <li><strong>Số nguyên tử hiệu dụng trong một ô:</strong> <span class="key">6</span> nguyên tử. Tính toán:
+                <div style="margin: 10px 0; font-weight: bold; text-align: center; color: var(--accent);">
+                  12 (đỉnh) &times; <sup>1</sup>&frasl;<sub>6</sub> + 2 (tâm đáy) &times; <sup>1</sup>&frasl;<sub>2</sub> + 3 (bên trong) = 6 nguyên tử
+                </div>
+              </li>
+            </ul>
+          </p>
+          <p>
+            Dù cùng độ chặt khít 74% với FCC, nhưng cấu trúc HCP có sự đối xứng thấp hơn và có ít mặt trượt tinh thể chéo hơn. Vì vậy, các kim loại kết tinh theo mạng HCP thường cứng hơn, giòn hơn và khó gia công, dát mỏng hơn so với kim loại FCC.
+          </p>
+          
+          <div id="mob-demo-4" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 5: QUIZ -->
+        <section id="sec-notebook-5" class="card ruled-page" data-demo="5">
+          <div class="card-head">
+            <h2>5. Bài trắc nghiệm củng cố</h2>
+            <span class="tag" style="background: var(--lotus); border-color: var(--lotus-deep);">Kiểm tra</span>
+          </div>
+          <p>
+            Hãy thử sức với 5 câu hỏi trắc nghiệm khách quan ở bảng bên cạnh để củng cố kiến thức vừa học về các loại cấu trúc tinh thể kim loại (SC, BCC, FCC, HCP).
+          </p>
+          <p>
+            Bấm trực tiếp vào các phương án để kiểm tra câu trả lời, nhận điểm và đọc giải thích chi tiết cho từng hiện tượng tinh thể.
+          </p>
+          
+          <div id="mob-demo-5" class="mobile-demo-placeholder"></div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- RIGHT SIDE: FIXED LAB BENCH PANEL -->
+    <div class="lab-panel">
+      <div class="lab-sticky-wrapper">
+
+        <!-- DEMO 0: INTRO WELCOME PANEL -->
+        <div id="desk-demo-0" class="desk-demo-slot">
+          <div id="demo-0" class="demo-panel">
+            <div class="glass-bench" style="justify-content: center; gap: 20px;">
+              <h2 style="font-family: 'Pacifico', cursive; color: #e2c07a; text-align: center; font-size: 26px;">Khám phá Cấu trúc Tinh thể</h2>
+              
+              <div style="background: rgba(0,0,0,0.25); border: 1.5px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 20px; font-size: 14px; line-height: 1.7; color: #b0c0a8;">
+                <p style="margin-bottom: 12px;">Màn hình bên phải là phòng thí nghiệm 3D ảo, cho phép bạn xoay và kiểm tra trực quan các cấu trúc ô cơ sở tinh thể kim loại:</p>
+                <ul style="list-style: disc; margin-left: 20px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
+                  <li><strong style="color: #e2c07a;">Lập phương đơn giản (SC)</strong> - Polonium</li>
+                  <li><strong style="color: #e2c07a;">Lập phương tâm khối (BCC)</strong> - Sắt, Crom, Wolfram</li>
+                  <li><strong style="color: #e2c07a;">Lập phương tâm diện (FCC)</strong> - Nhôm, Đồng, Vàng</li>
+                  <li><strong style="color: #e2c07a;">Lục phương chặt khít (HCP)</strong> - Kẽm, Magie, Titan</li>
+                </ul>
+                <p>Hãy cuộn xuống từng mục bên trái để tương tác với mô hình 3D và thay đổi chế độ hiển thị quả cầu cắt lớp (Sliced) hay phủ đặc (Space-Filling).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 1-4: 3D CRYSTAL LATTICE VISUALIZER (SHARED) -->
+        <div id="desk-demo-1" class="desk-demo-slot">
+          <div id="demo-crystal" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title" id="crys-bench-title">Cấu trúc tinh thể 3D</div>
+              
+              <div class="ctrl-row">
+                <button class="ctrl-btn active" id="btn-mode-ball">Ball &amp; Stick</button>
+                <button class="ctrl-btn" id="btn-mode-space">Space-Filling</button>
+                <button class="ctrl-btn" id="btn-mode-slice">Sliced Cell</button>
+              </div>
+
+              <div class="canvas-wrap">
+                <div class="stage-overlay">
+                  <h2 id="crys-overlay-title">Đang tải...</h2>
+                  <div class="detail-info" id="crys-overlay-info">Đang dựng hình 3D...</div>
+                </div>
+                <canvas id="canvas-crystal"></canvas>
+                <div class="stage-hint">Kéo để xoay · Cuộn để phóng to</div>
+              </div>
+
+              <div class="info-display-card" id="crys-info-card">
+                <h4 id="crys-info-title">Thông số mạng lập phương</h4>
+                <p id="crys-info-desc">Số phối trí và độ chặt khít tương ứng.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 5: QUIZ PANEL -->
+        <div id="desk-demo-5" class="desk-demo-slot">
+          <div id="demo-5" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Trắc nghiệm Cấu trúc tinh thể</div>
+              
+              <div class="quiz-card">
+                <!-- Progress Header -->
+                <div class="quiz-progress">
+                  <span id="quiz-question-num">Câu hỏi 1/5</span>
+                  <div class="quiz-bar-outer">
+                    <div id="quiz-progress-bar" class="quiz-bar-inner"></div>
+                  </div>
+                </div>
+
+                <!-- Quiz Card -->
+                <div id="quiz-question-card" class="quiz-question-card">
+                  <div id="quiz-q-text" class="quiz-question">Đang tải câu hỏi...</div>
+                  <div id="quiz-options-box" class="quiz-options">
+                    <!-- Buttons will be rendered here -->
+                  </div>
+                  <div id="quiz-explanation-box" class="quiz-explanation">
+                    <!-- Text description of answers -->
+                  </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="quiz-nav-row">
+                  <button id="quiz-next-btn" class="quiz-next-btn" disabled>Câu tiếp theo</button>
+                </div>
+
+                <!-- Results -->
+                <div id="quiz-results" class="quiz-results">
+                  <div class="score-circle">
+                    <span id="score-num" class="score-val">0/5</span>
+                    <span class="score-label">Đúng</span>
+                  </div>
+                  <div id="result-headline" class="result-text">Hoàn thành!</div>
+                  <div id="result-desc" class="result-sub">Chúc mừng bạn đã hoàn thành chuyên đề Cấu trúc Tinh thể.</div>
+                  <button id="quiz-restart-btn" class="replay-btn" type="button">Làm lại bài thi</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Three.js Library CDN Setup -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    /* ══════════════════════════════════════════
+       THEME & LOCAL STORAGE
+       ══════════════════════════════════════════ */
+    (function(){
+      const body = document.body;
+      const saved = localStorage.getItem('bewy-theme');
+      if (saved === 'dark') { body.classList.add('dark-mode'); }
+    })();
+
+    /* ══════════════════════════════════════════
+       THREE.JS 3D ENGINE CONFIGURATION
+       ══════════════════════════════════════════ */
+    const canvasC = document.getElementById('canvas-crystal');
+    const renderer = new THREE.WebGLRenderer({ canvas: canvasC, antialias: true, alpha: true });
+    renderer.localClippingEnabled = true; // IMPORTANT for sliced mode
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    camera.position.set(3.5, 2.5, 4.5);
+
+    const controls = new OrbitControls(camera, canvasC);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.enableZoom = true;
+    controls.maxDistance = 15;
+    controls.minDistance = 2;
+
+    // Lights configuration optimized for light background and glossy materials
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x888888, 0.6));
+    scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.95);
+    dirLight1.position.set(6, 10, 8);
+    scene.add(dirLight1);
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.45);
+    dirLight2.position.set(-6, -6, -6);
+    scene.add(dirLight2);
+
+    // Group to hold all lattice elements
+    const crystalGroup = new THREE.Group();
+    scene.add(crystalGroup);
+
+    // Global Clipping Planes for Sliced mode
+    // Cube boundaries: [-1, 1] for SC, BCC, FCC
+    const cubeClippingPlanes = [
+      new THREE.Plane(new THREE.Vector3(1, 0, 0), 1),
+      new THREE.Plane(new THREE.Vector3(-1, 0, 0), 1),
+      new THREE.Plane(new THREE.Vector3(0, 1, 0), 1),
+      new THREE.Plane(new THREE.Vector3(0, -1, 0), 1),
+      new THREE.Plane(new THREE.Vector3(0, 0, 1), 1),
+      new THREE.Plane(new THREE.Vector3(0, 0, -1), 1)
+    ];
+
+    // HCP boundaries: Regular hexagonal prism with side 1 and height from y = -1 to 1.
+    // Distance from center to hexagon flats is cos(30 deg) * r = 0.866
+    const hcpClippingPlanes = [
+      new THREE.Plane(new THREE.Vector3(0, 1, 0), 1),
+      new THREE.Plane(new THREE.Vector3(0, -1, 0), 1)
+    ];
+    for (let i = 0; i < 6; i++) {
+      const angle = i * Math.PI / 3 + Math.PI / 6;
+      hcpClippingPlanes.push(
+        new THREE.Plane(new THREE.Vector3(-Math.cos(angle), 0, -Math.sin(angle)), 0.866)
+      );
+    }
+
+    // Material definitions (Bright, glossy Phong finish for beautiful specular highlights and high readability)
+    const silverMat = new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 100, specular: 0x333333, side: THREE.DoubleSide }); // Corner atoms (Bright white)
+    const goldMat = new THREE.MeshPhongMaterial({ color: 0xffcc00, shininess: 100, specular: 0x555555, side: THREE.DoubleSide });   // Body centers (Bright gold)
+    const blueMat = new THREE.MeshPhongMaterial({ color: 0x00ccff, shininess: 100, specular: 0x555555, side: THREE.DoubleSide });   // Face centers (Bright sky blue)
+    const orangeMat = new THREE.MeshPhongMaterial({ color: 0xff6600, shininess: 100, specular: 0x555555, side: THREE.DoubleSide }); // HCP mid-layer (Bright orange)
+    
+    // Wireframe materials (Bright gold for contrast on black background)
+    const lineMat = new THREE.LineBasicMaterial({ color: 0xe2c07a, linewidth: 2 });
+
+    let currentCrystal = 'sc';
+    let viewMode = 'ball'; // 'ball', 'space', 'slice'
+
+    // Crystal metrics
+    const CRYSTAL_DATA = {
+      sc: {
+        title: "Lập phương đơn giản (SC)",
+        desc: "Mạng lập phương đơn giản chỉ chứa nguyên tử ở các đỉnh. Hiệu suất nén thấp, dẫn đến tính kém bền cơ học.",
+        coordination: "6",
+        efficiency: "52.4%",
+        atomsCell: "8 × (1/8) = 1 nguyên tử",
+        radius: { ball: 0.22, space: 1.0, slice: 1.0 }
+      },
+      bcc: {
+        title: "Lập phương tâm khối (BCC)",
+        desc: "Cấu trúc gồm nguyên tử ở 8 đỉnh và 1 ở chính giữa tâm. Khả năng liên kết chéo cực kỳ vững chắc.",
+        coordination: "8",
+        efficiency: "68.0%",
+        atomsCell: "8 × (1/8) + 1 = 2 nguyên tử",
+        radius: { ball: 0.20, space: 0.866, slice: 0.866 } // R = sqrt(3)/2
+      },
+      fcc: {
+        title: "Lập phương tâm diện (FCC)",
+        desc: "Nguyên tử nằm ở 8 đỉnh và tâm của 6 mặt cube. Mật độ xếp chặt khít lý thuyết cao nhất, tạo ra độ dẻo tuyệt vời.",
+        coordination: "12",
+        efficiency: "74.0%",
+        atomsCell: "8 × (1/8) + 6 × (1/2) = 4 nguyên tử",
+        radius: { ball: 0.18, space: 0.707, slice: 0.707 } // R = sqrt(2)/2
+      },
+      hcp: {
+        title: "Lục phương chặt khít (HCP)",
+        desc: "Ô cơ sở dạng hình hộp lục giác đứng gồm 12 đỉnh, 2 mặt đáy và 3 quả cầu trung gian tạo tính bền vững và cứng giòn.",
+        coordination: "12",
+        efficiency: "74.0%",
+        atomsCell: "12 × (1/6) + 2 × (1/2) + 3 = 6 nguyên tử",
+        radius: { ball: 0.18, space: 0.5, slice: 0.5 } // R = 0.5 (hexagon side = 1)
+      }
+    };
+
+    function addSphereMesh(r, posArray, material) {
+      const geom = new THREE.SphereGeometry(r, 32, 32);
+      const pos = new THREE.Vector3(posArray[0], posArray[1], posArray[2]);
+      
+      // Standard double-sided shaded mesh
+      material.side = THREE.DoubleSide;
+      const mesh = new THREE.Mesh(geom, material);
+      mesh.position.copy(pos);
+      crystalGroup.add(mesh);
+
+      // If in sliced mode, add flat circular caps for any intersecting clipping planes
+      if (viewMode === 'slice' && material.clippingPlanes) {
+        let backColor = 0xffffff;
+        if (material === silverMat) backColor = 0xffffff;      // Corner atoms (White)
+        else if (material === goldMat) backColor = 0xffcc00;    // Body center (Gold)
+        else if (material === blueMat) backColor = 0x00ccff;    // Face centers (Blue)
+        else if (material === orangeMat) backColor = 0xff6600;  // HCP mid-layer (Orange)
+
+        const capMat = new THREE.MeshPhongMaterial({
+          color: backColor,
+          shininess: 30, // Low shininess for a flat-ish solid cut look
+          specular: 0x111111,
+          side: THREE.DoubleSide,
+          clippingPlanes: material.clippingPlanes,
+          clipShadows: true
+        });
+
+        material.clippingPlanes.forEach(plane => {
+          // Signed distance from sphere center to clipping plane
+          const h = plane.normal.dot(pos) + plane.constant;
+          
+          // If the plane cuts the sphere (distance is less than radius)
+          if (Math.abs(h) < r) {
+            const rCap = Math.sqrt(r * r - h * h);
+            
+            // Offset slightly along the normal (towards the kept side) to avoid z-fighting and self-clipping
+            const capPos = new THREE.Vector3().copy(pos).addScaledVector(plane.normal, -h + 0.002);
+            
+            const circleGeom = new THREE.CircleGeometry(rCap, 32);
+            const circleMesh = new THREE.Mesh(circleGeom, capMat);
+            circleMesh.position.copy(capPos);
+            
+            // Align circle normal with the plane normal
+            const defaultNormal = new THREE.Vector3(0, 0, 1);
+            circleMesh.quaternion.setFromUnitVectors(defaultNormal, plane.normal);
+            
+            crystalGroup.add(circleMesh);
+          }
+        });
+      }
+    }
+
+    function renderCrystal() {
+      // 1. Clear old groups (with geometry & material disposal to prevent leaks)
+      while(crystalGroup.children.length > 0){
+        const obj = crystalGroup.children[0];
+        if (obj.geometry) obj.geometry.dispose();
+        if (obj.material && obj.material !== silverMat && obj.material !== goldMat && obj.material !== blueMat && obj.material !== orangeMat && obj.material !== lineMat) {
+          obj.material.dispose();
+        }
+        crystalGroup.remove(obj);
+      }
+
+      const data = CRYSTAL_DATA[currentCrystal];
+      const r = data.radius[viewMode];
+      const isSliced = viewMode === 'slice';
+      const activePlanes = isSliced ? (currentCrystal === 'hcp' ? hcpClippingPlanes : cubeClippingPlanes) : null;
+
+      // Assign clipping planes to materials dynamically
+      [silverMat, goldMat, blueMat, orangeMat].forEach(mat => {
+        mat.clippingPlanes = activePlanes;
+        mat.clipShadows = true;
+      });
+
+      // 2. Render outlines and coordinates based on Crystal type
+      if (currentCrystal === 'sc') {
+        // SC Corners
+        const corners = [
+          [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
+          [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]
+        ];
+        corners.forEach(pos => {
+          addSphereMesh(r, pos, silverMat);
+        });
+
+        // Bounding Box Outline
+        const boxGeom = new THREE.BoxGeometry(2, 2, 2);
+        const edges = new THREE.EdgesGeometry(boxGeom);
+        const cubeFrame = new THREE.LineSegments(edges, lineMat);
+        crystalGroup.add(cubeFrame);
+
+        // Ball & Stick connection lines
+        if (viewMode === 'ball') {
+          drawStick([-1, -1, -1], [1, -1, -1]);
+          drawStick([1, -1, -1], [1, 1, -1]);
+          drawStick([1, 1, -1], [-1, 1, -1]);
+          drawStick([-1, 1, -1], [-1, -1, -1]);
+          
+          drawStick([-1, -1, 1], [1, -1, 1]);
+          drawStick([1, -1, 1], [1, 1, 1]);
+          drawStick([1, 1, 1], [-1, 1, 1]);
+          drawStick([-1, 1, 1], [-1, -1, 1]);
+
+          drawStick([-1, -1, -1], [-1, -1, 1]);
+          drawStick([1, -1, -1], [1, -1, 1]);
+          drawStick([1, 1, -1], [1, 1, 1]);
+          drawStick([-1, 1, -1], [-1, 1, 1]);
+        }
+
+      } else if (currentCrystal === 'bcc') {
+        // BCC Corners
+        const corners = [
+          [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
+          [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]
+        ];
+        corners.forEach(pos => {
+          addSphereMesh(r, pos, silverMat);
+        });
+
+        // BCC Center
+        addSphereMesh(r, [0, 0, 0], goldMat);
+
+        // Bounding Box Outline
+        const boxGeom = new THREE.BoxGeometry(2, 2, 2);
+        const edges = new THREE.EdgesGeometry(boxGeom);
+        const cubeFrame = new THREE.LineSegments(edges, lineMat);
+        crystalGroup.add(cubeFrame);
+
+        // Ball & Stick diagonal connections
+        if (viewMode === 'ball') {
+          corners.forEach(pos => {
+            drawStick(pos, [0, 0, 0], 0.035, goldMat);
+          });
+          // Draw light frame outline
+          drawLatticeWireframe();
+        }
+
+      } else if (currentCrystal === 'fcc') {
+        // FCC Corners
+        const corners = [
+          [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
+          [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]
+        ];
+        corners.forEach(pos => {
+          addSphereMesh(r, pos, silverMat);
+        });
+
+        // FCC Face Centers
+        const faceCenters = [
+          [0, 0, 1], [0, 0, -1], // Front, Back
+          [0, 1, 0], [0, -1, 0], // Top, Bottom
+          [1, 0, 0], [-1, 0, 0]  // Right, Left
+        ];
+        faceCenters.forEach(pos => {
+          addSphereMesh(r, pos, blueMat);
+        });
+
+        // Bounding Box Outline
+        const boxGeom = new THREE.BoxGeometry(2, 2, 2);
+        const edges = new THREE.EdgesGeometry(boxGeom);
+        const cubeFrame = new THREE.LineSegments(edges, lineMat);
+        crystalGroup.add(cubeFrame);
+
+        // Ball & Stick connections (Corners to adjacent face centers)
+        if (viewMode === 'ball') {
+          corners.forEach(c => {
+            faceCenters.forEach(f => {
+              const dist = Math.sqrt(Math.pow(c[0]-f[0], 2) + Math.pow(c[1]-f[1], 2) + Math.pow(c[2]-f[2], 2));
+              if (Math.abs(dist - 1.414) < 0.1) {
+                drawStick(c, f, 0.03, blueMat);
+              }
+            });
+          });
+          drawLatticeWireframe();
+        }
+
+      } else if (currentCrystal === 'hcp') {
+        // Hexagonal coordinates (Radius = 1, Height = 1)
+        const hexCorners = [];
+        const topY = 1.0;
+        const bottomY = -1.0;
+
+        for (let i = 0; i < 6; i++) {
+          const angle = i * Math.PI / 3;
+          const x = Math.cos(angle);
+          const z = Math.sin(angle);
+          hexCorners.push([x, topY, z]);
+          hexCorners.push([x, bottomY, z]);
+        }
+
+        // Render Hexagon Corners
+        hexCorners.forEach(pos => {
+          addSphereMesh(r, pos, silverMat);
+        });
+
+        // Render Face Centers (Top and Bottom)
+        const centers = [[0, topY, 0], [0, bottomY, 0]];
+        centers.forEach(pos => {
+          addSphereMesh(r, pos, blueMat);
+        });
+
+        // Render Inner Layer (3 atoms inside the prism at y = 0)
+        const rm = 1 / Math.sqrt(3); // 0.577
+        const innerAtoms = [
+          [rm * Math.cos(Math.PI/6), 0, rm * Math.sin(Math.PI/6)],
+          [rm * Math.cos(5*Math.PI/6), 0, rm * Math.sin(5*Math.PI/6)],
+          [rm * Math.cos(3*Math.PI/2), 0, rm * Math.sin(3*Math.PI/2)]
+        ];
+        innerAtoms.forEach(pos => {
+          addSphereMesh(r, pos, orangeMat);
+        });
+
+        // Draw hexagonal wireframe outline manually
+        drawHCPWireframe(hexCorners);
+
+        // Sticks for HCP in Ball-and-Stick
+        if (viewMode === 'ball') {
+          // Sticks from centers to corners of hexagons
+          for (let i = 0; i < 12; i++) {
+            const hCorner = hexCorners[i];
+            const center = hCorner[1] > 0 ? [0, topY, 0] : [0, bottomY, 0];
+            drawStick(center, hCorner, 0.03, blueMat);
+          }
+          // Sticks from mid-layer to hexagons
+          innerAtoms.forEach(mid => {
+            hexCorners.forEach(corner => {
+              const dist = Math.sqrt(Math.pow(mid[0]-corner[0], 2) + Math.pow(mid[1]-corner[1], 2) + Math.pow(mid[2]-corner[2], 2));
+              // Ideal HCP: nearest neighbors is exactly equal to side length (1.0)
+              if (Math.abs(dist - 1.0) < 0.15) {
+                drawStick(mid, corner, 0.03, orangeMat);
+              }
+            });
+            // Sticks between mid layer atoms
+            innerAtoms.forEach(other => {
+              if (mid !== other) {
+                drawStick(mid, other, 0.03, orangeMat);
+              }
+            });
+          });
+        }
+      }
+
+      // Update overlay and info panel text
+      document.getElementById('crys-overlay-title').textContent = data.title;
+      document.getElementById('crys-overlay-info').textContent = viewMode === 'slice' ? 'Sliced Unit Cell View' : (viewMode === 'space' ? 'Space-Filling Mode' : 'Ball-and-Stick Mode');
+      
+      document.getElementById('crys-info-title').textContent = `Thông số Mạng ${data.title}`;
+      document.getElementById('crys-info-desc').innerHTML = `
+        <p style="margin-bottom:6px;">${data.desc}</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:12px; margin-top:8px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:8px;">
+          <div><strong>• Số phối trí:</strong> <span style="color:#e2c07a;font-weight:bold;">${data.coordination}</span></div>
+          <div><strong>• Độ chặt khít:</strong> <span style="color:#e2c07a;font-weight:bold;">${data.efficiency}</span></div>
+          <div style="grid-column: span 2;"><strong>• Số nguyên tử/cell:</strong> <span style="color:#e2c07a;font-weight:bold;">${data.atomsCell}</span></div>
+        </div>
+      `;
+    }
+
+    // Helper functions for sticks
+    function drawStick(posStart, posEnd, radius = 0.04, material = new THREE.MeshPhongMaterial({ color: 0xb0b0b0, shininess: 80, specular: 0x222222, side: THREE.DoubleSide })) {
+      const vStart = new THREE.Vector3(posStart[0], posStart[1], posStart[2]);
+      const vEnd = new THREE.Vector3(posEnd[0], posEnd[1], posEnd[2]);
+      const dist = vStart.distanceTo(vEnd);
+
+      const geom = new THREE.CylinderGeometry(radius, radius, dist, 8);
+      const mesh = new THREE.Mesh(geom, material);
+      
+      // Position and orient the cylinder
+      const vMid = new THREE.Vector3().addVectors(vStart, vEnd).multiplyScalar(0.5);
+      mesh.position.copy(vMid);
+
+      const direction = new THREE.Vector3().subVectors(vEnd, vStart).normalize();
+      const up = new THREE.Vector3(0, 1, 0);
+      mesh.quaternion.setFromUnitVectors(up, direction);
+      
+      // Keep clipping in Sliced mode
+      if (viewMode === 'slice') {
+        mesh.material.clippingPlanes = currentCrystal === 'hcp' ? hcpClippingPlanes : cubeClippingPlanes;
+        mesh.material.clipShadows = true;
+      }
+
+      crystalGroup.add(mesh);
+    }
+
+    // Draw standard cubic wireframe loop
+    function drawLatticeWireframe() {
+      const corners = [
+        [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
+        [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]
+      ];
+      drawStick(corners[0], corners[1], 0.015);
+      drawStick(corners[1], corners[2], 0.015);
+      drawStick(corners[2], corners[3], 0.015);
+      drawStick(corners[3], corners[0], 0.015);
+      
+      drawStick(corners[4], corners[5], 0.015);
+      drawStick(corners[5], corners[6], 0.015);
+      drawStick(corners[6], corners[7], 0.015);
+      drawStick(corners[7], corners[4], 0.015);
+
+      drawStick(corners[0], corners[4], 0.015);
+      drawStick(corners[1], corners[5], 0.015);
+      drawStick(corners[2], corners[6], 0.015);
+      drawStick(corners[3], corners[7], 0.015);
+    }
+
+    // HCP wireframe rendering
+    function drawHCPWireframe(corners) {
+      // corners list: indices 0..11 corresponding to alternate top/bottom hexagonal points.
+      // Filter top (y=1) and bottom (y=-1)
+      const topPts = corners.filter(c => c[1] > 0).sort((a,b) => Math.atan2(a[2], a[0]) - Math.atan2(b[2], b[0]));
+      const bottomPts = corners.filter(c => c[1] < 0).sort((a,b) => Math.atan2(a[2], a[0]) - Math.atan2(b[2], b[0]));
+
+      // Draw top and bottom hexagons
+      for(let i=0; i<6; i++) {
+        drawStick(topPts[i], topPts[(i+1)%6], 0.015);
+        drawStick(bottomPts[i], bottomPts[(i+1)%6], 0.015);
+        // Draw vertical columns
+        drawStick(topPts[i], bottomPts[i], 0.015);
+      }
+    }
+
+    // Render loop
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Gentle continuous rotation only if not manually dragging (controls.state is -1 when idle)
+      if (controls.state === -1) {
+        crystalGroup.rotation.y += 0.0025;
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Canvas Resize Handler
+    function resize() {
+      const wrap = canvasC.parentElement;
+      if (wrap) {
+        const w = wrap.clientWidth;
+        const h = wrap.clientHeight;
+        renderer.setSize(w, h);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      }
+    }
+    window.addEventListener('resize', resize);
+    setTimeout(resize, 100);
+
+    /* ══════════════════════════════════════════
+       INTERACTION & VIEW MODE TOGGLES
+       ══════════════════════════════════════════ */
+    const modeButtons = {
+      ball: document.getElementById('btn-mode-ball'),
+      space: document.getElementById('btn-mode-space'),
+      slice: document.getElementById('btn-mode-slice')
+    };
+
+    function setActiveMode(mode) {
+      viewMode = mode;
+      Object.keys(modeButtons).forEach(key => {
+        if(key === mode) modeButtons[key].classList.add('active');
+        else modeButtons[key].classList.remove('active');
+      });
+      renderCrystal();
+    }
+
+    modeButtons.ball.addEventListener('click', () => setActiveMode('ball'));
+    modeButtons.space.addEventListener('click', () => setActiveMode('space'));
+    modeButtons.slice.addEventListener('click', () => setActiveMode('slice'));
+
+    /* ══════════════════════════════════════
+       SECTION DETECTION — IntersectionObserver
+       ══════════════════════════════════════ */
+    const notebookSections = document.querySelectorAll('.hero, .card');
+    const demoPanels = document.querySelectorAll('.demo-panel');
+    let currentActiveSec = null;
+
+    function setActiveSection(sec) {
+      if (currentActiveSec === sec) return;
+      currentActiveSec = sec;
+
+      const activeDemoNum = parseInt(sec.dataset.demo);
+      const isMobile = window.innerWidth <= 920;
+
+      notebookSections.forEach((s) => {
+        if (s === sec) {
+          s.classList.add('active-section');
+        } else {
+          s.classList.remove('active-section');
+        }
+      });
+
+      // Switch active panels
+      demoPanels.forEach((panel) => {
+        const panelId = panel.id;
+        if (activeDemoNum >= 1 && activeDemoNum <= 4) {
+          // Use shared canvas visualizer
+          if (panelId === 'demo-crystal') {
+            panel.classList.add('active');
+          } else {
+            panel.classList.remove('active');
+          }
+        } else {
+          // Use static welcome or quiz panels
+          if (panelId === `demo-${activeDemoNum}`) {
+            panel.classList.add('active');
+          } else {
+            panel.classList.remove('active');
+          }
+        }
+      });
+
+      // Update crystal type if inside section 1..4
+      if (activeDemoNum >= 1 && activeDemoNum <= 4) {
+        const types = ['sc', 'bcc', 'fcc', 'hcp'];
+        currentCrystal = types[activeDemoNum - 1];
+        renderCrystal();
+        setTimeout(resize, 20); // trigger resize to fix Three.js aspect ratios
+      }
+    }
+
+    function observeSection(sec) {
+      const scroller = window.innerWidth > 920 ? document.querySelector('.notebook-panel') : null;
+      const options = {
+        root: scroller || null,
+        threshold: 0.25
+      };
+      
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target);
+          }
+        });
+      }, options);
+      
+      io.observe(sec);
+      return io;
+    }
+
+    let sectionObservers = [];
+
+    function initObservers() {
+      sectionObservers.forEach(io => io.disconnect());
+      sectionObservers = [];
+      notebookSections.forEach(sec => {
+        sectionObservers.push(observeSection(sec));
+      });
+    }
+
+    initObservers();
+
+    /* ══════════════════════════════════════
+       MOBILE RESPONSIVE ELEMENT RELOCATION
+       ══════════════════════════════════════ */
+    let wasDesktop = window.innerWidth > 920;
+
+    const relocateDemos = () => {
+      const isMobile = window.innerWidth <= 920;
+      const isDesktop = !isMobile;
+      
+      if (isDesktop !== wasDesktop) {
+        wasDesktop = isDesktop;
+        initObservers();
+      }
+
+      // Relocate Shared Canvas Panel
+      const demoCrystal = document.getElementById('demo-crystal');
+      if (isMobile) {
+        const activeDemoNum = parseInt(currentActiveSec?.dataset.demo || 1);
+        const targetNum = (activeDemoNum >= 1 && activeDemoNum <= 4) ? activeDemoNum : 1;
+        const mobContainer = document.getElementById(`mob-demo-${targetNum}`);
+        if (mobContainer && demoCrystal.parentElement !== mobContainer) {
+          mobContainer.appendChild(demoCrystal);
+        }
+      } else {
+        const deskContainer = document.getElementById('desk-demo-1');
+        if (deskContainer && demoCrystal.parentElement !== deskContainer) {
+          deskContainer.appendChild(demoCrystal);
+        }
+      }
+
+      // Relocate Static Welcome (0) and Quiz (5)
+      const staticDemos = [0, 5];
+      staticDemos.forEach(num => {
+        const demo = document.getElementById(`demo-${num}`);
+        if (!demo) return;
+
+        if (isMobile) {
+          const mobContainer = document.getElementById(`mob-demo-${num === 0 ? '1' : num}`);
+          // For welcome (0), put it in mob-demo-1 or keep it hidden depending on section.
+          // Usually welcome page doesn't show separately on mobile as it merges into layout flow.
+          if (num === 5 && mobContainer && demo.parentElement !== mobContainer) {
+            mobContainer.appendChild(demo);
+          }
+        } else {
+          const deskContainer = document.getElementById(`desk-demo-${num}`);
+          if (deskContainer && demo.parentElement !== deskContainer) {
+            deskContainer.appendChild(demo);
+          }
+        }
+      });
+      
+      if (isMobile) {
+        notebookSections.forEach((s) => {
+          const targets = Array.from(s.children).filter(c => !c.classList.contains('mobile-demo-placeholder'));
+          targets.forEach(t => t.style.opacity = ''); // Reset inline opacities
+        });
+      }
+      setTimeout(resize, 100);
+    };
+
+    window.addEventListener('resize', relocateDemos);
+    setTimeout(relocateDemos, 150);
+
+    /* ══════════════════════════════════════════
+       INTERACTIVE QUIZ LOGIC
+       ══════════════════════════════════════════ */
+    const QUIZ_QUESTIONS = [
+      {
+        q: "Kiểu mạng tinh thể nào sau đây có độ chặt khít lý thuyết lớn nhất (74.0%)?",
+        opts: ["Lập phương đơn giản (SC)", "Lập phương tâm khối (BCC)", "Lập phương tâm diện (FCC) và Lục phương chặt khít (HCP)", "Chỉ có mạng tinh thể Lập phương tâm diện (FCC)"],
+        correct: 2,
+        exp: "Cả mạng FCC và HCP đều có độ chặt khít quả cầu tối đa là 74.0% và số phối trí 12. Chúng chỉ khác nhau ở thứ tự xếp lớp chồng khít (ABCABC đối với FCC và ABABAB đối với HCP)."
+      },
+      {
+        q: "Số nguyên tử hiệu dụng quy về một ô cơ sở tinh thể Lập phương tâm khối (BCC) là bao nhiêu?",
+        opts: ["1 nguyên tử", "2 nguyên tử", "3 nguyên tử", "4 nguyên tử"],
+        correct: 1,
+        exp: "Mạng BCC có 8 nguyên tử ở đỉnh (mỗi góc chung 8 ô cơ sở khác) và 1 nguyên tử ở trung tâm (thuộc riêng ô cơ sở). Tổng số nguyên tử là: 8 × (1/8) + 1 = 2."
+      },
+      {
+        q: "Kim loại Đồng (Cu), Vàng (Au) và Nhôm (Al) kết tinh theo kiểu cấu trúc tinh thể nào?",
+        opts: ["Lập phương tâm khối (BCC)", "Lập phương tâm diện (FCC)", "Lập phương đơn giản (SC)", "Lục phương chặt khít (HCP)"],
+        correct: 1,
+        exp: "Các kim loại dẻo và dẫn điện tốt này đều có cấu trúc Lập phương tâm diện (FCC), cấu trúc này cung cấp nhiều hệ trượt tinh thể cho các lớp nguyên tử trượt lên nhau mà không đứt gãy liên kết."
+      },
+      {
+        q: "Số phối trí của một nguyên tử bất kỳ trong mạng tinh thể Lập phương đơn giản (SC) là bao nhiêu?",
+        opts: ["4", "6", "8", "12"],
+        correct: 1,
+        exp: "Trong mạng lập phương đơn giản, mỗi quả cầu ở góc tiếp xúc trực tiếp với 6 quả cầu lân cận gần nhất (4 ở cùng mặt, 1 trên, 1 dưới), do đó số phối trí bằng 6."
+      },
+      {
+        q: "Trong mạng lục phương chặt khít (HCP), 12 nguyên tử ở đỉnh lục lăng đóng góp bao nhiêu phần nguyên tử hiệu dụng vào một ô cơ sở?",
+        opts: ["1 nguyên tử", "2 nguyên tử", "3 nguyên tử", "6 nguyên tử"],
+        correct: 1,
+        exp: "Ở mạng HCP lăng trụ lục giác, mỗi nguyên tử ở đỉnh góc được chung bởi 6 ô lăng trụ khác nhau. Do đó, 12 nguyên tử đỉnh đóng góp: 12 × (1/6) = 2 nguyên tử vào mỗi ô cơ sở."
+      }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+    let answered = false;
+
+    const qNumText = document.getElementById('quiz-question-num');
+    const qProgressBar = document.getElementById('quiz-progress-bar');
+    const qText = document.getElementById('quiz-q-text');
+    const qOptionsBox = document.getElementById('quiz-options-box');
+    const qExplanationBox = document.getElementById('quiz-explanation-box');
+    const qNextBtn = document.getElementById('quiz-next-btn');
+    const qResultsPanel = document.getElementById('quiz-results');
+    const qQuestionCard = document.getElementById('quiz-question-card');
+    const qRestartBtn = document.getElementById('quiz-restart-btn');
+
+    function loadQuestion() {
+      answered = false;
+      qNextBtn.disabled = true;
+      qExplanationBox.style.display = 'none';
+      qExplanationBox.innerHTML = '';
+      
+      const question = QUIZ_QUESTIONS[currentQ];
+      qText.textContent = `${currentQ + 1}. ${question.q}`;
+      qNumText.textContent = `Câu hỏi ${currentQ + 1}/${QUIZ_QUESTIONS.length}`;
+      qProgressBar.style.width = `${((currentQ) / QUIZ_QUESTIONS.length) * 100}%`;
+
+      qOptionsBox.innerHTML = '';
+      question.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt-btn';
+        btn.type = 'button';
+        btn.textContent = opt;
+        btn.addEventListener('click', () => selectOption(idx, btn));
+        qOptionsBox.appendChild(btn);
+      });
+    }
+
+    function selectOption(idx, btn) {
+      if (answered) return;
+      answered = true;
+      
+      const question = QUIZ_QUESTIONS[currentQ];
+      const allButtons = qOptionsBox.querySelectorAll('.quiz-opt-btn');
+      allButtons.forEach(b => b.classList.add('checked'));
+
+      if (idx === question.correct) {
+        btn.classList.add('correct');
+        score++;
+      } else {
+        btn.classList.add('incorrect');
+        allButtons[question.correct].classList.add('correct');
+      }
+
+      qExplanationBox.style.display = 'block';
+      qExplanationBox.innerHTML = `<strong>Giải thích:</strong> ${question.exp}`;
+
+      qNextBtn.disabled = false;
+      if (currentQ === QUIZ_QUESTIONS.length - 1) {
+        qNextBtn.textContent = 'Xem kết quả';
+      } else {
+        qNextBtn.textContent = 'Câu tiếp theo';
+      }
+    }
+
+    qNextBtn.addEventListener('click', () => {
+      if (currentQ === QUIZ_QUESTIONS.length - 1) {
+        // Show results
+        qQuestionCard.style.display = 'none';
+        qNextBtn.style.display = 'none';
+        qResultsPanel.style.display = 'flex';
+        qProgressBar.style.width = '100%';
+        qNumText.textContent = 'Hoàn thành chuyên đề';
+
+        document.getElementById('score-num').textContent = `${score}/${QUIZ_QUESTIONS.length}`;
+        let headline = '';
+        let desc = '';
+        if (score === QUIZ_QUESTIONS.length) {
+          headline = 'Chuyên gia Mạng tinh thể!';
+          desc = 'Bạn đã nắm vững hoàn hảo từ số phối trí, độ chặt khít đến cấu trúc hình học chi tiết của các mạng tinh thể kim loại!';
+        } else if (score >= 3) {
+          headline = 'Kết quả rất tốt!';
+          desc = 'Bạn đã nắm rõ nguyên lý cơ bản của các cấu trúc tinh thể. Hãy xem lại phần giải thích cho câu chưa đúng nhé.';
+        } else {
+          headline = 'Cần luyện tập thêm!';
+          desc = 'Hãy đọc kỹ lại thông số ô cơ sở và xoay kỹ lại các mô hình 3D cắt lớp để hiểu sâu hơn.';
+        }
+        document.getElementById('result-headline').textContent = headline;
+        document.getElementById('result-desc').textContent = desc;
+      } else {
+        currentQ++;
+        loadQuestion();
+      }
+    });
+
+    qRestartBtn.addEventListener('click', () => {
+      currentQ = 0;
+      score = 0;
+      qQuestionCard.style.display = 'flex';
+      qNextBtn.style.display = 'block';
+      qResultsPanel.style.display = 'none';
+      loadQuestion();
+    });
+
+    loadQuestion();
+  </script>
+</body>
+</html>

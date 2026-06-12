@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="vi">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Learning Resources Hub</title>
+  <title>Mục Lục Hóa Học · Học Liệu Tương Tác</title>
   <link rel="stylesheet" href="colors_and_type.css"/>
 
   <style>
@@ -11,7 +11,7 @@
     html, body {
       height: 100vh; overflow: hidden;
       background: #1E1B18; color: #FBF4E4;
-      font-family: 'Times New Roman', Times, serif;
+      font-family: 'Itim', cursive;
     }
     ::selection { background: #F2B544; color: #1E1B18; }
 
@@ -82,9 +82,9 @@
     }
 
     .bookmarks {
-      position: absolute; top: 52px;
+      position: absolute; top: 32px;
       left: calc(var(--pw) * 2 - 4px);
-      display: flex; flex-direction: column; gap: 10px;
+      display: flex; flex-direction: column; gap: 8px;
       z-index: 2;
     }
 
@@ -113,7 +113,7 @@
       border: 1px solid rgba(251,244,228,0.16);
       background: rgba(30,27,24,0.82);
       color: #FBF4E4;
-      font-family: 'Times New Roman', Times, serif;
+      font-family: 'Itim', cursive;
       font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.04em;
@@ -163,7 +163,7 @@
 
   <script type="text/babel">
     const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-      "coverColor": "#C73C2E",
+      "coverColor": "#2F8F6F",
       "accentColor": "#F2B544"
     }/*EDITMODE-END*/;
 
@@ -176,33 +176,205 @@
       return [values, setTweak];
     }
 
-    const SUBJECTS_BASE = [
-      { id: 'math',      label: 'Math',      icon: 'π',  color: '#F2B544', deep: '#D89824',
-        chapters: ['Algebra Fundamentals', 'Calculus I & II', 'Linear Algebra', 'Probability & Statistics', 'Discrete Mathematics'] },
-      { id: 'physics',   label: 'Physics',   icon: '⚙',  color: '#6FB8D1', deep: '#3F8AAA',
-        chapters: ['Classical Mechanics', 'Electromagnetism', 'Thermodynamics', 'Waves & Optics', 'Modern Physics'] },
-      { id: 'chemistry', label: 'Chemistry', icon: '⚗',  color: '#2F8F6F', deep: '#1F6A52',
-        chapters: ['Atomic Structure', 'Chemical Bonding', 'Organic Chemistry', 'Reaction Kinetics', 'Analytical Methods', 'Bond Types and Intermolecular Forces', 'Chemical Equations and Conservation', 'Laboratory Simulation Game'] },
-      { id: 'biology',   label: 'Biology',   icon: '🧬',  color: '#D9633B', deep: '#B04A26',
-        chapters: ['Cell Biology', 'Genetics & DNA', 'Human Anatomy', 'Ecology & Environment', 'Evolutionary Biology'] },
-      { id: 'economics', label: 'Economics', icon: '📊',  color: '#E89BA8', deep: '#C76C7E',
-        chapters: ['Microeconomics', 'Macroeconomics', 'International Trade', 'Financial Markets', 'Development Economics'] },
+    const CHEMISTRY_CHAPTERS_VI = [
+      {
+        id: 'chuong-1',
+        label: 'Cấu trúc nguyên tử',
+        icon: '⚛',
+        color: '#2F8F6F',
+        deep: '#1F6A52',
+        url: 'chuong-cau-truc-nguyen-tu.html',
+        desc: 'Khám phá cấu tạo hạt nhân (proton, neutron) và lớp vỏ electron chuyển động xung quanh tạo nên thế giới vi mô.',
+        sections: ['1. Thành phần nguyên tử', '2. Điện tích & Kích thước', '3. Lớp vỏ electron', '4. Thực hành mô phỏng 3D']
+      },
+      {
+        id: 'chuong-2',
+        label: 'Bảng tuần hoàn',
+        icon: '🗂',
+        color: '#F2B544',
+        deep: '#D89824',
+        url: 'chuong-bang-tuan-hoan.html',
+        desc: 'Tìm hiểu quy luật sắp xếp 118 nguyên tố hóa học, ý nghĩa chu kì, nhóm và các xu hướng tuần hoàn của bán kính, tính kim loại.',
+        sections: ['1. Ô nguyên tố hóa học', '2. Chu kì & Lớp vỏ electron', '3. Xu hướng biến đổi tuần hoàn', '4. Bảng 118 nguyên tố đầy đủ']
+      },
+      {
+        id: 'chuong-3',
+        label: 'Liên kết hóa học',
+        icon: '🤝',
+        color: '#6FB8D1',
+        deep: '#3F8AAA',
+        url: 'chuong-cac-loai-lien-ket.html',
+        desc: 'Nghiên cứu cơ chế hình thành liên kết ion, liên kết cộng hóa trị phân cực/không cực, liên kết kim loại và các tương tác liên phân tử.',
+        sections: ['1. Ba loại liên kết chính', '2. Tương tác yếu & liên kết hydro', '3. Hiệu độ âm điện & liên kết', '4. Trắc nghiệm kiểm tra nhanh']
+      },
+      {
+        id: 'chuong-4',
+        label: 'Quy tắc octet',
+        icon: '🎱',
+        color: '#D9633B',
+        deep: '#B04A26',
+        url: 'chuong-lien-ket-octet.html',
+        desc: 'Giải thích xu hướng của các nguyên tử góp chung electron để đạt cấu hình ngoài cùng bền vững qua mô hình Lewis và orbital lai hóa.',
+        sections: ['1. Kí hiệu Lewis nguyên tử', '2. Công thức Lewis phân tử', '3. Lai hóa orbital (sp, sp², sp³)', '4. Liên kết Sigma (σ) & Pi (π)', '5. Trắc nghiệm ôn tập']
+      },
+      {
+        id: 'chuong-5',
+        label: 'Phương trình hóa học',
+        icon: '📝',
+        color: '#E89BA8',
+        deep: '#C76C7E',
+        url: 'chuong-phuong-trinh-hoa-hoc.html',
+        desc: 'Hướng dẫn cách biểu diễn phản ứng hóa học, áp dụng định luật bảo toàn khối lượng và phương pháp cân bằng phản ứng trực quan.',
+        sections: ['1. Biểu diễn phản ứng', '2. Cân bằng phương trình', '3. Định luật bảo toàn nguyên tố', '4. Trò chơi cân bằng phản ứng']
+      },
+      {
+        id: 'chuong-6',
+        label: 'Trạng thái chất',
+        icon: '🌡️',
+        color: '#9D8EC3',
+        deep: '#7968A7',
+        url: 'chuong-trang-thai-chat.html',
+        desc: 'Tìm hiểu đặc trưng cấu trúc hạt và tính chất vĩ mô của ba trạng thái Rắn, Lỏng, Khí cùng các quá trình chuyển pha trạng thái.',
+        sections: ['1. Trạng thái rắn (Solid)', '2. Trạng thái lỏng (Liquid)', '3. Trạng thái khí (Gas)', '4. So sánh tổng hợp', '5. Chuyển pha trạng thái']
+      },
+      {
+        id: 'chuong-7',
+        label: 'Phòng thí nghiệm',
+        icon: '🎮',
+        color: '#5A4632',
+        deep: '#3E301F',
+        url: 'chuong-phong-thi-nghiem.html',
+        desc: 'Trải nghiệm phòng thí nghiệm hóa học ảo tương tác: tự do thực hiện các phản ứng hóa học thú vị và an toàn ngay trên màn hình.',
+        sections: ['1. Dụng cụ & Hóa chất ảo', '2. Thực hành phản ứng', '3. Trò chơi hóa học', '4. Hướng dẫn thí nghiệm']
+      },
+      {
+        id: 'chuong-8',
+        label: 'Chuyên đề: Nhôm (Al)',
+        icon: '💿',
+        color: '#8A7E6C',
+        deep: '#5A4632',
+        url: 'chuong-nhom.html',
+        desc: 'Chuyên đề nghiên cứu sâu về nguyên tố Nhôm (Al): cấu trúc nguyên tử, tính chất vật lý mạng tinh thể FCC, quy trình điện phân bauxite và ứng dụng.',
+        sections: ['1. Cấu trúc nguyên tử', '2. Tinh thể lập phương FCC', '3. Điện phân quặng Bauxite', '4. Thụ động hóa & Ứng dụng', '5. Trắc nghiệm chuyên đề']
+      },
+      {
+        id: 'chuong-9',
+        label: 'Cấu trúc tinh thể',
+        icon: '💎',
+        color: '#556B2F',
+        deep: '#3F4F2F',
+        url: 'chuong-cau-truc-tinh-the.html',
+        desc: 'Khám phá cấu trúc sắp xếp các nguyên tử tinh thể kim loại phổ biến (SC, BCC, FCC, HCP) qua mô phỏng 3D tương tác và cắt lớp ô cơ sở.',
+        sections: ['1. Mạng Lập phương đơn giản (SC)', '2. Mạng Lập phương tâm khối (BCC)', '3. Mạng Lập phương tâm diện (FCC)', '4. Mạng Lục phương chặt khít (HCP)', '5. Trắc nghiệm tinh thể học']
+      }
+    ];
+
+    const CHEMISTRY_CHAPTERS_EN = [
+      {
+        id: 'chuong-1',
+        label: 'Atomic Structure',
+        icon: '⚛',
+        color: '#2F8F6F',
+        deep: '#1F6A52',
+        url: 'chuong-cau-truc-nguyen-tu.html',
+        desc: 'Explore the microscopic structure of atoms: the nucleus containing protons and neutrons, and the orbiting electron shell.',
+        sections: ['1. Atomic Components', '2. Charges & Dimensions', '3. Electron Shell Structure', '4. 3D Simulation Practice']
+      },
+      {
+        id: 'chuong-2',
+        label: 'Periodic Table',
+        icon: '🗂',
+        color: '#F2B544',
+        deep: '#D89824',
+        url: 'chuong-bang-tuan-hoan.html',
+        desc: 'Learn the organization of the 118 chemical elements, the meaning of periods and groups, and periodic trends like atomic radius.',
+        sections: ['1. The Chemical Element Cell', '2. Periods & Electron Shells', '3. Periodic Trend Heatmaps', '4. 118 Elements Full Table']
+      },
+      {
+        id: 'chuong-3',
+        label: 'Chemical Bonding',
+        icon: '🤝',
+        color: '#6FB8D1',
+        deep: '#3F8AAA',
+        url: 'chuong-cac-loai-lien-ket.html',
+        desc: 'Investigate the mechanisms of ionic, polar and nonpolar covalent bonds, metallic bonds, and weak intermolecular forces.',
+        sections: ['1. Three Primary Bond Types', '2. Weak Forces & Hydrogen Bonds', '3. Electronegativity Difference', '4. Quick Review Quiz']
+      },
+      {
+        id: 'chuong-4',
+        label: 'Octet Rule',
+        icon: '🎱',
+        color: '#D9633B',
+        deep: '#B04A26',
+        url: 'chuong-lien-ket-octet.html',
+        desc: 'Explain the tendency of atoms to share electrons to achieve stable configurations using Lewis structures and hybridized orbitals.',
+        sections: ['1. Lewis Dot Symbols', '2. Lewis Structures', '3. Orbital Hybridization', '4. Sigma (σ) & Pi (π) Bonds', '5. Conceptual Review Quiz']
+      },
+      {
+        id: 'chuong-5',
+        label: 'Chemical Equations',
+        icon: '📝',
+        color: '#E89BA8',
+        deep: '#C76C7E',
+        url: 'chuong-phuong-trinh-hoa-hoc.html',
+        desc: 'Understand how to write chemical reactions, apply the law of conservation of mass, and balance chemical equations.',
+        sections: ['1. Representing Reactions', '2. Balancing Chemical Equations', '3. Element Conservation Law', '4. Interactive Balancing Game']
+      },
+      {
+        id: 'chuong-6',
+        label: 'States of Matter',
+        icon: '🌡️',
+        color: '#9D8EC3',
+        deep: '#7968A7',
+        url: 'chuong-trang-thai-chat.html',
+        desc: 'Explore the microscopic structures and macroscopic behaviors of Solids, Liquids, and Gases, along with phase transitions.',
+        sections: ['1. Solid State', '2. Liquid State', '3. Gas State', '4. Comparative Analysis', '5. Phase Transitions']
+      },
+      {
+        id: 'chuong-7',
+        label: 'Laboratory',
+        icon: '🎮',
+        color: '#5A4632',
+        deep: '#3E301F',
+        url: 'chuong-phong-thi-nghiem.html',
+        desc: 'Experience a fully interactive virtual chemistry lab: perform exciting, safe chemical reactions directly on screen.',
+        sections: ['1. Virtual Tools & Reagents', '2. Interactive Experiments', '3. Chemistry Puzzle Minigame', '4. Safety & Guidelines']
+      },
+      {
+        id: 'chuong-8',
+        label: 'Specialized: Aluminum (Al)',
+        icon: '💿',
+        color: '#8A7E6C',
+        deep: '#5A4632',
+        url: 'chuong-nhom.html',
+        desc: 'In-depth monograph on Aluminum (Al): atomic orbits, 3D FCC crystal lattice, Hall-Héroult electrolysis, passivation layer, and real-world applications.',
+        sections: ['1. Atomic Structure & Bohr', '2. FCC Crystal Lattice', '3. Bauxite Smelting Cell', '4. Passivation & Industry', '5. specialized Monograph Quiz']
+      },
+      {
+        id: 'chuong-9',
+        label: 'Crystal Structures',
+        icon: '💎',
+        color: '#556B2F',
+        deep: '#3F4F2F',
+        url: 'chuong-cau-truc-tinh-the.html',
+        desc: 'Explore the spatial arrangement of metal crystals (SC, BCC, FCC, HCP) using interactive 3D WebGL lattices and sliced unit cell visualization.',
+        sections: ['1. Simple Cubic Lattice (SC)', '2. Body-Centered Cubic (BCC)', '3. Face-Centered Cubic (FCC)', '4. Hexagonal Close-Packed (HCP)', '5. Crystal Lattice Quiz']
+      }
     ];
 
     const I18N = {
       vi: {
         langCode: 'VI',
         langSwitch: 'EN',
-        brand: 'LR Hub',
-        hint: 'Chọn tab để mở môn học →',
+        brand: 'Mục lục Hóa Học',
+        hint: 'Chọn tab để xem chương học →',
         closeBook: '← Đóng sách',
-        coverTitle: 'Trung Tâm Tài Nguyên Học Tập',
-        coverSub: 'Giáo trình · Tập 1',
-        toc: 'Mục lục',
-        startReading: 'Bắt đầu đọc →',
-        openChapter: 'Mở chương {n} →',
-        chaptersInside: 'chương bên trong',
-        intro: 'Lộ trình học đầy đủ cho {subject} — từ nền tảng đến nâng cao, được sắp xếp theo từng chương.',
+        coverTitle: 'Sổ Tay Hóa Học Tương Tác',
+        coverSub: 'Mục lục chương trình học',
+        toc: 'Nội dung chương',
+        startReading: 'Bắt đầu học →',
+        openChapter: 'Bắt đầu học →',
+        chaptersInside: 'phần học chính',
         tweaksTitle: 'Tinh chỉnh',
         tweaksCover: 'Bìa sách',
         tweaksAccent: 'Màu nhấn',
@@ -211,16 +383,15 @@
       en: {
         langCode: 'EN',
         langSwitch: 'VI',
-        brand: 'LR Hub',
-        hint: 'Pick a tab to open your subject →',
+        brand: 'Chemistry Index',
+        hint: 'Pick a tab to view chapter →',
         closeBook: '← Close book',
-        coverTitle: 'Learning Resources Hub',
-        coverSub: 'Curriculum · Vol. 1',
-        toc: 'Table of Contents',
+        coverTitle: 'Interactive Chemistry Notebook',
+        coverSub: 'Interactive Table of Contents',
+        toc: 'Chapter Sections',
         startReading: 'Start Reading →',
-        openChapter: 'Open Chapter {n} →',
-        chaptersInside: 'chapters inside',
-        intro: 'A complete reading path through {subject} — from foundations to advanced topics, organized chapter by chapter.',
+        openChapter: 'Start Reading →',
+        chaptersInside: 'key sections',
         tweaksTitle: 'Tweaks',
         tweaksCover: 'Cover',
         tweaksAccent: 'Accent',
@@ -228,61 +399,13 @@
       },
     };
 
-    const SUBJECT_TRANSLATIONS = {
-      vi: {
-        math: {
-          label: 'Toán học',
-          chapters: ['Nền tảng Đại số', 'Giải tích I & II', 'Đại số tuyến tính', 'Xác suất & Thống kê', 'Toán rời rạc'],
-        },
-        physics: {
-          label: 'Vật lý',
-          chapters: ['Cơ học cổ điển', 'Điện từ học', 'Nhiệt động lực học', 'Sóng & Quang học', 'Vật lý hiện đại'],
-        },
-        chemistry: {
-          label: 'Hóa học',
-          chapters: ['Cấu trúc nguyên tử', 'Liên kết hóa học', 'Hóa hữu cơ', 'Động học phản ứng', 'Phương pháp phân tích', 'Các loại liên kết và tương tác phân tử', 'Phương trình hóa học và bảo toàn nguyên tố', 'Phòng thí nghiệm mô phỏng'],
-        },
-        biology: {
-          label: 'Sinh học',
-          chapters: ['Sinh học tế bào', 'Di truyền & DNA', 'Giải phẫu người', 'Sinh thái & Môi trường', 'Tiến hóa sinh học'],
-        },
-        economics: {
-          label: 'Kinh tế học',
-          chapters: ['Kinh tế vi mô', 'Kinh tế vĩ mô', 'Thương mại quốc tế', 'Thị trường tài chính', 'Kinh tế phát triển'],
-        },
-      },
-    };
-
-    function getSubjectsByLang(lang) {
-      const dict = SUBJECT_TRANSLATIONS[lang];
-      if (!dict) return SUBJECTS_BASE;
-      return SUBJECTS_BASE.map((s) => {
-        const tr = dict[s.id];
-        if (!tr) return s;
-        return { ...s, label: tr.label || s.label, chapters: tr.chapters || s.chapters };
-      });
-    }
-
-    // Map chương đã có nội dung — bấm vào sẽ mở trang riêng.
-    const CHAPTER_LINKS = {
-      chemistry: {
-        0: 'chuong-cau-truc-nguyen-tu.html',
-        1: 'chuong-lien-ket-octet.html',
-        5: 'chuong-cac-loai-lien-ket.html',
-        6: 'chuong-phuong-trinh-hoa-hoc.html',
-        7: 'chuong-phong-thi-nghiem.html',
-      },
-    };
-    const hasChapterPage = (subjectId, chapterIndex) =>
-      !!(CHAPTER_LINKS[subjectId] && CHAPTER_LINKS[subjectId][chapterIndex]);
-    const openChapterPage = (subjectId, chapterIndex) => {
-      const url = CHAPTER_LINKS[subjectId] && CHAPTER_LINKS[subjectId][chapterIndex];
+    const openChapterPage = (url) => {
       if (url) window.location.href = url;
     };
 
     function darken(hex) {
       const map = { '#C73C2E':'#9E2E22', '#2F8F6F':'#1F6A52', '#3A4A6B':'#28324A', '#5A4632':'#3E301F', '#F2B544':'#D89824' };
-      return map[hex] || '#9E2E22';
+      return map[hex] || '#1F6A52';
     }
 
     /* ---- Bookmark tab (horizontal, on the book's fore-edge) ---- */
@@ -296,7 +419,7 @@
           onMouseLeave={() => setHov(false)}
           style={{
             display: 'flex', alignItems: 'center', gap: 10,
-            height: 46, padding: '0 18px 0 14px',
+            height: 40, padding: '0 18px 0 14px',
             background: subject.color,
             border: 'none',
             borderRadius: '0 12px 12px 0',
@@ -312,14 +435,14 @@
           }}
         >
           <span style={{
-            width: 26, height: 26, borderRadius: 7,
+            width: 24, height: 24, borderRadius: 6,
             background: 'rgba(0,0,0,0.12)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 15, flexShrink: 0,
+            fontSize: 14, flexShrink: 0,
           }}>{subject.icon}</span>
           <span style={{
-            fontFamily: "'Times New Roman', Times, serif",
-            fontSize: 14, fontWeight: isActive ? 700 : 600,
+            fontFamily: "'Itim', cursive",
+            fontSize: 13, fontWeight: isActive ? 700 : 600,
             color: '#1E1B18',
           }}>{subject.label}</span>
         </button>
@@ -340,8 +463,8 @@
             margin: '90px 36px 0 64px', padding: '26px 26px 22px',
             background: '#FBF4E4', borderRadius: 8, boxShadow: '0 8px 20px -8px rgba(0,0,0,0.4)',
           }}>
-            <h1 style={{ fontFamily: "'Times New Roman', Times, serif", fontWeight: 700, fontSize: 38, lineHeight: 1, color: '#2A2520', margin: 0 }}>{t.coverTitle}</h1>
-            <p style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8A7E6C', margin: '10px 0 0' }}>{t.coverSub}</p>
+            <h1 style={{ fontFamily: "'Itim', cursive", fontWeight: 700, fontSize: 38, lineHeight: 1.1, color: '#2A2520', margin: 0 }}>{t.coverTitle}</h1>
+            <p style={{ fontFamily: "'Itim', cursive", fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8A7E6C', margin: '10px 0 0' }}>{t.coverSub}</p>
           </div>
           <div style={{ marginTop: 'auto', marginBottom: 34, marginLeft: 64, display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 32, height: 32, borderRadius: 9, background: accentColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -350,7 +473,7 @@
                 <rect x="7" y="1" width="13" height="17" rx="2" fill="#1E1B18" opacity="0.65"/>
               </svg>
             </div>
-            <span style={{ fontFamily: "'Times New Roman', Times, serif", fontWeight: 700, fontSize: 22, color: '#FBF4E4' }}>{t.brand}</span>
+            <span style={{ fontFamily: "'Itim', cursive", fontWeight: 700, fontSize: 22, color: '#FBF4E4' }}>{t.brand}</span>
           </div>
         </div>
       );
@@ -368,42 +491,41 @@
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32,
             boxShadow: `0 10px 24px -8px ${subject.color}88`,
           }}>{subject.icon}</div>
-          <h2 style={{ fontFamily: "'Times New Roman', Times, serif", fontWeight: 700, fontSize: 52, lineHeight: 0.95, color: '#2A2520', margin: '26px 0 0' }}>{subject.label}</h2>
+          <h2 style={{ fontFamily: "'Itim', cursive", fontWeight: 700, fontSize: 36, lineHeight: 1.1, color: '#2A2520', margin: '26px 0 0' }}>{subject.label}</h2>
           <div style={{ width: 50, height: 4, borderRadius: 2, background: subject.color, margin: '18px 0 20px' }} />
-          <p style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: 15, lineHeight: 1.65, color: '#6B5F4E', margin: 0 }}>
-            {t.intro.replace('{subject}', subject.label.toLowerCase())}
+          <p style={{ fontFamily: "'Itim', cursive", fontSize: 15, lineHeight: 1.65, color: '#6B5F4E', margin: 0 }}>
+            {subject.desc}
           </p>
           <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'baseline', gap: 8 }}>
-            <span style={{ fontFamily: "'Times New Roman', Times, serif", fontWeight: 700, fontSize: 44, color: subject.color, lineHeight: 1 }}>{subject.chapters.length}</span>
-            <span style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: 13, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#8A7E6C' }}>{t.chaptersInside}</span>
+            <span style={{ fontFamily: "'Itim', cursive", fontWeight: 700, fontSize: 44, color: subject.color, lineHeight: 1 }}>{subject.sections.length}</span>
+            <span style={{ fontFamily: "'Itim', cursive", fontSize: 13, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#8A7E6C' }}>{t.chaptersInside}</span>
           </div>
         </div>
       );
     }
 
     /* ---- Right page — Table of Contents ---- */
-    function TableOfContents({ subject, activeChapter, onSelectChapter, t }) {
+    function TableOfContents({ subject, activeSection, onSelectSection, t }) {
       return (
         <div key={subject.id} className="fade-content" style={{
           width: '100%', height: '100%', padding: '44px 40px 36px',
           display: 'flex', flexDirection: 'column', color: '#2A2520',
         }}>
-          <p style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#8A7E6C', margin: 0 }}>{t.toc}</p>
-          <h3 style={{ fontFamily: "'Times New Roman', Times, serif", fontWeight: 700, fontSize: 34, color: '#2A2520', margin: '2px 0 0', lineHeight: 1 }}>{subject.label}</h3>
+          <p style={{ fontFamily: "'Itim', cursive", fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#8A7E6C', margin: 0 }}>{t.toc}</p>
+          <h3 style={{ fontFamily: "'Itim', cursive", fontWeight: 700, fontSize: 30, color: '#2A2520', margin: '2px 0 0', lineHeight: 1.1 }}>{subject.label}</h3>
           <div style={{ margin: '18px 0 14px', height: 2, backgroundImage: 'repeating-linear-gradient(90deg, #D8CBAF 0 6px, transparent 6px 12px)' }} />
           <div className="toc-scroll" style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-            {subject.chapters.map((ch, i) => {
-              const active = activeChapter === i;
-              const hasPage = hasChapterPage(subject.id, i);
+            {subject.sections.map((sec, i) => {
+              const active = activeSection === i;
               return (
                 <button key={i} onClick={() => {
-                  onSelectChapter(i);
-                  if (hasPage) openChapterPage(subject.id, i);
+                  onSelectSection(i);
+                  openChapterPage(subject.url);
                 }} style={{
                   display: 'flex', alignItems: 'center', gap: 14, padding: '11px 10px',
                   background: active ? subject.color + '22' : 'transparent',
                   border: 'none', borderRadius: 8, cursor: 'pointer', textAlign: 'left',
-                  transition: 'all .18s ease', fontFamily: "'Times New Roman', Times, serif",
+                  transition: 'all .18s ease', fontFamily: "'Itim', cursive",
                 }}
                   onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
                   onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}
@@ -415,28 +537,24 @@
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontWeight: 700, fontSize: 14, transition: 'all .18s ease',
                   }}>{i + 1}</span>
-                  <span style={{ fontSize: 15, fontWeight: active ? 700 : 500, color: '#2A2520', flex: 1 }}>{ch}</span>
-                  {hasPage
-                    ? <span style={{ fontSize: 10, fontWeight: 700, color: subject.deep, background: subject.color + '33', padding: '3px 8px', borderRadius: 999, letterSpacing: '0.06em', textTransform: 'uppercase' }}>3D</span>
-                    : <span style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: 14, color: '#B0A488' }}>{(i + 1) * 12}</span>}
+                  <span style={{ fontSize: 15, fontWeight: active ? 700 : 500, color: '#2A2520', flex: 1 }}>{sec}</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: subject.deep, background: subject.color + '33', padding: '3px 8px', borderRadius: 999, letterSpacing: '0.06em', textTransform: 'uppercase' }}>3D</span>
                 </button>
               );
             })}
           </div>
           <button onClick={() => {
-            const idx = activeChapter == null ? 0 : activeChapter;
-            if (hasChapterPage(subject.id, idx)) openChapterPage(subject.id, idx);
-            else onSelectChapter(idx);
+            openChapterPage(subject.url);
           }} style={{
             marginTop: 14, padding: '13px 0', background: subject.color, color: '#1E1B18',
             border: 'none', borderRadius: 10, cursor: 'pointer',
-            fontFamily: "'Times New Roman', Times, serif", fontSize: 15, fontWeight: 700,
+            fontFamily: "'Itim', cursive", fontSize: 15, fontWeight: 700,
             boxShadow: `0 8px 20px -8px ${subject.color}`, transition: 'transform .15s ease',
           }}
             onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
             onMouseLeave={e => e.currentTarget.style.transform = 'none'}
           >
-            {activeChapter == null ? t.startReading : t.openChapter.replace('{n}', activeChapter + 1)}
+            {t.startReading}
           </button>
         </div>
       );
@@ -447,36 +565,36 @@
       const [tweaks, setTweak] = useTweaksSafe(TWEAK_DEFAULTS);
       const [lang, setLang] = React.useState('vi');
       const [open, setOpen] = React.useState(false);
-      const [subjectId, setSubjectId] = React.useState(null);
-      const [activeChapter, setActiveChapter] = React.useState(null);
+      const [chapterId, setChapterId] = React.useState(null);
+      const [activeSection, setActiveSection] = React.useState(null);
       const hasTweaksUI = typeof TweaksPanel !== 'undefined'
         && typeof TweakSection !== 'undefined'
         && typeof TweakColor !== 'undefined';
 
       const t = I18N[lang] || I18N.en;
-      const SUBJECTS = React.useMemo(() => getSubjectsByLang(lang), [lang]);
+      const CHAPTERS = React.useMemo(() => {
+        return lang === 'vi' ? CHEMISTRY_CHAPTERS_VI : CHEMISTRY_CHAPTERS_EN;
+      }, [lang]);
 
-      const subject = SUBJECTS.find(s => s.id === subjectId) || SUBJECTS[0];
+      const subject = CHAPTERS.find(s => s.id === chapterId) || CHAPTERS[0];
 
-      const chooseBookmark = (id) => { setActiveChapter(null); setSubjectId(id); setOpen(true); };
+      const chooseBookmark = (id) => { setActiveSection(null); setChapterId(id); setOpen(true); };
       const closeBook = () => setOpen(false);
 
-      // Imperative open/close animation (Web Animations API) — robust against
-      // CSS-transition baseline quirks under React commits.
+      // Web Animations API for smooth cover open/close
       const firstRun = React.useRef(true);
       React.useEffect(() => {
         const book  = document.querySelector('.book');
         const cover = document.querySelector('.cover');
         const lp    = document.querySelector('.left-page');
-        const bm    = document.querySelector('.bookmarks');
         const inner = document.querySelector('.cover-inner-wrap');
-        if (!book || !cover || !lp || !bm) return;
+        if (!book || !cover || !lp) return;
         const ease = 'cubic-bezier(.66,0,.2,1)';
         const opt = (d, delay) => ({ duration: d, delay: delay || 0, easing: ease, fill: 'both' });
 
         if (firstRun.current) {
           firstRun.current = false;
-          if (!open) return; // nothing to animate on first paint (starts closed)
+          if (!open) return;
         }
 
         if (open) {
@@ -521,21 +639,21 @@
                   <rect x="7" y="1" width="13" height="17" rx="2" fill="#1E1B18" opacity="0.65"/>
                 </svg>
               </div>
-              <span style={{ fontFamily: "'Times New Roman', Times, serif", fontWeight: 700, fontSize: 22 }}>{t.brand}</span>
+              <span style={{ fontFamily: "'Itim', cursive", fontWeight: 700, fontSize: 22 }}>{t.brand}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, pointerEvents: 'auto' }}>
               <button onClick={() => setLang(prev => prev === 'vi' ? 'en' : 'vi')} style={{
                 padding: '9px 14px', background: 'rgba(251,244,228,0.08)',
                 border: '1px solid rgba(251,244,228,0.12)', borderRadius: 10,
                 cursor: 'pointer', color: '#FBF4E4',
-                fontFamily: "'Times New Roman', Times, serif", fontSize: 13, fontWeight: 700,
+                fontFamily: "'Itim', cursive", fontSize: 13, fontWeight: 700,
               }}>{t.langCode} | {t.langSwitch}</button>
               <button onClick={closeBook} style={{
                 opacity: open ? 1 : 0, pointerEvents: open ? 'auto' : 'none',
                 display: 'flex', alignItems: 'center', gap: 8, padding: '9px 18px',
                 background: 'rgba(251,244,228,0.08)', border: '1px solid rgba(251,244,228,0.12)',
                 borderRadius: 10, cursor: 'pointer', color: '#FBF4E4',
-                fontFamily: "'Times New Roman', Times, serif", fontSize: 14, fontWeight: 600,
+                fontFamily: "'Itim', cursive", fontSize: 14, fontWeight: 600,
                 transition: 'opacity .4s ease',
               }}>{t.closeBook}</button>
             </div>
@@ -546,7 +664,7 @@
             position: 'absolute', bottom: 48, left: 0, right: 0, textAlign: 'center', zIndex: 20,
             opacity: open ? 0 : 1, transition: 'opacity .5s ease', pointerEvents: 'none',
           }}>
-            <p style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: 26, color: 'rgba(251,244,228,0.55)', margin: 0 }}>{t.hint}</p>
+            <p style={{ fontFamily: "'Itim', cursive", fontSize: 26, color: 'rgba(251,244,228,0.55)', margin: 0 }}>{t.hint}</p>
           </div>
 
           {/* Scene */}
@@ -554,14 +672,14 @@
             <div className="book">
               <div className="page-stack" />
 
-              {/* Left page (subject intro) */}
+              {/* Left page */}
               <div className="left-page">
                 <LeftPage subject={subject} t={t} />
               </div>
 
-              {/* Right page (TOC) */}
+              {/* Right page */}
               <div className="right-page">
-                <TableOfContents subject={subject} activeChapter={activeChapter} onSelectChapter={setActiveChapter} t={t} />
+                <TableOfContents subject={subject} activeSection={activeSection} onSelectSection={setActiveSection} t={t} />
               </div>
 
               {/* Cover */}
@@ -573,19 +691,19 @@
 
               {/* Bookmarks */}
               <div className="bookmarks">
-                {SUBJECTS.map(s => (
-                  <Bookmark key={s.id} subject={s} isOpen={open} isActive={open && s.id === subjectId} onClick={chooseBookmark} />
+                {CHAPTERS.map(ch => (
+                  <Bookmark key={ch.id} subject={ch} isOpen={open} isActive={open && ch.id === chapterId} onClick={chooseBookmark} />
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Render tweaks UI only when tweaks runtime is available. */}
+          {/* Render tweaks UI */}
           {hasTweaksUI && (
             <TweaksPanel title={t.tweaksTitle}>
               <TweakSection title={t.tweaksCover}>
                 <TweakColor label={t.tweaksColor} value={tweaks.coverColor} onChange={v => setTweak('coverColor', v)}
-                  options={['#C73C2E', '#2F8F6F', '#3A4A6B', '#5A4632']} />
+                  options={['#2F8F6F', '#3A4A6B', '#5A4632', '#C73C2E']} />
               </TweakSection>
               <TweakSection title={t.tweaksAccent}>
                 <TweakColor label={t.tweaksColor} value={tweaks.accentColor} onChange={v => setTweak('accentColor', v)}

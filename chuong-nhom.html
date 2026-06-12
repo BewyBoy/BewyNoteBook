@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chuyên đề: Nhôm (Al) — Kim loại của Kỷ nguyên Hiện đại</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SPLIT NOTEBOOK & LAB BENCH SYSTEM
+    ══════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:        #FBF4E4;
+      --paper-dark:   #F2E7CE;
+      --ink:          #2A2520;
+      --ink-mid:      #4D4439;
+      --ink-light:    #8A7E6C;
+      --red-margin:   #C73C2E;
+      --blue-line:    rgba(111, 184, 209, 0.25);
+      --accent:       #D9633B;       /* terracotta */
+      --accent-blue:  #1F6A52;       /* jade deep */
+      --highlight-y:  rgba(242, 181, 68, 0.40);
+      --highlight-g:  rgba(47, 143, 111, 0.25);
+      --line-h:       30px;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #8B7355;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #9E8565 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #6B5540 0%, transparent 50%),
+        repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+      color: var(--ink);
+      font-family: 'Itim', cursive;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    .scrolly-container {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Left Side - School Notebook */
+    .notebook-panel {
+      width: 50%;
+      position: relative;
+      background-color: var(--paper);
+      box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+      z-index: 5;
+    }
+
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(90deg, transparent 71px, var(--red-margin) 71px, var(--red-margin) 73px, transparent 73px),
+        repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
+      background-attachment: local;
+      background-position: 0 0, 0 22px;
+    }
+
+    .hero {
+      padding: 90px 40px 40px 96px;
+      border-bottom: 2px solid rgba(42,37,32,0.12);
+      position: relative; overflow: hidden;
+      scroll-snap-align: start;
+    }
+    .hero::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #8B7355 0%, #8B7355 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+    .crumb { font-size: 12px; letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: 30px; line-height: 30px; }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+    .title { font-family: 'Pacifico', cursive; font-size: clamp(32px, 4.5vw, 60px); line-height: 65px; color: var(--ink); margin-bottom: 30px; font-weight: 700; }
+    .title-stroke { width: clamp(140px, 30vw, 300px); height: 3px; background: var(--accent); border-radius: 2px; margin-top: -15px; margin-bottom: 12px; }
+    .subtitle { font-family: 'Itim', cursive; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-blue); margin-bottom: 30px; line-height: 30px; }
+    .intro { max-width: 800px; font-size: 15px; line-height: var(--line-h); color: var(--ink-mid); }
+
+    .card {
+      padding: 90px 36px 90px 96px;
+      border-top: 1px solid rgba(42,37,32,0.08);
+      position: relative; overflow: hidden;
+      min-height: 100vh;
+      box-sizing: border-box;
+      scroll-snap-align: start;
+      transition: background-color 0.3s;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(42,37,32,0.08); }
+    .card.ruled-page:nth-child(even) { background-color: var(--paper-dark); }
+    .card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #8B7355 0%, #8B7355 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+
+    .card.active-section {
+      background-color: rgba(242, 231, 206, 0.45);
+    }
+
+    @media (min-width: 921px) {
+      .scrolly-container {
+        height: 100vh;
+        overflow: hidden;
+      }
+      .notebook-panel {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scrollbar-width: none;
+      }
+      .notebook-panel::-webkit-scrollbar {
+        display: none;
+      }
+      .lab-panel {
+        position: relative;
+        right: auto;
+        top: auto;
+        height: 100vh;
+      }
+      .card > *:not(.mobile-demo-placeholder) {
+        opacity: 0.15;
+        transition: opacity 0.4s ease;
+      }
+      .card.active-section > *:not(.mobile-demo-placeholder) {
+        opacity: 1;
+      }
+      .hero > * {
+        opacity: 0.15;
+        transition: opacity 0.4s ease;
+      }
+      .hero.active-section > * {
+        opacity: 1;
+      }
+    }
+
+    .card h2 { font-family: 'Pacifico', cursive; font-size: 24px; color: var(--ink); line-height: 30px; font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 0px; margin-bottom: 30px; display: inline-block; }
+    .card p { font-size: 15px; line-height: var(--line-h); color: var(--ink-mid); margin-bottom: 20px; }
+    .card p:last-child { margin-bottom: 0; }
+    .card .key { color: var(--accent); font-weight: bold; }
+
+    /* Interactive lists & items */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 15px 0; }
+    .prop-card {
+      background: rgba(0,0,0,0.03);
+      border-left: 3px solid var(--accent-blue);
+      padding: 14px 16px 12px;
+      border-radius: 0 8px 8px 0;
+    }
+    .prop-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 16px; font-weight: 700;
+      color: var(--accent-blue); margin-bottom: 6px;
+    }
+    .prop-body { font-size: 14px; line-height: 1.6; color: var(--ink-mid); }
+
+    .tag {
+      font-family: 'Itim', cursive;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 700; padding: 3px 10px; border-radius: 4px;
+      background: var(--marigold);
+      color: var(--ink); border: 1.5px solid rgba(42,37,32,0.18);
+      flex-shrink: 0;
+      box-shadow: 1px 1.5px 4px rgba(0,0,0,0.15);
+      transform: rotate(1.2deg);
+    }
+    .card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+
+    /* ══════════════════════════════════════
+       Right Side - Elegant Lab Bench / Chalkboard
+    ══════════════════════════════════════ */
+    .lab-panel {
+      width: 50%;
+      background: #141913;
+      background-image: 
+        radial-gradient(ellipse at 50% 20%, #1e281c 0%, transparent 65%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px);
+      position: fixed;
+      right: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    .lab-sticky-wrapper {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    /* Demonstration containers on the right */
+    .desk-demo-slot {
+      position: absolute;
+      top: 50px;
+      bottom: 30px;
+      left: 40px;
+      right: 40px;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .demo-panel {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.96) translateY(15px);
+      pointer-events: none;
+      transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+    }
+    .demo-panel.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Blackboard/Lab bench card overlay */
+    .glass-bench {
+      background: rgba(30, 40, 28, 0.65);
+      border: 1.5px solid rgba(154, 184, 144, 0.25);
+      border-radius: 12px;
+      box-shadow: 
+        0 15px 35px rgba(0,0,0,0.5), 
+        inset 0 0 20px rgba(154, 184, 144, 0.1);
+      padding: 20px;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(10px);
+      color: #eaeaea;
+      box-sizing: border-box;
+    }
+
+    .bench-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 20px;
+      color: #e2c07a;
+      margin-bottom: 12px;
+      text-align: center;
+      border-bottom: 1px dashed rgba(154, 184, 144, 0.2);
+      padding-bottom: 6px;
+    }
+
+    .canvas-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0b0f0a;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      flex-grow: 1;
+      margin-bottom: 12px;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+      position: relative;
+    }
+    .canvas-wrap canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Interactive Elements & controls */
+    .ctrl-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .ctrl-btn {
+      font-family: 'Itim', cursive;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #b0c0a8;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: bold;
+      transition: all 0.2s;
+      flex: 1;
+      text-align: center;
+    }
+    .ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    .ctrl-btn.active {
+      background: #e2c07a;
+      color: #1a2517;
+      border-color: #e2c07a;
+    }
+
+    /* Description Box Card */
+    .info-display-card {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(154, 184, 144, 0.15);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 70px;
+    }
+    .info-display-card h4 {
+      color: #e2c07a;
+      font-family: 'Pacifico', cursive;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+    .info-display-card p {
+      color: #b0c0a8;
+      margin: 0;
+    }
+
+    .stage-overlay {
+      position: absolute; left: 16px; top: 12px; z-index: 5;
+      display: flex; flex-direction: column; gap: 2px;
+      pointer-events: none;
+    }
+    .stage-overlay h2 {
+      font-family: 'Pacifico', cursive; font-size: 18px; color: #e2c07a; line-height: 1.2;
+    }
+    .stage-overlay .detail-info {
+      font-size: 11px; color: #a5b59e;
+    }
+    .stage-hint {
+      position: absolute; right: 12px; bottom: 8px; font-size: 10px; color: rgba(255,255,255,0.4);
+      pointer-events: none;
+    }
+
+    /* 2D SVG Board design */
+    .svg-canvas-board {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    .svg-canvas-board svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Specimen card specific styling (Demo 2) */
+    .specimen-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: transparent;
+      border-radius: 8px;
+      overflow: hidden;
+      flex-grow: 0;
+      height: 200px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .specimen-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1.5px solid rgba(255,255,255,0.15);
+    }
+    .specimen-table {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      font-size: 13px;
+    }
+    .specimen-table-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .specimen-table-item .lbl {
+      color: #a5b59e;
+      font-weight: bold;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .specimen-table-item .val {
+      color: #fff;
+      font-family: 'Itim', cursive;
+      font-size: 14px;
+    }
+    .specimen-table-item .unit {
+      color: #888;
+      font-size: 11px;
+    }
+
+    /* Photo layouts on Demo 4 */
+    .photos-flex {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
+      height: 65%;
+      margin-bottom: 12px;
+    }
+    .photo-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+    }
+    .photo-card:hover {
+      transform: translateY(-4px);
+    }
+    .photo-card img {
+      width: 100%;
+      height: calc(100% - 25px);
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.2);
+    }
+    .photo-label {
+      text-align: center;
+      font-size: 12px;
+      color: #b0c0a8;
+      margin-top: 5px;
+      font-weight: bold;
+    }
+
+    /* Quiz Elements */
+    .quiz-card {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .quiz-progress {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #a5b59e;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+    }
+    .quiz-bar-outer {
+      width: 100px;
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .quiz-bar-inner {
+      height: 100%;
+      width: 0%;
+      background: #e2c07a;
+      transition: width 0.3s ease;
+    }
+    .quiz-question-card {
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 16px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .quiz-question {
+      font-size: 15px;
+      font-weight: bold;
+      color: #fff;
+      margin-bottom: 12px;
+      line-height: 1.45;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .quiz-opt-btn {
+      font-family: 'Itim', cursive;
+      text-align: left;
+      padding: 9px 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 6px;
+      color: #eaeaea;
+      cursor: pointer;
+      font-size: 13.5px;
+      transition: all 0.2s;
+    }
+    .quiz-opt-btn:hover:not(.checked) {
+      background: rgba(255,255,255,0.1);
+      border-color: #e2c07a;
+    }
+    .quiz-opt-btn.correct {
+      background: rgba(80, 180, 100, 0.25);
+      border-color: #8be0a0;
+      color: #8be0a0;
+      font-weight: bold;
+    }
+    .quiz-opt-btn.incorrect {
+      background: rgba(217, 99, 59, 0.2);
+      border-color: #fca088;
+      color: #fca088;
+    }
+    .quiz-explanation {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #b8c8b0;
+      background: rgba(154, 184, 144, 0.1);
+      border-left: 3.5px solid #e2c07a;
+      padding: 6px 10px;
+      border-radius: 0 4px 4px 0;
+      display: none;
+      line-height: 1.4;
+    }
+    .quiz-nav-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+    .quiz-next-btn {
+      font-family: 'Itim', cursive;
+      padding: 8px 18px;
+      background: #e2c07a;
+      color: #1a2517;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+    .quiz-next-btn:hover { background: #ffd993; }
+    .quiz-next-btn:disabled { background: rgba(255,255,255,0.1); color: #888; cursor: not-allowed; }
+
+    .quiz-results {
+      text-align: center;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      padding: 20px 0;
+      flex-grow: 1;
+    }
+    .score-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 4px solid #e2c07a;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: rgba(226, 192, 122, 0.15);
+      box-shadow: 0 0 20px rgba(226, 192, 122, 0.2);
+    }
+    .score-val { font-size: 32px; font-weight: bold; color: #e2c07a; font-family: 'Pacifico', cursive; line-height: 1; }
+    .score-label { font-size: 10px; color: #a5b59e; text-transform: uppercase; letter-spacing: 0.1em; }
+    .result-text { font-size: 18px; font-weight: bold; color: #fff; }
+    .result-sub { font-size: 13px; color: #a5b59e; max-width: 250px; line-height: 1.45; }
+    .replay-btn {
+      font-family: 'Itim', cursive;
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .replay-btn:hover { background: #e2c07a; color: #1a2517; border-color: #e2c07a; }
+
+    /* ══════════════════════════════════════
+       Mobile responsiveness (max-width: 920px)
+    ══════════════════════════════════════ */
+    @media (max-width: 920px) {
+      .scrolly-container { flex-direction: column; }
+      .notebook-panel { width: 100%; }
+      .lab-panel { display: none; }
+      .mobile-demo-placeholder { display: block; width: 100%; margin-top: 20px; }
+      .card { min-height: auto; padding-top: 40px; padding-bottom: 40px; }
+      .demo-panel { opacity: 1 !important; visibility: visible !important; transform: none !important; pointer-events: auto !important; height: auto; padding: 0; margin-top: 15px; }
+      .glass-bench { height: auto; min-height: 400px; padding: 16px; }
+      .canvas-wrap { aspect-ratio: 1.6; height: 250px; flex-grow: 0; }
+      .svg-canvas-board { height: 220px; }
+      .photos-flex { height: auto; grid-template-columns: 1fr 1fr; }
+      .photo-card { height: 180px; }
+    }
+
+    @media (max-width: 640px) {
+      .hero, .card { padding-left: 56px; }
+      .card::before, .hero::before { width: 28px; background-size: 28px 80px; }
+      .photos-flex { grid-template-columns: 1fr; }
+    }
+
+    @media (max-height: 760px) and (min-width: 921px) {
+      .lab-sticky-wrapper { padding: 20px; }
+      .glass-bench { padding: 14px; }
+      .canvas-wrap { margin-bottom: 6px; }
+      .info-display-card { min-height: 50px; padding: 6px 10px; font-size: 12px; }
+      .ctrl-row { margin-bottom: 6px; }
+      .grid-2 { gap: 8px; margin: 10px 0; }
+      .prop-card { padding: 8px 12px 6px; }
+      .quiz-question-card { padding: 10px; }
+      .quiz-question { font-size: 13.5px; margin-bottom: 8px; }
+      .quiz-opt-btn { padding: 6px 10px; font-size: 12px; }
+      .quiz-explanation { padding: 4px 8px; font-size: 11.5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scrolly-container">
+    
+    <!-- LEFT SIDE: NOTEBOOK COLUMN -->
+    <div class="notebook-panel">
+      
+      <!-- Hero / Header Section -->
+      <header class="hero ruled-page" data-demo="0">
+        <div class="crumb">
+          <a href="Learning Resources Hub v4.html">Hóa học</a> › Chuyên đề nguyên tố
+        </div>
+        <h1 class="title">Nhôm (Aluminium)</h1>
+        <div class="title-stroke"></div>
+        <p class="subtitle">Số hiệu Z = 13 · Lập phương tâm diện · Điện phân nóng chảy</p>
+        <p class="intro">
+          Nhôm (Al) là nguyên tố phổ biến thứ ba trong vỏ Trái Đất và là kim loại được sử dụng rộng rãi nhất chỉ sau sắt. Sở hữu sự kết hợp độc đáo giữa trọng lượng nhẹ, độ bền cao khi hóa hợp kim, và khả năng tự bảo vệ chống ăn mòn xuất sắc, nhôm đã trở thành nền móng cho các ngành công nghiệp hàng không, xây dựng và công nghệ hiện đại.
+        </p>
+      </header>
+
+      <main class="layout">
+        
+        <!-- SECTION 1: ATOMIC STRUCTURE -->
+        <section id="sec-notebook-1" class="card ruled-page" data-demo="1">
+          <div class="card-head">
+            <h2>1. Cấu trúc nguyên tử &amp; Vỏ Electron</h2>
+            <span class="tag">Z = 13</span>
+          </div>
+          <p>
+            Nhôm thuộc nhóm <span class="key">13 (IIIA)</span> và chu kì <span class="key">3</span> của bảng tuần hoàn.
+          </p>
+          <p>
+            <strong>Thông số cơ bản:</strong>
+            <ul style="list-style: disc; margin-left: 20px; margin-bottom: 15px;">
+              <li>Số hiệu nguyên tử ($Z$): 13 (gồm 13 proton và 14 neutron trong hạt nhân).</li>
+              <li>Khối lượng nguyên tử: 26,9815 u.</li>
+              <li>Cấu hình electron: <span class="key">[Ne] 3s² 3p¹</span> (hoặc viết đầy đủ: $1s^2 2s^2 2p^6 3s^2 3p^1$).</li>
+            </ul>
+          </p>
+          <p>
+            Nhôm có <span class="key">3 electron hóa trị</span> ở lớp ngoài cùng (phân lớp $3s$ và $3p$). Khi tham gia phản ứng hóa học, nhôm có xu hướng nhường cả 3 electron này để đạt cấu hình electron bền vững của khí hiếm Neon ($1s^2 2s^2 2p^6$), hình thành ion dương <span class="key">Al³⁺</span>. Điều này giải thích tại sao nhôm có số oxi hóa phổ biến nhất là +3 trong các hợp chất.
+          </p>
+          
+          <div id="mob-demo-1" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 2: PHYSICAL PROPERTIES & CHARACTERISTIC METRICS -->
+        <section id="sec-notebook-2" class="card ruled-page" data-demo="2">
+          <div class="card-head">
+            <h2>2. Tính chất vật lý đặc trưng</h2>
+            <span class="tag">Kim loại nhẹ &amp; dẻo</span>
+          </div>
+          <p>
+            Nhôm sở hữu một tập hợp các đặc tính vật lý vô cùng độc đáo, biến nó thành vật liệu lý tưởng cho vô vàn ứng dụng công nghệ đời sống.
+          </p>
+          <p>
+            <strong>• Khối lượng riêng (Nặng hay nhẹ):</strong> Nhôm nổi tiếng là một <span class="key">kim loại rất nhẹ</span>. Trọng lượng riêng của nó chỉ bằng khoảng một phần ba so với sắt hay đồng. Đặc tính này giúp giảm thiểu đáng kể trọng lượng của các chi tiết cấu trúc, đặc biệt có giá trị trong ngành hàng không vũ trụ và giao thông vận tải để tiết kiệm nhiên liệu.
+          </p>
+          <p>
+            <strong>• Khả năng dẫn điện và dẫn nhiệt:</strong> Nhôm có <span class="key">độ dẫn điện và dẫn nhiệt xuất sắc</span>, xếp thứ tư trong số các kim loại (chỉ sau bạc, đồng và vàng). Nhờ ưu thế khối lượng nhẹ, dây cáp nhôm được sử dụng phổ biến cho lưới điện truyền tải cao thế trên không. Nó cũng được chế tạo rộng rãi làm các tấm tản nhiệt cho linh kiện điện tử.
+          </p>
+          <p>
+            <strong>• Độ cứng &amp; cơ tính:</strong> Ở trạng thái tinh khiết, nhôm là kim loại <span class="key">tương đối mềm, có độ dẻo cao và cấu trúc mạng tinh thể lập phương tâm diện (FCC)</span>. Nhôm dễ dàng được cán thành lá siêu mỏng (giấy nhôm bọc thực phẩm) hoặc kéo thành sợi dây mảnh. Khi cần độ cứng và độ bền cao chịu lực trong công nghiệp, nhôm sẽ được pha trộn với các nguyên tố khác (như đồng, silic, magie, mangan) để tạo nên các hợp kim nhôm (như duralumin) có độ bền cơ học tương đương nhiều loại thép.
+          </p>
+          <p>
+            <strong>• Nhiệt độ nóng chảy:</strong> Nhôm có nhiệt độ nóng chảy <span class="key">ở mức trung bình</span>. Nhiệt độ này đủ cao để duy trì tính bền chắc ổn định của vật liệu trong môi trường sử dụng bình thường, nhưng cũng đủ thấp để tạo điều kiện cực kỳ thuận lợi cho việc nấu chảy đúc khuôn tạo hình chi tiết, cũng như tái chế phế liệu giúp tiết kiệm chi phí năng lượng đáng kể.
+          </p>
+          
+          <div id="mob-demo-2" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 3: EXTRACTION PROCESS -->
+        <section id="sec-notebook-3" class="card ruled-page" data-demo="3">
+          <div class="card-head">
+            <h2>3. Khai thác quặng Bauxite &amp; Điện phân</h2>
+            <span class="tag">Hall-Héroult</span>
+          </div>
+          <p>
+            Trong tự nhiên, nhôm hoạt động hóa học mạnh nên không tồn tại dưới dạng đơn chất. Nó được tìm thấy nhiều nhất trong <span class="key">quặng bauxite (boxit)</span> dưới dạng nhôm oxit ngậm nước ($Al_2O_3 \cdot xH_2O$), có lẫn các tạp chất như sắt oxit ($Fe_2O_3$) và silica ($SiO_2$).
+          </p>
+          <p>
+            <strong>Quy trình tinh luyện và điện phân:</strong>
+            <ul style="list-style: disc; margin-left: 20px; margin-bottom: 15px;">
+              <li><strong>Quy trình Bayer:</strong> Quặng bauxite thô được xử lý hóa học bằng dung dịch xút ($NaOH$) nóng để hòa tan chọn lọc nhôm oxit, sau đó kết tủa và nung thành bột alumina nguyên chất ($Al_2O_3$).</li>
+              <li><strong>Điện phân nóng chảy (Quy trình Hall-Héroult):</strong> Alumina có nhiệt độ nóng chảy rất cao ($2072^\circ\text{C}$), đòi hỏi chi phí năng lượng cực lớn. Do đó, người ta trộn nó với <span class="key">quặng cryolite ($Na_3AlF_6$)</span> để giảm nhiệt độ nóng chảy xuống chỉ còn khoảng $950^\circ\text{C}$ và tăng tính dẫn điện của hỗn hợp điện dịch.</li>
+            </ul>
+          </p>
+          <p>
+            Quá trình điện phân xảy ra trong các bể lót carbon (catốt). Tại đây, nhôm nóng chảy nặng hơn chìm xuống đáy bể và được hút ra, trong khi khí oxy sinh ra ở anốt carbon sẽ phản ứng ăn mòn anốt tạo khí $CO_2$.
+          </p>
+          
+          <div id="mob-demo-3" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 4: OXIDE PASSIVATION & APPLICATIONS -->
+        <section id="sec-notebook-4" class="card ruled-page" data-demo="4">
+          <div class="card-head">
+            <h2>4. Màng Oxit tự bảo vệ &amp; Ứng dụng</h2>
+            <span class="tag">Thực tế &amp; Tái chế</span>
+          </div>
+          <p>
+            Nhôm là kim loại có tính khử mạnh, về mặt lý thuyết phải phản ứng dễ dàng với nước và oxy. Tuy nhiên, trong không khí, bề mặt nhôm phản ứng tức thời với oxy tạo thành một màng <span class="key">nhôm oxit ($Al_2O_3$)</span> cực mỏng (khoảng vài nanomet), cực kỳ bền vững, mịn màng và bám chặt vào bề mặt.
+          </p>
+          <p>
+            Lớp màng oxit thụ động này ngăn hoàn toàn sự xâm nhập tiếp theo của hơi nước và khí oxy, giúp nhôm bền vững một cách kỳ diệu mà không bị gỉ sét như sắt.
+          </p>
+          <p>
+            <strong>Ứng dụng thực tế chủ chốt:</strong>
+            <ul style="list-style: disc; margin-left: 20px; margin-bottom: 15px;">
+              <li><strong>Hàng không &amp; Vận tải:</strong> Hợp kim nhôm siêu cứng (duralumin) là vật liệu chính chế tạo vỏ máy bay, tàu hỏa cao tốc nhờ đặc tính nhẹ và bền.</li>
+              <li><strong>Xây dựng:</strong> Làm khung cửa, vách kính, tấm ốp mặt dựng tòa nhà.</li>
+              <li><strong>Bao bì:</strong> Lon nước ngọt, giấy bạc bọc thực phẩm (khả năng cán mỏng xuất sắc).</li>
+              <li><strong>Tái chế vượt trội:</strong> Tái chế nhôm chỉ tiêu thụ <span class="key">5% năng lượng</span> so với sản xuất nhôm mới, và có thể tái chế vô hạn lần mà không làm suy giảm chất lượng.</li>
+            </ul>
+          </p>
+          
+          <div id="mob-demo-4" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 5: QUIZ -->
+        <section id="sec-notebook-5" class="card ruled-page" data-demo="5">
+          <div class="card-head">
+            <h2>5. Bài trắc nghiệm chuyên đề Nhôm</h2>
+            <span class="tag" style="background: var(--lotus); border-color: var(--lotus-deep);">Kiểm tra</span>
+          </div>
+          <p>
+            Hãy hoàn thành bài kiểm tra nhanh gồm 5 câu hỏi trắc nghiệm ở bảng bên cạnh để củng cố ngay kiến thức lý thuyết về cấu trúc nguyên tử, tính chất vật lý, tinh thể, quy trình điện phân và hiện tượng thụ động hóa của kim loại Nhôm.
+          </p>
+          <p>
+            Bấm trực tiếp vào các phương án trả lời để kiểm tra đáp án đúng và đọc giải thích chi tiết.
+          </p>
+          
+          <div id="mob-demo-5" class="mobile-demo-placeholder"></div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- RIGHT SIDE: FIXED LAB BENCH PANEL -->
+    <div class="lab-panel">
+      <div class="lab-sticky-wrapper">
+
+        <!-- DEMO 1: BOHR MODEL ELECTRON ORBIT -->
+        <div id="desk-demo-1" class="desk-demo-slot">
+          <div id="demo-1" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Mô hình Bohr nguyên tử Nhôm (Al)</div>
+              
+              <div class="canvas-wrap" style="background: #0b0f0a;">
+                <div class="svg-canvas-board">
+                  <svg id="svg-bohr-atom" viewBox="0 0 300 300">
+                    <!-- Central Nucleus -->
+                    <circle cx="150" cy="150" r="18" fill="#D9633B" filter="drop-shadow(0 0 6px rgba(217,99,59,0.6))" />
+                    <text x="150" y="153" font-family="'Itim', cursive" font-weight="bold" font-size="12" fill="#fff" text-anchor="middle" dominant-baseline="middle">+13</text>
+                    
+                    <!-- Orbit 1 (K shell - 2e) -->
+                    <circle cx="150" cy="150" r="45" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="3,3" />
+                    <!-- Orbit 2 (L shell - 8e) -->
+                    <circle cx="150" cy="150" r="80" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="3,3" />
+                    <!-- Orbit 3 (M shell - 3e) -->
+                    <circle cx="150" cy="150" r="115" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="3,3" />
+
+                    <!-- Electron groups inside container to animate rotation -->
+                    <g id="bohr-shell-1"></g>
+                    <g id="bohr-shell-2"></g>
+                    <g id="bohr-shell-3"></g>
+                  </svg>
+                  
+                  <div class="stage-overlay">
+                    <h2>Lớp vỏ: 2, 8, 3</h2>
+                    <div class="detail-info">Phân lớp ngoài cùng: 3s² 3p¹</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Controls row -->
+              <div class="ctrl-row">
+                <button class="ctrl-btn" id="btn-bohr-ionize">Kích hoạt Ion hóa (Al³⁺)</button>
+              </div>
+
+              <!-- Info feedback card -->
+              <div class="info-display-card" id="bohr-info">
+                <h4 id="bohr-info-title">Trạng thái nguyên tử tự do</h4>
+                <p id="bohr-info-desc">Lớp vỏ ngoài cùng có 3 electron chuyển động trên quỹ đạo thứ 3 (lớp M). Khi có đủ năng lượng kích thích hoặc phản ứng, nhôm dễ dàng nhường 3 electron này.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 2: 3D FCC CRYSTAL LATTICE -->
+        <div id="desk-demo-2" class="desk-demo-slot">
+          <div id="demo-2" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Mẫu vật &amp; Số liệu Vật lý cụ thể</div>
+
+              <div class="specimen-wrap">
+                <img src="./assets/aluminum_ingots.png" alt="Nhôm thỏi thực tế" class="specimen-img" />
+                <div class="stage-overlay" style="background: rgba(0,0,0,0.5); padding: 4px 8px; border-radius: 4px; left: 10px; top: 10px;">
+                  <h2 style="font-size: 14px; color: #e2c07a;">Kim loại Nhôm (Al)</h2>
+                </div>
+              </div>
+
+              <div class="info-display-card" id="crystal-info" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 8px;">
+                <h4 style="font-family: 'Pacifico', cursive; color: #e2c07a; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 4px; margin-bottom: 6px;">Hồ sơ Vật lý định lượng</h4>
+                <div class="specimen-table">
+                  <div class="specimen-table-item">
+                    <span class="lbl">• Khối lượng riêng</span>
+                    <span class="val">2,70 <span class="unit">g/cm³</span></span>
+                    <span class="unit">ở 20°C (Siêu nhẹ)</span>
+                  </div>
+                  <div class="specimen-table-item">
+                    <span class="lbl">• Nhiệt độ nóng chảy</span>
+                    <span class="val">660,32 <span class="unit">°C</span></span>
+                    <span class="unit">933,47 Kelvin</span>
+                  </div>
+                  <div class="specimen-table-item">
+                    <span class="lbl">• Độ dẫn điện</span>
+                    <span class="val">37,8 <span class="unit">MS/m</span></span>
+                    <span class="unit">~61% đồng IACS</span>
+                  </div>
+                  <div class="specimen-table-item">
+                    <span class="lbl">• Độ dẫn nhiệt</span>
+                    <span class="val">237 <span class="unit">W/(m·K)</span></span>
+                    <span class="unit">Truyền nhiệt rất cao</span>
+                  </div>
+                  <div class="specimen-table-item">
+                    <span class="lbl">• Độ cứng Mohs</span>
+                    <span class="val">2,75</span>
+                    <span class="unit">Tương đối mềm dẻo</span>
+                  </div>
+                  <div class="specimen-table-item">
+                    <span class="lbl">• Giới hạn cơ học</span>
+                    <span class="val">70 - 700 <span class="unit">MPa</span></span>
+                    <span class="unit">Tăng vọt khi hóa hợp kim</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 3: ANTIMATED ELECTROLYSIS SMELTING CELL -->
+        <div id="desk-demo-3" class="desk-demo-slot">
+          <div id="demo-3" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Mô phỏng Bể Điện Phân Hall-Héroult</div>
+              
+              <div class="canvas-wrap" style="background: #111410;">
+                <div class="svg-canvas-board">
+                  <svg id="svg-smelting" viewBox="0 0 320 200">
+                    <!-- Tank Casing -->
+                    <rect x="20" y="50" width="280" height="130" rx="8" fill="#2d302c" stroke="#444" stroke-width="2" />
+                    <!-- Carbon Lining (Cathode) -->
+                    <rect x="28" y="58" width="264" height="114" rx="4" fill="#151714" />
+                    <!-- Molten Liquid Aluminium layer at bottom -->
+                    <path id="molten-al" d="M 32 155 Q 160 155 288 155 L 288 168 L 32 168 Z" fill="#b0b5b2" opacity="0.4" />
+                    
+                    <!-- Electrolyte liquid bath (Molten Cryolite + Alumina) -->
+                    <rect id="electrolyte-bath" x="32" y="75" width="256" height="80" fill="#cc6633" opacity="0.2" />
+                    
+                    <!-- Solid crust layer on top -->
+                    <rect x="32" y="70" width="256" height="8" fill="#eae0cf" rx="2" />
+                    
+                    <!-- Carbon Anodes hanging down -->
+                    <g id="anodes">
+                      <rect x="75" y="25" width="20" height="70" fill="#111" />
+                      <rect x="150" y="25" width="20" height="70" fill="#111" />
+                      <rect x="225" y="25" width="20" height="70" fill="#111" />
+                      <!-- Copper connection lines -->
+                      <line x1="85" y1="0" x2="85" y2="25" stroke="#cc6633" stroke-width="3" />
+                      <line x1="165" y1="0" x2="165" y2="25" stroke="#cc6633" stroke-width="3" />
+                      <line x1="235" y1="0" x2="235" y2="25" stroke="#cc6633" stroke-width="3" />
+                      <line x1="85" y1="0" x2="235" y2="0" stroke="#cc6633" stroke-width="3" />
+                    </g>
+                    
+                    <!-- Electrolysis particles (bubbles, ions) -->
+                    <g id="smelt-particles" style="display: none;">
+                      <!-- Gas bubbles at anodes -->
+                      <circle cx="85" cy="98" r="3" fill="#fff" opacity="0.7"/>
+                      <circle cx="160" cy="98" r="4" fill="#fff" opacity="0.6"/>
+                      <circle cx="235" cy="98" r="3" fill="#fff" opacity="0.7"/>
+                      <!-- Aluminium ions moving down -->
+                      <circle cx="110" cy="115" r="2.5" fill="#6FB8D1"/>
+                      <circle cx="190" cy="125" r="2.5" fill="#6FB8D1"/>
+                      <circle cx="130" cy="135" r="2.5" fill="#6FB8D1"/>
+                      <!-- Oxygen ions moving up to anodes -->
+                      <circle cx="95" cy="118" r="2" fill="#E89BA8"/>
+                      <circle cx="220" cy="110" r="2" fill="#E89BA8"/>
+                      <circle cx="170" cy="120" r="2" fill="#E89BA8"/>
+                    </g>
+
+                    <!-- Tap hole & molten metal outflow -->
+                    <line x1="284" y1="162" x2="305" y2="162" stroke="#555" stroke-width="4" />
+                    <circle cx="305" cy="162" r="3" fill="#333" />
+                    <path id="pouring-metal" d="M 305 162 Q 308 180 308 195" stroke="#d9633b" stroke-width="3.5" fill="none" stroke-linecap="round" style="display: none;" />
+
+                    <!-- Text label -->
+                    <text x="160" y="115" font-family="Itim" font-size="10" fill="#a5b59e" text-anchor="middle" opacity="0.3" id="electrolyte-label">Cryolite nóng chảy + Al₂O₃</text>
+                  </svg>
+
+                  <div class="stage-overlay">
+                    <h2 id="smelt-title">Quy trình Hall-Héroult</h2>
+                    <div class="detail-info" id="smelt-status">Bể đang ở chế độ chờ. Hãy nạp Alumina.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Smelting controls -->
+              <div class="ctrl-row">
+                <button class="ctrl-btn" id="btn-smelt-load">1. Nạp Alumina ($Al_2O_3$)</button>
+                <button class="ctrl-btn" id="btn-smelt-power" disabled>2. Điện phân</button>
+                <button class="ctrl-btn" id="btn-smelt-tap" disabled>3. Tháo Nhôm lỏng</button>
+              </div>
+
+              <div class="info-display-card" id="smelt-info">
+                <h4>Hệ thống lò điện phân ảo</h4>
+                <p id="smelt-info-desc">Điện phân nóng chảy nhôm oxit trong bể chứa quặng cryolite nóng chảy ở khoảng 950°C. Bấm các nút theo thứ tự để bắt đầu quá trình luyện nhôm.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 4: PASSIVATION LAYER & REAL PHOTOS -->
+        <div id="desk-demo-4" class="desk-demo-slot">
+          <div id="demo-4" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Oxit bảo vệ &amp; Mẫu Vật Nhôm</div>
+              
+              <!-- Real Images Grid -->
+              <div class="photos-flex">
+                <div class="photo-card">
+                  <img src="./assets/bauxite_ore.png" alt="Quặng Bauxite thực tế" />
+                  <div class="photo-label">Quặng Bauxite thô ($Al_2O_3 \cdot xH_2O$)</div>
+                </div>
+                <div class="photo-card">
+                  <img src="./assets/aluminum_ingots.png" alt="Nhôm thỏi đúc khuôn" />
+                  <div class="photo-label">Nhôm thỏi tinh khiết đúc sẵn</div>
+                </div>
+              </div>
+
+              <div class="canvas-wrap" style="height: 30%; margin-bottom: 8px; background: #0c0f0b;">
+                <!-- 2D Interactive simulation of Oxygen attack on Al surface -->
+                <div class="svg-canvas-board">
+                  <svg id="svg-passivation" viewBox="0 0 320 80">
+                    <!-- Aluminum atom rows (Grid) -->
+                    <g id="al-atoms">
+                      <circle cx="20" cy="50" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="40" cy="50" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="60" cy="50" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="80" cy="50" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="100" cy="50" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="120" cy="50" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="140" cy="50" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="160" cy="50" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="180" cy="50" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="200" cy="50" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="220" cy="50" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="240" cy="50" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="260" cy="50" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="280" cy="50" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="300" cy="50" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      
+                      <circle cx="20" cy="70" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="40" cy="70" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="60" cy="70" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="80" cy="70" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="100" cy="70" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="120" cy="70" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="140" cy="70" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="160" cy="70" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="180" cy="70" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="200" cy="70" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="220" cy="70" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="240" cy="70" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="260" cy="70" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="280" cy="70" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                      <circle cx="300" cy="70" r="10" fill="#a0a8b5" stroke="#777" stroke-width="1"/>
+                    </g>
+                    
+                    <!-- Oxygen molecules moving or binding -->
+                    <g id="pass-ox-atoms">
+                      <circle cx="50" cy="15" r="5" fill="#E89BA8" />
+                      <circle cx="60" cy="15" r="5" fill="#E89BA8" />
+                      <circle cx="170" cy="10" r="5" fill="#E89BA8" />
+                      <circle cx="180" cy="10" r="5" fill="#E89BA8" />
+                      <circle cx="260" cy="20" r="5" fill="#E89BA8" />
+                      <circle cx="270" cy="20" r="5" fill="#E89BA8" />
+                    </g>
+
+                    <rect id="passivation-layer" x="10" y="32" width="300" height="15" fill="#6FB8D1" opacity="0" rx="4" />
+                    <text id="pass-label" x="160" y="42" font-family="Itim" font-size="9" fill="#0b0f0a" text-anchor="middle" font-weight="bold" style="display:none;">MÀNG OXIT BẢO VỆ Al₂O₃</text>
+                  </svg>
+
+                  <div class="stage-overlay" style="top: 2px;">
+                    <div class="detail-info" id="pass-status">Bề mặt nhôm chưa bị oxi hóa trong chân không.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Passivation controls -->
+              <div class="ctrl-row" style="margin-bottom: 0;">
+                <button class="ctrl-btn" id="btn-passivate">Thổi O₂ tạo màng Oxit ($Al_2O_3$)</button>
+                <button class="ctrl-btn" id="btn-reset-pass">Làm sạch bề mặt</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 5: QUIZ FOR AL MONOGRAPH -->
+        <div id="desk-demo-5" class="desk-demo-slot">
+          <div id="demo-5" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Trắc nghiệm chuyên đề Nhôm</div>
+              
+              <div class="quiz-card">
+                <!-- Progress Header -->
+                <div class="quiz-progress">
+                  <span id="quiz-question-num">Câu hỏi 1/5</span>
+                  <div class="quiz-bar-outer">
+                    <div id="quiz-progress-bar" class="quiz-bar-inner"></div>
+                  </div>
+                </div>
+
+                <!-- Quiz Card -->
+                <div id="quiz-question-card" class="quiz-question-card">
+                  <div id="quiz-q-text" class="quiz-question">Đang tải câu hỏi...</div>
+                  <div id="quiz-options-box" class="quiz-options">
+                    <!-- Buttons will be rendered here -->
+                  </div>
+                  <div id="quiz-explanation-box" class="quiz-explanation">
+                    <!-- Text description of answers -->
+                  </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="quiz-nav-row">
+                  <button id="quiz-next-btn" class="quiz-next-btn" disabled>Câu tiếp theo</button>
+                </div>
+
+                <!-- Results -->
+                <div id="quiz-results" class="quiz-results">
+                  <div class="score-circle">
+                    <span id="score-num" class="score-val">0/5</span>
+                    <span class="score-label">Đúng</span>
+                  </div>
+                  <div id="result-headline" class="result-text">Hoàn thành!</div>
+                  <div id="result-desc" class="result-sub">Chúc mừng bạn đã hoàn thành chuyên đề học tập về Nhôm.</div>
+                  <button id="quiz-restart-btn" class="replay-btn" type="button">Làm lại bài thi</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+
+
+  <script>
+    /* ══════════════════════════════════════════
+       THEME & LOCAL STORAGE
+     ══════════════════════════════════════════ */
+    (function(){
+      const body = document.body;
+      const saved = localStorage.getItem('bewy-theme');
+      if (saved === 'dark') { body.classList.add('dark-mode'); }
+    })();
+
+    /* ══════════════════════════════════════════
+       DEMO 1: BOHR ATOM MODEL (STATIC)
+     ══════════════════════════════════════════ */
+    const shell1 = document.getElementById('bohr-shell-1');
+    const shell2 = document.getElementById('bohr-shell-2');
+    const shell3 = document.getElementById('bohr-shell-3');
+    const bohrTitle = document.getElementById('bohr-info-title');
+    const bohrDesc = document.getElementById('bohr-info-desc');
+
+    const electronsCount = [2, 8, 3];
+    const radii = [45, 80, 115];
+    let isIonized = false;
+
+    // Generate electron dots in SVG groups statically
+    function createBohrElectrons() {
+      shell1.innerHTML = '';
+      shell2.innerHTML = '';
+      shell3.innerHTML = '';
+
+      const containers = [shell1, shell2, shell3];
+
+      for (let s = 0; s < 3; s++) {
+        // If ionized, shell 3 (outermost 3e) is removed
+        if (isIonized && s === 2) continue;
+        
+        const count = electronsCount[s];
+        const r = radii[s];
+        const container = containers[s];
+
+        // Symmetrically position electrons:
+        // Shell 3 is rotated by -PI/6 so its 3 e- don't align directly with shell 2
+        const startAngle = s === 2 ? -Math.PI / 6 : 0;
+
+        for (let i = 0; i < count; i++) {
+          const angle = startAngle + (i * 2 * Math.PI) / count;
+          const cx = 150 + r * Math.cos(angle);
+          const cy = 150 + r * Math.sin(angle);
+
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', cx.toFixed(1));
+          circle.setAttribute('cy', cy.toFixed(1));
+          circle.setAttribute('r', '5');
+          circle.setAttribute('fill', s === 2 ? '#FFE9A8' : '#6FB8D1');
+          circle.setAttribute('stroke', '#222');
+          circle.setAttribute('stroke-width', '1');
+          circle.setAttribute('filter', 'drop-shadow(0 0 2px rgba(111,184,209,0.8))');
+          container.appendChild(circle);
+        }
+      }
+    }
+
+    createBohrElectrons();
+
+    // Event listener for Ionization
+    document.getElementById('btn-bohr-ionize').addEventListener('click', (e) => {
+      isIonized = !isIonized;
+      createBohrElectrons();
+      if (isIonized) {
+        e.target.textContent = 'Khôi phục dạng Nguyên tử';
+        e.target.classList.add('active');
+        bohrTitle.textContent = 'Ion Nhôm Al³⁺ (Cation)';
+        bohrDesc.innerHTML = 'Sau khi nhường 3 electron ở lớp ngoài cùng M, lớp vỏ ngoài cùng mới là lớp L (8 electron) đã bão hòa tuyệt đối. Bán kính ion <span class="key">Al³⁺</span> ($0.535\text{ Å}$) nhỏ hơn nhiều so với nguyên tử nhôm ($1.43\text{ Å}$).';
+        document.querySelector('#svg-bohr-atom text').textContent = 'Al³⁺';
+      } else {
+        e.target.textContent = 'Kích hoạt Ion hóa (Al³⁺)';
+        e.target.classList.remove('active');
+        bohrTitle.textContent = 'Trạng thái nguyên tử tự do';
+        bohrDesc.textContent = 'Lớp vỏ ngoài cùng có 3 electron chuyển động trên quỹ đạo thứ 3 (lớp M). Khi có đủ năng lượng kích thích hoặc phản ứng, nhôm dễ dàng nhường 3 electron này.';
+        document.querySelector('#svg-bohr-atom text').textContent = '+13';
+      }
+    });
+
+    /* ══════════════════════════════════════════
+       DEMO 3: ELECTROLYSIS SMELTING CELL SIMULATOR
+     ══════════════════════════════════════════ */
+    let smeltingStage = 0; // 0: Idle, 1: Loaded Alumina, 2: Electrolyzing, 3: Tapping
+    const smeltStatusText = document.getElementById('smelt-status');
+    const smeltInfoDesc = document.getElementById('smelt-info-desc');
+    const smeltTitle = document.getElementById('smelt-title');
+    const btnSmeltLoad = document.getElementById('btn-smelt-load');
+    const btnSmeltPower = document.getElementById('btn-smelt-power');
+    const btnSmeltTap = document.getElementById('btn-smelt-tap');
+    const electrolyteBath = document.getElementById('electrolyte-bath');
+    const smeltParticles = document.getElementById('smelt-particles');
+    const moltenAl = document.getElementById('molten-al');
+    const pouringMetal = document.getElementById('pouring-metal');
+
+    btnSmeltLoad.addEventListener('click', () => {
+      smeltingStage = 1;
+      smeltStatusText.textContent = 'Alumina đã được nạp. Hỗn hợp sẵn sàng điện phân.';
+      smeltTitle.textContent = 'Trạng thái: Đã nạp Alumina';
+      smeltInfoDesc.textContent = 'Nhôm oxit (Al₂O₃) dạng bột trắng đã hòa tan vào quặng cryolite nóng chảy ở 950°C. Mật độ điện dịch tăng lên. Hãy bật dòng điện để bắt đầu điện phân.';
+      electrolyteBath.setAttribute('opacity', '0.45');
+      btnSmeltLoad.disabled = true;
+      btnSmeltPower.disabled = false;
+      btnSmeltLoad.classList.remove('active');
+      btnSmeltPower.classList.add('active');
+    });
+
+    btnSmeltPower.addEventListener('click', () => {
+      smeltingStage = 2;
+      smeltStatusText.textContent = 'Đang điện phân tích cực! Khí CO₂ thoát ra ở cực dương.';
+      smeltTitle.textContent = 'Trạng thái: Đang điện phân';
+      smeltInfoDesc.innerHTML = 'Dòng điện một chiều cực mạnh chạy qua hệ thống. Cation <span class="key">Al³⁺</span> di chuyển về catốt (đáy bể) nhận 3e hóa thành nhôm lỏng chìm xuống đáy. Anion <span class="key">O²⁻</span> di chuyển về anốt carbon giải phóng khí oxy ăn mòn cực dương sinh ra CO₂.';
+      smeltParticles.style.display = 'block';
+      
+      // Animate molten Al layer rising - snappier
+      moltenAl.setAttribute('opacity', '0.9');
+      let h = 155;
+      const interval = setInterval(() => {
+        if (h > 135 && smeltingStage === 2) {
+          h -= 0.8;
+          moltenAl.setAttribute('d', `M 32 ${h} Q 160 ${h-5} 288 ${h} L 288 168 L 32 168 Z`);
+        } else {
+          clearInterval(interval);
+        }
+      }, 20);
+
+      btnSmeltPower.disabled = true;
+      btnSmeltTap.disabled = false;
+      btnSmeltPower.classList.remove('active');
+      btnSmeltTap.classList.add('active');
+    });
+
+    btnSmeltTap.addEventListener('click', () => {
+      smeltingStage = 3;
+      smeltStatusText.textContent = 'Nhôm lỏng đang được tháo ra ngoài khuôn đúc.';
+      smeltTitle.textContent = 'Trạng thái: Tháo nhôm lỏng';
+      smeltInfoDesc.textContent = 'Nhôm nóng chảy tích tụ ở đáy bể được tháo ra ngoài định kỳ qua lỗ xả. Hợp chất nhôm lỏng nguội đi kết tinh thành các thỏi nhôm thô độ tinh khiết cao (>99.5%).';
+      pouringMetal.style.display = 'block';
+
+      // Drain molten Al layer back down - immediate & fast
+      setTimeout(() => {
+        let h = 135;
+        const interval = setInterval(() => {
+          if (h < 155) {
+            h += 0.8;
+            moltenAl.setAttribute('d', `M 32 ${h} Q 160 ${h-3} 288 ${h} L 288 168 L 32 168 Z`);
+          } else {
+            clearInterval(interval);
+            pouringMetal.style.display = 'none';
+            moltenAl.setAttribute('opacity', '0.4');
+            smeltParticles.style.display = 'none';
+            electrolyteBath.setAttribute('opacity', '0.2');
+            
+            // Reset state
+            btnSmeltTap.disabled = true;
+            btnSmeltLoad.disabled = false;
+            btnSmeltTap.classList.remove('active');
+            btnSmeltLoad.classList.add('active');
+            smeltStatusText.textContent = 'Quy trình hoàn thành. Sẵn sàng cho mẻ nạp alumina tiếp theo.';
+            smeltTitle.textContent = 'Mô phỏng Bể Điện Phân';
+          }
+        }, 20);
+      }, 100);
+    });
+
+    /* ══════════════════════════════════════════
+       DEMO 4: PASSIVATION LAYER INTERACTIVE SIM
+     ══════════════════════════════════════════ */
+    const btnPassivate = document.getElementById('btn-passivate');
+    const btnResetPass = document.getElementById('btn-reset-pass');
+    const passivationLayer = document.getElementById('passivation-layer');
+    const passStatus = document.getElementById('pass-status');
+    const passLabelText = document.getElementById('pass-label');
+    const alAtoms = document.querySelectorAll('#al-atoms circle');
+    const oxygenAtomsGroup = document.getElementById('pass-ox-atoms');
+
+    btnPassivate.addEventListener('click', () => {
+      passivationLayer.setAttribute('opacity', '0.8');
+      passLabelText.style.display = 'block';
+      passStatus.textContent = 'Màng Oxit Al₂O₃ dày ~5nm đã hình thành, bảo vệ nhôm bên trong.';
+      
+      // Change color of top row of Al atoms to indicate bond
+      for(let i=0; i<15; i++) {
+        alAtoms[i].setAttribute('fill', '#9bc0cf');
+      }
+
+      // Move oxygen molecules down to bond
+      oxygenAtomsGroup.setAttribute('transform', 'translate(0, 18)');
+      btnPassivate.disabled = true;
+      btnPassivate.classList.remove('active');
+    });
+
+    btnResetPass.addEventListener('click', () => {
+      passivationLayer.setAttribute('opacity', '0');
+      passLabelText.style.display = 'none';
+      passStatus.textContent = 'Bề mặt nhôm đã được làm sạch, nhạy cảm với khí quyển.';
+      
+      // Reset color
+      alAtoms.forEach(atom => atom.setAttribute('fill', '#a0a8b5'));
+      oxygenAtomsGroup.setAttribute('transform', 'translate(0, 0)');
+      btnPassivate.disabled = false;
+      btnPassivate.classList.add('active');
+    });
+
+    /* ══════════════════════════════════════════
+       DEMO 5: INTERACTIVE QUIZ LOGIC
+     ══════════════════════════════════════════ */
+    const QUIZ_QUESTIONS = [
+      {
+        q: "Số hiệu nguyên tử của Nhôm (Al) là 13. Cấu hình electron lớp ngoài cùng của nó ở trạng thái cơ bản là gì?",
+        opts: ["3s² 3p²", "3s² 3p¹", "2s² 2p⁶", "3s¹"],
+        correct: 1,
+        exp: "Nhôm (Z = 13) có 13 electron. Cấu hình e viết đầy đủ là 1s² 2s² 2p⁶ 3s² 3p¹, do đó lớp ngoài cùng (lớp 3) có 3 electron ở phân lớp 3s² 3p¹."
+      },
+      {
+        q: "Trong công nghiệp, nhôm được sản xuất chủ yếu bằng phương pháp nào?",
+        opts: ["Điện phân dung dịch AlCl₃", "Điện phân nóng chảy Al₂O₃", "Nhiệt luyện khử Al₂O₃ bằng CO", "Thủy luyện dùng bột kẽm khử ion Al³⁺"],
+        correct: 1,
+        exp: "Nhôm oxit có độ bền liên kết ion rất cao, do đó không thể khử bằng CO hay H₂ thông thường mà bắt buộc phải dùng phương pháp điện phân nóng chảy bột Al₂O₃ nguyên chất."
+      },
+      {
+        q: "Vai trò chủ yếu của quặng cryolite (Na₃AlF₆) trong quá trình điện phân alumina nóng chảy là gì?",
+        opts: ["Tăng nhiệt độ sôi và giảm tính bay hơi của nhôm lỏng", "Xúc tác hóa học và hòa tan kim loại nhôm", "Làm giảm nhiệt độ nóng chảy của alumina xuống ~950°C và tăng độ dẫn điện", "Giải phóng nguyên tố Flo tạo bọt khí chống ăn mòn cực dương"],
+        correct: 2,
+        exp: "Bột nhôm oxit nóng chảy ở nhiệt độ cực cao 2072°C. Cryolite hoạt động như dung môi, tạo ra hỗn hợp chảy ở khoảng 950°C, giúp tiết kiệm năng lượng khổng lồ và tăng độ dẫn điện của bể điện phân."
+      },
+      {
+        q: "Ở điều kiện nhiệt độ phòng, tinh thể kim loại nhôm sắp xếp theo kiểu mạng nào?",
+        opts: ["Lập phương đơn giản (Simple Cubic)", "Lập phương tâm khối (BCC)", "Lập phương tâm diện (FCC)", "Lục phương chặt khít (HCP)"],
+        correct: 2,
+        exp: "Nhôm kết tinh theo mạng Lập phương tâm diện (FCC), với các nguyên tử nằm ở 8 đỉnh và 6 tâm mặt, giúp kim loại dẻo dai và có độ kéo giãn rất lớn."
+      },
+      {
+        q: "Nhôm là kim loại hoạt động hóa học mạnh nhưng tại sao lại bền vững trong không khí và nước ở nhiệt độ thường?",
+        opts: ["Do có lớp màng nhôm oxit (Al₂O₃) mỏng, rất mịn và bền vững bảo vệ bề mặt", "Do nhôm có lớp vỏ bão hòa nên không thể phản ứng tự phát", "Do thế điện cực chuẩn của nhôm là số dương", "Do nhôm phản ứng với nitơ trong khí quyển tạo màng nhôm nitride chống oxy"],
+        correct: 0,
+        exp: "Chỉ sau vài tích tắc tiếp xúc không khí, nhôm bị oxi hóa tạo một màng Al₂O₃ mỏng mịn bao bọc toàn bộ bề mặt. Màng oxit này trơ hóa học, không cho oxy và nước đi qua, bảo vệ lớp nhôm kim loại bên dưới."
+      }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+    let answered = false;
+
+    const qNumText = document.getElementById('quiz-question-num');
+    const qProgressBar = document.getElementById('quiz-progress-bar');
+    const qText = document.getElementById('quiz-q-text');
+    const qOptionsBox = document.getElementById('quiz-options-box');
+    const qExplanationBox = document.getElementById('quiz-explanation-box');
+    const qNextBtn = document.getElementById('quiz-next-btn');
+    const qResultsPanel = document.getElementById('quiz-results');
+    const qQuestionCard = document.getElementById('quiz-question-card');
+    const qRestartBtn = document.getElementById('quiz-restart-btn');
+
+    function loadQuestion() {
+      answered = false;
+      qNextBtn.disabled = true;
+      qExplanationBox.style.display = 'none';
+      qExplanationBox.innerHTML = '';
+      
+      const question = QUIZ_QUESTIONS[currentQ];
+      qText.textContent = `${currentQ + 1}. ${question.q}`;
+      qNumText.textContent = `Câu hỏi ${currentQ + 1}/${QUIZ_QUESTIONS.length}`;
+      qProgressBar.style.width = `${((currentQ) / QUIZ_QUESTIONS.length) * 100}%`;
+
+      qOptionsBox.innerHTML = '';
+      question.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt-btn';
+        btn.type = 'button';
+        btn.textContent = opt;
+        btn.addEventListener('click', () => selectOption(idx, btn));
+        qOptionsBox.appendChild(btn);
+      });
+    }
+
+    function selectOption(idx, btn) {
+      if (answered) return;
+      answered = true;
+      
+      const question = QUIZ_QUESTIONS[currentQ];
+      const allButtons = qOptionsBox.querySelectorAll('.quiz-opt-btn');
+      allButtons.forEach(b => b.classList.add('checked'));
+
+      if (idx === question.correct) {
+        btn.classList.add('correct');
+        score++;
+      } else {
+        btn.classList.add('incorrect');
+        allButtons[question.correct].classList.add('correct');
+      }
+
+      qExplanationBox.style.display = 'block';
+      qExplanationBox.innerHTML = `<strong>Giải thích:</strong> ${question.exp}`;
+
+      qNextBtn.disabled = false;
+      if (currentQ === QUIZ_QUESTIONS.length - 1) {
+        qNextBtn.textContent = 'Xem kết quả';
+      } else {
+        qNextBtn.textContent = 'Câu tiếp theo';
+      }
+    }
+
+    qNextBtn.addEventListener('click', () => {
+      if (currentQ === QUIZ_QUESTIONS.length - 1) {
+        // Show results
+        qQuestionCard.style.display = 'none';
+        qNextBtn.style.display = 'none';
+        qResultsPanel.style.display = 'flex';
+        qProgressBar.style.width = '100%';
+        qNumText.textContent = 'Hoàn thành chuyên đề';
+
+        document.getElementById('score-num').textContent = `${score}/${QUIZ_QUESTIONS.length}`;
+        let headline = '';
+        let desc = '';
+        if (score === QUIZ_QUESTIONS.length) {
+          headline = 'Chuyên gia luyện nhôm!';
+          desc = 'Bạn đã nắm vững hoàn hảo từ cấu trúc nguyên tử, mạng tinh thể FCC, quy trình Hall-Héroult đến màng oxit bảo vệ bề mặt nhôm!';
+        } else if (score >= 3) {
+          headline = 'Đạt kết quả Tốt!';
+          desc = 'Bạn đã hiểu hầu hết kiến thức chuyên đề về kim loại nhôm. Hãy xem lại phần giải thích cho câu sai để ghi nhớ lâu hơn.';
+        } else {
+          headline = 'Cần cố gắng!';
+          desc = 'Hãy đọc kỹ lại các trang vở bên trái và luyện tập điện phân để làm bài tốt hơn nhé.';
+        }
+        document.getElementById('result-headline').textContent = headline;
+        document.getElementById('result-desc').textContent = desc;
+      } else {
+        currentQ++;
+        loadQuestion();
+      }
+    });
+
+    qRestartBtn.addEventListener('click', () => {
+      currentQ = 0;
+      score = 0;
+      qQuestionCard.style.display = 'flex';
+      qNextBtn.style.display = 'block';
+      qResultsPanel.style.display = 'none';
+      loadQuestion();
+    });
+
+    loadQuestion();
+
+    /* ══════════════════════════════════════
+       SECTION DETECTION — IntersectionObserver
+     ══════════════════════════════════════ */
+    const notebookSections = document.querySelectorAll('.hero, .card');
+    const demoPanels = document.querySelectorAll('.demo-panel');
+    let currentActiveSec = null;
+
+    function setActiveSection(sec) {
+      if (currentActiveSec === sec) return;
+      currentActiveSec = sec;
+
+      const activeDemoNum = sec.dataset.demo;
+      const isDesktop = window.innerWidth > 920;
+
+      notebookSections.forEach((s) => {
+        if (s === sec) {
+          s.classList.add('active-section');
+        } else {
+          s.classList.remove('active-section');
+        }
+      });
+
+      demoPanels.forEach((panel) => {
+        if (panel.id === `demo-${activeDemoNum}`) {
+          panel.classList.add('active');
+        } else {
+          panel.classList.remove('active');
+        }
+      });
+    }
+
+    function observeSection(sec) {
+      const scroller = window.innerWidth > 920 ? document.querySelector('.notebook-panel') : null;
+      const options = {
+        root: scroller || null,
+        threshold: 0.25
+      };
+      
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target);
+          }
+        });
+      }, options);
+      
+      io.observe(sec);
+      return io;
+    }
+
+    let sectionObservers = [];
+
+    function initObservers() {
+      sectionObservers.forEach(io => io.disconnect());
+      sectionObservers = [];
+      notebookSections.forEach(sec => {
+        sectionObservers.push(observeSection(sec));
+      });
+    }
+
+    initObservers();
+
+
+    /* ══════════════════════════════════════
+       MOBILE RESPONSIVE ELEMENT RELOCATION
+     ══════════════════════════════════════ */
+    let wasDesktop = window.innerWidth > 920;
+
+    const relocateDemos = () => {
+      const isMobile = window.innerWidth <= 920;
+      const isDesktop = !isMobile;
+      
+      if (isDesktop !== wasDesktop) {
+        wasDesktop = isDesktop;
+        initObservers();
+      }
+
+      for (let i = 1; i <= 5; i++) {
+        const demo = document.getElementById(`demo-${i}`);
+        if (!demo) continue;
+        
+        if (isMobile) {
+          const mobContainer = document.getElementById(`mob-demo-${i}`);
+          if (mobContainer && demo.parentElement !== mobContainer) {
+            mobContainer.appendChild(demo);
+          }
+        } else {
+          const deskContainer = document.getElementById(`desk-demo-${i}`);
+          if (deskContainer && demo.parentElement !== deskContainer) {
+            deskContainer.appendChild(demo);
+          }
+        }
+      }
+      
+      if (isMobile) {
+        notebookSections.forEach((s) => {
+          const targets = Array.from(s.children).filter(c => !c.classList.contains('mobile-demo-placeholder'));
+          targets.forEach(t => t.style.opacity = ''); // Reset inline opacities
+        });
+      }
+    };
+
+    window.addEventListener('resize', relocateDemos);
+    setTimeout(relocateDemos, 150);
+  </script>
+
+</body>
+</html>

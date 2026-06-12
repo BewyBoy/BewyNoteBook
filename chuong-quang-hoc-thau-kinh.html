@@ -375,6 +375,56 @@
       );
     }
 
+    /* Premium Switch Toggle CSS */
+    .switch-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+      font-family: 'Itim', cursive;
+      font-size: 14px;
+      color: var(--ink-mid);
+    }
+    .switch-container input {
+      display: none;
+    }
+    .switch-slider {
+      position: relative;
+      width: 44px;
+      height: 22px;
+      background: var(--paper-dark);
+      border: 1.5px solid rgba(26,18,8,0.22);
+      border-radius: 11px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .switch-slider::before {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      left: 3px;
+      top: 2.5px;
+      background: var(--ink-light);
+      border-radius: 50%;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+    .switch-container input:checked + .switch-slider {
+      background: var(--highlight-y);
+      border-color: var(--accent);
+    }
+    .switch-container input:checked + .switch-slider::before {
+      transform: translateX(20px);
+      background: var(--accent);
+    }
+    .single-lens-ctrls .ctrl {
+      opacity: 1;
+      transition: opacity 0.2s;
+    }
+    .single-lens-ctrls .readouts {
+      transition: opacity 0.2s;
+    }
+
     @media (max-width: 860px) {
       .grid-2 { grid-template-columns: 1fr; }
       .spring-demo { grid-template-columns: 1fr; }
@@ -534,8 +584,42 @@
           <button class="viz-btn" onclick="setViz('microscope')">Kính hiển vi</button>
           <button class="viz-btn" onclick="setViz('telescope')">Kính thiên văn</button>
         </div>
+
+        <div class="single-lens-ctrls" id="single-lens-ctrls" style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+            <label class="switch-container">
+              <input type="checkbox" id="toggle-object" checked>
+              <span class="switch-slider"></span>
+              <span class="switch-label">Hiển thị Vật &amp; Ảnh</span>
+            </label>
+            
+            <div class="ctrl" id="ctrl-f">
+              <label>Tiêu cự |f|: <span id="val-f" class="val">80</span>px</label>
+              <input type="range" id="slide-f" min="40" max="150" value="80">
+            </div>
+            
+            <div class="ctrl" id="ctrl-d">
+              <label>Khoảng cách vật d: <span id="val-d" class="val">120</span>px</label>
+              <input type="range" id="slide-d" min="10" max="280" value="120">
+            </div>
+            
+            <div class="ctrl" id="ctrl-h">
+              <label>Chiều cao vật h: <span id="val-h" class="val">50</span>px</label>
+              <input type="range" id="slide-h" min="10" max="80" value="50">
+            </div>
+          </div>
+          
+          <div class="readouts" id="lens-readouts">
+            <div class="readout">d = <span id="read-d">120</span> px</div>
+            <div class="readout">f = <span id="read-f">80</span> px</div>
+            <div class="readout">d' = <span id="read-d-prime">240</span> px</div>
+            <div class="readout">G = <span id="read-g">-2.00</span></div>
+            <div class="readout">Tính chất: <span id="read-type" style="color: var(--accent); font-weight: bold;">Ảnh thật, ngược chiều, lớn hơn vật</span></div>
+          </div>
+        </div>
+
         <div class="viz-stage" id="viz-stage">
-          <svg id="viz-svg" viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg"></svg>
+          <svg id="viz-svg" viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg" style="user-select: none;"></svg>
         </div>
       </section>
 
@@ -592,103 +676,321 @@
       for(const [k,v] of Object.entries(attrs||{})) e.setAttribute(k,v);
       if(txt!==undefined) e.textContent=txt; return e;
     }
-    function arrow(svg, x1,y1,x2,y2,color,w) {
-      svg.appendChild(el('line',{x1,y1,x2,y2,stroke:color,'stroke-width':w||2}));
+    function arrow(svg, x1,y1,x2,y2,color,w,dash) {
+      const attrs = {x1,y1,x2,y2,stroke:color,'stroke-width':w||2};
+      if(dash) attrs['stroke-dasharray'] = dash;
+      svg.appendChild(el('line',attrs));
       const dx=x2-x1, dy=y2-y1, len=Math.sqrt(dx*dx+dy*dy);
-      const ux=dx/len, uy=dy/len;
-      const px=-uy, py=ux;
-      const ax=x2-ux*10+px*4, ay=y2-uy*10+py*4;
-      const bx=x2-ux*10-px*4, by=y2-uy*10-py*4;
-      svg.appendChild(el('polygon',{points:`${x2},${y2} ${ax},${ay} ${bx},${by}`,fill:color}));
+      if(len > 5) {
+        const ux=dx/len, uy=dy/len;
+        const px=-uy, py=ux;
+        const ax=x2-ux*10+px*4, ay=y2-uy*10+py*4;
+        const bx=x2-ux*10-px*4, by=y2-uy*10-py*4;
+        svg.appendChild(el('polygon',{points:`${x2},${y2} ${ax},${ay} ${bx},${by}`,fill:color}));
+      }
+    }
+
+    // State variables
+    let activeMode = 'convex';
+    let fVal = 80;
+    let dVal = 120;
+    let hVal = 50;
+    let isDragging = false;
+
+    // DOM References
+    const toggleObject = document.getElementById('toggle-object');
+    const slideF = document.getElementById('slide-f');
+    const slideD = document.getElementById('slide-d');
+    const slideH = document.getElementById('slide-h');
+    const valF = document.getElementById('val-f');
+    const valD = document.getElementById('val-d');
+    const valH = document.getElementById('val-h');
+    const readF = document.getElementById('read-f');
+    const readD = document.getElementById('read-d');
+    const readDPrime = document.getElementById('read-d-prime');
+    const readG = document.getElementById('read-g');
+    const readType = document.getElementById('read-type');
+    const singleLensCtrls = document.getElementById('single-lens-ctrls');
+    const svgEl = document.getElementById('viz-svg');
+
+    // Attach listeners
+    slideF.addEventListener('input', (e) => { fVal = +e.target.value; updateUI(); });
+    slideD.addEventListener('input', (e) => { dVal = +e.target.value; updateUI(); });
+    slideH.addEventListener('input', (e) => { hVal = +e.target.value; updateUI(); });
+    toggleObject.addEventListener('change', () => { updateUIState(); updateUI(); });
+
+    function updateUIState() {
+      const showObj = toggleObject.checked;
+      document.getElementById('ctrl-d').style.opacity = showObj ? '1' : '0.4';
+      document.getElementById('slide-d').disabled = !showObj;
+      document.getElementById('ctrl-h').style.opacity = showObj ? '1' : '0.4';
+      document.getElementById('slide-h').disabled = !showObj;
+      document.getElementById('lens-readouts').style.opacity = showObj ? '1' : '0';
+      document.getElementById('lens-readouts').style.pointerEvents = showObj ? 'auto' : 'none';
+    }
+
+    function updateUI() {
+      valF.textContent = fVal;
+      valD.textContent = dVal;
+      valH.textContent = hVal;
+      updateSimulation();
+    }
+
+    function projectRayX(x1, y1, x2, y2, targetX) {
+      if (Math.abs(x2 - x1) < 0.001) return { x: targetX, y: y1 };
+      const m = (y2 - y1) / (x2 - x1);
+      return { x: targetX, y: y1 + m * (targetX - x1) };
     }
 
     function drawLens(svg, xL, f, convex) {
       // Optical axis
-      svg.appendChild(el('line',{x1:10,y1:140,x2:590,y2:140,stroke:'rgba(251,244,228,0.2)','stroke-width':1,'stroke-dasharray':'6 3'}));
-      // Lens
-      const lh = 100;
+      svg.appendChild(el('line',{x1:10,y1:140,x2:590,y2:140,stroke:'rgba(251,244,228,0.2)','stroke-width':1.5,'stroke-dasharray':'6 3'}));
+      // Lens body
+      const lh = 180;
       if(convex) {
-        svg.appendChild(el('ellipse',{cx:xL,cy:140,rx:10,ry:lh/2,fill:'rgba(90,120,200,0.2)',stroke:'rgba(90,120,200,0.7)','stroke-width':2}));
+        svg.appendChild(el('path',{d:`M${xL},${140-lh/2} Q${xL+16},140 ${xL},${140+lh/2} Q${xL-16},140 ${xL},${140-lh/2}`,fill:'rgba(90,120,200,0.15)',stroke:'rgba(90,120,200,0.7)','stroke-width':2}));
+        svg.appendChild(el('polygon',{points:`${xL},${140-lh/2} ${xL-5},${140-lh/2+8} ${xL+5},${140-lh/2+8}`,fill:'rgba(90,120,200,0.7)'}));
+        svg.appendChild(el('polygon',{points:`${xL},${140+lh/2} ${xL-5},${140+lh/2-8} ${xL+5},${140+lh/2-8}`,fill:'rgba(90,120,200,0.7)'}));
       } else {
-        svg.appendChild(el('path',{d:`M${xL-10},${140-lh/2} Q${xL+14},140 ${xL-10},${140+lh/2}`,fill:'none',stroke:'rgba(90,120,200,0.7)','stroke-width':2}));
-        svg.appendChild(el('path',{d:`M${xL+10},${140-lh/2} Q${xL-14},140 ${xL+10},${140+lh/2}`,fill:'none',stroke:'rgba(90,120,200,0.7)','stroke-width':2}));
+        svg.appendChild(el('path',{d:`M${xL-12},${140-lh/2} Q${xL},140 ${xL-12},${140+lh/2} L${xL+12},${140+lh/2} Q${xL},140 ${xL+12},${140-lh/2} Z`,fill:'rgba(90,120,200,0.12)',stroke:'rgba(90,120,200,0.7)','stroke-width':2}));
+        svg.appendChild(el('polygon',{points:`${xL-6},${140-lh/2} ${xL+6},${140-lh/2} ${xL},${140-lh/2+6}`,fill:'rgba(90,120,200,0.7)'}));
+        svg.appendChild(el('polygon',{points:`${xL-6},${140+lh/2} ${xL+6},${140+lh/2} ${xL},${140+lh/2-6}`,fill:'rgba(90,120,200,0.7)'}));
       }
-      // F markers
-      svg.appendChild(el('line',{x1:xL-f,y1:135,x2:xL-f,y2:145,stroke:'rgba(251,244,228,0.5)','stroke-width':1}));
-      svg.appendChild(el('text',{x:xL-f-4,y:158,fill:'rgba(251,244,228,0.5)','font-size':11},'F'));
-      svg.appendChild(el('line',{x1:xL+f,y1:135,x2:xL+f,y2:145,stroke:'rgba(251,244,228,0.5)','stroke-width':1}));
-      svg.appendChild(el('text',{x:xL+f-4,y:158,fill:'rgba(251,244,228,0.5)','font-size':11},"F'"));
+      
+      const fAbs = Math.abs(f);
+      svg.appendChild(el('circle',{cx:xL-fAbs,cy:140,r:3,fill:'#C44010'}));
+      svg.appendChild(el('text',{x:xL-fAbs-5,y:158,fill:'var(--ink-light)','font-size':12,'font-weight':'bold'},'F'));
+      svg.appendChild(el('circle',{cx:xL+fAbs,cy:140,r:3,fill:'#C44010'}));
+      svg.appendChild(el('text',{x:xL+fAbs-5,y:158,fill:'var(--ink-light)','font-size':12,'font-weight':'bold'},"F'"));
+      svg.appendChild(el('text',{x:xL-12,y:155,fill:'var(--ink-light)','font-size':12,'font-weight':'bold'},'O'));
     }
 
-    function drawConvex(svg) {
-      const xL=280, f=90;
-      drawLens(svg,xL,f,true);
-      // Object
-      svg.appendChild(el('line',{x1:100,y1:140,x2:100,y2:90,stroke:'#F2B544','stroke-width':2}));
-      svg.appendChild(el('polygon',{points:'100,90 95,100 105,100',fill:'#F2B544'}));
-      svg.appendChild(el('text',{x:84,y:86,fill:'#F2B544','font-size':11},'Vật'));
-      // 3 special rays
-      // Ray 1: parallel → through F'
-      arrow(svg,100,90,xL,90,'rgba(110,219,176,0.8)');
-      arrow(svg,xL,90,xL+f+90,140+90*(xL+f+90-xL)/f,'rgba(110,219,176,0.8)');
-      // Ray 2: through center
-      arrow(svg,100,90,570,90+(570-100)*(140-90)/(xL-100),'rgba(167,188,238,0.8)');
-      // Ray 3: through F → parallel
-      arrow(svg,100,90,xL,90+(xL-xL+f)/(xL-100-xL+f)*(140-90),'rgba(242,181,68,0.5)');
-      // Image (real, inverted, d=2f → same size)
-      const imgX=xL+180;
-      svg.appendChild(el('line',{x1:imgX,y1:140,x2:imgX,y2:190,stroke:'rgba(251,244,228,0.5)','stroke-width':2,'stroke-dasharray':'4 2'}));
-      svg.appendChild(el('polygon',{points:`${imgX},190 ${imgX-5},180 ${imgX+5},180`,fill:'rgba(251,244,228,0.5)'}));
-      svg.appendChild(el('text',{x:imgX-6,y:208,fill:'rgba(251,244,228,0.5)','font-size':11},'Ảnh'));
-      svg.appendChild(el('text',{x:30,y:260,fill:'rgba(251,244,228,0.55)','font-size':12},'1/f = 1/d + 1/d\' | d>2f → ảnh thật, ngược chiều, nhỏ hơn vật'));
+    function drawInteractiveConvex(svg) {
+      const xL = 300;
+      const f = fVal;
+      const d = dVal;
+      const h = hVal;
+      const showObj = toggleObject.checked;
+
+      drawLens(svg, xL, f, true);
+
+      if (!showObj) {
+        const heights = [60, 80, 100, 120, 160, 180, 200, 220];
+        heights.forEach(y => {
+          svg.appendChild(el('line', {x1:10, y1:y, x2:xL, y2:y, stroke:'rgba(110,219,176,0.85)', 'stroke-width':1.8}));
+          const pEnd = projectRayX(xL, y, xL + f, 140, 590);
+          arrow(svg, xL, y, pEnd.x, pEnd.y, 'rgba(110,219,176,0.85)', 1.8);
+        });
+        return;
+      }
+
+      let dPrime, G, imgTypeStr;
+      if (Math.abs(d - f) < 0.01) {
+        dPrime = Infinity;
+        G = Infinity;
+        imgTypeStr = "Ảnh ở vô cực (vô cùng)";
+      } else {
+        dPrime = (d * f) / (d - f);
+        G = -dPrime / d;
+        const isReal = dPrime > 0;
+        const isUpright = G > 0;
+        const sizeCompare = Math.abs(G) > 1.001 ? "lớn hơn" : (Math.abs(G) < 0.999 ? "nhỏ hơn" : "bằng");
+        imgTypeStr = `${isReal ? "Ảnh thật" : "Ảnh ảo"}, ${isUpright ? "cùng chiều" : "ngược chiều"}, ${sizeCompare} vật`;
+      }
+
+      readD.textContent = d;
+      readF.textContent = f;
+      readDPrime.textContent = dPrime === Infinity ? "∞" : dPrime.toFixed(1);
+      readG.textContent = G === Infinity ? "∞" : G.toFixed(2);
+      readType.textContent = imgTypeStr;
+
+      const xO = xL - d;
+      const yO = 140 - h;
+
+      // Draw Megamind object
+      svg.appendChild(el('image', {
+        href: 'uploads/megamind.png',
+        x: xO - h/2,
+        y: 140 - h,
+        width: h,
+        height: h,
+        opacity: 0.85
+      }));
+
+      arrow(svg, xO, 140, xO, yO, '#F2B544', 3);
+      svg.appendChild(el('text', {x: xO - 10, y: yO - 10, fill:'#F2B544', 'font-size':12, 'font-weight':'bold'}, 'A (Vật)'));
+
+      let xI, yI;
+      if (dPrime !== Infinity) {
+        xI = xL + dPrime;
+        yI = 140 - G * h;
+        
+        if (xI >= 0 && xI <= 1200) {
+          const color = dPrime > 0 ? '#1A4FA0' : '#E05050';
+          const label = dPrime > 0 ? "A' (Ảnh thật)" : "A' (Ảnh ảo)";
+          
+          // Draw Megamind image
+          const wI = Math.abs(G) * h;
+          const hI = Math.abs(G) * h;
+          const imgAttrs = {
+            href: 'uploads/megamind.png',
+            x: xI - wI/2,
+            y: 140 - hI,
+            width: wI,
+            height: hI,
+            opacity: 0.8
+          };
+          if (G < 0) {
+            imgAttrs.transform = 'translate(0, 280) scale(1, -1)';
+          }
+          svg.appendChild(el('image', imgAttrs));
+          
+          arrow(svg, xI, 140, xI, yI, color, 2.5, dPrime > 0 ? null : '4 2');
+          svg.appendChild(el('text', {x: xI - 15, y: yI + (G > 0 ? -10 : 18), fill: color, 'font-size':12, 'font-weight':'bold'}, label));
+        }
+      }
+
+      svg.appendChild(el('line', {x1: xO, y1: yO, x2: xL, y2: yO, stroke: 'rgba(110,219,176,0.8)', 'stroke-width':2}));
+      const pFPrime = { x: xL + f, y: 140 };
+      const pRay1End = projectRayX(xL, yO, pFPrime.x, pFPrime.y, 590);
+      arrow(svg, xL, yO, pRay1End.x, pRay1End.y, 'rgba(110,219,176,0.8)', 2);
+      if (dPrime !== Infinity && dPrime < 0) {
+        svg.appendChild(el('line', {x1: xL, y1: yO, x2: xI, y2: yI, stroke: 'rgba(110,219,176,0.5)', 'stroke-width':1.5, 'stroke-dasharray':'4 3'}));
+      }
+
+      const pRay2End = projectRayX(xO, yO, xL, 140, 590);
+      arrow(svg, xO, yO, pRay2End.x, pRay2End.y, 'rgba(167,188,238,0.8)', 2);
+      if (dPrime !== Infinity && dPrime < 0) {
+        svg.appendChild(el('line', {x1: xO, y1: yO, x2: xI, y2: yI, stroke: 'rgba(167,188,238,0.5)', 'stroke-width':1.5, 'stroke-dasharray':'4 3'}));
+      }
+
+      const pF = { x: xL - f, y: 140 };
+      let yLens3;
+      if (d > f) {
+        const slope = (140 - yO) / (pF.x - xO);
+        yLens3 = yO + slope * (xL - xO);
+        svg.appendChild(el('line', {x1: xO, y1: yO, x2: xL, y2: yLens3, stroke: 'rgba(242,181,68,0.6)', 'stroke-width':2}));
+      } else {
+        const slope = (yO - 140) / (xO - pF.x);
+        yLens3 = yO + slope * (xL - xO);
+        svg.appendChild(el('line', {x1: pF.x, y1: 140, x2: xL, y2: yLens3, stroke: 'rgba(242,181,68,0.3)', 'stroke-width':1.5, 'stroke-dasharray':'3 3'}));
+        svg.appendChild(el('line', {x1: xO, y1: yO, x2: xL, y2: yLens3, stroke: 'rgba(242,181,68,0.6)', 'stroke-width':2}));
+      }
+      
+      svg.appendChild(el('line', {x1: xL, y1: yLens3, x2: 590, y2: yLens3, stroke: 'rgba(242,181,68,0.6)', 'stroke-width':2}));
+      if (dPrime !== Infinity && dPrime < 0) {
+        svg.appendChild(el('line', {x1: xL, y1: yLens3, x2: xI, y2: yLens3, stroke: 'rgba(242,181,68,0.5)', 'stroke-width':1.5, 'stroke-dasharray':'4 3'}));
+      }
+
+      svg.appendChild(el('circle', {id:'drag-handle', cx: xO, cy: yO, r: 8, fill:'rgba(242,181,68,0.4)', stroke:'#F2B544', 'stroke-width':2, style:'cursor: grab;'}));
     }
 
-    function drawConcave(svg) {
-      const xL=300, f=80;
-      drawLens(svg,xL,f,false);
-      // Object
-      svg.appendChild(el('line',{x1:120,y1:140,x2:120,y2:85,stroke:'#F2B544','stroke-width':2}));
-      svg.appendChild(el('polygon',{points:'120,85 115,95 125,95',fill:'#F2B544'}));
-      svg.appendChild(el('text',{x:104,y:81,fill:'#F2B544','font-size':11},'Vật'));
-      // Ray 1: parallel → diverge, extension meets virtual F
-      svg.appendChild(el('line',{x1:120,y1:85,x2:xL,y2:85,stroke:'rgba(110,219,176,0.8)','stroke-width':2}));
-      // After lens diverges upward/outward
-      svg.appendChild(el('line',{x1:xL,y1:85,x2:560,y2:148,stroke:'rgba(110,219,176,0.8)','stroke-width':2}));
-      // Extension (dashed) meets virtual F
-      svg.appendChild(el('line',{x1:xL,y1:85,x2:xL-f,y2:140,stroke:'rgba(110,219,176,0.4)','stroke-width':1.5,'stroke-dasharray':'5 3'}));
-      // Ray 2: through center straight
-      svg.appendChild(el('line',{x1:120,y1:85,x2:560,y2:85+(560-120)*(140-85)/(xL-120),'stroke':'rgba(167,188,238,0.8)','stroke-width':2}));
-      // Virtual image
-      const imgX = xL - 53;
-      svg.appendChild(el('line',{x1:imgX,y1:140,x2:imgX,y2:108,stroke:'rgba(251,244,228,0.4)','stroke-width':1.5,'stroke-dasharray':'4 2'}));
-      svg.appendChild(el('polygon',{points:`${imgX},108 ${imgX-4},118 ${imgX+4},118`,fill:'rgba(251,244,228,0.4)'}));
-      svg.appendChild(el('text',{x:imgX-16,y:102,fill:'rgba(251,244,228,0.4)','font-size':10},'Ảnh ảo'));
-      svg.appendChild(el('text',{x:30,y:260,fill:'rgba(251,244,228,0.55)','font-size':12},'Thấu kính phân kỳ: luôn tạo ảnh ảo, cùng chiều, nhỏ hơn | f < 0'));
+    function drawInteractiveConcave(svg) {
+      const xL = 300;
+      const f = -fVal;
+      const d = dVal;
+      const h = hVal;
+      const showObj = toggleObject.checked;
+
+      drawLens(svg, xL, f, false);
+
+      if (!showObj) {
+        const heights = [60, 80, 100, 120, 160, 180, 200, 220];
+        const fVirtual = xL - fVal;
+        heights.forEach(y => {
+          svg.appendChild(el('line', {x1:10, y1:y, x2:xL, y2:y, stroke:'rgba(110,219,176,0.85)', 'stroke-width':1.8}));
+          const pEnd = projectRayX(fVirtual, 140, xL, y, 590);
+          arrow(svg, xL, y, pEnd.x, pEnd.y, 'rgba(110,219,176,0.85)', 1.8);
+          svg.appendChild(el('line', {x1: xL, y1: y, x2: fVirtual, y2: 140, stroke:'rgba(110,219,176,0.35)', 'stroke-width':1, 'stroke-dasharray':'4 3'}));
+        });
+        return;
+      }
+
+      const dPrime = (d * f) / (d - f);
+      const G = -dPrime / d;
+      const imgTypeStr = `Ảnh ảo, cùng chiều, nhỏ hơn vật`;
+
+      readD.textContent = d;
+      readF.textContent = f;
+      readDPrime.textContent = dPrime.toFixed(1);
+      readG.textContent = G.toFixed(2);
+      readType.textContent = imgTypeStr;
+
+      const xO = xL - d;
+      const yO = 140 - h;
+      const xI = xL + dPrime;
+      const yI = 140 - G * h;
+
+      // Draw Megamind object
+      svg.appendChild(el('image', {
+        href: 'uploads/megamind.png',
+        x: xO - h/2,
+        y: 140 - h,
+        width: h,
+        height: h,
+        opacity: 0.85
+      }));
+
+      arrow(svg, xO, 140, xO, yO, '#F2B544', 3);
+      svg.appendChild(el('text', {x: xO - 10, y: yO - 10, fill:'#F2B544', 'font-size':12, 'font-weight':'bold'}, 'A (Vật)'));
+
+      const color = '#E05050';
+
+      // Draw Megamind image
+      const wI = Math.abs(G) * h;
+      const hI = Math.abs(G) * h;
+      const imgAttrs = {
+        href: 'uploads/megamind.png',
+        x: xI - wI/2,
+        y: 140 - hI,
+        width: wI,
+        height: hI,
+        opacity: 0.8
+      };
+      if (G < 0) {
+        imgAttrs.transform = 'translate(0, 280) scale(1, -1)';
+      }
+      svg.appendChild(el('image', imgAttrs));
+
+      arrow(svg, xI, 140, xI, yI, color, 2.5, '4 2');
+      svg.appendChild(el('text', {x: xI - 15, y: yI - 10, fill: color, 'font-size':12, 'font-weight':'bold'}, "A' (Ảnh ảo)"));
+
+      svg.appendChild(el('line', {x1: xO, y1: yO, x2: xL, y2: yO, stroke: 'rgba(110,219,176,0.8)', 'stroke-width':2}));
+      const pFPrime = { x: xL - fVal, y: 140 };
+      const pRay1End = projectRayX(pFPrime.x, pFPrime.y, xL, yO, 590);
+      arrow(svg, xL, yO, pRay1End.x, pRay1End.y, 'rgba(110,219,176,0.8)', 2);
+      svg.appendChild(el('line', {x1: xL, y1: yO, x2: pFPrime.x, y2: 140, stroke: 'rgba(110,219,176,0.5)', 'stroke-width':1.5, 'stroke-dasharray':'4 3'}));
+
+      const pRay2End = projectRayX(xO, yO, xL, 140, 590);
+      arrow(svg, xO, yO, pRay2End.x, pRay2End.y, 'rgba(167,188,238,0.8)', 2);
+
+      const pF = { x: xL + fVal, y: 140 };
+      const slope3 = (140 - yO) / (pF.x - xO);
+      const yLens3 = yO + slope3 * (xL - xO);
+      svg.appendChild(el('line', {x1: xO, y1: yO, x2: xL, y2: yLens3, stroke: 'rgba(242,181,68,0.6)', 'stroke-width':2}));
+      svg.appendChild(el('line', {x1: xL, y1: yLens3, x2: pF.x, y2: 140, stroke: 'rgba(242,181,68,0.35)', 'stroke-width':1, 'stroke-dasharray':'3 3'}));
+      svg.appendChild(el('line', {x1: xL, y1: yLens3, x2: 590, y2: yLens3, stroke: 'rgba(242,181,68,0.6)', 'stroke-width':2}));
+      svg.appendChild(el('line', {x1: xL, y1: yLens3, x2: xI, y2: yLens3, stroke: 'rgba(242,181,68,0.5)', 'stroke-width':1.5, 'stroke-dasharray':'4 3'}));
+
+      svg.appendChild(el('circle', {id:'drag-handle', cx: xO, cy: yO, r: 8, fill:'rgba(242,181,68,0.4)', stroke:'#F2B544', 'stroke-width':2, style:'cursor: grab;'}));
     }
 
     function drawMicroscope(svg) {
-      const xO=120, fO=25; // objective: short focal length
-      const xE=440, fE=60; // eyepiece: moderate focal length
-      // Axes
+      const xO=120, fO=25;
+      const xE=440, fE=60;
       svg.appendChild(el('line',{x1:10,y1:140,x2:590,y2:140,stroke:'rgba(251,244,228,0.15)','stroke-width':1,'stroke-dasharray':'5 3'}));
-      // Objective lens
       svg.appendChild(el('ellipse',{cx:xO,cy:140,rx:8,ry:50,fill:'rgba(90,120,200,0.2)',stroke:'rgba(90,120,200,0.7)','stroke-width':2}));
       svg.appendChild(el('text',{x:xO-22,y:205,fill:'#7B96E0','font-size':10},'Vật kính'));
       svg.appendChild(el('text',{x:xO-16,y:217,fill:'rgba(251,244,228,0.4)','font-size':9},'f₁≈5mm'));
-      // Eyepiece
       svg.appendChild(el('ellipse',{cx:xE,cy:140,rx:8,ry:55,fill:'rgba(90,120,200,0.2)',stroke:'rgba(90,120,200,0.7)','stroke-width':2}));
       svg.appendChild(el('text',{x:xE-14,y:210,fill:'#7B96E0','font-size':10},'Thị kính'));
       svg.appendChild(el('text',{x:xE-16,y:222,fill:'rgba(251,244,228,0.4)','font-size':9},'f₂≈25mm'));
-      // Object (tiny, near objective)
       svg.appendChild(el('line',{x1:xO+35,y1:140,x2:xO+35,y2:118,stroke:'#F2B544','stroke-width':2}));
       svg.appendChild(el('text',{x:xO+22,y:112,fill:'#F2B544','font-size':9},'Vật'));
-      // Intermediate image (between lenses, real, inverted, magnified)
       svg.appendChild(el('line',{x1:xE-80,y1:140,x2:xE-80,y2:185,stroke:'rgba(110,219,176,0.6)','stroke-width':2,'stroke-dasharray':'4 2'}));
       svg.appendChild(el('text',{x:xE-105,y:200,fill:'rgba(110,219,176,0.6)','font-size':9},'Ảnh trung gian'));
-      // Final virtual image
       svg.appendChild(el('text',{x:490,y:90,fill:'rgba(251,244,228,0.5)','font-size':10},'Ảnh cuối (ảo,'));
       svg.appendChild(el('text',{x:490,y:102,fill:'rgba(251,244,228,0.5)','font-size':10},'rất lớn)'));
-      // Rays schematic
       svg.appendChild(el('line',{x1:xO+35,y1:118,x2:xO,y2:118,stroke:'rgba(242,181,68,0.5)','stroke-width':1.5}));
       svg.appendChild(el('line',{x1:xO,y1:118,x2:xE-80,y2:185,stroke:'rgba(242,181,68,0.5)','stroke-width':1.5}));
       svg.appendChild(el('line',{x1:xE-80,y1:185,x2:xE,y2:185,stroke:'rgba(110,219,176,0.5)','stroke-width':1.5}));
@@ -697,31 +999,25 @@
     }
 
     function drawTelescope(svg) {
-      const xO=100, fO=160; // objective: long focal length
-      const xE=440, fE=60; // eyepiece
+      const xO=100, fO=160;
+      const xE=440, fE=60;
       svg.appendChild(el('line',{x1:10,y1:140,x2:590,y2:140,stroke:'rgba(251,244,228,0.15)','stroke-width':1,'stroke-dasharray':'5 3'}));
-      // Objective
       svg.appendChild(el('ellipse',{cx:xO,cy:140,rx:8,ry:60,fill:'rgba(90,120,200,0.2)',stroke:'rgba(90,120,200,0.7)','stroke-width':2}));
       svg.appendChild(el('text',{x:xO-22,y:215,fill:'#7B96E0','font-size':10},'Vật kính'));
       svg.appendChild(el('text',{x:xO-20,y:227,fill:'rgba(251,244,228,0.4)','font-size':9},'f₁ = 160mm'));
-      // Eyepiece
       svg.appendChild(el('ellipse',{cx:xE,cy:140,rx:8,ry:45,fill:'rgba(90,120,200,0.2)',stroke:'rgba(90,120,200,0.7)','stroke-width':2}));
       svg.appendChild(el('text',{x:xE-14,y:200,fill:'#7B96E0','font-size':10},'Thị kính'));
       svg.appendChild(el('text',{x:xE-14,y:212,fill:'rgba(251,244,228,0.4)','font-size':9},'f₂=40mm'));
-      // Parallel rays from distant star
       svg.appendChild(el('line',{x1:10,y1:108,x2:xO,y2:108,stroke:'#F2B544','stroke-width':2}));
       svg.appendChild(el('line',{x1:10,y1:140,x2:xO,y2:140,stroke:'#F2B544','stroke-width':2}));
       svg.appendChild(el('line',{x1:10,y1:172,x2:xO,y2:172,stroke:'#F2B544','stroke-width':2}));
       svg.appendChild(el('text',{x:12,y:88,fill:'rgba(242,181,68,0.7)','font-size':10},'Tia song song từ sao xa'));
-      // Converge at F' of objective = F of eyepiece (telescope condition)
-      const focal = xO+fO; // 260
+      const focal = xO+fO;
       svg.appendChild(el('line',{x1:xO,y1:108,x2:focal,y2:140,stroke:'rgba(242,181,68,0.6)','stroke-width':1.5}));
       svg.appendChild(el('line',{x1:xO,y1:140,x2:focal,y2:140,stroke:'rgba(242,181,68,0.6)','stroke-width':1.5}));
       svg.appendChild(el('line',{x1:xO,y1:172,x2:focal,y2:140,stroke:'rgba(242,181,68,0.6)','stroke-width':1.5}));
-      // Label focal point
       svg.appendChild(el('circle',{cx:focal,cy:140,r:3,fill:'rgba(251,244,228,0.5)'}));
       svg.appendChild(el('text',{x:focal-4,y:158,fill:'rgba(251,244,228,0.4)','font-size':10},'F₁=F₂'));
-      // Exit through eyepiece as parallel (for infinity viewing)
       svg.appendChild(el('line',{x1:focal,y1:140,x2:xE,y2:108,stroke:'rgba(110,219,176,0.7)','stroke-width':1.5}));
       svg.appendChild(el('line',{x1:focal,y1:140,x2:xE,y2:140,stroke:'rgba(110,219,176,0.7)','stroke-width':1.5}));
       svg.appendChild(el('line',{x1:focal,y1:140,x2:xE,y2:172,stroke:'rgba(110,219,176,0.7)','stroke-width':1.5}));
@@ -731,15 +1027,84 @@
       svg.appendChild(el('text',{x:30,y:265,fill:'rgba(251,244,228,0.55)','font-size':11},'G = f₁/f₂ = 160/40 = 4×  |  Ảnh ảo, ngược chiều với vật thật'));
     }
 
-    const vizFns = {convex:drawConvex, concave:drawConcave, microscope:drawMicroscope, telescope:drawTelescope};
+    const vizFns = {
+      convex: drawInteractiveConvex,
+      concave: drawInteractiveConcave,
+      microscope: drawMicroscope,
+      telescope: drawTelescope
+    };
     const btnLabels = {convex:'Hội tụ', concave:'Phân kỳ', microscope:'Kính hiển vi', telescope:'Kính thiên văn'};
 
     function setViz(name) {
+      activeMode = name;
       document.querySelectorAll('.viz-btn').forEach(b=>b.classList.toggle('active', b.textContent.trim()===btnLabels[name]));
-      const svg=document.getElementById('viz-svg');
-      while(svg.firstChild) svg.removeChild(svg.firstChild);
-      vizFns[name](svg);
+      
+      if (name === 'convex' || name === 'concave') {
+        singleLensCtrls.style.display = 'flex';
+      } else {
+        singleLensCtrls.style.display = 'none';
+      }
+      
+      updateSimulation();
     }
+
+    function updateSimulation() {
+      while(svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
+      vizFns[activeMode](svgEl);
+    }
+
+    // Drag-and-drop mechanics
+    function handleStart(e) {
+      const handle = e.target.closest('#drag-handle');
+      if (!handle) return;
+      isDragging = true;
+      e.preventDefault();
+    }
+
+    function handleMove(e) {
+      if (!isDragging) return;
+      
+      const rect = svgEl.getBoundingClientRect();
+      const scaleX = 600 / rect.width;
+      const scaleY = 280 / rect.height;
+      
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      
+      const svgX = (clientX - rect.left) * scaleX;
+      const svgY = (clientY - rect.top) * scaleY;
+      
+      let d = 300 - svgX;
+      let h = 140 - svgY;
+      
+      d = Math.max(10, Math.min(280, d));
+      h = Math.max(10, Math.min(80, h));
+      
+      dVal = Math.round(d);
+      hVal = Math.round(h);
+      
+      slideD.value = dVal;
+      slideH.value = hVal;
+      
+      updateUI();
+    }
+
+    function handleEnd() {
+      isDragging = false;
+    }
+
+    svgEl.addEventListener('mousedown', handleStart);
+    svgEl.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleEnd);
+
+    svgEl.addEventListener('touchstart', handleStart, {passive: false});
+    svgEl.addEventListener('touchmove', handleMove, {passive: false});
+    window.addEventListener('touchend', handleEnd);
+
+    // Initial setup
+    updateUIState();
+    updateUI();
+    
     setViz('convex');
 
     /* ── Quiz ── */

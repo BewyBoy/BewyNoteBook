@@ -92,7 +92,7 @@ function FlatTab({ subject, active, onClick, index }) {
       style={{
         display: 'flex', alignItems: 'center', gap: 14,
         padding: '14px 22px',
-        fontFamily: "'Times New Roman', Times, serif",
+        fontFamily: "'Itim', cursive",
         fontSize: 16, fontWeight: isActive ? 700 : 500,
         color: isActive ? FLAT.dark : FLAT.cream,
         background: isActive ? subject.color : 'rgba(251,244,228,0.08)',
@@ -141,7 +141,7 @@ function FlatButton({ children, primary, color, onClick }) {
       onMouseDown={() => setPressed(true)}
       onMouseUp={() => setPressed(false)}
       style={{
-        fontFamily: "'Times New Roman', Times, serif",
+        fontFamily: "'Itim', cursive",
         fontSize: 16, fontWeight: 700,
         padding: '14px 32px',
         background: bg,
@@ -186,12 +186,12 @@ function FlatFeatureCard({ icon, title, desc, color }) {
         boxShadow: `0 6px 16px -4px ${color || FLAT.gold}44`,
       }}>{icon}</div>
       <h4 style={{
-        fontFamily: "'Times New Roman', Times, serif",
+        fontFamily: "'Itim', cursive",
         fontSize: 16, fontWeight: 700,
         color: FLAT.cream, margin: '0 0 6px',
       }}>{title}</h4>
       <p style={{
-        fontFamily: "'Times New Roman', Times, serif",
+        fontFamily: "'Itim', cursive",
         fontSize: 14, color: 'rgba(251,244,228,0.5)',
         margin: 0, lineHeight: 1.5,
       }}>{desc}</p>
@@ -240,11 +240,11 @@ function FlatModal({ subject, onClose }) {
             }}>{s.icon}</div>
             <div>
               <h2 style={{
-                fontFamily: "'Times New Roman', Times, serif", fontSize: 30,
+                fontFamily: "'Itim', cursive", fontSize: 30,
                 margin: 0, color: FLAT.cream,
               }}>{s.label}</h2>
               <p style={{
-                fontFamily: "'Times New Roman', Times, serif",
+                fontFamily: "'Itim', cursive",
                 fontSize: 13, color: 'rgba(251,244,228,0.4)', margin: 0,
               }}>{(chapters[s.id] || []).length} chapters available</p>
             </div>
@@ -287,13 +287,13 @@ function ChapterRow({ index, label, color, deep }) {
         width: 30, height: 30, borderRadius: 8,
         background: hov ? color : 'rgba(251,244,228,0.08)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: "'Times New Roman', Times, serif",
+        fontFamily: "'Itim', cursive",
         fontSize: 13, fontWeight: 700,
         color: hov ? FLAT.dark : 'rgba(251,244,228,0.4)',
         transition: 'all 0.15s ease', flexShrink: 0,
       }}>{index + 1}</span>
       <span style={{
-        fontFamily: "'Times New Roman', Times, serif",
+        fontFamily: "'Itim', cursive",
         fontSize: 15, color: FLAT.cream,
       }}>{label}</span>
       <span style={{
@@ -326,7 +326,7 @@ function FlatBrand({ size = 'default' }) {
         </svg>
       </div>
       <span style={{
-        fontFamily: "'Times New Roman', Times, serif", fontWeight: 700,
+        fontFamily: "'Itim', cursive", fontWeight: 700,
         fontSize: sz, color: FLAT.cream,
         letterSpacing: '-0.02em',
       }}>LR Hub</span>

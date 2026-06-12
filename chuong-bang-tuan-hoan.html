@@ -1,0 +1,2309 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hóa học · Chương 2 — Bảng Tuần Hoàn Hóa Học (Split Notebook)</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SPLIT NOTEBOOK & LAB BENCH SYSTEM
+    ══════════════════════════════════════ */
+    @import url('https://fonts.googleapis.com/css2?family=Itim&family=Pacifico&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:        #F5F0E0;
+      --paper-dark:   #EDE5CC;
+      --ink:          #1A1208;
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #C44010;
+      --accent-blue:  #1A4FA0;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-g:  rgba(80, 180, 100, 0.30);
+      --line-h:       30px;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #8B7355;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #9E8565 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #6B5540 0%, transparent 50%),
+        repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+      color: var(--ink);
+      font-family: 'Itim', cursive;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    .back-link {
+      position: absolute; top: 24px; left: 96px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent-blue);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Itim', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.15);
+      transform: rotate(0.8deg); transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent-blue); }
+
+    /* ══════════════════════════════════════
+       SPLIT LAYOUT CONTAINER
+     ══════════════════════════════════════ */
+    .scrolly-container {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Left Side - School Notebook */
+    .notebook-panel {
+      width: 50%;
+      position: relative;
+      background-color: var(--paper);
+      box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+      z-index: 5;
+    }
+
+    /* Ruled paper background classes */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(90deg, transparent 71px, var(--red-margin) 71px, var(--red-margin) 73px, transparent 73px),
+        repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
+      background-attachment: local;
+      background-position: 0 0, 0 22px;
+    }
+
+    .hero {
+      padding: 90px 40px 30px 96px;
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+      position: relative; overflow: hidden;
+      scroll-snap-align: start;
+    }
+    .hero::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #8B7355 0%, #8B7355 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+    .crumb { font-size: 12px; letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: 30px; line-height: 30px; font-family: 'Itim', cursive; }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+    .title { font-family: 'Pacifico', cursive; font-size: clamp(32px, 4.5vw, 60px); line-height: 60px; color: var(--ink); margin-bottom: 30px; font-weight: 700; }
+    .title-stroke { width: clamp(140px, 30vw, 300px); height: 3px; background: var(--accent); border-radius: 2px; margin-top: -15px; margin-bottom: 12px; }
+    .subtitle { font-family: 'Itim', cursive; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-blue); margin-bottom: 30px; line-height: 30px; }
+    .intro { max-width: 800px; font-size: 15px; line-height: var(--line-h); color: var(--ink-mid); }
+
+    .card {
+      padding: 90px 36px 90px 96px;
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative; overflow: hidden;
+      min-height: 100vh;
+      box-sizing: border-box;
+      scroll-snap-align: start;
+      transition: background-color 0.3s;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+    .card.ruled-page:nth-child(even) { background-color: var(--paper-dark); }
+    .card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #8B7355 0%, #8B7355 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+
+    /* Active section highlight on notebook */
+    .card.active-section {
+      background-color: rgba(255, 248, 220, 0.45);
+    }
+
+    @media (min-width: 921px) {
+      .scrolly-container {
+        height: 100vh;
+        overflow: hidden;
+      }
+      .notebook-panel {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scrollbar-width: none;
+      }
+      .notebook-panel::-webkit-scrollbar {
+        display: none;
+      }
+      .lab-panel {
+        position: relative;
+        right: auto;
+        top: auto;
+        height: 100vh;
+      }
+      .card > *:not(.mobile-demo-placeholder) {
+        opacity: 0.15;
+        transition: opacity 0.5s ease;
+      }
+      .card.active-section > *:not(.mobile-demo-placeholder) {
+        opacity: 1;
+      }
+      .hero > * {
+        opacity: 0.15;
+        transition: opacity 0.5s ease;
+      }
+      .hero.active-section > * {
+        opacity: 1;
+      }
+    }
+
+    .card h2 { font-family: 'Pacifico', cursive; font-size: 24px; color: var(--ink); line-height: 30px; font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 0px; margin-bottom: 30px; display: inline-block; }
+    .card p { font-size: 15px; line-height: var(--line-h); color: var(--ink-mid); margin-bottom: 30px; }
+    .card p:last-child { margin-bottom: 0; }
+    .card .key { color: var(--accent); font-weight: bold; }
+
+    /* Custom Note stamp style inside notebook card */
+    .doodle-note {
+      position: relative;
+      margin: 30px 0;
+      padding: 20px 24px;
+      background: var(--highlight-y);
+      border: 1px dashed rgba(26,18,8,0.2);
+      border-radius: 4px;
+      transform: rotate(-0.5deg);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+    .doodle-note p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 24px;
+      color: var(--ink-mid);
+    }
+    .doodle-note strong {
+      color: var(--accent);
+    }
+
+    .checklist {
+      list-style: none;
+      margin-bottom: 30px;
+    }
+    .checklist li {
+      font-size: 15px;
+      line-height: 30px;
+      color: var(--ink-mid);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .checklist li::before {
+      content: '✓';
+      color: var(--jade);
+      font-weight: bold;
+    }
+
+    /* ══════════════════════════════════════
+       Right Side - Elegant Lab Bench / Chalkboard
+    ══════════════════════════════════════ */
+    .lab-panel {
+      width: 50%;
+      background: #141913;
+      background-image: 
+        radial-gradient(ellipse at 50% 20%, #1e281c 0%, transparent 65%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px);
+      position: fixed;
+      right: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    .lab-sticky-wrapper {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .blackboard-title {
+      position: absolute;
+      top: 24px;
+      left: 40px;
+      font-family: 'Pacifico', cursive;
+      font-size: 20px;
+      color: #9ab890;
+      opacity: 0.85;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 8px rgba(154, 184, 144, 0.3);
+    }
+
+    /* Demonstration containers on the right */
+    .demo-panel {
+      position: absolute;
+      top: 60px;
+      bottom: 30px;
+      left: 40px;
+      right: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 1;
+    }
+    .demo-panel.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    /* Blackboard/Lab bench card overlay */
+    .glass-bench {
+      background: rgba(30, 40, 28, 0.65);
+      border: 1.5px solid rgba(154, 184, 144, 0.25);
+      border-radius: 12px;
+      box-shadow: 
+        0 15px 35px rgba(0,0,0,0.5), 
+        inset 0 0 20px rgba(154, 184, 144, 0.1);
+      padding: 24px;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(10px);
+      color: #eaeaea;
+      box-sizing: border-box;
+    }
+
+    .bench-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 22px;
+      color: #e2c07a;
+      margin-bottom: 12px;
+      text-align: center;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    /* ══════════════════════════════════════
+       DEMO 0: HERO (COVER LOGO)
+    ══════════════════════════════════════ */
+    .cover-graphic-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 20px;
+    }
+    .glowing-pt {
+      display: grid;
+      grid-template-columns: repeat(4, 35px);
+      gap: 6px;
+      transform: rotate(-5deg);
+    }
+    .glowing-box {
+      width: 35px;
+      height: 35px;
+      border: 1px solid rgba(226, 192, 122, 0.3);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 0 5px #fff;
+      animation: pulse-glow 2s infinite alternate;
+    }
+    .glowing-box:nth-child(1) { background: rgba(217, 99, 59, 0.2); animation-delay: 0s; }
+    .glowing-box:nth-child(2) { background: rgba(111, 184, 209, 0.2); animation-delay: 0.4s; }
+    .glowing-box:nth-child(3) { background: rgba(242, 181, 68, 0.2); animation-delay: 0.8s; }
+    .glowing-box:nth-child(4) { background: rgba(47, 143, 111, 0.2); animation-delay: 1.2s; }
+
+    @keyframes pulse-glow {
+      0% { box-shadow: 0 0 5px rgba(226, 192, 122, 0.2); border-color: rgba(226,192,122,0.3); }
+      100% { box-shadow: 0 0 15px rgba(226, 192, 122, 0.8); border-color: rgba(226,192,122,0.9); }
+    }
+
+    .cover-intro-text {
+      text-align: center;
+      color: #9ab890;
+      font-size: 15px;
+      max-width: 320px;
+      line-height: 1.4;
+      font-style: italic;
+    }
+
+    /* ══════════════════════════════════════
+       DEMO 1: CELL DETAILS STYLING
+    ══════════════════════════════════════ */
+    .element-selector {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .el-sel-btn {
+      padding: 6px 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-family: 'Itim', cursive;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .el-sel-btn:hover {
+      background: rgba(226, 192, 122, 0.15);
+      border-color: #e2c07a;
+    }
+    .el-sel-btn.active {
+      background: #e2c07a;
+      color: #141913;
+      font-weight: bold;
+      border-color: #e2c07a;
+    }
+
+    .chalk-cell-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 15px 0;
+      flex-grow: 1;
+    }
+    .chalk-cell {
+      position: relative;
+      width: 175px;
+      height: 185px;
+      border: 2px dashed rgba(255,255,255,0.4);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      box-shadow: inset 0 0 15px rgba(255,255,255,0.05);
+      transition: all 0.3s;
+    }
+    .chalk-cell:hover {
+      border-color: #e2c07a;
+      box-shadow: 0 0 20px rgba(226, 192, 122, 0.2), inset 0 0 15px rgba(226, 192, 122, 0.05);
+    }
+    .cell-part {
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1.5px dashed transparent;
+      border-radius: 4px;
+      padding: 2px 6px;
+      text-align: center;
+    }
+    .cell-part:hover, .cell-part.active {
+      border-color: #e2c07a;
+      background: rgba(226, 192, 122, 0.15);
+      color: #e2c07a;
+      text-shadow: 0 0 8px rgba(226, 192, 122, 0.5);
+    }
+    .part-z {
+      align-self: flex-start;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .part-sym {
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1;
+      margin-top: -2px;
+      margin-bottom: 6px;
+    }
+    .part-name {
+      font-size: 14px;
+      margin-bottom: 1px;
+    }
+    .part-mass {
+      font-size: 13px;
+      color: #a5b59e;
+    }
+
+    .chalk-explanation {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 12px 16px;
+      min-height: 80px;
+      font-size: 13.5px;
+      line-height: 1.4;
+    }
+    .chalk-explanation .exp-title {
+      color: #e2c07a;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .chalk-explanation .exp-body {
+      color: #b0c0a8;
+    }
+
+    /* ══════════════════════════════════════
+       DEMO 2: MINI PERIODIC TABLE & BOHR MODEL
+    ══════════════════════════════════════ */
+    .mini-pt-container {
+      width: 100%;
+    }
+    .mini-pt-grid {
+      display: grid;
+      grid-template-columns: repeat(18, 1fr);
+      gap: 3px;
+      margin-bottom: 12px;
+    }
+    .mini-cell {
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.03);
+      border-radius: 3px;
+      color: #eaeaea;
+      font-family: 'Itim', cursive;
+      font-size: 10px;
+      font-weight: bold;
+      padding: 3px 0;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .mini-cell .z-sub {
+      font-size: 6px;
+      opacity: 0.5;
+    }
+    .mini-cell:hover {
+      border-color: #e2c07a;
+      background: rgba(226, 192, 122, 0.15);
+    }
+    .mini-cell.active {
+      outline: 1.5px solid #fff;
+      box-shadow: 0 0 10px rgba(255,255,255,0.5);
+    }
+    .mini-cell.alkali { background: rgba(242, 181, 68, 0.18); }
+    .mini-cell.alkaline { background: rgba(232, 155, 168, 0.18); }
+    .mini-cell.halogen { background: rgba(217, 99, 59, 0.18); }
+    .mini-cell.noble { background: rgba(111, 184, 209, 0.18); }
+    .mini-cell.nonmetal { background: rgba(47, 143, 111, 0.18); }
+    .mini-cell.metalloid { background: rgba(199, 60, 46, 0.18); }
+
+    .mini-gap {
+      visibility: hidden;
+    }
+
+    .inspector-visual {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-top: auto;
+      width: 100%;
+    }
+    .bohr-canvas-wrap {
+      background: #090b08;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      width: 130px;
+      height: 130px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .bohr-canvas-wrap canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .inspector-info {
+      flex-grow: 1;
+    }
+    .inspector-info h3 {
+      font-family: 'Pacifico', cursive;
+      font-size: 18px;
+      color: #e2c07a;
+      margin-bottom: 4px;
+    }
+    .inspector-info p {
+      font-size: 13px;
+      line-height: 1.4;
+      color: #b0c0a8;
+      margin: 0;
+    }
+    #inspector-el-pos {
+      font-weight: bold;
+      color: #eaeaea;
+      margin-bottom: 6px;
+    }
+
+    /* ══════════════════════════════════════
+       DEMO 3: PERIODIC TRENDS HEATMAP
+    ══════════════════════════════════════ */
+    .trend-controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 12px;
+      width: 100%;
+    }
+    .trend-btn {
+      flex-grow: 1;
+      padding: 6px 4px;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 6px;
+      background: rgba(255,255,255,0.03);
+      color: #b0c0a8;
+      font-family: 'Itim', cursive;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .trend-btn:hover {
+      border-color: #e2c07a;
+      color: #fff;
+    }
+    .trend-btn.active {
+      background: rgba(196, 64, 16, 0.15);
+      border-color: #C44010;
+      color: #fff;
+      box-shadow: inset 0 0 8px rgba(196, 64, 16, 0.2);
+    }
+    .trend-pt-container {
+      width: 100%;
+    }
+    .trend-pt-grid {
+      display: grid;
+      grid-template-columns: repeat(18, 1fr);
+      gap: 3px;
+      margin-bottom: 12px;
+    }
+    .trend-cell {
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.02);
+      border-radius: 3px;
+      color: rgba(255,255,255,0.7);
+      font-family: 'Itim', cursive;
+      font-size: 9px;
+      padding: 10px 0;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .trend-cell .cell-symbol {
+      position: relative;
+      z-index: 5;
+      font-weight: bold;
+    }
+    .trend-cell .radius-circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(242, 181, 68, 0.35);
+      border: 1px solid rgba(242, 181, 68, 0.6);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      top: 50%;
+      left: 50%;
+      z-index: 1;
+      transition: width 0.3s ease, height 0.3s ease, background 0.3s, border-color 0.3s;
+    }
+    .trend-cell:hover {
+      border-color: #fff;
+      color: #fff;
+    }
+
+    .trend-explanation {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      background: rgba(0,0,0,0.25);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-top: auto;
+      width: 100%;
+    }
+    .trend-arrow-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .trend-arrow {
+      background: rgba(226, 192, 122, 0.15);
+      border: 1px solid #e2c07a;
+      border-radius: 4px;
+      color: #e2c07a;
+      font-size: 14px;
+      width: 44px;
+      padding: 2px 0;
+      text-align: center;
+      font-weight: bold;
+      transition: transform 0.3s ease;
+    }
+    .trend-desc-text {
+      font-size: 13px;
+      line-height: 1.4;
+      color: #b0c0a8;
+    }
+
+    /* ══════════════════════════════════════
+       DEMO 4: PLAYABLE QUIZ STYLING
+    ══════════════════════════════════════ */
+    .quiz-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      width: 100%;
+    }
+    .quiz-progress {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #a5b59e;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 6px;
+      width: 100%;
+    }
+    .quiz-bar-outer {
+      width: 100px;
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .quiz-bar-inner {
+      height: 100%;
+      width: 0%;
+      background: #e2c07a;
+      transition: width 0.3s ease;
+    }
+
+    .quiz-card {
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 10px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .quiz-question {
+      font-size: 15px;
+      font-weight: bold;
+      color: #fff;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .quiz-opt-btn {
+      font-family: 'Itim', cursive;
+      text-align: left;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 6px;
+      color: #eaeaea;
+      cursor: pointer;
+      font-size: 13.5px;
+      transition: all 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .quiz-opt-btn:hover:not(.checked) {
+      background: rgba(255,255,255,0.1);
+      border-color: #e2c07a;
+    }
+    .quiz-opt-btn.correct {
+      background: rgba(80, 180, 100, 0.25);
+      border-color: #8be0a0;
+      color: #8be0a0;
+      font-weight: bold;
+    }
+    .quiz-opt-btn.incorrect {
+      background: rgba(217, 99, 59, 0.2);
+      border-color: #fca088;
+      color: #fca088;
+      animation: shake 0.4s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    .opt-icon { font-size: 14px; }
+
+    .quiz-explanation {
+      margin-top: 12px;
+      font-size: 12.5px;
+      color: #b8c8b0;
+      background: rgba(154, 184, 144, 0.1);
+      border-left: 3.5px solid #e2c07a;
+      padding: 8px 12px;
+      border-radius: 0 4px 4px 0;
+      display: none;
+      line-height: 1.4;
+    }
+
+    .quiz-nav-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+    .quiz-next-btn {
+      font-family: 'Itim', cursive;
+      padding: 8px 18px;
+      background: #e2c07a;
+      color: #1a2517;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+    .quiz-next-btn:hover { background: #ffd993; }
+    .quiz-next-btn:disabled { background: rgba(255,255,255,0.1); color: #888; cursor: not-allowed; }
+
+    /* Results Screen */
+    .quiz-results {
+      text-align: center;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      padding: 20px 0;
+    }
+    .score-circle {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 4px solid #e2c07a;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: rgba(226, 192, 122, 0.15);
+      box-shadow: 0 0 20px rgba(226, 192, 122, 0.2);
+    }
+    .score-val {
+      font-size: 36px;
+      font-weight: bold;
+      color: #e2c07a;
+      font-family: 'Pacifico', cursive;
+      line-height: 1;
+    }
+    .score-label {
+      font-size: 11px;
+      color: #a5b59e;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .result-text { font-size: 18px; font-weight: bold; color: #fff; }
+    .result-sub { font-size: 13px; color: #a5b59e; max-width: 250px; line-height: 1.4; }
+    .replay-btn {
+      font-family: 'Itim', cursive;
+      padding: 8px 18px;
+      border: 1px solid #e2c07a;
+      border-radius: 6px;
+      background: rgba(226, 192, 122, 0.1);
+      color: #e2c07a;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .replay-btn:hover {
+      background: #e2c07a;
+      color: #1a2517;
+    }
+
+    /* MOBILE LAYOUT & INLINE DEMOS */
+    .mobile-demo-placeholder {
+      display: none;
+      width: 100%;
+      margin: 16px 0;
+    }
+
+    @media (max-width: 920px) {
+      .scrolly-container {
+        flex-direction: column;
+      }
+      .notebook-panel {
+        width: 100%;
+      }
+      .lab-panel {
+        display: none;
+      }
+      .mobile-demo-placeholder {
+        display: block;
+        width: 100%;
+        margin: 16px 0;
+      }
+      .demo-panel {
+        position: relative;
+        top: auto; bottom: auto; left: auto; right: auto;
+        opacity: 1 !important;
+        transform: none !important;
+        pointer-events: auto !important;
+        padding: 0;
+        margin-top: 10px;
+        height: auto;
+      }
+      .glass-bench {
+        padding: 16px;
+        height: auto;
+        min-height: 380px;
+      }
+      .card {
+        min-height: auto;
+        padding-bottom: 24px;
+      }
+      .bohr-canvas-wrap {
+        width: 100px;
+        height: 100px;
+      }
+      .mini-cell {
+        font-size: 8px;
+        padding: 2px 0;
+      }
+      .trend-cell {
+        height: 28px;
+        padding: 6px 0;
+      }
+      .inspector-visual {
+        gap: 12px;
+      }
+    }
+
+    /* Modal for Periodic Table */
+    .pt-modal {
+      position: fixed; inset: 0; z-index: 120;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(6, 10, 8, 0.75); backdrop-filter: blur(5px);
+      padding: 20px;
+    }
+    .pt-modal.hidden { display: none; }
+    .pt-panel {
+      width: min(1000px, 95vw); max-height: 90vh; overflow: auto;
+      background: #141913; border: 1.5px solid rgba(154, 184, 144, 0.3);
+      border-radius: 12px; padding: 20px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    }
+    .pt-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .pt-head h3 { font-family: 'Pacifico', cursive; font-size: 24px; color: #e2c07a; }
+    .pt-head p { font-size: 11px; color: #a5b59e; }
+    .pt-close {
+      border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05);
+      color: #fff; font-family: 'Itim', cursive; padding: 6px 12px; border-radius: 6px; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pt-close:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: #fff;
+    }
+    
+    /* Internal split layout */
+    .pt-body-layout {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      margin-top: 15px;
+    }
+    .pt-inspector-panel {
+      width: 220px;
+      flex-shrink: 0;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .pt-mag-details {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13.5px;
+      color: #b0c0a8;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 12px;
+    }
+    .pt-detail-item {
+      line-height: 1.4;
+    }
+    .pt-detail-item strong {
+      color: #e2c07a;
+    }
+    .pt-grid-container {
+      flex-grow: 1;
+      overflow-x: auto;
+      width: 100%;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(154, 184, 144, 0.3) rgba(0,0,0,0.1);
+    }
+    .pt-grid-container::-webkit-scrollbar {
+      height: 6px;
+    }
+    .pt-grid-container::-webkit-scrollbar-thumb {
+      background: rgba(154, 184, 144, 0.3);
+      border-radius: 3px;
+    }
+    
+    .pt-grid { display: grid; grid-template-columns: repeat(19, minmax(32px, 1fr)); gap: 4px; }
+    .pt-gap { visibility: hidden; }
+    
+    /* Header labels for rows and columns */
+    .pt-header-row {
+      grid-column: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9ab890;
+      font-size: 13px;
+      font-weight: bold;
+      pointer-events: none;
+      min-height: 48px;
+    }
+    .pt-header-col {
+      grid-row: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #9ab890;
+      font-size: 9px;
+      font-weight: bold;
+      pointer-events: none;
+      line-height: 1.2;
+      padding-bottom: 4px;
+      text-align: center;
+    }
+    #pt-mag-cell {
+      border-style: solid !important;
+    }
+    
+    .pt-cell {
+      min-height: 48px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03); color: #fff; font-family: 'Itim', cursive;
+      cursor: pointer; padding: 2px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: 10px; transition: all 0.1s;
+    }
+    .pt-cell:hover { border-color: #e2c07a; background: rgba(226, 192, 122, 0.2); }
+    .pt-cell .sym { font-size: 13px; font-weight: bold; }
+    .pt-cell .num { font-size: 8px; opacity: 0.6; margin-top: 1px; }
+    
+    /* Category styles */
+    .pt-cell.noble { background: rgba(111,184,209,0.18); }
+    .pt-cell.alkali { background: rgba(242,181,68,0.18); }
+    .pt-cell.alkaline { background: rgba(232,155,168,0.18); }
+    .pt-cell.halogen { background: rgba(217,99,59,0.18); }
+    .pt-cell.nonmetal { background: rgba(47,143,111,0.18); }
+    .pt-cell.metalloid { background: rgba(199,60,46,0.18); }
+    .pt-cell.transition { background: rgba(80, 200, 180, 0.18); }
+    .pt-cell.lanthanide { background: rgba(210, 160, 230, 0.18); }
+    .pt-cell.actinide { background: rgba(180, 120, 220, 0.18); }
+    .pt-cell.post-transition { background: rgba(100, 170, 210, 0.18); }
+    .pt-cell.active { outline: 1.5px solid #fff; }
+    
+    /* Placeholder styles */
+    .pt-placeholder {
+      border: 1px dashed rgba(154, 184, 144, 0.3);
+      border-radius: 4px;
+      background: rgba(255,255,255,0.02);
+      color: #9ab890;
+      font-size: 8px;
+      font-weight: bold;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      pointer-events: none;
+      line-height: 1.2;
+    }
+    
+    @media (max-width: 920px) {
+      .pt-body-layout {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .pt-inspector-panel {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+      }
+      .pt-mag-details {
+        width: auto;
+        border-top: none;
+        padding-top: 0;
+        border-left: 1px solid rgba(255,255,255,0.1);
+        padding-left: 16px;
+      }
+    }
+  </style>
+</head>
+<body class="paper-grain">
+
+  <a href="Learning Resources Hub v4.html" class="back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    Quay lại Hub
+  </a>
+
+  <div class="scrolly-container">
+    
+    <!-- LEFT SIDE: NOTEBOOK COLUMN -->
+    <div class="notebook-panel">
+      
+      <!-- Hero Section (data-demo="0") -->
+      <header class="hero ruled-page active-section" data-demo="0">
+        <div class="crumb">
+          <a href="Learning Resources Hub v4.html">Hóa học</a> › Chương 2
+        </div>
+        <h1 class="title">Bảng Tuần Hoàn Hóa Học</h1>
+        <div class="title-stroke"></div>
+        <p class="subtitle">Bản Đồ Của Vũ Trụ</p>
+        <p class="intro">
+          Hãy tưởng tượng thế giới xung quanh chúng ta được xây dựng từ những viên gạch Lego vô hình. Bảng tuần hoàn chính là bộ catalog phân loại tất cả các loại gạch đó. Ở chương này, chúng ta sẽ học cách giải mã các ký tự, con số trên bảng tuần hoàn và hiểu được quy luật sắp xếp tinh tế của các nguyên tố hóa học.
+        </p>
+      </header>
+
+      <main class="layout">
+        
+        <!-- SECTION 1 (data-demo="1") -->
+        <section id="sec-notebook-1" class="card ruled-page" data-demo="1">
+          <h2>1. Cấu Trúc Ô Nguyên Tố</h2>
+          <p>
+            Mỗi nguyên tố hóa học được xếp vào một ô riêng biệt trong bảng tuần hoàn. Ô nguyên tố giống như một tấm <span class="key">"thẻ căn cước"</span> chứa các thông tin cơ bản nhất:
+          </p>
+          <ul class="checklist">
+            <li><strong>Số hiệu nguyên tử (Z):</strong> Số hạt proton (và electron) trong nguyên tử. Nó quyết định danh tính của nguyên tố đó.</li>
+            <li><strong>Kí hiệu hóa học:</strong> Tên viết tắt bằng 1 hoặc 2 chữ cái (chữ đầu viết hoa), dùng thống nhất trên toàn thế giới.</li>
+            <li><strong>Tên nguyên tố:</strong> Tên gọi chính thức theo danh pháp quốc tế.</li>
+            <li><strong>Khối lượng nguyên tử:</strong> Khối lượng trung bình các đồng vị nguyên tố đó (tính bằng đơn vị amu).</li>
+          </ul>
+          
+          <div class="doodle-note">
+            <p>
+              💡 <strong>Mẹo nhớ:</strong> Số hiệu nguyên tử chính là <strong>số thứ tự</strong> của ô nguyên tố đó trong bảng tuần hoàn. Ví dụ, Carbon có Z = 6, nằm ở ô số 6!
+            </p>
+          </div>
+          
+          <!-- Mobile Placeholder (Dynamically filled on <= 920px screen sizes) -->
+          <div id="mob-demo-1" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 2 (data-demo="2") -->
+        <section id="sec-notebook-2" class="card ruled-page" data-demo="2">
+          <h2>2. Ý Nghĩa Của Chu Kì & Nhóm</h2>
+          <p>
+            Bảng tuần hoàn sắp xếp các nguyên tố theo chiều tăng dần của số hiệu nguyên tử. Vị trí hàng và cột của một nguyên tố mang thông tin cực kỳ quan trọng về lớp vỏ electron của nó:
+          </p>
+          <p>
+            <span class="key">Chu kì (Hàng ngang):</span> Bảng tuần hoàn gồm 7 chu kì. 
+            <br>➔ <strong>Số thứ tự chu kì chính bằng số lớp electron</strong> của nguyên tử nguyên tố đó.
+            <br><em>Ví dụ:</em> Các nguyên tố ở chu kì 2 (Li, Be, B, C...) đều có đúng 2 vòng electron xung quanh hạt nhân.
+          </p>
+          <p>
+            <span class="key">Nhóm (Cột dọc):</span> Gồm các nhóm A (từ IA đến VIIIA) và nhóm B. Các nguyên tố trong cùng một nhóm có tính chất hóa học rất tương tự nhau.
+            <br>➔ Đối với nhóm A, <strong>số thứ tự nhóm bằng số electron ở lớp ngoài cùng</strong> (electron hóa trị).
+            <br><em>Ví dụ:</em> Natri (Na) ở nhóm IA có 1 electron lớp ngoài cùng, do đó rất hoạt động hóa học và dễ nhường electron.
+          </p>
+          
+          <div id="mob-demo-2" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 3 (data-demo="3") -->
+        <section id="sec-notebook-3" class="card ruled-page" data-demo="3">
+          <h2>3. Xu Hướng Biến Đổi Tuần Hoàn</h2>
+          <p>
+            Vị trí tương đối của các nguyên tố trong bảng tuần hoàn cho phép ta dự đoán các đặc tính vật lý và hóa học của chúng mà không cần làm thí nghiệm:
+          </p>
+          <p>
+            <span class="key">Phân chia Kim loại & Phi kim:</span>
+            <br>• Góc trái và ở giữa: Các nguyên tố <strong>Kim loại</strong> (dễ nhường electron).
+            <br>• Góc trên bên phải: Các nguyên tố <strong>Phi kim</strong> (dễ nhận electron).
+            <br>• Cột ngoài cùng bên phải (Nhóm VIIIA): Các khí hiếm cực kỳ trơ và bền vững.
+          </p>
+          <p>
+            <span class="key">Quy luật biến đổi chính:</span>
+            <br>• <strong>Bán kính nguyên tử:</strong> Giảm dần từ trái sang phải trong một chu kì (lực hút hạt nhân mạnh lên) và tăng dần từ trên xuống dưới trong một nhóm (số lớp electron tăng).
+            <br>• <strong>Tính kim loại:</strong> Giảm dần từ trái sang phải và tăng dần từ trên xuống dưới.
+            <br>• <strong>Tính phi kim:</strong> Tăng dần từ trái sang phải và giảm dần từ trên xuống dưới.
+          </p>
+
+          <div id="mob-demo-3" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 4 (data-demo="4") -->
+        <section id="sec-notebook-4" class="card ruled-page" data-demo="4">
+          <h2>4. Thử Thách Bảng Tuần Hoàn</h2>
+          <p>
+            Bảng tuần hoàn không chỉ để tra cứu, nó là một bản đồ tư duy tuyệt vời của hóa học. Bạn đã hiểu hết ý nghĩa của các con số và quy luật vị trí của chúng chưa?
+          </p>
+          <p>
+            Hãy cùng làm bài trắc nghiệm nhanh 4 câu hỏi bên cạnh để thử sức và hệ thống lại kiến thức đã học ở chương này nhé!
+          </p>
+          
+          <button id="open-full-pt-btn" class="replay-btn" style="margin-top: 15px; width: 100%; border-color: var(--accent-blue); color: var(--accent-blue); background: rgba(26, 79, 160, 0.05); display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>
+            Mở Bảng Tuần Hoàn Đầy Đủ
+          </button>
+          
+          <div id="mob-demo-4" class="mobile-demo-placeholder"></div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- RIGHT SIDE: ELEGANT LAB BENCH / CHALKBOARD -->
+    <div class="lab-panel">
+      <div class="lab-sticky-wrapper">
+        
+        <!-- DEMO 0: HERO (COVER LOGO) -->
+        <div id="desk-demo-0" class="desk-demo-slot">
+          <div id="demo-0" class="demo-panel active">
+            <div class="cover-graphic-wrap">
+              <div class="glowing-pt">
+                <div class="glowing-box">H</div>
+                <div class="glowing-box">He</div>
+                <div class="glowing-box">Li</div>
+                <div class="glowing-box">Be</div>
+              </div>
+              <div class="cover-intro-text">
+                "Hóa học là bản giao hưởng của các nguyên tố, và bảng tuần hoàn chính là bản nhạc phổ của bản giao hưởng đó."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 1: CELL INTERACTIVE INSPECTOR -->
+        <div id="desk-demo-1" class="desk-demo-slot">
+          <div id="demo-1" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Giải Mã Ô Nguyên Tố</div>
+              
+              <div class="element-selector">
+                <button class="el-sel-btn active" data-el="C">Carbon</button>
+                <button class="el-sel-btn" data-el="H">Hydrogen</button>
+                <button class="el-sel-btn" data-el="O">Oxygen</button>
+                <button class="el-sel-btn" data-el="Na">Sodium</button>
+                <button class="el-sel-btn" data-el="Cl">Chlorine</button>
+              </div>
+              
+              <div class="chalk-cell-container">
+                <div class="chalk-cell" id="interactive-cell">
+                  <div class="cell-part part-z" id="cell-z" data-part="z">6</div>
+                  <div class="cell-part part-sym" id="cell-sym" data-part="sym">C</div>
+                  <div class="cell-part part-name" id="cell-name" data-part="name">Carbon</div>
+                  <div class="cell-part part-mass" id="cell-mass" data-part="mass">12.011</div>
+                </div>
+              </div>
+              
+              <div class="chalk-explanation" id="cell-explanation">
+                <div class="exp-title" id="cell-exp-title">👉 Khám phá ô nguyên tố</div>
+                <div class="exp-body" id="cell-exp-body">Hãy nhấp hoặc di chuột vào các vùng thông tin khác nhau trong ô nguyên tố Carbon để xem giải nghĩa chi tiết!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 2: PERIOD & GROUP INSPECTOR -->
+        <div id="desk-demo-2" class="desk-demo-slot">
+          <div id="demo-2" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Kính Hiển Vi Vỏ Electron</div>
+              
+              <div class="mini-pt-container">
+                <div class="mini-pt-grid" id="inspector-pt-grid">
+                  <!-- Row 1 -->
+                  <button class="mini-cell nonmetal active" data-z="1" data-period="1" data-group="1">H<span class="z-sub">1</span></button>
+                  <div class="mini-gap" style="grid-column: span 16;"></div>
+                  <button class="mini-cell noble" data-z="2" data-period="1" data-group="8">He<span class="z-sub">2</span></button>
+                  
+                  <!-- Row 2 -->
+                  <button class="mini-cell alkali" data-z="3" data-period="2" data-group="1">Li<span class="z-sub">3</span></button>
+                  <button class="mini-cell alkaline" data-z="4" data-period="2" data-group="2">Be<span class="z-sub">4</span></button>
+                  <div class="mini-gap" style="grid-column: span 10;"></div>
+                  <button class="mini-cell metalloid" data-z="5" data-period="2" data-group="3">B<span class="z-sub">5</span></button>
+                  <button class="mini-cell nonmetal" data-z="6" data-period="2" data-group="4">C<span class="z-sub">6</span></button>
+                  <button class="mini-cell nonmetal" data-z="7" data-period="2" data-group="5">N<span class="z-sub">7</span></button>
+                  <button class="mini-cell nonmetal" data-z="8" data-period="2" data-group="6">O<span class="z-sub">8</span></button>
+                  <button class="mini-cell halogen" data-z="9" data-period="2" data-group="7">F<span class="z-sub">9</span></button>
+                  <button class="mini-cell noble" data-z="10" data-period="2" data-group="8">Ne<span class="z-sub">10</span></button>
+                  
+                  <!-- Row 3 -->
+                  <button class="mini-cell alkali" data-z="11" data-period="3" data-group="1">Na<span class="z-sub">11</span></button>
+                  <button class="mini-cell alkaline" data-z="12" data-period="3" data-group="2">Mg<span class="z-sub">12</span></button>
+                  <div class="mini-gap" style="grid-column: span 10;"></div>
+                  <button class="mini-cell nonmetal" data-z="13" data-period="3" data-group="3">Al<span class="z-sub">13</span></button>
+                  <button class="mini-cell metalloid" data-z="14" data-period="3" data-group="4">Si<span class="z-sub">14</span></button>
+                  <button class="mini-cell nonmetal" data-z="15" data-period="3" data-group="5">P<span class="z-sub">15</span></button>
+                  <button class="mini-cell nonmetal" data-z="16" data-period="3" data-group="6">S<span class="z-sub">16</span></button>
+                  <button class="mini-cell halogen" data-z="17" data-period="3" data-group="7">Cl<span class="z-sub">17</span></button>
+                  <button class="mini-cell noble" data-z="18" data-period="3" data-group="8">Ar<span class="z-sub">18</span></button>
+                  
+                  <!-- Row 4 -->
+                  <button class="mini-cell alkali" data-z="19" data-period="4" data-group="1">K<span class="z-sub">19</span></button>
+                  <button class="mini-cell alkaline" data-z="20" data-period="4" data-group="2">Ca<span class="z-sub">20</span></button>
+                </div>
+              </div>
+              
+              <div class="inspector-visual">
+                <div class="bohr-canvas-wrap">
+                  <canvas id="bohr-canvas" width="130" height="130"></canvas>
+                </div>
+                <div class="inspector-info">
+                  <h3 id="inspector-el-title">Hydrogen (H)</h3>
+                  <p id="inspector-el-pos">Chu kì: 1 | Nhóm: IA</p>
+                  <p id="inspector-el-desc">Có 1 lớp electron và 1 electron ở lớp ngoài cùng.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 3: PERIODIC TRENDS MAP -->
+        <div id="desk-demo-3" class="desk-demo-slot">
+          <div id="demo-3" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Xu Hướng Bảng Tuần Hoàn</div>
+              
+              <div class="trend-controls">
+                <button class="trend-btn active" data-trend="radius">Bán kính nguyên tử</button>
+                <button class="trend-btn" data-trend="metal">Tính kim loại</button>
+                <button class="trend-btn" data-trend="nonmetal">Tính phi kim</button>
+              </div>
+              
+              <div class="trend-pt-container">
+                <div class="trend-pt-grid" id="trend-pt-grid">
+                  <!-- Generated by Javascript dynamically to keep HTML cleaner -->
+                </div>
+              </div>
+              
+              <div class="trend-explanation">
+                <div class="trend-arrow-wrap">
+                  <div class="trend-arrow" id="trend-arrow-h">➔</div>
+                  <div class="trend-arrow" id="trend-arrow-v">➔</div>
+                </div>
+                <div class="trend-desc-text" id="trend-desc-text">
+                  Bán kính nguyên tử tăng dần từ trên xuống dưới trong một nhóm và giảm dần từ trái sang phải trong một chu kì.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 4: INTERACTIVE QUIZ -->
+        <div id="desk-demo-4" class="desk-demo-slot">
+          <div id="demo-4" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Thử Thách Tuần Hoàn</div>
+              
+              <div class="quiz-container" id="quiz-container">
+                <!-- Progress Header -->
+                <div class="quiz-progress">
+                  <span id="quiz-progress-txt">Câu hỏi 1 / 4</span>
+                  <div class="quiz-bar-outer">
+                    <div id="quiz-bar-inner" class="quiz-bar-inner"></div>
+                  </div>
+                </div>
+
+                <!-- Quiz Card -->
+                <div class="quiz-card">
+                  <div id="quiz-question" class="quiz-question"></div>
+                  <div id="quiz-options" class="quiz-options"></div>
+                  <div id="quiz-explanation" class="quiz-explanation"></div>
+                </div>
+
+                <!-- Navigation Row -->
+                <div class="quiz-nav-row">
+                  <button id="quiz-next-btn" class="quiz-next-btn" disabled>Tiếp theo</button>
+                </div>
+              </div>
+
+              <!-- Results screen (hidden initially) -->
+              <div id="quiz-results" class="quiz-results">
+                <div class="score-circle">
+                  <span id="score-num" class="score-val">0/4</span>
+                  <span class="score-label">Đúng</span>
+                </div>
+                <div id="result-headline" class="result-text">Cố gắng lên!</div>
+                <div id="result-desc" class="result-sub">Hãy đọc kỹ lại ghi chép ở trang vở bên trái và thực hành quan sát các mô phỏng nhé!</div>
+                <button id="quiz-restart-btn" class="replay-btn">Làm lại câu hỏi</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Periodic Table Modal -->
+  <div id="pt-modal" class="pt-modal hidden" aria-hidden="true">
+    <div class="pt-panel">
+      <div class="pt-head">
+        <div>
+          <h3>Bảng Tuần Hoàn Hóa Học (118 Nguyên Tố)</h3>
+          <p>Di chuột hoặc nhấn vào các nguyên tố để phóng đại và xem thông tin chi tiết.</p>
+        </div>
+        <button id="pt-close" class="pt-close" type="button">Đóng</button>
+      </div>
+      <div class="pt-body-layout">
+        <!-- Left Column: Element Inspector / Magnifier -->
+        <div class="pt-inspector-panel">
+          <div class="chalk-cell" id="pt-mag-cell" style="width: 155px; height: 165px; padding: 10px;">
+            <div class="cell-part part-z" id="pt-mag-z">6</div>
+            <div class="cell-part part-sym" id="pt-mag-sym" style="font-size: 44px; margin-top: -2px; margin-bottom: 4px; font-weight: 700; line-height: 1;">C</div>
+            <div class="cell-part part-name" id="pt-mag-name" style="font-size: 13px; margin-bottom: 1px;">Carbon</div>
+            <div class="cell-part part-mass" id="pt-mag-mass" style="font-size: 12px; color: #a5b59e;">12.011</div>
+          </div>
+          <div class="pt-mag-details">
+            <div class="pt-detail-item"><strong>Tên Việt:</strong> <span id="pt-det-name-vn">Cacbon</span></div>
+            <div class="pt-detail-item"><strong>Vị trí:</strong> <span id="pt-det-pos">Chu kì 2 | Nhóm IVA</span></div>
+            <div class="pt-detail-item"><strong>Phân loại:</strong> <span id="pt-det-cat">Phi kim hoạt động</span></div>
+            <div class="pt-detail-item"><strong>Lớp vỏ e:</strong> <span id="pt-det-shells">2, 4</span></div>
+          </div>
+        </div>
+        
+        <!-- Right Column: The 118-element Grid -->
+        <div class="pt-grid-container">
+          <div id="pt-grid" class="pt-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      /* ══════════════════════════════════════
+         ELEMENT DATA & HELPER FUNCTIONS
+      ══════════════════════════════════════ */
+      const ELEMENTS_DETAILS = {
+        C: { z: 6, sym: 'C', name: 'Carbon', nameVN: 'Cacbon', mass: '12.011', group: 'IVA', period: 2, cat: 'phi kim', shells: [2, 4], desc: 'Nguyên tố phi kim cơ bản xây dựng nên sự sống trên Trái Đất.' },
+        H: { z: 1, sym: 'H', name: 'Hydrogen', nameVN: 'Hydro', mass: '1.008', group: 'IA', period: 1, cat: 'phi kim', shells: [1], desc: 'Nguyên tố phổ biến nhất vũ trụ, cấu tạo đơn giản nhất.' },
+        O: { z: 8, sym: 'O', name: 'Oxygen', nameVN: 'Oxi', mass: '15.999', group: 'VIA', period: 2, cat: 'phi kim', shells: [2, 6], desc: 'Duy trì sự sống cho động vật và sự cháy.' },
+        Na: { z: 11, sym: 'Na', name: 'Sodium', nameVN: 'Natri', mass: '22.990', group: 'IA', period: 3, cat: 'kim loại kiềm', shells: [2, 8, 1], desc: 'Kim loại kiềm rất mềm, phản ứng mãnh liệt với nước.' },
+        Cl: { z: 17, sym: 'Cl', name: 'Chlorine', nameVN: 'Clo', mass: '35.45', group: 'VIIA', period: 3, cat: 'halogen', shells: [2, 8, 7], desc: 'Khí phi kim cực độc, chất khử trùng mạnh mẽ trong đời sống.' }
+      };
+
+      const CELL_PARTS_DESC = {
+        z: '<strong>Số hiệu nguyên tử (Z)</strong>: Cho biết số proton trong hạt nhân và số electron ở vỏ nguyên tử. Đây cũng chính là số thứ tự ô nguyên tố.',
+        sym: '<strong>Kí hiệu hóa học</strong>: Chữ cái đại diện viết tắt cho tên nguyên tố, viết hoa chữ cái đầu tiên.',
+        name: '<strong>Tên nguyên tố</strong>: Tên gọi chuẩn hóa quốc tế (IUPAC) của nguyên tố.',
+        mass: '<strong>Khối lượng nguyên tử</strong>: Trọng lượng trung bình của nguyên tử tính theo đơn vị amu.'
+      };
+
+      const FIRST_20_ELEMENTS = [
+        { z: 1, sym: 'H', name: 'Hydrogen', period: 1, group: 1, cat: 'nonmetal', shells: [1], radius: 37, metal: 0, nonmetal: 7 },
+        { z: 2, sym: 'He', name: 'Helium', period: 1, group: 18, cat: 'noble', shells: [2], radius: 31, metal: 0, nonmetal: 0 },
+        
+        { z: 3, sym: 'Li', name: 'Lithium', period: 2, group: 1, cat: 'alkali', shells: [2, 1], radius: 152, metal: 8.5, nonmetal: 0 },
+        { z: 4, sym: 'Be', name: 'Beryllium', period: 2, group: 2, cat: 'alkaline', shells: [2, 2], radius: 112, metal: 6.5, nonmetal: 0 },
+        { z: 5, sym: 'B', name: 'Boron', period: 2, group: 13, cat: 'metalloid', shells: [2, 3], radius: 85, metal: 2, nonmetal: 3.5 },
+        { z: 6, sym: 'C', name: 'Carbon', period: 2, group: 14, cat: 'nonmetal', shells: [2, 4], radius: 77, metal: 0, nonmetal: 6 },
+        { z: 7, sym: 'N', name: 'Nitrogen', period: 2, group: 15, cat: 'nonmetal', shells: [2, 5], radius: 75, metal: 0, nonmetal: 8 },
+        { z: 8, sym: 'O', name: 'Oxygen', period: 2, group: 16, cat: 'nonmetal', shells: [2, 6], radius: 73, metal: 0, nonmetal: 9.5 },
+        { z: 9, sym: 'F', name: 'Fluorine', period: 2, group: 17, cat: 'halogen', shells: [2, 7], radius: 72, metal: 0, nonmetal: 10 },
+        { z: 10, sym: 'Ne', name: 'Neon', period: 2, group: 18, cat: 'noble', shells: [2, 8], radius: 71, metal: 0, nonmetal: 0 },
+
+        { z: 11, sym: 'Na', name: 'Sodium', period: 3, group: 1, cat: 'alkali', shells: [2, 8, 1], radius: 186, metal: 9.5, nonmetal: 0 },
+        { z: 12, sym: 'Mg', name: 'Magnesium', period: 3, group: 2, cat: 'alkaline', shells: [2, 8, 2], radius: 160, metal: 7.5, nonmetal: 0 },
+        { z: 13, sym: 'Al', name: 'Aluminum', period: 3, group: 13, cat: 'nonmetal', shells: [2, 8, 3], radius: 143, metal: 5.5, nonmetal: 0 },
+        { z: 14, sym: 'Si', name: 'Silicon', period: 3, group: 14, cat: 'metalloid', shells: [2, 8, 4], radius: 118, metal: 1.5, nonmetal: 4.5 },
+        { z: 15, sym: 'P', name: 'Phosphorus', period: 3, group: 15, cat: 'nonmetal', shells: [2, 8, 5], radius: 110, metal: 0, nonmetal: 6.5 },
+        { z: 16, sym: 'S', name: 'Sulfur', period: 3, group: 16, cat: 'nonmetal', shells: [2, 8, 6], radius: 103, metal: 0, nonmetal: 8 },
+        { z: 17, sym: 'Cl', name: 'Chlorine', period: 3, group: 17, cat: 'halogen', shells: [2, 8, 7], radius: 100, metal: 0, nonmetal: 9 },
+        { z: 18, sym: 'Ar', name: 'Argon', period: 3, group: 18, cat: 'noble', shells: [2, 8, 8], radius: 98, metal: 0, nonmetal: 0 },
+
+        { z: 19, sym: 'K', name: 'Potassium', period: 4, group: 1, cat: 'alkali', shells: [2, 8, 8, 1], radius: 227, metal: 10, nonmetal: 0 },
+        { z: 20, sym: 'Ca', name: 'Calcium', period: 4, group: 2, cat: 'alkaline', shells: [2, 8, 8, 2], radius: 197, metal: 8.5, nonmetal: 0 }
+      ];
+
+      /* ══════════════════════════════════════
+         DEMO 1: CELL DETAILS INTERACTION
+      ══════════════════════════════════════ */
+      const elSelectorBtns = document.querySelectorAll('.el-sel-btn');
+      const cellParts = document.querySelectorAll('.cell-part');
+      const cellZ = document.getElementById('cell-z');
+      const cellSym = document.getElementById('cell-sym');
+      const cellName = document.getElementById('cell-name');
+      const cellMass = document.getElementById('cell-mass');
+      const cellExpTitle = document.getElementById('cell-exp-title');
+      const cellExpBody = document.getElementById('cell-exp-body');
+
+      let selectedElement = 'C';
+      let activePart = null;
+
+      function updateCellDisplay() {
+        const data = ELEMENTS_DETAILS[selectedElement];
+        cellZ.innerText = data.z;
+        cellSym.innerText = data.sym;
+        cellName.innerText = data.name;
+        cellMass.innerText = data.mass;
+        
+        if (activePart) {
+          showPartExplanation(activePart);
+        } else {
+          cellExpTitle.innerHTML = `👉 Ô nguyên tố ${data.nameVN} (${data.sym})`;
+          cellExpBody.innerText = `${data.desc} Nằm ở chu kì ${data.period}, nhóm ${data.group}.`;
+        }
+      }
+
+      function showPartExplanation(partName) {
+        activePart = partName;
+        cellParts.forEach(p => {
+          if (p.dataset.part === partName) p.classList.add('active');
+          else p.classList.remove('active');
+        });
+        
+        const data = ELEMENTS_DETAILS[selectedElement];
+        let titleText = '';
+        if (partName === 'z') titleText = `Số hiệu nguyên tử của ${data.nameVN} là ${data.z}`;
+        else if (partName === 'sym') titleText = `Kí hiệu hóa học: ${data.sym}`;
+        else if (partName === 'name') titleText = `Tên tiếng Anh: ${data.name}`;
+        else if (partName === 'mass') titleText = `Khối lượng: ${data.mass} amu`;
+
+        cellExpTitle.innerHTML = titleText;
+        cellExpBody.innerHTML = CELL_PARTS_DESC[partName];
+      }
+
+      elSelectorBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          elSelectorBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedElement = btn.dataset.el;
+          updateCellDisplay();
+        });
+      });
+
+      cellParts.forEach(part => {
+        part.addEventListener('mouseenter', () => {
+          showPartExplanation(part.dataset.part);
+        });
+        part.addEventListener('click', (e) => {
+          e.stopPropagation();
+          showPartExplanation(part.dataset.part);
+        });
+      });
+
+      document.getElementById('interactive-cell').addEventListener('mouseleave', () => {
+        cellParts.forEach(p => p.classList.remove('active'));
+        activePart = null;
+        updateCellDisplay();
+      });
+
+
+      /* ══════════════════════════════════════
+         DEMO 2: BOHR MODEL ELECTRON ANIMATOR
+      ══════════════════════════════════════ */
+      const bohrCanvas = document.getElementById('bohr-canvas');
+      const bohrCtx = bohrCanvas.getContext('2d');
+      const inspectorCells = document.querySelectorAll('#inspector-pt-grid .mini-cell');
+      const insTitle = document.getElementById('inspector-el-title');
+      const insPos = document.getElementById('inspector-el-pos');
+      const insDesc = document.getElementById('inspector-el-desc');
+
+      let currentBohrZ = 1;
+      let angleOffsets = [0, 0, 0, 0]; // angle offset for each shell
+
+      function drawBohrModel() {
+        const el = FIRST_20_ELEMENTS.find(e => e.z === currentBohrZ) || FIRST_20_ELEMENTS[0];
+        
+        // Clear canvas
+        bohrCtx.clearRect(0, 0, bohrCanvas.width, bohrCanvas.height);
+        
+        const centerX = bohrCanvas.width / 2;
+        const centerY = bohrCanvas.height / 2;
+        
+        // 1. Draw concentric shell circles
+        const numShells = el.shells.length;
+        const baseRadius = 22;
+        const stepRadius = 14;
+        
+        for (let i = 0; i < numShells; i++) {
+          const r = baseRadius + i * stepRadius;
+          bohrCtx.beginPath();
+          bohrCtx.arc(centerX, centerY, r, 0, 2 * Math.PI);
+          bohrCtx.strokeStyle = 'rgba(154, 184, 144, 0.25)';
+          bohrCtx.setLineDash([3, 3]);
+          bohrCtx.lineWidth = 1;
+          bohrCtx.stroke();
+          bohrCtx.setLineDash([]); // Reset dash
+        }
+        
+        // 2. Draw Nucleus
+        const radialGrad = bohrCtx.createRadialGradient(centerX, centerY, 2, centerX, centerY, 11);
+        radialGrad.addColorStop(0, '#ffa498');
+        radialGrad.addColorStop(0.4, '#e66b5c');
+        radialGrad.addColorStop(1, '#8f291e');
+        bohrCtx.beginPath();
+        bohrCtx.arc(centerX, centerY, 11, 0, 2 * Math.PI);
+        bohrCtx.fillStyle = radialGrad;
+        bohrCtx.shadowBlur = 10;
+        bohrCtx.shadowColor = '#e66b5c';
+        bohrCtx.fill();
+        bohrCtx.shadowBlur = 0; // reset
+        
+        // Nucleus label (+Z)
+        bohrCtx.fillStyle = '#fff';
+        bohrCtx.font = 'bold 9px Arial';
+        bohrCtx.textAlign = 'center';
+        bohrCtx.textBaseline = 'middle';
+        bohrCtx.fillText(`+${el.z}`, centerX, centerY);
+        
+        // 3. Draw electrons orbiting
+        for (let sIndex = 0; sIndex < numShells; sIndex++) {
+          const r = baseRadius + sIndex * stepRadius;
+          const eCount = el.shells[sIndex];
+          const orbitAngle = angleOffsets[sIndex];
+          
+          for (let eIndex = 0; eIndex < eCount; eIndex++) {
+            // Distribute electrons evenly around the ring
+            const angle = orbitAngle + (eIndex * (2 * Math.PI / eCount));
+            const ex = centerX + r * Math.cos(angle);
+            const ey = centerY + r * Math.sin(angle);
+            
+            // Draw electron sphere
+            const eGrad = bohrCtx.createRadialGradient(ex, ey, 0.5, ex, ey, 3.5);
+            eGrad.addColorStop(0, '#fff');
+            eGrad.addColorStop(0.3, '#6fb8d1');
+            eGrad.addColorStop(1, '#1d4554');
+            
+            bohrCtx.beginPath();
+            bohrCtx.arc(ex, ey, 3.5, 0, 2 * Math.PI);
+            bohrCtx.fillStyle = eGrad;
+            bohrCtx.shadowBlur = 5;
+            bohrCtx.shadowColor = '#6fb8d1';
+            bohrCtx.fill();
+            bohrCtx.shadowBlur = 0;
+          }
+          
+          // Increment angle (inner shells rotate faster)
+          const direction = sIndex % 2 === 0 ? 1 : -1;
+          angleOffsets[sIndex] += direction * (0.015 / (sIndex + 1));
+        }
+      }
+
+      function updateInspectorInfo(z) {
+        const el = FIRST_20_ELEMENTS.find(e => e.z === z) || FIRST_20_ELEMENTS[0];
+        const vnName = ELEMENTS_DETAILS[el.sym] ? ELEMENTS_DETAILS[el.sym].nameVN : el.name;
+        
+        insTitle.innerText = `${el.name} (${el.sym})`;
+        
+        let gp = el.group;
+        if (gp === 1) gp = 'IA';
+        else if (gp === 2) gp = 'IIA';
+        else if (gp === 13) gp = 'IIIA';
+        else if (gp === 14) gp = 'IVA';
+        else if (gp === 15) gp = 'VA';
+        else if (gp === 16) gp = 'VIA';
+        else if (gp === 17) gp = 'VIIA';
+        else if (gp === 18) gp = 'VIIIA';
+        
+        insPos.innerText = `Chu kì: ${el.period} | Nhóm: ${gp}`;
+        
+        const outerElectrons = el.shells[el.shells.length - 1];
+        insDesc.innerHTML = `Có <strong>${el.shells.length}</strong> lớp electron và <strong>${outerElectrons}</strong> electron ở lớp ngoài cùng.<br>Loại: <span style="text-transform: capitalize;">${el.cat === 'alkali' ? 'kim loại kiềm' : el.cat === 'alkaline' ? 'kim loại kiềm thổ' : el.cat === 'nonmetal' ? 'phi kim' : el.cat === 'halogen' ? 'halogen' : el.cat === 'noble' ? 'khí hiếm' : 'á kim'}</span>.`;
+      }
+
+      inspectorCells.forEach(cell => {
+        cell.addEventListener('click', () => {
+          inspectorCells.forEach(c => c.classList.remove('active'));
+          cell.classList.add('active');
+          currentBohrZ = parseInt(cell.dataset.z);
+          updateInspectorInfo(currentBohrZ);
+        });
+      });
+
+      // Bohr Model Animation loop
+      function animLoop() {
+        if (document.getElementById('demo-2').classList.contains('active')) {
+          drawBohrModel();
+        }
+        requestAnimationFrame(animLoop);
+      }
+      // Start loop
+      requestAnimationFrame(animLoop);
+      updateInspectorInfo(1);
+
+
+      /* ══════════════════════════════════════
+         DEMO 3: PERIODIC TRENDS MAP GENERATION & RENDER
+      ══════════════════════════════════════ */
+      const trendGrid = document.getElementById('trend-pt-grid');
+      const trendBtns = document.querySelectorAll('.trend-btn');
+      const trendArrowH = document.getElementById('trend-arrow-h');
+      const trendArrowV = document.getElementById('trend-arrow-v');
+      const trendDescText = document.getElementById('trend-desc-text');
+
+      let currentTrend = 'radius';
+
+      const TREND_DESCS = {
+        radius: '<strong>Bán kính nguyên tử</strong>: Tăng dần từ trên xuống dưới trong một nhóm (do số lớp e tăng) và giảm dần từ trái sang phải trong một chu kì (lực hút hạt nhân mạnh hơn).',
+        metal: '<strong>Tính kim loại (nhường e)</strong>: Tăng dần từ trên xuống dưới trong một nhóm (e ngoài cùng xa hạt nhân hơn, dễ rơi ra) và giảm dần từ trái sang phải trong một chu kì.',
+        nonmetal: '<strong>Tính phi kim (nhận e)</strong>: Giảm dần từ trên xuống dưới trong một nhóm và tăng dần từ trái sang phải trong một chu kì (hạt nhân hút e ngoài cùng mạnh hơn).'
+      };
+
+      // Generate the grid cells for Trend Map
+      function generateTrendGrid() {
+        trendGrid.innerHTML = '';
+        
+        // Create matching 4x18 table layout
+        for (let r = 1; r <= 4; r++) {
+          for (let c = 1; c <= 18; c++) {
+            // Find element at this position
+            const el = FIRST_20_ELEMENTS.find(e => e.period === r && e.group === c);
+            
+            if (el) {
+              const cell = document.createElement('div');
+              cell.className = 'trend-cell';
+              cell.dataset.z = el.z;
+              cell.innerHTML = `
+                <span class="cell-symbol">${el.sym}</span>
+                <div class="radius-circle" id="trend-circle-${el.z}"></div>
+              `;
+              trendGrid.appendChild(cell);
+            } else {
+              const gap = document.createElement('div');
+              gap.className = 'mini-gap';
+              trendGrid.appendChild(gap);
+            }
+          }
+        }
+      }
+
+      function updateTrendVisuals() {
+        trendBtns.forEach(btn => {
+          if (btn.dataset.trend === currentTrend) btn.classList.add('active');
+          else btn.classList.remove('active');
+        });
+
+        // Update description
+        trendDescText.innerHTML = TREND_DESCS[currentTrend];
+
+        // Update arrows & gradients
+        if (currentTrend === 'radius') {
+          // Increases downwards, leftwards
+          trendArrowH.style.transform = 'scaleX(-1)'; // Leftwards
+          trendArrowV.style.transform = 'scaleY(1)';  // Downwards
+          trendArrowH.style.borderColor = '#e2c07a';
+          trendArrowV.style.borderColor = '#e2c07a';
+        } else if (currentTrend === 'metal') {
+          // Increases downwards, leftwards
+          trendArrowH.style.transform = 'scaleX(-1)'; // Leftwards
+          trendArrowV.style.transform = 'scaleY(1)';  // Downwards
+          trendArrowH.style.borderColor = '#D9633B';
+          trendArrowV.style.borderColor = '#D9633B';
+        } else if (currentTrend === 'nonmetal') {
+          // Increases upwards, rightwards
+          trendArrowH.style.transform = 'scaleX(1)';  // Rightwards
+          trendArrowV.style.transform = 'scaleY(-1)'; // Upwards
+          trendArrowH.style.borderColor = '#6FB8D1';
+          trendArrowV.style.borderColor = '#6FB8D1';
+        }
+
+        // Color or size cells
+        FIRST_20_ELEMENTS.forEach(el => {
+          const circle = document.getElementById(`trend-circle-${el.z}`);
+          const cell = circle.parentElement;
+          if (!circle) return;
+
+          if (currentTrend === 'radius') {
+            // Size bubble proportional to radius
+            const size = (el.radius / 227) * 26 + 6; // max size is 32px
+            circle.style.width = `${size}px`;
+            circle.style.height = `${size}px`;
+            circle.style.background = 'rgba(242, 181, 68, 0.25)';
+            circle.style.borderColor = 'rgba(242, 181, 68, 0.6)';
+            cell.style.background = 'rgba(255,255,255,0.02)';
+          } else if (currentTrend === 'metal') {
+            // Metallic character gradient heat glow
+            circle.style.width = '0px';
+            circle.style.height = '0px';
+            if (el.cat === 'noble') {
+              cell.style.background = 'rgba(0,0,0,0.4)';
+            } else {
+              const alpha = el.metal / 10;
+              cell.style.background = `rgba(217, 99, 59, ${alpha * 0.45})`;
+            }
+          } else if (currentTrend === 'nonmetal') {
+            // Non-metallic character cool glow
+            circle.style.width = '0px';
+            circle.style.height = '0px';
+            if (el.cat === 'noble') {
+              cell.style.background = 'rgba(0,0,0,0.4)';
+            } else {
+              const alpha = el.nonmetal / 10;
+              cell.style.background = `rgba(111, 184, 209, ${alpha * 0.45})`;
+            }
+          }
+        });
+      }
+
+      trendBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentTrend = btn.dataset.trend;
+          updateTrendVisuals();
+        });
+      });
+
+      generateTrendGrid();
+      updateTrendVisuals();
+
+
+      /* ══════════════════════════════════════
+         DEMO 4: INTERACTIVE CHEMISTRY QUIZ
+      ══════════════════════════════════════ */
+      const QUIZ_QUESTIONS = [
+        {
+          q: 'Một nguyên tử ở ô số 12 trong bảng tuần hoàn. Số hiệu nguyên tử (Z) và số proton của nguyên tố đó lần lượt là bao nhiêu?',
+          opts: ['Z = 6, proton = 12', 'Z = 12, proton = 12', 'Z = 12, proton = 24', 'Z = 24, proton = 12'],
+          ans: 1,
+          exp: 'Số hiệu nguyên tử (Z) chính bằng số thứ tự của ô nguyên tố, và bằng số proton trong hạt nhân nguyên tử. Vì vậy Z = 12 và số proton = 12.'
+        },
+        {
+          q: 'Nguyên tố khí hiếm Heli (He) nằm ở chu kì 1, nhóm VIIIA. Số electron lớp ngoài cùng của Heli là bao nhiêu?',
+          opts: ['8 electron', '1 electron', '2 electron', '0 electron'],
+          ans: 2,
+          exp: 'Heli là trường hợp đặc biệt ở nhóm VIIIA. Do nằm ở chu kì 1, nó chỉ có 1 lớp electron duy nhất và lớp này chứa tối đa 2 electron, đây cũng chính là số e lớp ngoài cùng.'
+        },
+        {
+          q: 'Nguyên tử của nguyên tố Silic (Si) có 3 lớp electron. Silic nằm ở chu kì nào trong bảng tuần hoàn?',
+          opts: ['Chu kì 1', 'Chu kì 2', 'Chu kì 3', 'Chu kì 4'],
+          ans: 2,
+          exp: 'Số thứ tự chu kì bằng đúng số lớp electron của nguyên tử. Có 3 lớp electron tức là thuộc chu kì 3.'
+        },
+        {
+          q: 'Khi đi từ trái sang phải trong cùng một chu kì, bán kính nguyên tử và tính phi kim biến đổi như thế nào?',
+          opts: ['Bán kính tăng, tính phi kim tăng', 'Bán kính giảm, tính phi kim giảm', 'Bán kính tăng, tính phi kim giảm', 'Bán kính giảm, tính phi kim tăng'],
+          ans: 3,
+          exp: 'Trong một chu kì, khi đi từ trái sang phải: điện tích hạt nhân tăng thu hút electron chặt hơn khiến bán kính giảm; đồng thời khả năng nhận e tăng lên nên tính phi kim tăng.'
+        }
+      ];
+
+      let currentQuizIdx = 0;
+      let score = 0;
+      let answered = false;
+
+      const quizCont = document.getElementById('quiz-container');
+      const quizProgTxt = document.getElementById('quiz-progress-txt');
+      const quizBarInner = document.getElementById('quiz-bar-inner');
+      const quizQ = document.getElementById('quiz-question');
+      const quizOpts = document.getElementById('quiz-options');
+      const quizExp = document.getElementById('quiz-explanation');
+      const quizNextBtn = document.getElementById('quiz-next-btn');
+      const quizResults = document.getElementById('quiz-results');
+      const scoreNum = document.getElementById('score-num');
+      const quizRestartBtn = document.getElementById('quiz-restart-btn');
+      const resHeadline = document.getElementById('result-headline');
+      const resDesc = document.getElementById('result-desc');
+
+      function loadQuestion() {
+        answered = false;
+        quizNextBtn.disabled = true;
+        quizExp.style.display = 'none';
+        
+        const currentQ = QUIZ_QUESTIONS[currentQuizIdx];
+        quizProgTxt.innerText = `Câu hỏi ${currentQuizIdx + 1} / ${QUIZ_QUESTIONS.length}`;
+        quizBarInner.style.width = `${((currentQuizIdx) / QUIZ_QUESTIONS.length) * 100}%`;
+        quizQ.innerText = currentQ.q;
+        
+        quizOpts.innerHTML = '';
+        currentQ.opts.forEach((opt, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'quiz-opt-btn';
+          btn.innerHTML = `<span>${opt}</span><span class="opt-icon" id="opt-icon-${idx}"></span>`;
+          btn.addEventListener('click', () => selectOption(idx));
+          quizOpts.appendChild(btn);
+        });
+      }
+
+      function selectOption(selectedIdx) {
+        if (answered) return;
+        answered = true;
+        
+        const currentQ = QUIZ_QUESTIONS[currentQuizIdx];
+        const buttons = quizOpts.querySelectorAll('.quiz-opt-btn');
+        
+        buttons.forEach((btn, idx) => {
+          btn.classList.add('checked');
+          const iconSpan = document.getElementById(`opt-icon-${idx}`);
+          
+          if (idx === currentQ.ans) {
+            btn.classList.add('correct');
+            iconSpan.innerHTML = '✔';
+          } else if (idx === selectedIdx) {
+            btn.classList.add('incorrect');
+            iconSpan.innerHTML = '✖';
+          }
+        });
+
+        if (selectedIdx === currentQ.ans) {
+          score++;
+        }
+
+        quizExp.innerHTML = `<strong>Giải thích:</strong> ${currentQ.exp}`;
+        quizExp.style.display = 'block';
+        quizNextBtn.disabled = false;
+      }
+
+      quizNextBtn.addEventListener('click', () => {
+        currentQuizIdx++;
+        if (currentQuizIdx < QUIZ_QUESTIONS.length) {
+          loadQuestion();
+        } else {
+          showResults();
+        }
+      });
+
+      function showResults() {
+        quizCont.style.display = 'none';
+        quizResults.style.display = 'flex';
+        scoreNum.innerText = `${score} / ${QUIZ_QUESTIONS.length}`;
+        
+        if (score === QUIZ_QUESTIONS.length) {
+          resHeadline.innerText = 'Xuất sắc!';
+          resDesc.innerText = 'Bạn đã nắm cực kỳ vững ý nghĩa của các con số và quy luật sắp xếp trong bảng tuần hoàn!';
+        } else if (score >= 2) {
+          resHeadline.innerText = 'Khá tốt!';
+          resDesc.innerText = 'Bạn đã hiểu các kiến thức cơ bản. Xem lại phần xu hướng biến đổi và chu kì/nhóm để đạt điểm tối đa nhé.';
+        } else {
+          resHeadline.innerText = 'Cố gắng lên!';
+          resDesc.innerText = 'Hãy đọc kỹ các ghi chép ở trang vở bên trái và bấm làm lại thử thách nhé.';
+        }
+      }
+
+      quizRestartBtn.addEventListener('click', () => {
+        currentQuizIdx = 0;
+        score = 0;
+        quizCont.style.display = 'flex';
+        quizResults.style.display = 'none';
+        loadQuestion();
+      });
+
+      // ══════════════════════════════════════
+      // PERIODIC TABLE MODAL LOGIC
+      // ══════════════════════════════════════
+      // ══════════════════════════════════════
+      // PERIODIC TABLE MODAL LOGIC (118 ELEMENTS)
+      // ══════════════════════════════════════
+      const RAW_ELEMENTS_STRING = "H;Hydrogen;Hydro;1.008|He;Helium;Heli;4.0026|Li;Lithium;Liti;6.94|Be;Beryllium;Beri;9.0122|B;Boron;Bo;10.81|C;Carbon;Cacbon;12.011|N;Nitrogen;Nitơ;14.007|O;Oxygen;Oxi;15.999|F;Fluorine;Flo;18.998|Ne;Neon;Neon;20.180|Na;Sodium;Natri;22.990|Mg;Magnesium;Magiê;24.305|Al;Aluminum;Nhôm;26.982|Si;Silicon;Silic;28.085|P;Phosphorus;Photpho;30.974|S;Sulfur;Lưu huỳnh;32.06|Cl;Chlorine;Clo;35.45|Ar;Argon;Argon;39.948|K;Potassium;Kali;39.098|Ca;Calcium;Canxi;40.078|Sc;Scandium;Scandium;44.956|Ti;Titanium;Titan;47.867|V;Vanadium;Vanadium;50.942|Cr;Chromium;Crom;51.996|Mn;Manganese;Mangan;54.938|Fe;Iron;Sắt;55.845|Co;Cobalt;Coban;58.933|Ni;Nickel;Niken;58.693|Cu;Copper;Đồng;63.546|Zn;Zinc;Kẽm;65.38|Ga;Gallium;Gallium;69.723|Ge;Germanium;Germanium;72.630|As;Arsenic;Asen;74.922|Se;Selenium;Selen;78.971|Br;Bromine;Brom;79.904|Kr;Krypton;Krypton;83.798|Rb;Rubidium;Rubidi;85.468|Sr;Strontium;Stronti;87.62|Y;Yttrium;Ytri;88.906|Zr;Zirconium;Zirconi;91.224|Nb;Niobium;Niobi;92.906|Mo;Molybdenum;Molybden;95.95|Tc;Technetium;Techneti;98|Ru;Ruthenium;Rutheni;101.07|Rh;Rhodium;Rhodi;102.91|Pd;Palladium;Palladi;106.42|Ag;Silver;Bạc;107.87|Cd;Cadmium;Cadmi;112.41|In;Indium;Indi;114.82|Sn;Tin;Thiếc;118.71|Sb;Antimony;Antimon;121.76|Te;Tellurium;Tellur;127.60|I;Iodine;Iốt;126.90|Xe;Xenon;Xenon;131.29|Cs;Cesium;Cesi;132.91|Ba;Barium;Bari;137.33|La;Lanthanum;Lanthan;138.91|Ce;Cerium;Ceri;140.12|Pr;Praseodymium;Praseodym;140.91|Nd;Neodymium;Neodym;144.24|Pm;Promethium;Promethi;145|Sm;Samarium;Samari;150.36|Eu;Europium;Europi;151.96|Gd;Gadolinium;Gadolini;157.25|Tb;Terbium;Terbi;158.93|Dy;Dysprosium;Dysprosi;162.50|Ho;Holmium;Holmi;164.93|Er;Erbium;Erbi;167.26|Tm;Thulium;Thuli;168.93|Yb;Ytterbium;Ytterbi;173.05|Lu;Lutetium;Lutetium;174.97|Hf;Hafnium;Hafni;178.49|Ta;Tantalum;Tantal;180.95|W;Tungsten;Vonfram;183.84|Re;Rhenium;Rheni;186.21|Os;Osmium;Osmi;190.23|Ir;Iridium;Iridi;192.22|Pt;Platinum;Bạch kim;195.08|Au;Gold;Vàng;196.97|Hg;Mercury;Thủy ngân;200.59|Tl;Thallium;Thali;204.38|Pb;Lead;Chì;207.2|Bi;Bismuth;Bismut;208.98|Po;Polonium;Poloni;209|At;Astatine;Astatin;210|Rn;Radon;Radon;222|Fr;Francium;Franci;223|Ra;Radium;Radi;226|Ac;Actinium;Actini;227|Th;Thorium;Thori;232.04|Pa;Protactinium;Protactini;231.04|U;Uranium;Urani;238.03|Np;Neptunium;Neptuni;237|Pu;Plutonium;Plutoni;244|Am;Americium;Americi;243|Cm;Curium;Curi;247|Bk;Berkelium;Berkeli;247|Cf;Californium;Californi;251|Es;Einsteinium;Einsteinium;252|Fm;Fermium;Fermium;257|Md;Mendelevium;Mendelevium;258|No;Nobelium;Nobelium;259|Lr;Lawrencium;Lawrencium;262|Rf;Rutherfordium;Rutherfordium;267|Db;Dubnium;Dubnium;268|Sg;Seaborgium;Seaborgium;271|Bh;Bohrium;Bohri;270|Hs;Hassium;Hassium;277|Mt;Meitnerium;Meitnerium;278|Ds;Darmstadtium;Darmstadtium;281|Rg;Roentgenium;Roentgenium;280|Cn;Copernicium;Copernicium;285|Nh;Nihonium;Nihonium;286|Fl;Flerovium;Flerovium;289|Mc;Moscovium;Moscovium;290|Lv;Livermorium;Livermorium;293|Ts;Tennessine;Tennessine;294|Og;Oganesson;Oganesson;294";
+
+      function getElementCoords(z) {
+        if (z === 1) return { r: 1, c: 1 };
+        if (z === 2) return { r: 1, c: 18 };
+        if (z >= 3 && z <= 4) return { r: 2, c: z - 2 };
+        if (z >= 5 && z <= 10) return { r: 2, c: z + 8 };
+        if (z >= 11 && z <= 12) return { r: 3, c: z - 10 };
+        if (z >= 13 && z <= 18) return { r: 3, c: z };
+        if (z >= 19 && z <= 36) return { r: 4, c: z - 18 };
+        if (z >= 37 && z <= 54) return { r: 5, c: z - 36 };
+        if (z === 55) return { r: 6, c: 1 };
+        if (z === 56) return { r: 6, c: 2 };
+        if (z >= 57 && z <= 71) return { r: 9, c: z - 57 + 4 };
+        if (z >= 72 && z <= 86) return { r: 6, c: z - 72 + 4 };
+        if (z === 87) return { r: 7, c: 1 };
+        if (z === 88) return { r: 7, c: 2 };
+        if (z >= 89 && z <= 103) return { r: 10, c: z - 89 + 4 };
+        if (z >= 104 && z <= 118) return { r: 7, c: z - 104 + 4 };
+        return { r: 1, c: 1 };
+      }
+
+      function getElementCategory(z) {
+        if (z === 1) return 'nonmetal';
+        if ([2, 10, 18, 36, 54, 86, 118].includes(z)) return 'noble';
+        if ([3, 11, 19, 37, 55, 87].includes(z)) return 'alkali';
+        if ([4, 12, 20, 38, 56, 88].includes(z)) return 'alkaline';
+        if (z >= 57 && z <= 71) return 'lanthanide';
+        if (z >= 89 && z <= 103) return 'actinide';
+        if ([9, 17, 35, 53, 85, 117].includes(z)) return 'halogen';
+        if ([5, 14, 32, 33, 51, 52].includes(z)) return 'metalloid';
+        if ([6, 7, 8, 15, 16, 34].includes(z)) return 'nonmetal';
+        if ((z >= 21 && z <= 30) || (z >= 39 && z <= 48) || (z >= 72 && z <= 80) || (z >= 104 && z <= 112)) return 'transition';
+        return 'post-transition';
+      }
+
+      function getChemicalGroup(z) {
+        if (z >= 57 && z <= 71) return 'Họ Lanthan';
+        if (z >= 89 && z <= 103) return 'Họ Actin';
+        const coords = getElementCoords(z);
+        const c = coords.c;
+        const groupNames = {
+          1: 'IA', 2: 'IIA', 3: 'IIIB', 4: 'IVB', 5: 'VB', 6: 'VIB', 7: 'VIIB',
+          8: 'VIIIB', 9: 'VIIIB', 10: 'VIIIB', 11: 'IB', 12: 'IIB',
+          13: 'IIIA', 14: 'IVA', 15: 'VA', 16: 'VIA', 17: 'VIIA', 18: 'VIIIA'
+        };
+        return groupNames[c] || '';
+      }
+
+      function getShellsForZ(z) {
+        const subshells = [
+          { n: 1, cap: 2 }, { n: 2, cap: 2 }, { n: 2, cap: 6 },
+          { n: 3, cap: 2 }, { n: 3, cap: 6 }, { n: 4, cap: 2 },
+          { n: 3, cap: 10 }, { n: 4, cap: 6 }, { n: 5, cap: 2 },
+          { n: 4, cap: 10 }, { n: 5, cap: 6 }, { n: 6, cap: 2 },
+          { n: 4, cap: 14 }, { n: 5, cap: 10 }, { n: 6, cap: 6 },
+          { n: 7, cap: 2 }, { n: 5, cap: 14 }, { n: 6, cap: 10 },
+          { n: 7, cap: 6 }
+        ];
+        const shells = {};
+        let remaining = z;
+        for (const sub of subshells) {
+          const fill = Math.min(remaining, sub.cap);
+          shells[sub.n] = (shells[sub.n] || 0) + fill;
+          remaining -= fill;
+          if (remaining <= 0) break;
+        }
+        const maxN = Math.max(...Object.keys(shells).map(Number));
+        const res = [];
+        for (let i = 1; i <= maxN; i++) {
+          res.push(shells[i] || 0);
+        }
+        if (z === 24) return [2, 8, 13, 1];
+        if (z === 29) return [2, 8, 18, 1];
+        if (z === 41) return [2, 8, 18, 12, 1];
+        if (z === 42) return [2, 8, 18, 13, 1];
+        if (z === 44) return [2, 8, 18, 15, 1];
+        if (z === 45) return [2, 8, 18, 16, 1];
+        if (z === 46) return [2, 8, 18, 18, 0];
+        if (z === 47) return [2, 8, 18, 18, 1];
+        if (z === 78) return [2, 8, 18, 32, 17, 1];
+        if (z === 79) return [2, 8, 18, 32, 18, 1];
+        return res;
+      }
+
+      const ALL_118_ELEMENTS = RAW_ELEMENTS_STRING.split('|').map((item, idx) => {
+        const parts = item.split(';');
+        const z = idx + 1;
+        const sym = parts[0];
+        const name = parts[1];
+        const nameVN = parts[2];
+        const mass = parts[3];
+        const coords = getElementCoords(z);
+        const cat = getElementCategory(z);
+        const shells = getShellsForZ(z);
+        return {
+          z, sym, name, nameVN, mass,
+          period: coords.r <= 7 ? coords.r : (z >= 57 && z <= 71 ? 6 : 7),
+          group: getChemicalGroup(z),
+          gridRow: coords.r + 1,
+          gridCol: coords.c + 1,
+          cat, shells
+        };
+      });
+
+      const ptModal = document.getElementById('pt-modal');
+      const ptGrid = document.getElementById('pt-grid');
+      const ptOpenBtn = document.getElementById('open-full-pt-btn');
+      const ptCloseBtn = document.getElementById('pt-close');
+
+      const ptMagZ = document.getElementById('pt-mag-z');
+      const ptMagSym = document.getElementById('pt-mag-sym');
+      const ptMagName = document.getElementById('pt-mag-name');
+      const ptMagMass = document.getElementById('pt-mag-mass');
+      const ptDetNameVn = document.getElementById('pt-det-name-vn');
+      const ptDetPos = document.getElementById('pt-det-pos');
+      const ptDetCat = document.getElementById('pt-det-cat');
+      const ptDetShells = document.getElementById('pt-det-shells');
+      const ptMagCell = document.getElementById('pt-mag-cell');
+
+      function updateMagnifier(el) {
+        ptMagZ.innerText = el.z;
+        ptMagSym.innerText = el.sym;
+        ptMagName.innerText = el.name;
+        ptMagMass.innerText = el.mass;
+        ptDetNameVn.innerText = el.nameVN;
+        ptDetPos.innerText = `Chu kì ${el.period} | Nhóm ${el.group}`;
+        
+        const catNames = {
+          alkali: 'Kim loại kiềm',
+          alkaline: 'Kim loại kiềm thổ',
+          transition: 'Kim loại chuyển tiếp',
+          lanthanide: 'Họ Lanthan',
+          actinide: 'Họ Actin (Phóng xạ)',
+          'post-transition': 'Kim loại sau chuyển tiếp',
+          metalloid: 'Á kim',
+          nonmetal: 'Phi kim hoạt động',
+          halogen: 'Halogen',
+          noble: 'Khí hiếm'
+        };
+        ptDetCat.innerText = catNames[el.cat] || el.cat;
+        ptDetShells.innerText = el.shells.join(', ');
+        
+        ptMagCell.className = `chalk-cell ${el.cat}`;
+        const colors = {
+          alkali: '#f2b544',
+          alkaline: '#e89ba8',
+          transition: '#50c8b4',
+          lanthanide: '#d2a0e6',
+          actinide: '#b478dc',
+          'post-transition': '#64aad2',
+          metalloid: '#c7782e',
+          nonmetal: '#2f8f6f',
+          halogen: '#d9633b',
+          noble: '#6fb8d1'
+        };
+        const color = colors[el.cat] || '#fff';
+        ptMagCell.style.borderColor = color;
+        ptMagCell.style.boxShadow = `0 0 20px ${color}40, inset 0 0 15px ${color}15`;
+        ptMagCell.style.color = '#fff';
+        ptMagCell.style.textShadow = `0 0 5px ${color}`;
+      }
+
+      // Render column headers (Groups 1 to 18)
+      const groupLabels = [
+        '1<br>IA', '2<br>IIA', '3<br>IIIB', '4<br>IVB', '5<br>VB', '6<br>VIB', '7<br>VIIB',
+        '8<br>VIII', '9<br>VIII', '10<br>VIII', '11<br>IB', '12<br>IIB',
+        '13<br>IIIA', '14<br>IVA', '15<br>VA', '16<br>VIA', '17<br>VIIA', '18<br>VIIIA'
+      ];
+      groupLabels.forEach((label, idx) => {
+        const colHeader = document.createElement('div');
+        colHeader.className = 'pt-header-col';
+        colHeader.style.gridRow = '1';
+        colHeader.style.gridColumn = (idx + 2).toString();
+        colHeader.innerHTML = label;
+        ptGrid.appendChild(colHeader);
+      });
+
+      // Render row headers (Periods 1 to 7)
+      for (let r = 1; r <= 7; r++) {
+        const rowHeader = document.createElement('div');
+        rowHeader.className = 'pt-header-row';
+        rowHeader.style.gridRow = (r + 1).toString();
+        rowHeader.style.gridColumn = '1';
+        rowHeader.innerText = r.toString();
+        ptGrid.appendChild(rowHeader);
+      }
+
+      // Render f-block row headers
+      const laRowHeader = document.createElement('div');
+      laRowHeader.className = 'pt-header-row';
+      laRowHeader.style.gridRow = '10';
+      laRowHeader.style.gridColumn = '1';
+      laRowHeader.innerText = 'La-Lu';
+      laRowHeader.style.fontSize = '9px';
+      ptGrid.appendChild(laRowHeader);
+
+      const acRowHeader = document.createElement('div');
+      acRowHeader.className = 'pt-header-row';
+      acRowHeader.style.gridRow = '11';
+      acRowHeader.style.gridColumn = '1';
+      acRowHeader.innerText = 'Ac-Lr';
+      acRowHeader.style.fontSize = '9px';
+      ptGrid.appendChild(acRowHeader);
+
+      // Populate grid cells
+      ALL_118_ELEMENTS.forEach(el => {
+        const cell = document.createElement('button');
+        cell.type = 'button';
+        cell.className = `pt-cell ${el.cat}`;
+        cell.style.gridRow = el.gridRow;
+        cell.style.gridColumn = el.gridCol;
+        cell.dataset.z = el.z;
+        cell.innerHTML = `<span class="sym">${el.sym}</span><span class="num">${el.z}</span>`;
+        
+        cell.addEventListener('mouseenter', () => updateMagnifier(el));
+        cell.addEventListener('click', () => {
+          updateMagnifier(el);
+          document.querySelectorAll('.pt-cell').forEach(c => c.classList.remove('active'));
+          cell.classList.add('active');
+        });
+        
+        ptGrid.appendChild(cell);
+      });
+
+      // Add Lanthanides placeholder
+      const lPlaceholder = document.createElement('div');
+      lPlaceholder.className = 'pt-placeholder';
+      lPlaceholder.style.gridRow = '7';
+      lPlaceholder.style.gridColumn = '4';
+      lPlaceholder.innerHTML = '57-71<br>La-Lu';
+      ptGrid.appendChild(lPlaceholder);
+
+      // Add Actinides placeholder
+      const aPlaceholder = document.createElement('div');
+      aPlaceholder.className = 'pt-placeholder';
+      aPlaceholder.style.gridRow = '8';
+      aPlaceholder.style.gridColumn = '4';
+      aPlaceholder.innerHTML = '89-103<br>Ac-Lr';
+      ptGrid.appendChild(aPlaceholder);
+
+      // Initialize default magnifier view (Hydrogen)
+      updateMagnifier(ALL_118_ELEMENTS[0]);
+
+      if (ptOpenBtn) {
+        ptOpenBtn.addEventListener('click', () => {
+          ptModal.classList.remove('hidden');
+          ptModal.setAttribute('aria-hidden', 'false');
+        });
+      }
+
+      if (ptCloseBtn) {
+        ptCloseBtn.addEventListener('click', () => {
+          ptModal.classList.add('hidden');
+          ptModal.setAttribute('aria-hidden', 'true');
+        });
+      }
+
+      loadQuestion();
+    })();
+
+
+    /* ══════════════════════════════════════
+       SECTION DETECTION — IntersectionObserver
+       (Relies on notebook-panel local scrolling on desktop)
+    ══════════════════════════════════════ */
+    const notebookSections = document.querySelectorAll('.hero, #sec-notebook-1, #sec-notebook-2, #sec-notebook-3, #sec-notebook-4');
+    const demoPanels = document.querySelectorAll('.demo-panel');
+
+    let currentActiveSec = null;
+
+    function setActiveSection(sec) {
+      if (currentActiveSec === sec) return;
+      currentActiveSec = sec;
+
+      const activeDemoNum = sec.dataset.demo;
+      const isDesktop = window.innerWidth > 920;
+
+      // 1. Highlight active section and fade others on desktop
+      notebookSections.forEach((s) => {
+        if (s === sec) {
+          s.classList.add('active-section');
+        } else {
+          s.classList.remove('active-section');
+        }
+      });
+
+      // 2. Activate the matching demo panel
+      demoPanels.forEach((panel) => {
+        if (panel.id === `demo-${activeDemoNum}`) {
+          panel.classList.add('active');
+        } else {
+          panel.classList.remove('active');
+        }
+      });
+    }
+
+    // Set up IntersectionObserver with threshold: 0.2
+    function observeSection(sec) {
+      const scroller = window.innerWidth > 920 ? document.querySelector('.notebook-panel') : null;
+      const options = {
+        root: scroller || null,
+        threshold: 0.2
+      };
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target);
+          }
+        });
+      }, options);
+      io.observe(sec);
+      return io;
+    }
+
+    let sectionObservers = [];
+
+    function initObservers() {
+      sectionObservers.forEach(io => io.disconnect());
+      sectionObservers = [];
+      notebookSections.forEach(sec => {
+        sectionObservers.push(observeSection(sec));
+      });
+    }
+
+    initObservers();
+
+
+    /* ══════════════════════════════════════
+       MOBILE RESPONSIVE ELEMENT RELOCATION
+    ══════════════════════════════════════ */
+    let wasDesktop = window.innerWidth > 920;
+
+    const relocateDemos = () => {
+      const isMobile = window.innerWidth <= 920;
+      const isDesktop = !isMobile;
+      
+      if (isDesktop !== wasDesktop) {
+        wasDesktop = isDesktop;
+        initObservers(); // Re-initialize observers when layout changes
+      }
+
+      // Relocate demo blocks depending on screen size
+      for (let i = 0; i <= 4; i++) {
+        const demo = document.getElementById(`demo-${i}`);
+        if (!demo) continue;
+        
+        if (isMobile) {
+          const mobContainer = document.getElementById(`mob-demo-${i}`);
+          // Note: for hero (demo-0), we can place it right under the hero intro
+          const placeholder = mobContainer || document.querySelector('.hero .intro');
+          if (placeholder && demo.parentElement !== placeholder) {
+            placeholder.appendChild(demo);
+          }
+        } else {
+          const deskContainer = document.getElementById(`desk-demo-${i}`);
+          if (deskContainer && demo.parentElement !== deskContainer) {
+            deskContainer.appendChild(demo);
+          }
+        }
+      }
+      
+      if (isMobile) {
+        notebookSections.forEach((s) => {
+          const targets = Array.from(s.children).filter(c => !c.classList.contains('mobile-demo-placeholder'));
+          targets.forEach(t => t.style.opacity = ''); // Reset inline opacities on mobile
+        });
+      }
+    };
+
+    window.addEventListener('resize', relocateDemos);
+    // Run once on load
+    setTimeout(relocateDemos, 150);
+  </script>
+</body>
+</html>
