@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hóa học · Chương 3A — Hóa trị &amp; Công thức hóa học</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SPLIT NOTEBOOK & LAB BENCH SYSTEM
+    ══════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:        #FBF4E4;   /* warm cream */
+      --paper-dark:   #F2E7CE;   /* slightly darker cream */
+      --ink:          #2A2520;   /* warm black */
+      --ink-mid:      #4D4439;   /* soft charcoal */
+      --ink-light:    #8A7E6C;   /* pencil gray */
+      --red-margin:   #C73C2E;   /* margin red line */
+      --blue-line:    rgba(111, 184, 209, 0.25); /* ruled notebook lines */
+      --accent:       #2F8F6F;   /* Jade Accent for Valency & Bonds */
+      --accent-blue:  #1F6A52;   /* Deep Jade Green */
+      --highlight-y:  rgba(242, 181, 68, 0.40); /* marigold highlight */
+      --highlight-g:  rgba(47, 143, 111, 0.25); /* jade highlight */
+      --line-h:       30px;
+      --font-base:    15px;
+      --font-h2:      24px;
+      --font-h3:      16px;
+      --font-sub:     12px;
+      --ruled-top-offset: calc(var(--line-h) * 22 / 30);
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #556B2F; /* dark olive board background */
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #768F4C 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #3F4F2F 0%, transparent 50%),
+        repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+      color: var(--ink);
+      font-family: 'Itim', cursive;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    .scrolly-container {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Left Side - School Notebook */
+    .notebook-panel {
+      width: 50%;
+      position: relative;
+      background-color: var(--paper);
+      box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+      z-index: 5;
+    }
+
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(90deg, transparent calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 73 / 30), transparent calc(var(--line-h) * 73 / 30)),
+        repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
+      background-attachment: local;
+      background-position: 0 0, 0 var(--ruled-top-offset);
+    }
+
+    .hero {
+      padding: calc(3 * var(--line-h)) calc(var(--line-h) * 40 / 30) calc(var(--line-h) * 40 / 30) calc(3.2 * var(--line-h));
+      border-bottom: 2px solid rgba(42,37,32,0.12);
+      position: relative; overflow: hidden;
+      scroll-snap-align: start;
+    }
+    .hero::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #556B2F 0%, #556B2F 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+    .crumb { font-size: var(--font-sub); letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: var(--line-h); line-height: var(--line-h); }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+    .title { font-family: 'Pacifico', cursive; font-size: clamp(32px, 4.5vw, 60px); line-height: calc(2 * var(--line-h)); color: var(--ink); margin-bottom: var(--line-h); font-weight: 700; }
+    .title-stroke { width: clamp(140px, 30vw, 300px); height: 3px; background: var(--accent); border-radius: 2px; margin-top: calc(-0.5 * var(--line-h)); margin-bottom: calc(0.4 * var(--line-h)); }
+    .subtitle { font-family: 'Itim', cursive; font-size: var(--font-sub); letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-blue); margin-bottom: var(--line-h); line-height: var(--line-h); }
+    .intro { max-width: 800px; font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); }
+
+    .card {
+      padding: calc(3 * var(--line-h)) calc(1.2 * var(--line-h)) calc(3 * var(--line-h)) calc(3.2 * var(--line-h));
+      border-top: 1px solid rgba(42,37,32,0.08);
+      position: relative; overflow: hidden;
+      min-height: 100vh;
+      box-sizing: border-box;
+      scroll-snap-align: start;
+      transition: background-color 0.3s;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(42,37,32,0.08); }
+    .card.ruled-page:nth-child(even) { background-color: var(--paper-dark); }
+    .card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #556B2F 0%, #556B2F 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+
+    .card.active-section {
+      background-color: rgba(242, 231, 206, 0.45);
+    }
+
+    @media (min-width: 921px) {
+      :root {
+        --line-h:       clamp(30px, 1.25vw + 18.5px, 42px);
+        --font-base:    clamp(15px, 0.6vw + 9.5px, 21px);
+        --font-h2:      clamp(24px, 1vw + 14.8px, 34px);
+        --font-h3:      clamp(16px, 0.7vw + 9.5px, 23px);
+        --font-sub:     clamp(12px, 0.5vw + 7.4px, 17px);
+      }
+      .scrolly-container {
+        height: 100vh;
+        overflow: hidden;
+      }
+      .notebook-panel {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scrollbar-width: none;
+      }
+      .notebook-panel::-webkit-scrollbar {
+        display: none;
+      }
+      .hero {
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+      .lab-panel {
+        position: relative;
+        right: auto;
+        top: auto;
+        height: 100vh;
+      }
+      .card > *:not(.mobile-demo-placeholder) {
+        opacity: 0.15;
+        transition: opacity 0.4s ease;
+      }
+      .card.active-section > *:not(.mobile-demo-placeholder) {
+        opacity: 1;
+      }
+      .hero > * {
+        opacity: 0.15;
+        transition: opacity 0.4s ease;
+      }
+      .hero.active-section > * {
+        opacity: 1;
+      }
+    }
+
+    .card h2 { font-family: 'Pacifico', cursive; font-size: var(--font-h2); color: var(--ink); line-height: var(--line-h); font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 0px; margin-bottom: var(--line-h); display: inline-block; }
+    .card h3 { font-family: 'Itim', cursive; font-size: var(--font-h3); line-height: var(--line-h); color: var(--accent-blue); margin: calc(var(--line-h) / 2) 0 calc(var(--line-h) / 6); font-weight: 700; }
+    .card p { font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); margin-bottom: calc(var(--line-h) / 2); text-wrap: pretty; }
+    .card p:last-child { margin-bottom: 0; }
+    .card ul, .card ol { margin-left: 24px; margin-bottom: calc(var(--line-h) / 2); }
+    .card li { font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); }
+    .card .key { color: var(--accent); font-weight: bold; }
+    .card em { color: var(--accent-blue); font-style: italic; font-weight: bold; }
+
+    .tag {
+      font-family: 'Itim', cursive;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 700; padding: 3px 10px; border-radius: 4px;
+      background: var(--highlight-y);
+      color: var(--ink); border: 1.5px solid rgba(42,37,32,0.18);
+      flex-shrink: 0;
+      box-shadow: 1px 1.5px 4px rgba(0,0,0,0.15);
+      transform: rotate(1.2deg);
+    }
+    .card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+
+    /* Aero Card (Highlight block) */
+    .aero-card {
+      background: var(--highlight-g);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px 12px;
+      margin: 12px 0;
+    }
+    .aero-title { font-family: 'Pacifico', cursive; font-size: 16px; color: var(--accent); margin-bottom: 6px; }
+    .aero-body { font-size: 14px; line-height: 1.6; color: var(--ink-mid); }
+
+
+
+    /* ══════════════════════════════════════
+       Right Side - Elegant Lab Bench / Chalkboard
+    ══════════════════════════════════════ */
+    .lab-panel {
+      width: 50%;
+      background: #080c07;
+      background-image: 
+        radial-gradient(ellipse at 50% 20%, #152c1e 0%, transparent 65%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.005) 0px, rgba(255,255,255,0.005) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.005) 0px, rgba(255,255,255,0.005) 1px, transparent 1px, transparent 30px);
+      position: fixed;
+      right: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    .lab-sticky-wrapper {
+      padding: 40px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .desk-demo-slot {
+      position: absolute;
+      inset: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .demo-panel {
+      width: 100%;
+      max-width: 500px;
+      background: rgba(12, 18, 11, 0.90);
+      border: 2px solid rgba(47, 143, 111, 0.25);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .demo-panel.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .glass-bench {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .bench-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 18px;
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-align: center;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .canvas-wrap {
+      width: 100%;
+      aspect-ratio: 1.5;
+      background: #040604;
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .canvas-wrap canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Controls & Readouts */
+    .ctrl-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .ctrl-row label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #8A7E6C;
+      font-weight: 700;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .bench-btn {
+      padding: 6px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      color: #ccc;
+      font-family: 'Itim', cursive;
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .bench-btn:hover:not(:disabled) {
+      background: rgba(47, 143, 111, 0.15);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .readout-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .readout-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      padding: 8px 12px;
+      text-align: center;
+    }
+
+    .readout-lbl {
+      font-size: 11px;
+      color: var(--ink-light);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .readout-val {
+      font-family: 'Pacifico', cursive;
+      font-size: 18px;
+      color: #fff;
+    }
+
+    .readout-val span {
+      color: var(--accent);
+    }
+
+    .ctrl-btn {
+      width: 100%;
+      padding: 8px 16px;
+      background: var(--accent);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Itim', cursive;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: background 0.2s, transform 0.1s, opacity 0.2s;
+    }
+
+    .ctrl-btn:hover:not(:disabled) {
+      background: var(--accent-blue);
+      transform: translateY(-1px);
+    }
+
+    .ctrl-btn:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    .ctrl-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Auto Formula Generator styling */
+    .dropdown-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .select-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .select-wrap select {
+      padding: 8px;
+      background: #121811;
+      border: 1.5px solid rgba(47,143,111,0.3);
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Itim', cursive;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .select-wrap select:focus {
+      border-color: var(--accent);
+    }
+
+    .solver-math-card {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1.5px dashed rgba(47, 143, 111, 0.3);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: 'Itim', cursive;
+      color: #ddd;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .solver-math-card .math-line {
+      font-family: 'Pacifico', cursive;
+      color: var(--accent);
+      font-size: 18px;
+      text-align: center;
+      margin: 8px 0;
+    }
+
+    /* Quiz Widget Style */
+    .quiz-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .quiz-question-num {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .quiz-question {
+      font-size: 14px;
+      color: #fff;
+      line-height: 1.5;
+    }
+
+    .quiz-opts {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .quiz-opt-btn {
+      text-align: left;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: #ccc;
+      font-family: 'Itim', cursive;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quiz-opt-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    .quiz-opt-btn.correct {
+      background: rgba(47, 143, 111, 0.25) !important;
+      border-color: #2F8F6F !important;
+      color: #fff !important;
+      font-weight: bold;
+    }
+
+    .quiz-opt-btn.wrong {
+      background: rgba(199, 60, 46, 0.2) !important;
+      border-color: #C73C2E !important;
+      color: #fff !important;
+    }
+
+    .quiz-explanation {
+      font-size: 12.5px;
+      line-height: 1.5;
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: rgba(242, 181, 68, 0.1);
+      border-left: 3px solid var(--highlight-y);
+      color: #ddd;
+      display: none;
+    }
+
+    .quiz-results {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+      text-align: center;
+      gap: 14px;
+    }
+
+    .quiz-score-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 4px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Pacifico', cursive;
+      font-size: 36px;
+      color: #fff;
+      background: rgba(47, 143, 111, 0.1);
+      box-shadow: 0 0 15px rgba(47, 143, 111, 0.3);
+    }
+
+    .quiz-results-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 22px;
+      color: var(--accent);
+    }
+
+    .quiz-results-sub {
+      font-size: 13.5px;
+      color: #aaa;
+      line-height: 1.5;
+    }
+
+    /* Dark Mode variables */
+    body.dark-mode {
+      --paper:      #181512;
+      --paper-dark: #1E1B17;
+      --ink:        #E5D9C4;
+      --ink-mid:    #BCAEA0;
+      --ink-light:  #7E7264;
+      --blue-line:  rgba(111, 184, 209, 0.15);
+      --red-margin: rgba(199, 60, 46, 0.5);
+      --highlight-y: rgba(242, 181, 68, 0.20);
+      --highlight-g: rgba(47, 143, 111, 0.15);
+    }
+    body.dark-mode .notebook-panel {
+      box-shadow: 5px 0 25px rgba(0,0,0,0.6);
+    }
+    body.dark-mode .hero::before,
+    body.dark-mode .card::before {
+      background-color: rgba(255,255,255,0.02);
+      background-image: radial-gradient(circle 10px at 18px 50%, #2A361B 0%, #2A361B 55%, transparent 56%);
+    }
+
+    /* Mobile Relocation placeholders */
+    .mobile-demo-placeholder {
+      display: none;
+    }
+
+    /* Responsive Mobile Setup (max-width: 920px) */
+    @media (max-width: 920px) {
+      .scrolly-container {
+        flex-direction: column;
+      }
+      .notebook-panel {
+        width: 100%;
+      }
+      .lab-panel {
+        display: none;
+      }
+      .mobile-demo-placeholder {
+        display: block;
+        width: 100%;
+        margin: 16px 0;
+      }
+      .demo-panel {
+        position: relative;
+        top: auto; bottom: auto; left: auto; right: auto;
+        opacity: 1 !important;
+        transform: none !important;
+        pointer-events: auto !important;
+        padding: 16px;
+        margin-top: 10px;
+        height: auto;
+        max-width: 100%;
+        visibility: visible;
+      }
+      .card {
+        min-height: auto;
+        padding-bottom: 24px;
+        padding-top: calc(1.5 * var(--line-h));
+      }
+      .hero {
+        padding-top: calc(2 * var(--line-h));
+      }
+    }
+  </style>
+</head>
+<body>
+
+
+  <div class="scrolly-container">
+    
+    <!-- LEFT SIDE: NOTEBOOK COLUMN -->
+    <div class="notebook-panel">
+      
+      <!-- Hero / Header Section -->
+      <header class="hero ruled-page" data-demo="0">
+        <div class="crumb">
+          <a href="Learning Resources Hub v4.html">Hóa học</a> › Chương 5
+        </div>
+        <h1 class="title">Hóa trị</h1>
+        <div class="title-stroke"></div>
+        <p class="subtitle">Định luật &amp; Phương pháp thiết lập công thức hóa học</p>
+        <p class="intro">
+          Tại sao phân tử nước luôn là H₂O mà không phải là HO hay H₃O? Làm thế nào để các nguyên tử kết hợp với nhau theo những tỷ lệ số lượng hoàn hảo? Câu trả lời nằm ở khái niệm <strong>Hóa trị</strong>. Chương này sẽ giúp chúng ta tìm hiểu bản chất của hóa trị, quy tắc hóa trị, cách thiết lập công thức hóa học của các phân tử đơn giản cũng như các phân tử chứa các nhóm nguyên tử phức tạp.
+        </p>
+      </header>
+
+      <main class="layout">
+        
+        <!-- SECTION 1: CONCEPT -->
+        <section id="sec-notebook-1" class="card ruled-page" data-demo="1">
+          <div class="card-head">
+            <h2>1. Khái niệm Hóa trị</h2>
+            <span class="tag">Khả năng liên kết</span>
+          </div>
+          <p>
+            <strong>Hóa trị (Valency)</strong> là con số biểu thị khả năng liên kết của nguyên tử nguyên tố này với nguyên tử nguyên tố khác.
+          </p>
+          <p>
+            Để xác định hóa trị của một nguyên tố, các nhà hóa học quy ước lấy hóa trị của <strong>Hydrogen (H) làm đơn vị (hóa trị I)</strong>. Một nguyên tử của nguyên tố khác liên kết với bao nhiêu nguyên tử H thì nguyên tố đó có hóa trị bấy nhiêu.
+            <br>• Trong hợp chất <i>HCl</i>: nguyên tử <i>Cl</i> liên kết với 1 nguyên tử <i>H</i> → <i>Cl</i> có hóa trị I.
+            <br>• Trong hợp chất <i>H₂O</i>: nguyên tử <i>O</i> liên kết với 2 nguyên tử <i>H</i> → <i>O</i> có hóa trị II.
+            <br>• Trong hợp chất <i>NH₃</i>: nguyên tử <i>N</i> liên kết với 3 nguyên tử <i>H</i> → <i>N</i> có hóa trị III.
+          </p>
+          <p>
+            Nguyên tố <strong>Oxygen (O)</strong> cũng được chọn làm chuẩn và được quy ước có <strong>hóa trị II</strong>.
+            <br>• Trong hợp chất <i>CO₂</i>: 1 nguyên tử <i>C</i> liên kết với 2 nguyên tử <i>O</i> (tương đương 4 đơn vị H) → <i>C</i> có hóa trị IV.
+          </p>
+          <div class="aero-card">
+            <div class="aero-title">Mô hình "Móc liên kết" trực quan</div>
+            <div class="aero-body">
+              Hãy tưởng tượng mỗi hóa trị của nguyên tử tương đương với một chiếc "móc" hoặc cánh tay. Một phân tử ổn định chỉ được hình thành khi tất cả các móc của các nguyên tử tham gia đều được móc nối vừa vặn với nhau. Kéo thả các móc ở bảng bên phải để tự tạo phân tử!
+            </div>
+          </div>
+          
+          <div id="mob-demo-1" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 2: VALENCY RULE -->
+        <section id="sec-notebook-2" class="card ruled-page" data-demo="2">
+          <div class="card-head">
+            <h2>2. Quy tắc Hóa trị</h2>
+            <span class="tag">x·a = y·b</span>
+          </div>
+          <p>
+            Trong một công thức hóa học của hợp chất chứa hai nguyên tố, chúng ta luôn thấy một mối quan hệ toán học đối xứng rất đẹp mắt được gọi là <strong>Quy tắc hóa trị</strong>:
+          </p>
+          <p>
+            Giả sử hợp chất có công thức dạng chung:
+            <br><span class="key" style="font-size: 1.1em; display: block; text-align: center; margin: 8px 0;">A<sub>x</sub><sup>a</sup>B<sub>y</sub><sup>b</sup></span>
+            Trong đó:
+            <br>• <i>A, B</i> là các nguyên tố hoặc nhóm nguyên tử.
+            <br>• <i>a, b</i> lần lượt là hóa trị của <i>A</i> và <i>B</i> (thường viết bằng số La Mã).
+            <br>• <i>x, y</i> là chỉ số (số lượng) nguyên tử của <i>A</i> và <i>B</i> trong phân tử.
+          </p>
+          <p>
+            <strong>Phát biểu quy tắc:</strong> Trong công thức hóa học, tích của chỉ số và hóa trị của nguyên tố này bằng tích của chỉ số và hóa trị của nguyên tố kia:
+            <br><span class="key" style="font-size: 1.2em; display: block; text-align: center; margin: 10px 0;">x · a = y · b</span>
+          </p>
+          <p>
+            <i>Ví dụ:</i> Hợp chất nước <i>H₂<sup>I</sup>O₁<sup>II</sup></i>
+            <br>Ta có: <i>x · a = 2 · I = 2</i> và <i>y · b = 1 · II = 2</i>. Cả hai vế bằng nhau, quy tắc được thỏa mãn.
+            <br>Thử thêm bớt nguyên tử trên đĩa cân ở bảng bên phải để kiểm tra sự thăng bằng của quy tắc!
+          </p>
+          
+          <div id="mob-demo-2" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 3: FORMULA WRITING -->
+        <section id="sec-notebook-3" class="card ruled-page" data-demo="3">
+          <div class="card-head">
+            <h2>3. Thiết lập Công thức Hóa học</h2>
+            <span class="tag">Từng bước giải chi tiết</span>
+          </div>
+          <p>
+            Khi biết hóa trị của hai nguyên tố cấu thành (ví dụ nguyên tố A hóa trị <i>a</i> và nguyên tố B hóa trị <i>b</i>), chúng ta áp dụng quy tắc hóa trị để lập công thức hóa học theo 4 bước sau:
+          </p>
+          <ol>
+            <li><strong>Bước 1:</strong> Viết công thức dạng chung: <i>A<sub>x</sub>B<sub>y</sub></i>.</li>
+            <li><strong>Bước 2:</strong> Viết biểu thức quy tắc hóa trị: <i>x · a = y · b</i>.</li>
+            <li><strong>Bước 3:</strong> Chuyển về dạng tỷ lệ số nguyên tối giản:
+              <br><span class="key" style="display:block; text-align:center; margin: 5px 0;">x / y = b / a = b' / a'</span>
+            </li>
+            <li><strong>Bước 4:</strong> Chọn chỉ số tương ứng: <i>x = b'</i> và <i>y = a'</i>. Viết công thức hóa học cuối cùng (lưu ý chỉ số bằng 1 thì không cần ghi).</li>
+          </ol>
+          <p>
+            <i>Ví dụ thiết lập công thức của Aluminium (Al - hóa trị III) và Oxygen (O - hóa trị II):</i>
+            <br>• Công thức dạng chung: <i>Al<sub>x</sub>O<sub>y</sub></i>.
+            <br>• Quy tắc hóa trị: <i>x · III = y · II</i>.
+            <br>• Lập tỉ lệ: <i>x/y = II/III = 2/3</i> (đã tối giản).
+            <br>• Chọn <i>x = 2</i> và <i>y = 3</i>. Công thức hóa học là <i>Al₂O₃</i>.
+          </p>
+          
+          <div id="mob-demo-3" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 4: POLYATOMIC GROUPS -->
+        <section id="sec-notebook-4" class="card ruled-page" data-demo="4">
+          <div class="card-head">
+            <h2>4. Hóa trị của Nhóm nguyên tử</h2>
+            <span class="tag">Gắn kết cụm liên kết</span>
+          </div>
+          <p>
+            Trong nhiều phản ứng hóa học, có những nhóm nguyên tử liên kết rất chặt chẽ với nhau và di chuyển nguyên vẹn từ hợp chất này sang hợp chất khác giống như một nguyên tử đơn lẻ. Chúng được gọi là <strong>Nhóm nguyên tử (Polyatomic groups)</strong>.
+          </p>
+          <p>
+            Mỗi nhóm nguyên tử cũng mang một hóa trị xác định:
+            <br>• <strong>Nhóm Hydroxide (OH)</strong>: hóa trị I.
+            <br>• <strong>Nhóm Nitrate (NO₃)</strong>: hóa trị I.
+            <br>• <strong>Nhóm Sulfate (SO₄)</strong>: hóa trị II.
+            <br>• <strong>Nhóm Carbonate (CO₃)</strong>: hóa trị II.
+            <br>• <strong>Nhóm Phosphate (PO₄)</strong>: hóa trị III.
+          </p>
+          <p>
+            <strong>Cách viết công thức:</strong> Khi thiết lập công thức với nhóm nguyên tử, nếu chỉ số của nhóm nguyên tử <i>&gt; 1</i>, ta bắt buộc phải đặt cả nhóm nguyên tử trong <strong>dấu ngoặc đơn</strong> trước khi ghi chỉ số phía dưới.
+            <br>• <i>Calcium hydroxide</i> gồm Ca (II) và nhóm OH (I) → <i>Ca(OH)₂</i>.
+            <br>• <i>Sodium carbonate</i> gồm Na (I) và nhóm CO₃ (II) → <i>Na₂CO₃</i> (chỉ số nhóm CO₃ là 1 nên không cần dấu ngoặc).
+          </p>
+          
+          <div id="mob-demo-4" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 5: QUIZ -->
+        <section id="sec-notebook-5" class="card ruled-page" data-demo="5">
+          <div class="card-head">
+            <h2>5. Tự kiểm tra</h2>
+            <span class="tag">Luyện tập trắc nghiệm</span>
+          </div>
+          <p>
+            Hãy củng cố kiến thức về hóa trị và cách thiết lập công thức hóa học bằng bài trắc nghiệm nhanh 5 câu hỏi tương tác trên bảng đen bên phải.
+          </p>
+          <p>
+            <strong>Nội dung câu hỏi tập trung vào:</strong>
+            <br>• Xác định hóa trị nguyên tố trong một hợp chất cho sẵn khi biết hóa trị của nguyên tố làm chuẩn (H hoặc O).
+            <br>• Lựa chọn công thức đúng của hợp chất tạo bởi hai nguyên tố hoặc giữa nguyên tố kim loại với nhóm nguyên tử.
+            <br>• Phát hiện và sửa sai các công thức hóa học không tuân thủ quy tắc hóa trị.
+          </p>
+          <p>
+            Nhấp trực tiếp vào phương án để nhận giải thích chi tiết. Hãy bắt đầu ngay để kiểm tra mức độ hiểu bài của bạn!
+          </p>
+          
+          <div id="mob-demo-5" class="mobile-demo-placeholder"></div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- RIGHT SIDE: FIXED LAB BENCH PANEL -->
+    <div class="lab-panel">
+      <div class="lab-sticky-wrapper">
+
+        <!-- DEMO 1: MOLECULAR HOOK BUILDER -->
+        <div id="desk-demo-1" class="desk-demo-slot">
+          <div id="demo-1" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Mô hình móc hóa trị ảo</div>
+              <div class="canvas-wrap">
+                <canvas id="hookCanvas"></canvas>
+              </div>
+              <div class="ctrl-row">
+                <label>Bảng thêm nguyên tử tự do:</label>
+                <div class="btn-row">
+                  <button class="bench-btn" id="addHBtn" type="button">Thêm H (I)</button>
+                  <button class="bench-btn" id="addOBtn" type="button">Thêm O (II)</button>
+                  <button class="bench-btn" id="addClBtn" type="button">Thêm Cl (I)</button>
+                  <button class="bench-btn" id="addCBtn" type="button">Thêm C (IV)</button>
+                </div>
+              </div>
+              <div style="font-size:12px; color:#aaa; text-align:center; margin-top:4px;">
+                Nhấp chuột kéo nối các điểm móc (màu xanh lá) để liên kết nguyên tử.
+              </div>
+            </div>
+            <button class="ctrl-btn" id="hookReset" disabled>Đặt lại bàn thực hành</button>
+          </div>
+        </div>
+
+        <!-- DEMO 2: VALENCY BALANCING SCALE -->
+        <div id="desk-demo-2" class="desk-demo-slot">
+          <div id="demo-2" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Cân thăng bằng Quy tắc hóa trị</div>
+              <div class="ctrl-row" style="margin-bottom: 8px;">
+                <label>Hợp chất cần cân bằng:</label>
+                <div class="btn-row" id="scaleCompoundSelect">
+                  <button class="bench-btn active" data-cmp="NaO">Na(I) &amp; O(II)</button>
+                  <button class="bench-btn" data-cmp="AlO">Al(III) &amp; O(II)</button>
+                  <button class="bench-btn" data-cmp="CaCl">Ca(II) &amp; Cl(I)</button>
+                </div>
+              </div>
+              <div class="canvas-wrap">
+                <canvas id="scaleCanvas"></canvas>
+              </div>
+              <div class="dropdown-row">
+                <div class="select-wrap">
+                  <label id="lblScaleA">Nguyên tố A (Na):</label>
+                  <div class="btn-row" style="margin-top:4px;">
+                    <button class="bench-btn" id="btnSubA">-</button>
+                    <button class="bench-btn" id="btnAddA">+</button>
+                  </div>
+                </div>
+                <div class="select-wrap">
+                  <label id="lblScaleB">Nguyên tố B (O):</label>
+                  <div class="btn-row" style="margin-top:4px;">
+                    <button class="bench-btn" id="btnSubB">-</button>
+                    <button class="bench-btn" id="btnAddB">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button class="ctrl-btn" id="scaleReset" disabled>Đặt lại bàn thực hành</button>
+          </div>
+        </div>
+
+        <!-- DEMO 3: AUTO FORMULA GENERATOR -->
+        <div id="desk-demo-3" class="desk-demo-slot">
+          <div id="demo-3" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Trình thiết lập công thức tự động</div>
+              <div class="dropdown-row">
+                <div class="select-wrap">
+                  <label for="selectA">Nguyên tố/Nhóm cation A:</label>
+                  <select id="selectA">
+                    <option value="Na-1">Na (I)</option>
+                    <option value="Ca-2">Ca (II)</option>
+                    <option value="Al-3">Al (III)</option>
+                    <option value="Fe-3">Fe (III)</option>
+                    <option value="H-1">H (I)</option>
+                  </select>
+                </div>
+                <div class="select-wrap">
+                  <label for="selectB">Nguyên tố/Nhóm anion B:</label>
+                  <select id="selectB">
+                    <option value="Cl-1">Cl (I)</option>
+                    <option value="O-2" selected>O (II)</option>
+                    <option value="OH-1">OH (I)</option>
+                    <option value="SO4-2">SO₄ (II)</option>
+                    <option value="PO4-3">PO₄ (III)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="solver-math-card">
+                <div>Các bước thiết lập công thức:</div>
+                <div id="genStep1">1. Dạng chung: Na_x O_y</div>
+                <div id="genStep2">2. Quy tắc: x &times; I = y &times; II</div>
+                <div id="genStep3">3. Tỷ lệ tối giản: x/y = 2/1</div>
+                <div class="math-line" id="genFinalFormula">Na₂O</div>
+              </div>
+            </div>
+            <button class="ctrl-btn" id="genReset" disabled>Đặt lại cấu hình</button>
+          </div>
+        </div>
+
+        <!-- DEMO 4: POLYATOMIC GROUP VISUALIZER -->
+        <div id="desk-demo-4" class="desk-demo-slot">
+          <div id="demo-4" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Trực quan cấu tạo nhóm nguyên tử</div>
+              <div class="ctrl-row" style="margin-bottom: 8px;">
+                <label>Chọn cấu trúc xem:</label>
+                <div class="btn-row" id="polyCompoundSelect">
+                  <button class="bench-btn active" data-poly="CaOH">Ca(OH)₂</button>
+                  <button class="bench-btn" data-poly="NaCO3">Na₂CO₃</button>
+                  <button class="bench-btn" data-poly="AlSO4">Al₂(SO₄)₃</button>
+                </div>
+              </div>
+              <div class="canvas-wrap">
+                <canvas id="polyCanvas"></canvas>
+              </div>
+              <div class="solver-math-card" style="font-size: 12.5px;">
+                <div style="font-weight:bold; color:var(--accent);" id="polyTitle">Calcium hydroxide - Ca(OH)₂</div>
+                <div id="polyDesc">Nguyên tử Ca (II) liên kết với 2 nhóm Hydroxide (OH) hóa trị I. Sử dụng ngoặc đơn (OH)₂ để chỉ rõ có hai cụm OH độc lập bám vào Calcium.</div>
+              </div>
+            </div>
+            <button class="ctrl-btn" id="polyReset" disabled>Đặt lại bàn thực hành</button>
+          </div>
+        </div>
+
+        <!-- DEMO 5: QUIZ INTERACTIVE -->
+        <div id="desk-demo-5" class="desk-demo-slot">
+          <div id="demo-5" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Kiểm tra trắc nghiệm</div>
+              
+              <!-- Quiz Active Screen -->
+              <div class="quiz-card" id="quizActiveCard">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span class="quiz-question-num" id="quizQuestNum">Câu 1 / 5</span>
+                  <span class="tag" style="transform:none; font-size:10px;" id="quizScoreRead">Điểm: 0</span>
+                </div>
+                <div class="quiz-question" id="quizQuestionText">Câu hỏi tải ở đây...</div>
+                <div class="quiz-opts" id="quizOptionsWrap">
+                  <!-- Dynamic options -->
+                </div>
+                <div class="quiz-explanation" id="quizExplBox">Giải thích chi tiết đáp án...</div>
+              </div>
+
+              <!-- Quiz Results Screen -->
+              <div class="quiz-results" id="quizResultsScreen">
+                <div class="quiz-score-circle" id="quizFinalScore">5/5</div>
+                <div class="quiz-results-title" id="quizResultsTitle">Xuất sắc! 🎉</div>
+                <div class="quiz-results-sub" id="quizResultsSub">Bạn đã trả lời đúng tất cả các câu hỏi. Hãy tiếp tục phát huy!</div>
+                <button class="ctrl-btn" id="btnQuizReplay" style="margin-top: 10px;">Làm lại bài kiểm tra</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /* ══════════════════════════════════════════
+       THEME & COLOR SCHEME CONFIGURATION
+    ══════════════════════════════════════════ */
+    (function(){
+      const body = document.body;
+      const saved = localStorage.getItem('bewy-theme');
+      if (saved === 'dark') { body.classList.add('dark-mode'); }
+    })();
+
+    /* ══════════════════════════════════════════
+       DEMO 1: MOLECULAR HOOK BUILDER LOGIC
+    ══════════════════════════════════════════ */
+    const hookCanvas = document.getElementById('hookCanvas');
+    const hCtx = hookCanvas.getContext('2d');
+    const hookReset = document.getElementById('hookReset');
+    
+    let atoms = [];
+    let dragPoint = null;
+    let connections = []; // items: { fromAtom, fromHookIdx, toAtom, toHookIdx }
+
+    const atomTypes = {
+      H:  { name: 'H',  valency: 1, color: '#6FB8D1', r: 20 },
+      O:  { name: 'O',  valency: 2, color: '#C73C2E', r: 24 },
+      Cl: { name: 'Cl', valency: 1, color: '#2F8F6F', r: 22 },
+      C:  { name: 'C',  valency: 4, color: '#4D4439', r: 28 }
+    };
+
+    function initHookCanvas() {
+      const rect = hookCanvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      hookCanvas.width = rect.width * dpr;
+      hookCanvas.height = rect.height * dpr;
+      hCtx.scale(dpr, dpr);
+      drawHookWorld();
+    }
+
+    function addAtom(type) {
+      const info = atomTypes[type];
+      const w = hookCanvas.width / (window.devicePixelRatio || 1);
+      const h = hookCanvas.height / (window.devicePixelRatio || 1);
+      atoms.push({
+        type: type,
+        x: Math.random() * (w - 80) + 40,
+        y: Math.random() * (h - 80) + 40,
+        r: info.r,
+        valency: info.valency,
+        color: info.color,
+        hooks: getHookPositions(info.valency) // angles in radians
+      });
+      hookReset.disabled = false;
+      drawHookWorld();
+    }
+
+    function getHookPositions(valency) {
+      const list = [];
+      for(let i=0; i<valency; i++) {
+        list.push((Math.PI * 2 * i) / valency);
+      }
+      return list;
+    }
+
+    function drawHookWorld() {
+      const w = hookCanvas.width / (window.devicePixelRatio || 1);
+      const h = hookCanvas.height / (window.devicePixelRatio || 1);
+      hCtx.clearRect(0, 0, w, h);
+
+      // Draw dark background
+      hCtx.fillStyle = '#050805';
+      hCtx.fillRect(0, 0, w, h);
+
+      // Draw connections
+      hCtx.strokeStyle = '#F2B544';
+      hCtx.lineWidth = 3;
+      connections.forEach(conn => {
+        const p1 = getHookXY(conn.fromAtom, conn.fromHookIdx);
+        const p2 = getHookXY(conn.toAtom, conn.toHookIdx);
+        hCtx.beginPath();
+        hCtx.moveTo(p1.x, p1.y);
+        hCtx.lineTo(p2.x, p2.y);
+        hCtx.stroke();
+      });
+
+      // Draw dragging line
+      if (dragPoint) {
+        hCtx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        hCtx.lineWidth = 2.5;
+        hCtx.setLineDash([4, 4]);
+        const start = getHookXY(dragPoint.atom, dragPoint.hookIdx);
+        hCtx.beginPath();
+        hCtx.moveTo(start.x, start.y);
+        hCtx.lineTo(dragPoint.currX, dragPoint.currY);
+        hCtx.stroke();
+        hCtx.setLineDash([]);
+      }
+
+      // Draw atoms
+      atoms.forEach(atom => {
+        // Draw body
+        hCtx.fillStyle = atom.color;
+        hCtx.beginPath();
+        hCtx.arc(atom.x, atom.y, atom.r, 0, Math.PI*2);
+        hCtx.fill();
+        hCtx.strokeStyle = 'rgba(255,255,255,0.2)';
+        hCtx.lineWidth = 1.5;
+        hCtx.stroke();
+
+        // Draw symbol
+        hCtx.fillStyle = '#fff';
+        hCtx.font = 'bold 15px Itim';
+        hCtx.textAlign = 'center';
+        hCtx.textBaseline = 'middle';
+        hCtx.fillText(atom.type, atom.x, atom.y);
+
+        // Draw hooks (handles/pegs)
+        atom.hooks.forEach((angle, idx) => {
+          const startX = atom.x + atom.r * Math.cos(angle);
+          const startY = atom.y + atom.r * Math.sin(angle);
+          const endX = atom.x + (atom.r + 10) * Math.cos(angle);
+          const endY = atom.y + (atom.r + 10) * Math.sin(angle);
+
+          // Draw peg stem
+          hCtx.strokeStyle = '#8A7E6C';
+          hCtx.lineWidth = 2.5;
+          hCtx.beginPath();
+          hCtx.moveTo(startX, startY);
+          hCtx.lineTo(endX, endY);
+          hCtx.stroke();
+
+          // Draw peg bulb
+          hCtx.fillStyle = isHookConnected(atom, idx) ? '#F2B544' : '#2F8F6F';
+          hCtx.beginPath();
+          hCtx.arc(endX, endY, 5, 0, Math.PI*2);
+          hCtx.fill();
+        });
+      });
+
+      // Check if molecule is completely connected and correct
+      checkStructureCompletion();
+    }
+
+    function getHookXY(atom, hookIdx) {
+      const angle = atom.hooks[hookIdx];
+      return {
+        x: atom.x + (atom.r + 10) * Math.cos(angle),
+        y: atom.y + (atom.r + 10) * Math.sin(angle)
+      };
+    }
+
+    function isHookConnected(atom, hookIdx) {
+      return connections.some(c => 
+        (c.fromAtom === atom && c.fromHookIdx === hookIdx) ||
+        (c.toAtom === atom && c.toHookIdx === hookIdx)
+      );
+    }
+
+    function checkStructureCompletion() {
+      if (atoms.length < 2) return;
+      
+      // Check if all hooks of all atoms are connected
+      let allConnected = true;
+      atoms.forEach(atom => {
+        for(let i=0; i<atom.valency; i++) {
+          if (!isHookConnected(atom, i)) {
+            allConnected = false;
+          }
+        }
+      });
+
+      if (allConnected) {
+        // Build molecular formula from count
+        const counts = { H:0, O:0, Cl:0, C:0 };
+        atoms.forEach(a => counts[a.type]++);
+
+        let formula = '';
+        if (counts.C > 0) formula += 'C' + (counts.C > 1 ? counts.C : '');
+        if (counts.H > 0) formula += 'H' + (counts.H > 1 ? counts.H : '');
+        if (counts.Cl > 0) formula += 'Cl' + (counts.Cl > 1 ? counts.Cl : '');
+        if (counts.O > 0) formula += 'O' + (counts.O > 1 ? counts.O : '');
+
+        hCtx.fillStyle = 'rgba(47, 143, 111, 0.9)';
+        hCtx.fillRect(10, 10, 200, 32);
+        hCtx.fillStyle = '#fff';
+        hCtx.font = '12px Itim';
+        hCtx.fillText(`Tạo thành: ${formula} bền vững!`, 110, 26);
+      }
+    }
+
+    // Interactive drag logic
+    hookCanvas.addEventListener('mousedown', (e) => {
+      const rect = hookCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Check if clicking a hook bulb
+      for(let atom of atoms) {
+        for(let i=0; i<atom.hooks.length; i++) {
+          const pt = getHookXY(atom, i);
+          const dist = Math.hypot(pt.x - x, pt.y - y);
+          if (dist < 8) {
+            // Check if already connected, if so remove connections involving it
+            connections = connections.filter(c => 
+              !( (c.fromAtom === atom && c.fromHookIdx === i) || (c.toAtom === atom && c.toHookIdx === i) )
+            );
+            dragPoint = { atom: atom, hookIdx: i, currX: x, currY: y };
+            drawHookWorld();
+            return;
+          }
+        }
+      }
+
+      // Check if clicking an atom body to move it
+      for(let atom of atoms) {
+        const dist = Math.hypot(atom.x - x, atom.y - y);
+        if (dist < atom.r) {
+          dragPoint = { moveAtom: atom, offsetX: x - atom.x, offsetY: y - atom.y };
+          return;
+        }
+      }
+    });
+
+    hookCanvas.addEventListener('mousemove', (e) => {
+      if (!dragPoint) return;
+      const rect = hookCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (dragPoint.moveAtom) {
+        dragPoint.moveAtom.x = x - dragPoint.offsetX;
+        dragPoint.moveAtom.y = y - dragPoint.offsetY;
+      } else {
+        dragPoint.currX = x;
+        dragPoint.currY = y;
+      }
+      drawHookWorld();
+    });
+
+    hookCanvas.addEventListener('mouseup', (e) => {
+      if (!dragPoint) return;
+      
+      if (dragPoint.atom !== undefined) {
+        // Dragging connection line - check if released on another hook
+        const rect = hookCanvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        for(let atom of atoms) {
+          if (atom === dragPoint.atom) continue; // No self connection
+          for(let i=0; i<atom.hooks.length; i++) {
+            const pt = getHookXY(atom, i);
+            const dist = Math.hypot(pt.x - x, pt.y - y);
+            if (dist < 10) {
+              // Connect hooks
+              connections.push({
+                fromAtom: dragPoint.atom,
+                fromHookIdx: dragPoint.hookIdx,
+                toAtom: atom,
+                toHookIdx: i
+              });
+              break;
+            }
+          }
+        }
+      }
+
+      dragPoint = null;
+      drawHookWorld();
+    });
+
+    document.getElementById('addHBtn').addEventListener('click', () => addAtom('H'));
+    document.getElementById('addOBtn').addEventListener('click', () => addAtom('O'));
+    document.getElementById('addClBtn').addEventListener('click', () => addAtom('Cl'));
+    document.getElementById('addCBtn').addEventListener('click', () => addAtom('C'));
+
+    hookReset.addEventListener('click', () => {
+      atoms = [];
+      connections = [];
+      dragPoint = null;
+      hookReset.disabled = true;
+      drawHookWorld();
+    });
+
+    /* ══════════════════════════════════════════
+       DEMO 2: VALENCY BALANCING SCALE LOGIC
+    ══════════════════════════════════════════ */
+    const scaleCanvas = document.getElementById('scaleCanvas');
+    const sCtx = scaleCanvas.getContext('2d');
+    const scaleReset = document.getElementById('scaleReset');
+    const lblScaleA = document.getElementById('lblScaleA');
+    const lblScaleB = document.getElementById('lblScaleB');
+
+    let currentCmp = 'NaO'; // default compound mode
+    let countA = 0;
+    let countB = 0;
+
+    const cmpConfig = {
+      NaO: { nameA: 'Na', valA: 1, colorA: '#F2B544', nameB: 'O', valB: 2, colorB: '#C73C2E' },
+      AlO: { nameA: 'Al', valA: 3, colorA: '#8A7E6C', nameB: 'O', valB: 2, colorB: '#C73C2E' },
+      CaCl: { nameA: 'Ca', valA: 2, colorA: '#9D8EC3', nameB: 'Cl', valB: 1, colorB: '#2F8F6F' }
+    };
+
+    function initScaleCanvas() {
+      const rect = scaleCanvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      scaleCanvas.width = rect.width * dpr;
+      scaleCanvas.height = rect.height * dpr;
+      sCtx.scale(dpr, dpr);
+      drawScale();
+    }
+
+    function drawScale() {
+      const w = scaleCanvas.width / (window.devicePixelRatio || 1);
+      const h = scaleCanvas.height / (window.devicePixelRatio || 1);
+      sCtx.clearRect(0, 0, w, h);
+
+      sCtx.fillStyle = '#050805';
+      sCtx.fillRect(0, 0, w, h);
+
+      const cfg = cmpConfig[currentCmp];
+      const sumValA = countA * cfg.valA;
+      const sumValB = countB * cfg.valB;
+
+      // Tilt factor determined by difference in valencies
+      const diff = sumValB - sumValA;
+      let angle = diff * 0.04;
+      if (angle > 0.25) angle = 0.25;
+      if (angle < -0.25) angle = -0.25;
+
+      const centerX = w / 2;
+      const centerY = h - 60;
+      const armLength = 120;
+
+      // Draw Stand
+      sCtx.strokeStyle = '#8A7E6C';
+      sCtx.lineWidth = 5;
+      sCtx.beginPath();
+      sCtx.moveTo(centerX, centerY);
+      sCtx.lineTo(centerX, h - 15);
+      sCtx.moveTo(centerX - 30, h - 15);
+      sCtx.lineTo(centerX + 30, h - 15);
+      sCtx.stroke();
+
+      // Draw Arm (tilted based on angle)
+      const armLeftX = centerX - armLength * Math.cos(angle);
+      const armLeftY = centerY - armLength * Math.sin(angle);
+      const armRightX = centerX + armLength * Math.cos(angle);
+      const armRightY = centerY + armLength * Math.sin(angle);
+
+      sCtx.strokeStyle = '#BCAEA0';
+      sCtx.lineWidth = 3.5;
+      sCtx.beginPath();
+      sCtx.moveTo(armLeftX, armLeftY);
+      sCtx.lineTo(armRightX, armRightY);
+      sCtx.stroke();
+
+      // Draw Pans suspension cords
+      const panOffset = 50;
+      sCtx.strokeStyle = 'rgba(255,255,255,0.2)';
+      sCtx.lineWidth = 1.5;
+      
+      // Left Pan
+      sCtx.beginPath();
+      sCtx.moveTo(armLeftX, armLeftY);
+      sCtx.lineTo(armLeftX - 15, armLeftY + panOffset);
+      sCtx.moveTo(armLeftX, armLeftY);
+      sCtx.lineTo(armLeftX + 15, armLeftY + panOffset);
+      sCtx.stroke();
+      
+      // Left Pan dish
+      sCtx.fillStyle = '#4D4439';
+      sCtx.fillRect(armLeftX - 30, armLeftY + panOffset, 60, 4);
+
+      // Right Pan
+      sCtx.beginPath();
+      sCtx.moveTo(armRightX, armRightY);
+      sCtx.lineTo(armRightX - 15, armRightY + panOffset);
+      sCtx.moveTo(armRightX, armRightY);
+      sCtx.lineTo(armRightX + 15, armRightY + panOffset);
+      sCtx.stroke();
+      
+      // Right Pan dish
+      sCtx.fillStyle = '#4D4439';
+      sCtx.fillRect(armRightX - 30, armRightY + panOffset, 60, 4);
+
+      // Draw Atoms on Left Pan (A)
+      sCtx.textAlign = 'center';
+      sCtx.textBaseline = 'middle';
+      sCtx.font = '11px Itim';
+      
+      for(let i=0; i<countA; i++) {
+        const ax = armLeftX + (i % 2 === 0 ? -12 : 12);
+        const ay = armLeftY + panOffset - 12 - (Math.floor(i / 2) * 18);
+        sCtx.fillStyle = cfg.colorA;
+        sCtx.beginPath();
+        sCtx.arc(ax, ay, 9, 0, Math.PI*2);
+        sCtx.fill();
+        sCtx.fillStyle = '#fff';
+        sCtx.fillText(cfg.nameA, ax, ay);
+      }
+
+      // Draw Atoms on Right Pan (B)
+      for(let i=0; i<countB; i++) {
+        const bx = armRightX + (i % 2 === 0 ? -12 : 12);
+        const by = armRightY + panOffset - 12 - (Math.floor(i / 2) * 18);
+        sCtx.fillStyle = cfg.colorB;
+        sCtx.beginPath();
+        sCtx.arc(bx, by, 9, 0, Math.PI*2);
+        sCtx.fill();
+        sCtx.fillStyle = '#fff';
+        sCtx.fillText(cfg.nameB, bx, by);
+      }
+
+      // Output texts
+      sCtx.fillStyle = '#8A7E6C';
+      sCtx.font = '12px Itim';
+      sCtx.fillText(`Tích hóa trị vế trái: ${countA} &times; ${cfg.valA} = ${sumValA}`, w / 4, h - 25);
+      sCtx.fillText(`Tích hóa trị vế phải: ${countB} &times; ${cfg.valB} = ${sumValB}`, 3 * w / 4, h - 25);
+
+      // Success Banner if balanced
+      if (sumValA > 0 && sumValA === sumValB) {
+        sCtx.fillStyle = 'rgba(47, 143, 111, 0.9)';
+        sCtx.fillRect(w/2 - 100, 15, 200, 32);
+        sCtx.fillStyle = '#fff';
+        sCtx.font = 'bold 12px Itim';
+        let form = `${cfg.nameA}${countA > 1 ? countA : ''}${cfg.nameB}${countB > 1 ? countB : ''}`;
+        // Clean up CaCl
+        if (currentCmp === 'CaCl') form = `CaCl₂`;
+        sCtx.fillText(`CÂN BẰNG! Hợp chất: ${form}`, w/2, 31);
+      }
+    }
+
+    function setScaleCompound(cmp) {
+      currentCmp = cmp;
+      countA = 0;
+      countB = 0;
+      const cfg = cmpConfig[currentCmp];
+      lblScaleA.textContent = `Nguyên tố A (${cfg.nameA} - hóa trị ${cfg.valA}):`;
+      lblScaleB.textContent = `Nguyên tố B (${cfg.nameB} - hóa trị ${cfg.valB}):`;
+      scaleReset.disabled = true;
+      drawScale();
+    }
+
+    document.querySelectorAll('#scaleCompoundSelect button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#scaleCompoundSelect button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        setScaleCompound(btn.dataset.cmp);
+      });
+    });
+
+    document.getElementById('btnAddA').addEventListener('click', () => { countA++; scaleReset.disabled=false; drawScale(); });
+    document.getElementById('btnSubA').addEventListener('click', () => { if(countA > 0) countA--; drawScale(); });
+    document.getElementById('btnAddB').addEventListener('click', () => { countB++; scaleReset.disabled=false; drawScale(); });
+    document.getElementById('btnSubB').addEventListener('click', () => { if(countB > 0) countB--; drawScale(); });
+    
+    scaleReset.addEventListener('click', () => {
+      countA = 0;
+      countB = 0;
+      scaleReset.disabled = true;
+      drawScale();
+    });
+
+    /* ══════════════════════════════════════════
+       DEMO 3: AUTO FORMULA GENERATOR LOGIC
+    ══════════════════════════════════════════ */
+    const selectA = document.getElementById('selectA');
+    const selectB = document.getElementById('selectB');
+    const genStep1 = document.getElementById('genStep1');
+    const genStep2 = document.getElementById('genStep2');
+    const genStep3 = document.getElementById('genStep3');
+    const genFinalFormula = document.getElementById('genFinalFormula');
+    const genReset = document.getElementById('genReset');
+
+    function gcd(x, y) {
+      while(y) {
+        var t = y;
+        y = x % y;
+        x = t;
+      }
+      return x;
+    }
+
+    function updateGenerator() {
+      const partsA = selectA.value.split('-');
+      const partsB = selectB.value.split('-');
+
+      const nameA = partsA[0];
+      const valA = parseInt(partsA[1]);
+      
+      const nameB = partsB[0];
+      const valB = parseInt(partsB[1]);
+
+      genReset.disabled = nameA === 'Na' && nameB === 'O';
+
+      // 1. General formula
+      genStep1.innerHTML = `1. Dạng chung: <i>${nameA}<sub>x</sub>${nameB}<sub>y</sub></i>`;
+
+      // 2. Valency rule equation
+      genStep2.innerHTML = `2. Quy tắc hóa trị: <i>x</i> &times; <strong>${romanize(valA)}</strong> = <i>y</i> &times; <strong>${romanize(valB)}</strong>`;
+
+      // 3. Ratio calculation
+      const commonGcd = gcd(valA, valB);
+      const simpB = valB / commonGcd;
+      const simpA = valA / commonGcd;
+      
+      genStep3.innerHTML = `3. Tỷ lệ chỉ số: <i>x / y = ${romanize(valB)} / ${romanize(valA)} = ${simpB} / ${simpA}</i> (đã tối giản)`;
+
+      // 4. Final Formula formatting (handling groups like OH, SO4, PO4)
+      let displayA = nameA;
+      let displayB = nameB;
+
+      const isGroupB = ['OH', 'SO4', 'PO4'].includes(nameB);
+      
+      let indexA = simpB > 1 ? simpB : '';
+      let indexB = simpA > 1 ? simpA : '';
+
+      let formattedB = displayB;
+      if (isGroupB) {
+        // format subscripts for group B formulas
+        formattedB = nameB.replace('4', '₄');
+        if (simpA > 1) {
+          formattedB = `(${formattedB})`;
+        }
+      }
+
+      // Convert number subscripts to unicode subscripts for A
+      let unicodeIndexA = indexA.toString().replace('2', '₂').replace('3', '₃');
+      let unicodeIndexB = indexB.toString().replace('2', '₂').replace('3', '₃');
+
+      genFinalFormula.innerHTML = `${displayA}${unicodeIndexA}${formattedB}${unicodeIndexB}`;
+    }
+
+    function romanize(num) {
+      if (num === 1) return 'I';
+      if (num === 2) return 'II';
+      if (num === 3) return 'III';
+      if (num === 4) return 'IV';
+      return num;
+    }
+
+    selectA.addEventListener('change', updateGenerator);
+    selectB.addEventListener('change', updateGenerator);
+    
+    genReset.addEventListener('click', () => {
+      selectA.value = 'Na-1';
+      selectB.value = 'O-2';
+      updateGenerator();
+    });
+
+    /* ══════════════════════════════════════════
+       DEMO 4: POLYATOMIC GROUP VISUALIZER
+    ══════════════════════════════════════════ */
+    const polyCanvas = document.getElementById('polyCanvas');
+    const pCtx = polyCanvas.getContext('2d');
+    const polyReset = document.getElementById('polyReset');
+    const polyTitle = document.getElementById('polyTitle');
+    const polyDesc = document.getElementById('polyDesc');
+
+    let currentPolyMode = 'CaOH';
+
+    function initPolyCanvas() {
+      const rect = polyCanvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      polyCanvas.width = rect.width * dpr;
+      polyCanvas.height = rect.height * dpr;
+      pCtx.scale(dpr, dpr);
+      drawPolyStructure();
+    }
+
+    const polyData = {
+      CaOH: {
+        title: 'Calcium hydroxide - Ca(OH)₂',
+        desc: 'Nguyên tử Ca (II) liên kết với 2 nhóm Hydroxide (OH) hóa trị I. Sử dụng ngoặc đơn (OH)₂ để chỉ rõ có hai cụm OH độc lập bám vào Calcium.',
+        draw: (ctx, w, h) => {
+          const cx = w/2;
+          const cy = h/2;
+          
+          // Draw Ca
+          drawAtomNode(ctx, cx, cy, 28, '#9D8EC3', 'Ca');
+          
+          // Draw OH Left
+          drawAtomNode(ctx, cx - 110, cy - 30, 20, '#E89BA8', 'OH');
+          // Draw OH Right
+          drawAtomNode(ctx, cx + 110, cy + 30, 20, '#E89BA8', 'OH');
+
+          // Draw bonds
+          ctx.strokeStyle = '#8A7E6C';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(cx - 28, cy - 8); ctx.lineTo(cx - 90, cy - 25);
+          ctx.moveTo(cx + 28, cy + 8); ctx.lineTo(cx + 90, cy + 25);
+          ctx.stroke();
+
+          // Labels
+          ctx.fillStyle = '#8A7E6C';
+          ctx.font = '10px Itim';
+          ctx.fillText('Hóa trị II', cx, cy - 38);
+          ctx.fillText('Hóa trị I', cx - 110, cy - 60);
+          ctx.fillText('Hóa trị I', cx + 110, cy + 60);
+        }
+      },
+      NaCO3: {
+        title: 'Sodium carbonate - Na₂CO₃',
+        desc: 'Hai nguyên tử Na (I) liên kết với một nhóm Carbonate (CO₃) hóa trị II. Chỉ số nhóm CO₃ là 1 nên ta lược bỏ dấu ngoặc đơn.',
+        draw: (ctx, w, h) => {
+          const cx = w/2;
+          const cy = h/2;
+
+          // Draw central CO3 group
+          drawAtomNode(ctx, cx, cy, 32, '#D9633B', 'CO₃');
+
+          // Draw Na left and right
+          drawAtomNode(ctx, cx - 110, cy, 22, '#F2B544', 'Na');
+          drawAtomNode(ctx, cx + 110, cy, 22, '#F2B544', 'Na');
+
+          // Draw bonds
+          ctx.strokeStyle = '#8A7E6C';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(cx - 32, cy); ctx.lineTo(cx - 88, cy);
+          ctx.moveTo(cx + 32, cy); ctx.lineTo(cx + 88, cy);
+          ctx.stroke();
+
+          // Labels
+          ctx.fillStyle = '#8A7E6C';
+          ctx.font = '10px Itim';
+          ctx.fillText('Hóa trị II', cx, cy - 42);
+          ctx.fillText('Hóa trị I', cx - 110, cy - 32);
+          ctx.fillText('Hóa trị I', cx + 110, cy - 32);
+        }
+      },
+      AlSO4: {
+        title: 'Aluminium sulfate - Al₂(SO₄)₃',
+        desc: 'Hai nguyên tử Al (III) chia đều các liên kết với ba nhóm Sulfate (SO₄) hóa trị II. Dấu ngoặc đơn (SO₄)₃ chỉ rõ có ba nhóm SO₄ liên kết với hai Al.',
+        draw: (ctx, w, h) => {
+          const cx = w/2;
+          const cy = h/2;
+
+          // Draw Al nodes
+          drawAtomNode(ctx, cx - 60, cy - 40, 26, '#8A7E6C', 'Al');
+          drawAtomNode(ctx, cx + 60, cy + 40, 26, '#8A7E6C', 'Al');
+
+          // Draw SO4 nodes
+          drawAtomNode(ctx, cx - 130, cy, 22, '#1F7A8C', 'SO₄');
+          drawAtomNode(ctx, cx, cy, 22, '#1F7A8C', 'SO₄');
+          drawAtomNode(ctx, cx + 130, cy, 22, '#1F7A8C', 'SO₄');
+
+          // Draw connecting bonds
+          ctx.strokeStyle = '#8A7E6C';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          // Al1 bonds
+          ctx.moveTo(cx - 75, cy - 28); ctx.lineTo(cx - 115, cy - 10);
+          ctx.moveTo(cx - 60, cy - 14); ctx.lineTo(cx - 15, cy - 5);
+          ctx.moveTo(cx - 45, cy - 28); ctx.lineTo(cx + 40, cy + 20); // Cross bond
+
+          // Al2 bonds
+          ctx.moveTo(ctx, cx + 75, cy + 28); ctx.lineTo(cx + 115, cy + 10);
+          ctx.moveTo(ctx, cx + 60, cy + 14); ctx.lineTo(cx + 15, cy + 5);
+          ctx.stroke();
+        }
+      }
+    };
+
+    function drawAtomNode(ctx, x, y, r, color, label) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 13px Itim';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, x, y);
+    }
+
+    function drawPolyStructure() {
+      const w = polyCanvas.width / (window.devicePixelRatio || 1);
+      const h = polyCanvas.height / (window.devicePixelRatio || 1);
+      pCtx.clearRect(0, 0, w, h);
+
+      pCtx.fillStyle = '#050805';
+      pCtx.fillRect(0, 0, w, h);
+
+      const data = polyData[currentPolyMode];
+      if (data) {
+        data.draw(pCtx, w, h);
+      }
+    }
+
+    document.querySelectorAll('#polyCompoundSelect button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#polyCompoundSelect button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentPolyMode = btn.dataset.poly;
+        
+        const data = polyData[currentPolyMode];
+        polyTitle.textContent = data.title;
+        polyDesc.textContent = data.desc;
+        polyReset.disabled = currentPolyMode === 'CaOH';
+        
+        drawPolyStructure();
+      });
+    });
+
+    polyReset.addEventListener('click', () => {
+      currentPolyMode = 'CaOH';
+      document.querySelectorAll('#polyCompoundSelect button').forEach(b => {
+        if(b.dataset.poly === 'CaOH') b.classList.add('active');
+        else b.classList.remove('active');
+      });
+      polyTitle.textContent = polyData.CaOH.title;
+      polyDesc.textContent = polyData.CaOH.desc;
+      polyReset.disabled = true;
+      drawPolyStructure();
+    });
+
+    /* ══════════════════════════════════════════
+       DEMO 5: QUIZ INTERACTIVE QUESTION DATA
+    ══════════════════════════════════════════ */
+    const quizQuestionText = document.getElementById('quizQuestionText');
+    const quizOptionsWrap = document.getElementById('quizOptionsWrap');
+    const quizExplBox = document.getElementById('quizExplBox');
+    const quizQuestNum = document.getElementById('quizQuestNum');
+    const quizScoreRead = document.getElementById('quizScoreRead');
+    const quizActiveCard = document.getElementById('quizActiveCard');
+    const quizResultsScreen = document.getElementById('quizResultsScreen');
+    const quizFinalScore = document.getElementById('quizFinalScore');
+    const quizResultsTitle = document.getElementById('quizResultsTitle');
+    const quizResultsSub = document.getElementById('quizResultsSub');
+    const btnQuizReplay = document.getElementById('btnQuizReplay');
+
+    const quizQuestions = [
+      {
+        question: "Biết nguyên tố S có hóa trị VI trong hợp chất với Oxygen. Hãy chọn công thức hóa học viết đúng quy tắc hóa trị tương ứng.",
+        opts: [
+          "SO₂",
+          "S₂O₆",
+          "SO₃",
+          "S₃O"
+        ],
+        answer: 2,
+        expl: "Chính xác! Gọi công thức chung là SxOy. Ta có x · VI = y · II => x/y = II/VI = 1/3. Chỉ số tối giản tương ứng là x = 1, y = 3. Công thức là SO₃."
+      },
+      {
+        question: "Hóa trị của Sắt (Fe) trong hợp chất Fe₂O₃ (Biết Oxygen có hóa trị II làm chuẩn) là bao nhiêu?",
+        opts: [
+          "Hóa trị II",
+          "Hóa trị III",
+          "Hóa trị I",
+          "Hóa trị IV"
+        ],
+        answer: 1,
+        expl: "Đúng! Theo quy tắc hóa trị: 2 · a = 3 · II => 2 · a = 6 => a = III. Vậy Fe có hóa trị III trong hợp chất này."
+      },
+      {
+        question: "Công thức hóa học nào dưới đây viết sai quy tắc hóa trị?",
+        opts: [
+          "NaCl (Biết Na hóa trị I, Cl hóa trị I)",
+          "CaCl (Biết Ca hóa trị II, Cl hóa trị I)",
+          "Al₂O₃ (Biết Al hóa trị III, O hóa trị II)",
+          "H₂O (Biết H hóa trị I, O hóa trị II)"
+        ],
+        answer: 1,
+        expl: "Chính xác! CaCl là công thức viết sai. Vì Ca (II) và Cl (I) => biểu thức quy tắc là x · II = y · I => x/y = 1/2. Công thức viết đúng phải là CaCl₂."
+      },
+      {
+        question: "Biết Calcium (Ca) có hóa trị II, nhóm Phosphate (PO₄) có hóa trị III. Hãy thiết lập công thức hóa học đúng của Calcium phosphate.",
+        opts: [
+          "CaPO₄",
+          "Ca₃(PO₄)₂",
+          "Ca₂(PO₄)₃",
+          "Ca₃PO₄"
+        ],
+        answer: 1,
+        expl: "Đúng! Dạng chung Cax(PO₄)y => x · II = y · III => x/y = III/II = 3/2. Chỉ số tương ứng là x = 3, y = 2. Công thức chuẩn là Ca₃(PO₄)₂."
+      },
+      {
+        question: "Trong hợp chất khí Methanol CH₄, Carbon (C) thể hiện hóa trị mấy?",
+        opts: [
+          "Hóa trị IV",
+          "Hóa trị II",
+          "Hóa trị III",
+          "Hóa trị I"
+        ],
+        answer: 0,
+        expl: "Chính xác! Vì 1 nguyên tử C liên kết được với 4 nguyên tử H (hóa trị I), nên C thể hiện hóa trị IV."
+      }
+    ];
+
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+    let quizAnswered = false;
+
+    function initQuiz() {
+      currentQuizIndex = 0;
+      quizScore = 0;
+      quizAnswered = false;
+      quizActiveCard.style.display = 'flex';
+      quizResultsScreen.style.display = 'none';
+      showQuestion();
+    }
+
+    function showQuestion() {
+      quizAnswered = false;
+      quizExplBox.style.display = 'none';
+      quizScoreRead.textContent = `Điểm: ${quizScore}`;
+      
+      const q = quizQuestions[currentQuizIndex];
+      quizQuestNum.textContent = `Câu ${currentQuizIndex + 1} / ${quizQuestions.length}`;
+      quizQuestionText.textContent = q.question;
+      
+      quizOptionsWrap.innerHTML = '';
+      q.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt-btn';
+        btn.textContent = opt;
+        btn.addEventListener('click', () => selectOption(idx, btn));
+        quizOptionsWrap.appendChild(btn);
+      });
+    }
+
+    function selectOption(selectedIdx, btn) {
+      if (quizAnswered) return;
+      quizAnswered = true;
+
+      const q = quizQuestions[currentQuizIndex];
+      const optBtns = quizOptionsWrap.querySelectorAll('.quiz-opt-btn');
+
+      optBtns.forEach((b, idx) => {
+        b.disabled = true;
+        if (idx === q.answer) {
+          b.classList.add('correct');
+        }
+      });
+
+      if (selectedIdx === q.answer) {
+        quizScore++;
+        quizScoreRead.textContent = `Điểm: ${quizScore}`;
+      } else {
+        btn.classList.add('wrong');
+      }
+
+      quizExplBox.textContent = q.expl;
+      quizExplBox.style.display = 'block';
+
+      // Move to next question after a delay
+      setTimeout(() => {
+        currentQuizIndex++;
+        if (currentQuizIndex < quizQuestions.length) {
+          showQuestion();
+        } else {
+          showResults();
+        }
+      }, 4000);
+    }
+
+    function showResults() {
+      quizActiveCard.style.display = 'none';
+      quizResultsScreen.style.display = 'flex';
+      
+      quizFinalScore.textContent = `${quizScore} / ${quizQuestions.length}`;
+      
+      if (quizScore === quizQuestions.length) {
+        quizResultsTitle.textContent = 'Xuất sắc! 🎉';
+        quizResultsSub.textContent = 'Bạn đã nắm vững hoàn toàn kỹ năng thiết lập công thức hóa học và quy tắc hóa trị.';
+      } else if (quizScore >= 3) {
+        quizResultsTitle.textContent = 'Khá tốt! 👍';
+        quizResultsSub.textContent = 'Bạn đã hiểu bản chất hóa trị. Hãy ôn tập lại các nhóm nguyên tử để tránh sai sót.';
+      } else {
+        quizResultsTitle.textContent = 'Cần cố gắng! 📚';
+        quizResultsSub.textContent = 'Đọc kỹ lại phần vở ghi chép lý thuyết bên trái và làm lại các bài mô phỏng cân bằng.';
+      }
+    }
+
+    btnQuizReplay.addEventListener('click', initQuiz);
+    initQuiz();
+
+    /* ══════════════════════════════════════════
+       SECTION DETECTION — IntersectionObserver
+    ══════════════════════════════════════════ */
+    const notebookSections = document.querySelectorAll('.hero, #sec-notebook-1, #sec-notebook-2, #sec-notebook-3, #sec-notebook-4, #sec-notebook-5');
+    const demoPanels = document.querySelectorAll('.demo-panel');
+
+    let currentActiveSec = null;
+
+    function setActiveSection(sec) {
+      if (currentActiveSec === sec) return;
+      currentActiveSec = sec;
+
+      const activeDemoNum = sec.dataset.demo;
+      const isDesktop = window.innerWidth > 920;
+
+      // 1. Highlight active section in notebook
+      notebookSections.forEach((s) => {
+        if (s === sec) {
+          s.classList.add('active-section');
+        } else {
+          s.classList.remove('active-section');
+        }
+      });
+
+      // 2. Activate the matching demo panel on right
+      demoPanels.forEach((panel) => {
+        if (panel.id === `demo-${activeDemoNum}`) {
+          panel.classList.add('active');
+        } else {
+          panel.classList.remove('active');
+        }
+      });
+
+      // Trigger resizing and redrawing
+      if (activeDemoNum === '1') {
+        initHookCanvas();
+      } else if (activeDemoNum === '2') {
+        initScaleCanvas();
+      } else if (activeDemoNum === '3') {
+        updateGenerator();
+      } else if (activeDemoNum === '4') {
+        initPolyCanvas();
+      }
+    }
+
+    function observeSection(sec) {
+      const scroller = window.innerWidth > 920 ? document.querySelector('.notebook-panel') : null;
+      const options = {
+        root: scroller || null,
+        threshold: 0.2
+      };
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target);
+          }
+        });
+      }, options);
+      io.observe(sec);
+      return io;
+    }
+
+    let sectionObservers = [];
+
+    function initObservers() {
+      sectionObservers.forEach(io => io.disconnect());
+      sectionObservers = [];
+
+      notebookSections.forEach((sec) => {
+        sectionObservers.push(observeSection(sec));
+      });
+    }
+
+    initObservers();
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE MOBILE RELOCATION
+    ══════════════════════════════════════════ */
+    let wasDesktop = window.innerWidth > 920;
+
+    const relocateDemos = () => {
+      const isMobile = window.innerWidth <= 920;
+      const isDesktop = !isMobile;
+
+      if (isDesktop !== wasDesktop) {
+        wasDesktop = isDesktop;
+        initObservers();
+      }
+
+      for (let i = 1; i <= 5; i++) {
+        const demo = document.getElementById(`demo-${i}`);
+        if (!demo) continue;
+
+        if (isMobile) {
+          const mobContainer = document.getElementById(`mob-demo-${i}`);
+          if (mobContainer && demo.parentNode !== mobContainer) {
+            mobContainer.appendChild(demo);
+          }
+        } else {
+          const deskContainer = document.getElementById(`desk-demo-${i}`);
+          if (deskContainer && demo.parentNode !== deskContainer) {
+            deskContainer.appendChild(demo);
+          }
+        }
+      }
+
+      // Reset inline opacities on mobile so text is readable
+      if (isMobile) {
+        notebookSections.forEach((s) => {
+          const targets = Array.from(s.children).filter(c => !c.classList.contains('mobile-demo-placeholder'));
+          targets.forEach(t => t.style.opacity = '');
+        });
+      } else {
+        // Redetect section immediately
+        if (currentActiveSec) {
+          const temp = currentActiveSec;
+          currentActiveSec = null;
+          setActiveSection(temp);
+        }
+      }
+    };
+
+    window.addEventListener('resize', relocateDemos);
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        relocateDemos();
+        initHookCanvas();
+        initScaleCanvas();
+        initPolyCanvas();
+        updateGenerator();
+      }, 150);
+    });
+  </script>
+</body>
+</html>

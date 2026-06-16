@@ -26,6 +26,11 @@
       --highlight-y:  rgba(255, 218, 50, 0.50);
       --highlight-g:  rgba(80, 180, 100, 0.30);
       --line-h:       30px;
+      --font-base:    15px;
+      --font-h2:      24px;
+      --font-h3:      16px;
+      --font-sub:     12px;
+      --ruled-top-offset: calc(var(--line-h) * 22 / 30);
     }
 
 
@@ -77,14 +82,14 @@
     .ruled-page {
       background-color: var(--paper);
       background-image:
-        linear-gradient(90deg, transparent 71px, var(--red-margin) 71px, var(--red-margin) 73px, transparent 73px),
+        linear-gradient(90deg, transparent calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 73 / 30), transparent calc(var(--line-h) * 73 / 30)),
         repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
       background-attachment: local;
-      background-position: 0 0, 0 22px;
+      background-position: 0 0, 0 var(--ruled-top-offset);
     }
 
     .hero {
-      padding: 90px 40px 30px 96px;
+      padding: calc(3 * var(--line-h)) calc(var(--line-h) * 40 / 30) calc(var(--line-h) * 30 / 30) calc(3.2 * var(--line-h));
       border-bottom: 2px solid rgba(26,18,8,0.12);
       position: relative; overflow: hidden;
       scroll-snap-align: start;
@@ -95,16 +100,16 @@
       background-image: radial-gradient(circle 10px at 18px 50%, #8B7355 0%, #8B7355 55%, transparent 56%);
       background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
     }
-    .crumb { font-size: 12px; letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: 30px; line-height: 30px; font-family: 'Itim', cursive; }
+    .crumb { font-size: var(--font-sub); letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: var(--line-h); line-height: var(--line-h); font-family: 'Itim', cursive; }
     .crumb a { color: var(--accent); text-decoration: none; }
     .crumb a:hover { text-decoration: underline; }
     .title { font-family: 'Pacifico', cursive; font-size: clamp(32px, 4.5vw, 60px); line-height: 60px; color: var(--ink); margin-bottom: 30px; font-weight: 700; }
-    .title-stroke { width: clamp(140px, 30vw, 300px); height: 3px; background: var(--accent); border-radius: 2px; margin-top: -15px; margin-bottom: 12px; }
-    .subtitle { font-family: 'Itim', cursive; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-blue); margin-bottom: 30px; line-height: 30px; }
-    .intro { max-width: 800px; font-size: 15px; line-height: var(--line-h); color: var(--ink-mid); }
+    .title-stroke { width: clamp(140px, 30vw, 300px); height: 3px; background: var(--accent); border-radius: 2px; margin-top: calc(-0.5 * var(--line-h)); margin-bottom: calc(0.4 * var(--line-h)); }
+    .subtitle { font-family: 'Itim', cursive; font-size: var(--font-sub); letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-blue); margin-bottom: var(--line-h); line-height: var(--line-h); }
+    .intro { max-width: 800px; font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); }
 
     .card {
-      padding: 90px 36px 90px 96px;
+      padding: calc(3 * var(--line-h)) calc(1.2 * var(--line-h)) calc(3 * var(--line-h)) calc(3.2 * var(--line-h));
       border-top: 1px solid rgba(26,18,8,0.08);
       position: relative; overflow: hidden;
       min-height: 100vh;
@@ -127,6 +132,17 @@
     }
 
     @media (min-width: 921px) {
+      :root {
+        --line-h:       clamp(30px, 1.25vw + 18.5px, 42px);
+        --font-base:    clamp(15px, 0.6vw + 9.5px, 21px);
+        --font-h2:      clamp(24px, 1vw + 14.8px, 34px);
+        --font-h3:      clamp(16px, 0.7vw + 9.5px, 23px);
+        --font-sub:     clamp(12px, 0.5vw + 7.4px, 17px);
+      }
+      .hero {
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
       .card > *:not(.mobile-demo-placeholder),
       .hero > * {
         opacity: 0.15;
@@ -135,8 +151,8 @@
         opacity: 1;
       }
     }
-    .card h2 { font-family: 'Pacifico', cursive; font-size: 24px; color: var(--ink); line-height: 30px; font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 0px; margin-bottom: 30px; display: inline-block; }
-    .card p { font-size: 15px; line-height: var(--line-h); color: var(--ink-mid); margin-bottom: 30px; }
+    .card h2 { font-family: 'Pacifico', cursive; font-size: var(--font-h2); color: var(--ink); line-height: var(--line-h); font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 0px; margin-bottom: var(--line-h); display: inline-block; }
+    .card p { font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); margin-bottom: 30px; }
     .card p:last-child { margin-bottom: 0; }
 
     /* Left panel elements adapted for single column width */
@@ -1014,6 +1030,13 @@
     }
 
     @media (min-width: 921px) {
+      :root {
+        --line-h:       clamp(30px, 1.25vw + 18.5px, 42px);
+        --font-base:    clamp(15px, 0.6vw + 9.5px, 21px);
+        --font-h2:      clamp(24px, 1vw + 14.8px, 34px);
+        --font-h3:      clamp(16px, 0.7vw + 9.5px, 23px);
+        --font-sub:     clamp(12px, 0.5vw + 7.4px, 17px);
+      }
       .scrolly-container {
         height: 100vh;
         overflow: hidden;

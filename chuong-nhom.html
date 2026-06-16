@@ -24,6 +24,11 @@
       --highlight-y:  rgba(242, 181, 68, 0.40);
       --highlight-g:  rgba(47, 143, 111, 0.25);
       --line-h:       30px;
+      --font-base:    15px;
+      --font-h2:      24px;
+      --font-h3:      16px;
+      --font-sub:     12px;
+      --ruled-top-offset: calc(var(--line-h) * 22 / 30);
     }
 
     html, body {
@@ -59,14 +64,14 @@
     .ruled-page {
       background-color: var(--paper);
       background-image:
-        linear-gradient(90deg, transparent 71px, var(--red-margin) 71px, var(--red-margin) 73px, transparent 73px),
+        linear-gradient(90deg, transparent calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 73 / 30), transparent calc(var(--line-h) * 73 / 30)),
         repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
       background-attachment: local;
-      background-position: 0 0, 0 22px;
+      background-position: 0 0, 0 var(--ruled-top-offset);
     }
 
     .hero {
-      padding: 90px 40px 40px 96px;
+      padding: calc(3 * var(--line-h)) calc(var(--line-h) * 40 / 30) calc(var(--line-h) * 40 / 30) calc(3.2 * var(--line-h));
       border-bottom: 2px solid rgba(42,37,32,0.12);
       position: relative; overflow: hidden;
       scroll-snap-align: start;
@@ -77,16 +82,16 @@
       background-image: radial-gradient(circle 10px at 18px 50%, #8B7355 0%, #8B7355 55%, transparent 56%);
       background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
     }
-    .crumb { font-size: 12px; letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: 30px; line-height: 30px; }
+    .crumb { font-size: var(--font-sub); letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: var(--line-h); line-height: var(--line-h); }
     .crumb a { color: var(--accent); text-decoration: none; }
     .crumb a:hover { text-decoration: underline; }
-    .title { font-family: 'Pacifico', cursive; font-size: clamp(32px, 4.5vw, 60px); line-height: 65px; color: var(--ink); margin-bottom: 30px; font-weight: 700; }
-    .title-stroke { width: clamp(140px, 30vw, 300px); height: 3px; background: var(--accent); border-radius: 2px; margin-top: -15px; margin-bottom: 12px; }
-    .subtitle { font-family: 'Itim', cursive; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-blue); margin-bottom: 30px; line-height: 30px; }
-    .intro { max-width: 800px; font-size: 15px; line-height: var(--line-h); color: var(--ink-mid); }
+    .title { font-family: 'Pacifico', cursive; font-size: clamp(32px, 4.5vw, 60px); line-height: calc(2 * var(--line-h)); color: var(--ink); margin-bottom: var(--line-h); font-weight: 700; }
+    .title-stroke { width: clamp(140px, 30vw, 300px); height: 3px; background: var(--accent); border-radius: 2px; margin-top: calc(-0.5 * var(--line-h)); margin-bottom: calc(0.4 * var(--line-h)); }
+    .subtitle { font-family: 'Itim', cursive; font-size: var(--font-sub); letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-blue); margin-bottom: var(--line-h); line-height: var(--line-h); }
+    .intro { max-width: 800px; font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); }
 
     .card {
-      padding: 90px 36px 90px 96px;
+      padding: calc(3 * var(--line-h)) calc(1.2 * var(--line-h)) calc(3 * var(--line-h)) calc(3.2 * var(--line-h));
       border-top: 1px solid rgba(42,37,32,0.08);
       position: relative; overflow: hidden;
       min-height: 100vh;
@@ -108,6 +113,17 @@
     }
 
     @media (min-width: 921px) {
+      :root {
+        --line-h:       clamp(30px, 1.25vw + 18.5px, 42px);
+        --font-base:    clamp(15px, 0.6vw + 9.5px, 21px);
+        --font-h2:      clamp(24px, 1vw + 14.8px, 34px);
+        --font-h3:      clamp(16px, 0.7vw + 9.5px, 23px);
+        --font-sub:     clamp(12px, 0.5vw + 7.4px, 17px);
+      }
+      .hero {
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
       .scrolly-container {
         height: 100vh;
         overflow: hidden;
@@ -143,8 +159,8 @@
       }
     }
 
-    .card h2 { font-family: 'Pacifico', cursive; font-size: 24px; color: var(--ink); line-height: 30px; font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 0px; margin-bottom: 30px; display: inline-block; }
-    .card p { font-size: 15px; line-height: var(--line-h); color: var(--ink-mid); margin-bottom: 20px; }
+    .card h2 { font-family: 'Pacifico', cursive; font-size: var(--font-h2); color: var(--ink); line-height: var(--line-h); font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 0px; margin-bottom: var(--line-h); display: inline-block; }
+    .card p { font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); margin-bottom: 20px; }
     .card p:last-child { margin-bottom: 0; }
     .card .key { color: var(--accent); font-weight: bold; }
 
@@ -678,13 +694,13 @@
           <p>
             <strong>Thông số cơ bản:</strong>
             <ul style="list-style: disc; margin-left: 20px; margin-bottom: 15px;">
-              <li>Số hiệu nguyên tử ($Z$): 13 (gồm 13 proton và 14 neutron trong hạt nhân).</li>
+              <li>Số hiệu nguyên tử (<i>Z</i>): 13 (gồm 13 proton và 14 neutron trong hạt nhân).</li>
               <li>Khối lượng nguyên tử: 26,9815 u.</li>
-              <li>Cấu hình electron: <span class="key">[Ne] 3s² 3p¹</span> (hoặc viết đầy đủ: $1s^2 2s^2 2p^6 3s^2 3p^1$).</li>
+              <li>Cấu hình electron: <span class="key">[Ne] 3s² 3p¹</span> (hoặc viết đầy đủ: 1s<sup>2</sup> 2s<sup>2</sup> 2p<sup>6</sup> 3s<sup>2</sup> 3p<sup>1</sup>).</li>
             </ul>
           </p>
           <p>
-            Nhôm có <span class="key">3 electron hóa trị</span> ở lớp ngoài cùng (phân lớp $3s$ và $3p$). Khi tham gia phản ứng hóa học, nhôm có xu hướng nhường cả 3 electron này để đạt cấu hình electron bền vững của khí hiếm Neon ($1s^2 2s^2 2p^6$), hình thành ion dương <span class="key">Al³⁺</span>. Điều này giải thích tại sao nhôm có số oxi hóa phổ biến nhất là +3 trong các hợp chất.
+            Nhôm có <span class="key">3 electron hóa trị</span> ở lớp ngoài cùng (phân lớp 3s và 3p). Khi tham gia phản ứng hóa học, nhôm có xu hướng nhường cả 3 electron này để đạt cấu hình electron bền vững của khí hiếm Neon (1s<sup>2</sup> 2s<sup>2</sup> 2p<sup>6</sup>), hình thành ion dương <span class="key">Al³⁺</span>. Điều này giải thích tại sao nhôm có số oxi hóa phổ biến nhất là +3 trong các hợp chất.
           </p>
           
           <div id="mob-demo-1" class="mobile-demo-placeholder"></div>
@@ -697,19 +713,19 @@
             <span class="tag">Kim loại nhẹ &amp; dẻo</span>
           </div>
           <p>
-            Nhôm sở hữu một tập hợp các đặc tính vật lý vô cùng độc đáo, biến nó thành vật liệu lý tưởng cho vô vàn ứng dụng công nghệ đời sống.
+            Nhôm sở hữu các đặc tính vật lý đặc trưng của một kim loại nhẹ, mềm dẻo và dẫn điện, dẫn nhiệt tốt.
           </p>
           <p>
-            <strong>• Khối lượng riêng (Nặng hay nhẹ):</strong> Nhôm nổi tiếng là một <span class="key">kim loại rất nhẹ</span>. Trọng lượng riêng của nó chỉ bằng khoảng một phần ba so với sắt hay đồng. Đặc tính này giúp giảm thiểu đáng kể trọng lượng của các chi tiết cấu trúc, đặc biệt có giá trị trong ngành hàng không vũ trụ và giao thông vận tải để tiết kiệm nhiên liệu.
+            <strong>• Khối lượng riêng:</strong> Nhôm nổi tiếng là một <span class="key">kim loại rất nhẹ</span> với khối lượng riêng thấp (khoảng 2,70 g/cm³), chỉ bằng khoảng 1/3 so với sắt hay đồng.
           </p>
           <p>
-            <strong>• Khả năng dẫn điện và dẫn nhiệt:</strong> Nhôm có <span class="key">độ dẫn điện và dẫn nhiệt xuất sắc</span>, xếp thứ tư trong số các kim loại (chỉ sau bạc, đồng và vàng). Nhờ ưu thế khối lượng nhẹ, dây cáp nhôm được sử dụng phổ biến cho lưới điện truyền tải cao thế trên không. Nó cũng được chế tạo rộng rãi làm các tấm tản nhiệt cho linh kiện điện tử.
+            <strong>• Khả năng dẫn điện và dẫn nhiệt:</strong> Nhôm có <span class="key">độ dẫn điện và dẫn nhiệt rất tốt</span> (độ dẫn điện đạt khoảng 60% so với đồng nhưng có ưu thế khối lượng nhẹ hơn rất nhiều).
           </p>
           <p>
-            <strong>• Độ cứng &amp; cơ tính:</strong> Ở trạng thái tinh khiết, nhôm là kim loại <span class="key">tương đối mềm, có độ dẻo cao và cấu trúc mạng tinh thể lập phương tâm diện (FCC)</span>. Nhôm dễ dàng được cán thành lá siêu mỏng (giấy nhôm bọc thực phẩm) hoặc kéo thành sợi dây mảnh. Khi cần độ cứng và độ bền cao chịu lực trong công nghiệp, nhôm sẽ được pha trộn với các nguyên tố khác (như đồng, silic, magie, mangan) để tạo nên các hợp kim nhôm (như duralumin) có độ bền cơ học tương đương nhiều loại thép.
+            <strong>• Độ cứng &amp; cơ tính:</strong> Nhôm ở trạng thái tinh khiết là kim loại <span class="key">khá mềm, độ cứng thấp (khoảng 2,75 trên thang Mohs), độ dẻo cao</span> và kết tinh theo cấu trúc <span class="key">mạng lập phương tâm diện (FCC)</span>, rất dễ cán mỏng hoặc kéo sợi.
           </p>
           <p>
-            <strong>• Nhiệt độ nóng chảy:</strong> Nhôm có nhiệt độ nóng chảy <span class="key">ở mức trung bình</span>. Nhiệt độ này đủ cao để duy trì tính bền chắc ổn định của vật liệu trong môi trường sử dụng bình thường, nhưng cũng đủ thấp để tạo điều kiện cực kỳ thuận lợi cho việc nấu chảy đúc khuôn tạo hình chi tiết, cũng như tái chế phế liệu giúp tiết kiệm chi phí năng lượng đáng kể.
+            <strong>• Nhiệt độ nóng chảy:</strong> Nhiệt độ nóng chảy của nhôm nằm ở mức trung bình (<span class="key">660,32°C</span>), giúp nó dễ dàng được gia công nóng hoặc hóa lỏng.
           </p>
           
           <div id="mob-demo-2" class="mobile-demo-placeholder"></div>
@@ -722,17 +738,17 @@
             <span class="tag">Hall-Héroult</span>
           </div>
           <p>
-            Trong tự nhiên, nhôm hoạt động hóa học mạnh nên không tồn tại dưới dạng đơn chất. Nó được tìm thấy nhiều nhất trong <span class="key">quặng bauxite (boxit)</span> dưới dạng nhôm oxit ngậm nước ($Al_2O_3 \cdot xH_2O$), có lẫn các tạp chất như sắt oxit ($Fe_2O_3$) và silica ($SiO_2$).
+            Trong tự nhiên, nhôm hoạt động hóa học mạnh nên không tồn tại dưới dạng đơn chất. Nó được tìm thấy nhiều nhất trong <span class="key">quặng bauxite (boxit)</span> dưới dạng nhôm oxit ngậm nước (Al<sub>2</sub>O<sub>3</sub>·xH<sub>2</sub>O), có lẫn các tạp chất như sắt oxit (Fe<sub>2</sub>O<sub>3</sub>) và silica (SiO<sub>2</sub>).
           </p>
           <p>
             <strong>Quy trình tinh luyện và điện phân:</strong>
             <ul style="list-style: disc; margin-left: 20px; margin-bottom: 15px;">
-              <li><strong>Quy trình Bayer:</strong> Quặng bauxite thô được xử lý hóa học bằng dung dịch xút ($NaOH$) nóng để hòa tan chọn lọc nhôm oxit, sau đó kết tủa và nung thành bột alumina nguyên chất ($Al_2O_3$).</li>
-              <li><strong>Điện phân nóng chảy (Quy trình Hall-Héroult):</strong> Alumina có nhiệt độ nóng chảy rất cao ($2072^\circ\text{C}$), đòi hỏi chi phí năng lượng cực lớn. Do đó, người ta trộn nó với <span class="key">quặng cryolite ($Na_3AlF_6$)</span> để giảm nhiệt độ nóng chảy xuống chỉ còn khoảng $950^\circ\text{C}$ và tăng tính dẫn điện của hỗn hợp điện dịch.</li>
+              <li><strong>Quy trình Bayer:</strong> Quặng bauxite thô được xử lý hóa học bằng dung dịch xút (NaOH) nóng để hòa tan chọn lọc nhôm oxit, sau đó kết tủa và nung thành bột alumina nguyên chất (Al<sub>2</sub>O<sub>3</sub>).</li>
+              <li><strong>Điện phân nóng chảy (Quy trình Hall-Héroult):</strong> Alumina có nhiệt độ nóng chảy rất cao (2072°C), đòi hỏi chi phí năng lượng cực lớn. Do đó, người ta trộn nó với <span class="key">quặng cryolite (Na<sub>3</sub>AlF<sub>6</sub>)</span> để giảm nhiệt độ nóng chảy xuống chỉ còn khoảng 950°C và tăng tính dẫn điện của hỗn hợp điện dịch.</li>
             </ul>
           </p>
           <p>
-            Quá trình điện phân xảy ra trong các bể lót carbon (catốt). Tại đây, nhôm nóng chảy nặng hơn chìm xuống đáy bể và được hút ra, trong khi khí oxy sinh ra ở anốt carbon sẽ phản ứng ăn mòn anốt tạo khí $CO_2$.
+            Quá trình điện phân xảy ra trong các bể lót carbon (catốt). Tại đây, nhôm nóng chảy nặng hơn chìm xuống đáy bể và được hút ra, trong khi khí oxy sinh ra ở anốt carbon sẽ phản ứng ăn mòn anốt tạo khí CO<sub>2</sub>.
           </p>
           
           <div id="mob-demo-3" class="mobile-demo-placeholder"></div>
@@ -745,7 +761,7 @@
             <span class="tag">Thực tế &amp; Tái chế</span>
           </div>
           <p>
-            Nhôm là kim loại có tính khử mạnh, về mặt lý thuyết phải phản ứng dễ dàng với nước và oxy. Tuy nhiên, trong không khí, bề mặt nhôm phản ứng tức thời với oxy tạo thành một màng <span class="key">nhôm oxit ($Al_2O_3$)</span> cực mỏng (khoảng vài nanomet), cực kỳ bền vững, mịn màng và bám chặt vào bề mặt.
+            Nhôm là kim loại có tính khử mạnh, về mặt lý thuyết phải phản ứng dễ dàng với nước và oxy. Tuy nhiên, trong không khí, bề mặt nhôm phản ứng tức thời với oxy tạo thành một màng <span class="key">nhôm oxit (Al<sub>2</sub>O<sub>3</sub>)</span> cực mỏng (khoảng vài nanomet), cực kỳ bền vững, mịn màng và bám chặt vào bề mặt.
           </p>
           <p>
             Lớp màng oxit thụ động này ngăn hoàn toàn sự xâm nhập tiếp theo của hơi nước và khí oxy, giúp nhôm bền vững một cách kỳ diệu mà không bị gỉ sét như sắt.
@@ -953,7 +969,7 @@
 
               <!-- Smelting controls -->
               <div class="ctrl-row">
-                <button class="ctrl-btn" id="btn-smelt-load">1. Nạp Alumina ($Al_2O_3$)</button>
+                <button class="ctrl-btn" id="btn-smelt-load">1. Nạp Alumina (Al<sub>2</sub>O<sub>3</sub>)</button>
                 <button class="ctrl-btn" id="btn-smelt-power" disabled>2. Điện phân</button>
                 <button class="ctrl-btn" id="btn-smelt-tap" disabled>3. Tháo Nhôm lỏng</button>
               </div>
@@ -976,7 +992,7 @@
               <div class="photos-flex">
                 <div class="photo-card">
                   <img src="./assets/bauxite_ore.png" alt="Quặng Bauxite thực tế" />
-                  <div class="photo-label">Quặng Bauxite thô ($Al_2O_3 \cdot xH_2O$)</div>
+                  <div class="photo-label">Quặng Bauxite thô (Al<sub>2</sub>O<sub>3</sub>·xH<sub>2</sub>O)</div>
                 </div>
                 <div class="photo-card">
                   <img src="./assets/aluminum_ingots.png" alt="Nhôm thỏi đúc khuôn" />
@@ -1045,7 +1061,7 @@
 
               <!-- Passivation controls -->
               <div class="ctrl-row" style="margin-bottom: 0;">
-                <button class="ctrl-btn" id="btn-passivate">Thổi O₂ tạo màng Oxit ($Al_2O_3$)</button>
+                <button class="ctrl-btn" id="btn-passivate">Thổi O₂ tạo màng Oxit (Al<sub>2</sub>O<sub>3</sub>)</button>
                 <button class="ctrl-btn" id="btn-reset-pass">Làm sạch bề mặt</button>
               </div>
             </div>
@@ -1176,7 +1192,7 @@
         e.target.textContent = 'Khôi phục dạng Nguyên tử';
         e.target.classList.add('active');
         bohrTitle.textContent = 'Ion Nhôm Al³⁺ (Cation)';
-        bohrDesc.innerHTML = 'Sau khi nhường 3 electron ở lớp ngoài cùng M, lớp vỏ ngoài cùng mới là lớp L (8 electron) đã bão hòa tuyệt đối. Bán kính ion <span class="key">Al³⁺</span> ($0.535\text{ Å}$) nhỏ hơn nhiều so với nguyên tử nhôm ($1.43\text{ Å}$).';
+        bohrDesc.innerHTML = 'Sau khi nhường 3 electron ở lớp ngoài cùng M, lớp vỏ ngoài cùng mới là lớp L (8 electron) đã bão hòa tuyệt đối. Bán kính ion <span class="key">Al³⁺</span> (0,535 Å) nhỏ hơn nhiều so với nguyên tử nhôm (1,43 Å).';
         document.querySelector('#svg-bohr-atom text').textContent = 'Al³⁺';
       } else {
         e.target.textContent = 'Kích hoạt Ion hóa (Al³⁺)';

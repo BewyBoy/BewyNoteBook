@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chương 6: Mol &amp; Tính toán hóa học — Khái niệm, Tính toán &amp; Thực hành</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Itim&family=Pacifico&display=swap" rel="stylesheet" />
+  <style>
+    /* ══════════════════════════════════════
+       SPLIT NOTEBOOK & LAB BENCH SYSTEM
+    ══════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:        #FBF4E4;
+      --paper-dark:   #F2E7CE;
+      --ink:          #2A2520;
+      --ink-mid:      #4D4439;
+      --ink-light:    #8A7E6C;
+      --red-margin:   #C73C2E;
+      --blue-line:    rgba(111, 184, 209, 0.25);
+      --accent:       #F39C12;       /* Amber / Gold */
+      --accent-blue:  #9A7D0A;       /* Dark Amber */
+      --highlight-y:  rgba(243, 156, 18, 0.35);
+      --highlight-g:  rgba(47, 143, 111, 0.25);
+      --line-h:       30px;
+      --font-base:    15px;
+      --font-h2:      24px;
+      --font-h3:      16px;
+      --font-sub:     12px;
+      --ruled-top-offset: calc(var(--line-h) * 22 / 30);
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #2E2214;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #7E5109 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #1A1208 0%, transparent 50%),
+        repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+      color: var(--ink);
+      font-family: 'Itim', cursive;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    .scrolly-container {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Left Side - School Notebook */
+    .notebook-panel {
+      width: 50%;
+      position: relative;
+      background-color: var(--paper);
+      box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+      z-index: 5;
+    }
+
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(90deg, transparent calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 73 / 30), transparent calc(var(--line-h) * 73 / 30)),
+        repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
+      background-attachment: local;
+      background-position: 0 0, 0 var(--ruled-top-offset);
+    }
+
+    .hero {
+      padding: calc(3 * var(--line-h)) calc(var(--line-h) * 40 / 30) calc(var(--line-h) * 40 / 30) calc(3.2 * var(--line-h));
+      border-bottom: 2px solid rgba(42,37,32,0.12);
+      position: relative; overflow: hidden;
+      scroll-snap-align: start;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .hero::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #9A7D0A 0%, #9A7D0A 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+    .crumb { font-size: var(--font-sub); letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: var(--line-h); line-height: var(--line-h); }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+    .title { font-family: 'Pacifico', cursive; font-size: clamp(32px, 4.5vw, 60px); line-height: calc(2 * var(--line-h)); color: var(--ink); margin-bottom: var(--line-h); font-weight: 700; }
+    .title-stroke { width: clamp(140px, 30vw, 300px); height: 3px; background: var(--accent); border-radius: 2px; margin-top: calc(-0.5 * var(--line-h)); margin-bottom: calc(0.4 * var(--line-h)); }
+    .subtitle { font-family: 'Itim', cursive; font-size: var(--font-sub); letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-blue); margin-bottom: var(--line-h); line-height: var(--line-h); }
+    .intro { max-width: 800px; font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); }
+
+    .card {
+      padding: calc(3 * var(--line-h)) calc(1.2 * var(--line-h)) calc(3 * var(--line-h)) calc(3.2 * var(--line-h));
+      border-top: 1px solid rgba(42,37,32,0.08);
+      position: relative; overflow: hidden;
+      min-height: 100vh;
+      box-sizing: border-box;
+      scroll-snap-align: start;
+      transition: background-color 0.3s;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(42,37,32,0.08); }
+    .card.ruled-page:nth-child(even) { background-color: var(--paper-dark); }
+    .card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #9A7D0A 0%, #9A7D0A 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+
+    .card.active-section {
+      background-color: rgba(242, 231, 206, 0.45);
+    }
+
+    @media (min-width: 921px) {
+      :root {
+        --line-h:       clamp(30px, 1.25vw + 18.5px, 42px);
+        --font-base:    clamp(15px, 0.6vw + 9.5px, 21px);
+        --font-h2:      clamp(24px, 1vw + 14.8px, 34px);
+        --font-h3:      clamp(16px, 0.7vw + 9.5px, 23px);
+        --font-sub:     clamp(12px, 0.5vw + 7.4px, 17px);
+      }
+      .scrolly-container {
+        height: 100vh;
+        overflow: hidden;
+      }
+      .notebook-panel {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scrollbar-width: none;
+      }
+      .notebook-panel::-webkit-scrollbar {
+        display: none;
+      }
+      .hero {
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+      .lab-panel {
+        position: relative;
+        right: auto;
+        top: auto;
+        height: 100vh;
+      }
+      .card > *:not(.mobile-demo-placeholder) {
+        opacity: 0.15;
+        transition: opacity 0.4s ease;
+      }
+      .card.active-section > *:not(.mobile-demo-placeholder) {
+        opacity: 1;
+      }
+      .hero > * {
+        opacity: 0.15;
+        transition: opacity 0.4s ease;
+      }
+      .hero.active-section > * {
+        opacity: 1;
+      }
+    }
+
+    .card h2 { font-family: 'Pacifico', cursive; font-size: var(--font-h2); color: var(--ink); line-height: var(--line-h); font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 0px; margin-bottom: var(--line-h); display: inline-block; }
+    .card h3 { font-size: var(--font-h3); margin: calc(var(--line-h) / 2) 0 calc(var(--line-h) / 6); color: var(--accent-blue); line-height: var(--line-h); }
+    .card p { font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-soft); margin-bottom: calc(var(--line-h) / 2); text-align: justify; }
+    .card .key { background: var(--highlight-y); padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #785810; }
+    .card ul { margin-left: 20px; margin-bottom: calc(var(--line-h) / 2); list-style-type: square; }
+    .card li { font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-soft); }
+
+    .tag {
+      font-family: 'Itim', cursive;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 700; padding: 3px 10px; border-radius: 4px;
+      background: var(--highlight-y);
+      color: var(--ink); border: 1.5px solid rgba(42,37,32,0.18);
+      flex-shrink: 0;
+      box-shadow: 1px 1.5px 4px rgba(0,0,0,0.15);
+      transform: rotate(1.2deg);
+    }
+    .card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+
+    /* Right Side - Lab Bench (Sticky) */
+    .lab-panel {
+      width: 50%;
+      background: #0b0f0a; /* Dark chalkboard black */
+      background-image:
+        radial-gradient(ellipse at 50% 20%, #4a3319 0%, transparent 65%), /* Amber chalkboard glow */
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px);
+      border-left: 4px solid var(--accent-blue);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .desk-demo-slot {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .demo-panel {
+      width: 90%;
+      max-width: 520px;
+      background: rgba(25, 20, 15, 0.78);
+      border: 2px dashed rgba(243, 156, 18, 0.3);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      pointer-events: auto;
+      opacity: 0;
+      transform: translateY(30px);
+      pointer-events: none;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .demo-panel.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .bench-title {
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      font-weight: bold;
+      border-bottom: 1px dashed rgba(243, 156, 18, 0.2);
+      padding-bottom: 8px;
+      text-align: center;
+    }
+
+    .canvas-wrap {
+      width: 100%;
+      aspect-ratio: 300 / 185;
+      background: #080705;
+      border: 1.5px solid rgba(243, 156, 18, 0.2);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .svg-canvas-board {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Controls & sliders inside lab */
+    .ctrl-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+    }
+    
+    .btn-lab {
+      flex-grow: 1;
+      background: rgba(243, 156, 18, 0.15);
+      border: 1px solid var(--accent);
+      color: var(--paper);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-family: 'Itim', cursive;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, transform 0.1s;
+      outline: none;
+      text-align: center;
+    }
+    .btn-lab:hover:not(:disabled) {
+      background: var(--accent);
+      color: #1a1208;
+      transform: translateY(-1px);
+    }
+    .btn-lab:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+    .btn-lab:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none !important;
+      background: rgba(255,255,255,0.05) !important;
+      border-color: rgba(255,255,255,0.1) !important;
+      color: #777 !important;
+    }
+    .btn-lab.active {
+      background: var(--accent);
+      color: #1a1208;
+      box-shadow: 0 0 10px rgba(243, 156, 18, 0.4);
+    }
+
+    .select-lab {
+      flex-grow: 1;
+      background: #0d0a07;
+      border: 1px solid rgba(243, 156, 18, 0.3);
+      color: #fff;
+      padding: 8px;
+      border-radius: 4px;
+      font-family: 'Itim', cursive;
+      font-size: 13.5px;
+      outline: none;
+    }
+
+    .info-display-card {
+      background: rgba(0,0,0,0.4);
+      border: 1.5px solid rgba(243, 156, 18, 0.15);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #ddd;
+    }
+    .title-info {
+      font-weight: bold;
+      color: var(--accent);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+
+    /* Range slider styles */
+    .slider-lab {
+      flex-grow: 1;
+      accent-color: var(--accent);
+      height: 6px;
+      border-radius: 3px;
+      outline: none;
+    }
+    .slider-lbl {
+      min-width: 60px;
+      text-align: right;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    /* Specific Demo Widgets Styling */
+    /* Demo 2 Triangle formulas active indicator */
+    .tri-area {
+      cursor: pointer;
+      transition: fill 0.3s, opacity 0.3s;
+    }
+    .tri-area:hover {
+      fill: rgba(243, 156, 18, 0.2);
+    }
+    .tri-area.active-area {
+      fill: rgba(243, 156, 18, 0.45);
+      stroke: var(--accent);
+      stroke-width: 2px;
+    }
+
+    /* Piston Piles */
+    .piston-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Balloon Balance Scale classes */
+    .balloon-body {
+      transition: fill 0.5s;
+    }
+
+    /* Stoichiometry Solver Steps list */
+    .solve-step {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.5s, transform 0.5s;
+      margin-bottom: 10px;
+      padding-left: 10px;
+      border-left: 2.5px solid var(--accent);
+    }
+    .solve-step.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Mobile Responsive Setup (max-width: 920px) */
+    @media (max-width: 920px) {
+      .scrolly-container {
+        flex-direction: column;
+      }
+      .notebook-panel {
+        width: 100%;
+      }
+      .lab-panel {
+        display: none;
+      }
+      .mobile-demo-placeholder {
+        display: block;
+        width: 100%;
+        margin: 16px 0;
+      }
+      .demo-panel {
+        position: relative;
+        top: auto; bottom: auto; left: auto; right: auto;
+        opacity: 1 !important;
+        transform: none !important;
+        pointer-events: auto !important;
+        padding: 16px;
+        margin-top: 10px;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        box-shadow: none;
+        background: rgba(25, 20, 15, 0.95);
+      }
+      .card {
+        min-height: auto;
+        padding-bottom: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="scrolly-container">
+  
+  <!-- LEFT SIDE: NOTEBOOK COLUMN -->
+  <div class="notebook-panel">
+    
+    <!-- Hero / Header Section -->
+    <header class="hero ruled-page" data-demo="0">
+      <div class="crumb">
+        <a href="Learning Resources Hub v4.html">Hóa học</a> › Chương 6
+      </div>
+      <h1 class="title">Mol &amp; Tính toán</h1>
+      <div class="title-stroke"></div>
+      <p class="subtitle">Cơ sở định lượng của phản ứng hóa học</p>
+      <p class="intro">
+        Trong hóa học, các phản ứng xảy ra giữa các nguyên tử và phân tử cực kỳ nhỏ bé với số lượng khổng lồ. Làm thế nào để chúng ta cân, đo, đong, đếm và tính toán lượng chất phản ứng cũng như sản phẩm tạo thành trong phòng thí nghiệm? 
+        <br/><br/>
+        <span class="key">Mol</span> chính là "chiếc cầu nối" kỳ diệu giúp kết nối thế giới hạt vi mô vô hình và thế giới vĩ mô cân đong được của chúng ta. Cuộn xuống để mở cánh cửa thế giới định lượng hóa học!
+      </p>
+    </header>
+
+    <main class="layout">
+      
+      <!-- SECTION 1: KHÁI NIỆM MOL -->
+      <section id="sec-notebook-1" class="card ruled-page" data-demo="1">
+        <div class="card-head">
+          <h2>1. Khái niệm Mol &amp; Số Avogadro</h2>
+          <span class="tag">Định nghĩa</span>
+        </div>
+        <p>
+          Trong đời sống, ta thường dùng các đơn vị đếm gộp như <i>chục</i> (10 hạt), <i>tá</i> (12 hạt), hay <i>ram</i> giấy (500 tờ). Trong hóa học, do nguyên tử và phân tử quá nhỏ bé, các nhà khoa học sử dụng một đơn vị đếm gộp khổng lồ gọi là <span class="key">Mol</span>.
+        </p>
+        <p>
+          <strong>Định nghĩa:</strong> Mol là lượng chất có chứa <strong>6,022 × 10²³</strong> hạt vi mô (nguyên tử hoặc phân tử) của chất đó.
+        </p>
+        <p>
+          Con số <strong>6,022 × 10²³</strong> được gọi là <span class="key">Hằng số Avogadro</span> (kí hiệu là <strong>N<sub>A</sub></strong>).
+        </p>
+        <ul>
+          <li><strong>1 mol nguyên tử Sắt (Fe)</strong> = chứa N<sub>A</sub> nguyên tử sắt.</li>
+          <li><strong>1 mol phân tử Nước (H₂O)</strong> = chứa N<sub>A</sub> phân tử nước.</li>
+          <li><strong>1 mol phân tử khí Oxygen (O₂)</strong> = chứa N<sub>A</sub> phân tử O₂.</li>
+        </ul>
+        <p>
+          <i>Hãy tương tác với panel thí nghiệm để quan sát sự khác nhau về thể tích và khối lượng của cùng một lượng 1 mol các chất khác nhau!</i>
+        </p>
+        
+        <!-- Mobile Placeholder -->
+        <div id="mob-demo-1" class="mobile-demo-placeholder"></div>
+      </section>
+
+      <!-- SECTION 2: KHỐI LƯỢNG MOL -->
+      <section id="sec-notebook-2" class="card ruled-page" data-demo="2">
+        <div class="card-head">
+          <h2>2. Khối lượng mol (M)</h2>
+          <span class="tag">Công thức liên hệ</span>
+        </div>
+        <p>
+          Mặc dù 1 mol Fe và 1 mol H₂O đều chứa cùng số hạt Avogadro (6,022 × 10²³ hạt), nhưng khối lượng của chúng hoàn toàn khác nhau do khối lượng của mỗi nguyên tử/phân tử là khác nhau.
+        </p>
+        <p>
+          <strong>Định nghĩa:</strong> Khối lượng mol (M) của một chất là khối lượng tính bằng gam của 1 mol chất đó. Đơn vị: <strong>g/mol</strong>.
+        </p>
+        <p>
+          <strong>Mối liên hệ đặc biệt:</strong> Khối lượng mol (M) của một chất có <i>trị số bằng nguyên tử khối hoặc phân tử khối</i> của chất đó tính theo đơn vị amu.
+        </p>
+        <ul>
+          <li>Nguyên tử khối của Sắt là 56 amu &rArr; M<sub>Fe</sub> = 56 g/mol.</li>
+          <li>Phân tử khối của Nước là 18 amu &rArr; M<sub>H₂O</sub> = 18 g/mol.</li>
+        </ul>
+        <h3>Công thức chuyển đổi:</h3>
+        <p>
+          Gọi <strong>m</strong> là khối lượng chất (g), <strong>n</strong> là số mol (mol), <strong>M</strong> là khối lượng mol (g/mol):
+        </p>
+        <p style="text-align: center; font-size: 1.1em; background: rgba(0,0,0,0.03); padding: 8px; border-radius: 6px;">
+          <strong>n = m / M</strong> &nbsp;&nbsp;|&nbsp;&nbsp; <strong>m = n &times; M</strong> &nbsp;&nbsp;|&nbsp;&nbsp; <strong>M = m / n</strong>
+        </p>
+        <p>
+          <i>Sử dụng "Tam giác chuyển đổi" tương tác bên phải để tính toán tự động số mol từ khối lượng của các chất tương ứng.</i>
+        </p>
+        <div id="mob-demo-2" class="mobile-demo-placeholder"></div>
+      </section>
+
+      <!-- SECTION 3: THỂ TÍCH MOL CHẤT KHÍ -->
+      <section id="sec-notebook-3" class="card ruled-page" data-demo="3">
+        <div class="card-head">
+          <h2>3. Thể tích mol chất khí (V)</h2>
+          <span class="tag">Tiêu chuẩn mới KHTN 8</span>
+        </div>
+        <p>
+          Đối với chất khí, thể tích chủ yếu được quyết định bởi khoảng cách giữa các phân tử chứ không phải kích thước của bản thân hạt. Do đó, có một định luật kỳ diệu:
+        </p>
+        <p>
+          <strong>Định luật Avogadro:</strong> Ở cùng nhiệt độ và áp suất, các thể tích bằng nhau của các chất khí khác nhau đều chứa cùng một số lượng phân tử.
+        </p>
+        <p>
+          <strong>Điều kiện chuẩn (đkc) mới (nhiệt độ 25°C tức 298 K, áp suất 1 bar):</strong> 
+          <br/>
+          Ở đkc mới này, <span class="key">1 mol chất khí bất kỳ đều chiếm thể tích là 24,79 lít</span> (thay vì 22,4 lít ở điều kiện tiêu chuẩn cũ 0°C, 1 atm).
+        </p>
+        <h3>Công thức tính thể tích chất khí (V ở đkc):</h3>
+        <p style="text-align: center; font-size: 1.1em; background: rgba(0,0,0,0.03); padding: 8px; border-radius: 6px;">
+          <strong>V = n &times; 24,79</strong> (lít) &nbsp;&nbsp;&rArr;&nbsp;&nbsp; <strong>n = V / 24,79</strong> (mol)
+        </p>
+        <p>
+          <i>Hãy kéo thanh trượt số mol ở mô phỏng Piston bên phải để thấy thể tích khí thay đổi ra sao. Nhấp đổi các loại khí khác nhau để xem chuyển động nhiệt của các hạt!</i>
+        </p>
+        <div id="mob-demo-3" class="mobile-demo-placeholder"></div>
+      </section>
+
+      <!-- SECTION 4: TỈ KHỐI CHẤT KHÍ -->
+      <section id="sec-notebook-4" class="card ruled-page" data-demo="4">
+        <div class="card-head">
+          <h2>4. Tỉ khối của chất khí (d)</h2>
+          <span class="tag">Nặng nhẹ chất khí</span>
+        </div>
+        <p>
+          Để so sánh xem chất khí A nặng hay nhẹ hơn chất khí B bao nhiêu lần, người ta sử dụng khái niệm <span class="key">Tỉ khối chất khí</span>.
+        </p>
+        <p>
+          <strong>Công thức tỉ khối của khí A đối với khí B:</strong>
+        </p>
+        <p style="text-align: center; font-size: 1.1em;">
+          <strong>d<sub>A/B</sub> = M<sub>A</sub> / M<sub>B</sub></strong>
+        </p>
+        <p>
+          <strong>Tỉ khối của khí A đối với Không khí:</strong>
+          <br/>
+          Không khí là một hỗn hợp khí gồm N₂, O₂,... có khối lượng mol trung bình là <strong>29 g/mol</strong>. Do đó:
+        </p>
+        <p style="text-align: center; font-size: 1.1em;">
+          <strong>d<sub>A/kk</sub> = M<sub>A</sub> / 29</strong>
+        </p>
+        <ul>
+          <li>Nếu <strong>d<sub>A/kk</sub> &lt; 1</strong>: Khí A nhẹ hơn không khí (ví dụ H₂, He), bóng bay bơm khí này sẽ bay lên trời.</li>
+          <li>Nếu <strong>d<sub>A/kk</sub> &gt; 1</strong>: Khí A nặng hơn không khí (ví dụ CO₂), khí này sẽ chìm xuống sát nền đất.</li>
+        </ul>
+        <div id="mob-demo-4" class="mobile-demo-placeholder"></div>
+      </section>
+
+      <!-- SECTION 5: TÍNH THEO PTHH -->
+      <section id="sec-notebook-5" class="card ruled-page" data-demo="5">
+        <div class="card-head">
+          <h2>5. Tính toán theo Phương trình hóa học</h2>
+          <span class="tag">Ứng dụng định lượng</span>
+        </div>
+        <p>
+          Phương trình hóa học cho biết tỉ lệ số mol giữa các chất phản ứng và sản phẩm. Nhờ đó, từ lượng một chất ban đầu, ta có thể tính được lượng các chất còn lại theo <strong>Quy trình 4 bước chuẩn</strong>:
+        </p>
+        <p>
+          <strong>Bước 1:</strong> Viết phương trình hóa học (PTHH) và cân bằng hệ số chính xác.
+          <br/>
+          <strong>Bước 2:</strong> Tính số mol chất đã biết đề bài cho: dùng công thức <i>n = m/M</i> hoặc <i>n = V/24,79</i>.
+          <br/>
+          <strong>Bước 3:</strong> Lập tỉ lệ số mol trên phương trình để tìm số mol chất cần tính.
+          <br/>
+          <strong>Bước 4:</strong> Quy đổi số mol chất cần tính ra khối lượng <i>m = n &times; M</i> hoặc thể tích khí <i>V = n &times; 24,79</i> theo yêu cầu.
+        </p>
+        <p>
+          <i>Thực hành giải bài toán lượng chất phản ứng của kim loại Magnesium (Mg) ngay bên phải bằng cách điều chỉnh khối lượng Mg ban đầu.</i>
+        </p>
+        <div id="mob-demo-5" class="mobile-demo-placeholder"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- RIGHT SIDE: ELEGANT LAB BENCH / CHALKBOARD -->
+  <div class="lab-panel">
+    <div class="lab-sticky-wrapper">
+      
+      <!-- DESKTOP SLOT 1: AVOGADRO PARTICLE HEAP -->
+      <div id="desk-demo-1" class="desk-demo-slot">
+        <div id="demo-1" class="demo-panel">
+          <div class="bench-title">Mô phỏng 1: Đống Hạt Avogadro (1 mol)</div>
+          
+          <div class="canvas-wrap">
+            <svg id="avogadro-svg" class="svg-canvas-board" viewBox="0 0 300 185">
+              <!-- Background grid lines -->
+              <line x1="0" y1="140" x2="300" y2="140" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+              
+              <!-- Container / Dish -->
+              <path d="M 60,140 C 60,165 240,165 240,140" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="3" stroke-linecap="round" />
+              
+              <!-- Particle Heap (Fe / H2O / NaCl / C) -->
+              <path id="heap-shape" d="M 80,140 Q 150,55 220,140 Z" fill="#7f8c8d" opacity="0.9" style="transition: fill 0.5s, d 0.5s;" />
+              
+              <!-- Zoom Loop (Lens) -->
+              <circle cx="210" cy="70" r="36" fill="#080705" stroke="#F39C12" stroke-width="2.5" />
+              <line x1="210" y1="106" x2="210" y2="125" stroke="#F39C12" stroke-width="3" />
+              <text x="210" y="44" fill="#F39C12" font-size="9" font-family="'Itim', cursive" text-anchor="middle">KÍNH LÚP VI MÔ</text>
+              
+              <!-- Microscopic atoms inside lens -->
+              <g id="lens-particles" style="transition: opacity 0.3s;"></g>
+              
+              <!-- Labels -->
+              <text x="150" y="172" fill="#fff" font-size="11" font-family="'Itim', cursive" text-anchor="middle">Trạng thái: 1 mol chất đặt trên đĩa</text>
+            </svg>
+          </div>
+
+          <div class="ctrl-row">
+            <button class="btn-lab active" id="btn-heap-fe" onclick="switchHeap('fe')">Sắt (Fe)</button>
+            <button class="btn-lab" id="btn-heap-h2o" onclick="switchHeap('h2o')">Nước (H₂O)</button>
+            <button class="btn-lab" id="btn-heap-nacl" onclick="switchHeap('nacl')">Muối (NaCl)</button>
+            <button class="btn-lab" id="btn-heap-c" onclick="switchHeap('c')">Than (C)</button>
+          </div>
+
+          <div class="info-display-card">
+            <div class="title-info" id="heap-title">Chất: Sắt (Fe)</div>
+            <div id="heap-desc">1 mol Sắt (Fe) nặng 56g. Chứa đúng 6,022 &times; 10²³ nguyên tử Fe xếp chồng chặt khít tạo thành khối kim loại màu xám bạc.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESKTOP SLOT 2: CONVERSION TRIANGLE -->
+      <div id="desk-demo-2" class="desk-demo-slot">
+        <div id="demo-2" class="demo-panel">
+          <div class="bench-title">Mô phỏng 2: Tam giác công thức chuyển đổi</div>
+          
+          <div class="canvas-wrap" style="aspect-ratio: 300 / 170;">
+            <svg id="triangle-svg" class="svg-canvas-board" viewBox="0 0 300 170">
+              <!-- Triangle Background -->
+              <polygon points="150,15 260,145 40,145" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+              
+              <!-- Divider lines -->
+              <line x1="150" y1="15" x2="150" y2="85" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="3" />
+              <line x1="95" y1="85" x2="205" y2="85" stroke="rgba(255,255,255,0.25)" stroke-width="2.5" />
+              
+              <!-- Hotspots areas (clickable) -->
+              <polygon id="tri-m" class="tri-area active-area" points="150,16 202,84 98,84" fill="rgba(243, 156, 18, 0.1)" onclick="selectFormulaMode('m')" />
+              <polygon id="tri-n" class="tri-area" points="97,86 149,144 41,144" fill="rgba(255,255,255,0.02)" onclick="selectFormulaMode('n')" />
+              <polygon id="tri-M" class="tri-area" points="151,86 259,144 151,144" fill="rgba(255,255,255,0.02)" onclick="selectFormulaMode('M')" />
+              
+              <!-- Letter labels -->
+              <text x="150" y="55" fill="#fff" font-size="22" font-weight="bold" font-family="'Itim', cursive" text-anchor="middle" pointer-events="none">m</text>
+              <text x="95" y="122" fill="#fff" font-size="20" font-weight="bold" font-family="'Itim', cursive" text-anchor="middle" pointer-events="none">n</text>
+              <text x="205" y="122" fill="#fff" font-size="20" font-weight="bold" font-family="'Itim', cursive" text-anchor="middle" pointer-events="none">M</text>
+              <text x="150" y="122" fill="#F39C12" font-size="22" font-weight="bold" font-family="'Itim', cursive" text-anchor="middle" pointer-events="none">&times;</text>
+              
+              <!-- Mode indicator -->
+              <text x="150" y="162" id="tri-formula-text" fill="#F39C12" font-size="11" font-family="'Itim', cursive" text-anchor="middle">Công thức hoạt động: m = n &times; M</text>
+            </svg>
+          </div>
+
+          <div class="ctrl-row">
+            <span style="color:#aaa; font-size: 13px;">Chọn chất:</span>
+            <select class="select-lab" id="select-calc-substance" onchange="updateTriangleCalc()">
+              <option value="C" data-molar="12">Than chì (C) | M = 12 g/mol</option>
+              <option value="H2O" data-molar="18">Nước (H₂O) | M = 18 g/mol</option>
+              <option value="O2" data-molar="32">Khí Oxy (O₂) | M = 32 g/mol</option>
+              <option value="Cu" data-molar="64">Đồng (Cu) | M = 64 g/mol</option>
+              <option value="CaCO3" data-molar="100">Đá vôi (CaCO₃) | M = 100 g/mol</option>
+            </select>
+          </div>
+
+          <!-- Variable Sliders -->
+          <div class="ctrl-row" id="slider-row-m">
+            <span style="color:#aaa; font-size: 13px; min-width:85px;">Khối lượng (m):</span>
+            <input type="range" class="slider-lab" id="slider-val-m" min="0" max="300" value="36" oninput="updateTriangleCalc()">
+            <span class="slider-lbl" id="lbl-val-m">36 g</span>
+          </div>
+
+          <div class="ctrl-row" id="slider-row-n" style="display:none;">
+            <span style="color:#aaa; font-size: 13px; min-width:85px;">Số mol (n):</span>
+            <input type="range" class="slider-lab" id="slider-val-n" min="0.1" max="10" step="0.1" value="2.0" oninput="updateTriangleCalc()">
+            <span class="slider-lbl" id="lbl-val-n">2.0 mol</span>
+          </div>
+
+          <div class="info-display-card">
+            <div class="title-info">KẾT QUẢ PHÂN TÍCH</div>
+            <div id="tri-calc-result" style="font-size: 13.5px; font-family: monospace; color:#fff;">
+              Số mol của 36g H₂O:<br>
+              n = m / M = 36 / 18 = 2.000 mol chất.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESKTOP SLOT 3: GAS VOLUME PISTON -->
+      <div id="desk-demo-3" class="desk-demo-slot">
+        <div id="demo-3" class="demo-panel">
+          <div class="bench-title">Mô phỏng 3: Thể tích chất khí ở đkc mới (24.79 L/mol)</div>
+          
+          <div class="canvas-wrap" style="aspect-ratio: 300 / 175;">
+            <canvas id="piston-canvas" class="piston-canvas" width="300" height="175"></canvas>
+          </div>
+
+          <div class="ctrl-row">
+            <span style="color:#aaa; font-size: 13px;">Chọn khí:</span>
+            <button class="btn-lab active" id="btn-gas-h2" onclick="switchGas('H2', 2, '#3498db')">Khí H₂</button>
+            <button class="btn-lab" id="btn-gas-o2" onclick="switchGas('O2', 32, '#e74c3c')">Khí O₂</button>
+            <button class="btn-lab" id="btn-gas-co2" onclick="switchGas('CO2', 44, '#2ecc71')">Khí CO₂</button>
+          </div>
+
+          <div class="ctrl-row">
+            <span style="color:#aaa; font-size: 13px; min-width: 80px;">Số mol (n):</span>
+            <input type="range" class="slider-lab" id="slider-piston-n" min="0.2" max="3.0" step="0.1" value="1.0" oninput="updatePistonVol()">
+            <span class="slider-lbl" id="lbl-piston-n">1.0 mol</span>
+          </div>
+
+          <div class="info-display-card">
+            <div class="title-info" id="piston-title-info">THỂ TÍCH KHÍ HYDRO (H₂)</div>
+            <div id="piston-desc-info" style="font-size: 13px; line-height: 1.45;">
+              Số mol khí n = 1.0 mol. <br>
+              Thể tích chiếm dụng ở đkc (25°C, 1 bar): <br>
+              <strong>V = n &times; 24,79 = 1.0 &times; 24,79 = 24.79 lít</strong>.
+              <br><i style="color:#aaa; font-size: 11.5px;">Phân tử H₂ nhẹ (M=2) chuyển động hỗn loạn nhiệt cực nhanh.</i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESKTOP SLOT 4: GAS DENSITY BALANCE -->
+      <div id="desk-demo-4" class="desk-demo-slot">
+        <div id="demo-4" class="demo-panel">
+          <div class="bench-title">Mô phỏng 4: Cân đĩa so sánh tỉ khối khí</div>
+          
+          <div class="canvas-wrap" style="aspect-ratio: 300 / 175;">
+            <svg id="balance-scale-svg" class="svg-canvas-board" viewBox="0 0 300 175">
+              <!-- Central Pillar -->
+              <line x1="150" y1="160" x2="150" y2="85" stroke="#aaa" stroke-width="5" />
+              <polygon points="135,160 165,160 150,145" fill="#555" />
+              <circle cx="150" cy="85" r="5" fill="#F39C12" />
+              
+              <!-- Rotating Beam Group -->
+              <g id="scale-beam" style="transform-origin: 150px 85px; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);">
+                <!-- Balance beam line -->
+                <line x1="60" y1="85" x2="240" y2="85" stroke="#F39C12" stroke-width="4" />
+                <circle cx="60" cy="85" r="3.5" fill="#fff" />
+                <circle cx="240" cy="85" r="3.5" fill="#fff" />
+                
+                <!-- Left String & Balloon Group -->
+                <g id="scale-left-group" style="transform-origin: 60px 85px; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);">
+                  <!-- String -->
+                  <line x1="60" y1="85" x2="60" y2="115" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" />
+                  <!-- Balloon left -->
+                  <g transform="translate(60, 115)">
+                    <!-- Balloon shape -->
+                    <ellipse cx="0" cy="-20" rx="16" ry="22" id="balloon-a-body" fill="#3498db" class="balloon-body" />
+                    <!-- Balloon knot -->
+                    <polygon points="-3,0 3,0 0,-4" fill="#F39C12" />
+                    <!-- Letter A -->
+                    <text x="0" y="-16" fill="#fff" font-size="12" font-weight="bold" font-family="'Itim', cursive" text-anchor="middle">A</text>
+                  </g>
+                </g>
+
+                <!-- Right String & Balloon Group -->
+                <g id="scale-right-group" style="transform-origin: 240px 85px; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);">
+                  <!-- String -->
+                  <line x1="240" y1="85" x2="240" y2="115" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" />
+                  <!-- Balloon right -->
+                  <g transform="translate(240, 115)">
+                    <ellipse cx="0" cy="-20" rx="16" ry="22" id="balloon-b-body" fill="#2ecc71" class="balloon-body" />
+                    <polygon points="-3,0 3,0 0,-4" fill="#F39C12" />
+                    <text x="0" y="-16" fill="#fff" font-size="12" font-weight="bold" font-family="'Itim', cursive" text-anchor="middle">B</text>
+                  </g>
+                </g>
+              </g>
+              
+              <!-- Stand text -->
+              <text x="150" y="170" fill="rgba(255,255,255,0.3)" font-size="9" font-family="'Itim', cursive" text-anchor="middle">CÂN TỈ KHỐI KHÍ</text>
+            </svg>
+          </div>
+
+          <div class="ctrl-row" style="gap:8px;">
+            <div style="flex-grow:1; display:flex; flex-direction:column; gap:4px;">
+              <span style="color:#aaa; font-size:12px;">Khí A (Trái):</span>
+              <select class="select-lab" id="select-gas-a" onchange="updateScaleDensity()">
+                <option value="H2" data-color="#3498db">H₂ (M = 2)</option>
+                <option value="He" data-color="#f1c40f">He (M = 4)</option>
+                <option value="N2" data-color="#9b59b6">N₂ (M = 28)</option>
+                <option value="Air" data-color="#ecf0f1" selected>Không khí (M = 29)</option>
+                <option value="O2" data-color="#e67e22">O₂ (M = 32)</option>
+                <option value="CO2" data-color="#2ecc71">CO₂ (M = 44)</option>
+              </select>
+            </div>
+            <div style="flex-grow:1; display:flex; flex-direction:column; gap:4px;">
+              <span style="color:#aaa; font-size:12px;">Khí B (Phải):</span>
+              <select class="select-lab" id="select-gas-b" onchange="updateScaleDensity()">
+                <option value="H2" data-color="#3498db">H₂ (M = 2)</option>
+                <option value="He" data-color="#f1c40f">He (M = 4)</option>
+                <option value="N2" data-color="#9b59b6">N₂ (M = 28)</option>
+                <option value="Air" data-color="#ecf0f1">Không khí (M = 29)</option>
+                <option value="O2" data-color="#e67e22">O₂ (M = 32)</option>
+                <option value="CO2" data-color="#2ecc71" selected>CO₂ (M = 44)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="info-display-card">
+            <div class="title-info" id="scale-result-title">TỈ KHỐI KHÍ A SO VỚI KHÍ B</div>
+            <div id="scale-desc-info" style="font-size:13px; line-height: 1.45;">
+              Khí A: Không khí (M = 29 g/mol) <br>
+              Khí B: Cacbon đioxit CO₂ (M = 44 g/mol) <br>
+              Tỉ khối d<sub>A/B</sub> = 29 / 44 = 0.659.
+              <br><strong>Hiện tượng:</strong> Khí B nặng hơn khí A nên đĩa cân bên phải chìm xuống.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESKTOP SLOT 5: STOICHIOMETRY SOLVER -->
+      <div id="desk-demo-5" class="desk-demo-slot">
+        <div id="demo-5" class="demo-panel">
+          <div class="bench-title">Mô phỏng 5: Máy giải toán hóa học theo PTHH</div>
+          
+          <div class="ctrl-row">
+            <span style="color:#aaa; font-size:13px; min-width: 80px;">Chọn phản ứng:</span>
+            <select class="select-lab" id="select-stoich-rxn" onchange="resetStoichSolver()">
+              <option value="rxn1">Mg + 2HCl &rarr; MgCl₂ + H₂&uarr;</option>
+              <option value="rxn2">2Mg + O₂ &rarr; 2MgO (nhiệt độ)</option>
+            </select>
+          </div>
+
+          <div class="ctrl-row">
+            <span style="color:#aaa; font-size: 13px; min-width: 80px;">Khối lượng Mg:</span>
+            <input type="range" class="slider-lab" id="slider-stoich-mg" min="0.6" max="12.0" step="0.6" value="2.4" oninput="updateStoichInputs()">
+            <span class="slider-lbl" id="lbl-stoich-mg">2.4 g</span>
+          </div>
+
+          <div class="ctrl-row">
+            <button class="btn-lab" id="btn-stoich-run" onclick="runStoichSolver()">Giải chi tiết</button>
+            <button class="btn-lab" id="btn-stoich-reset" onclick="resetStoichSolver()" disabled>Đặt lại</button>
+          </div>
+
+          <div class="info-display-card" style="max-height: 220px; overflow-y: auto;">
+            <div class="title-info">CÁC BƯỚC GIẢI CHI TIẾT</div>
+            <div id="stoich-solve-area" style="font-size:12.5px; font-family: monospace; color:#eee;">
+              <div style="color:#aaa; font-style:italic;">Nhấp nút "Giải chi tiết" để xem cách giải định lượng hóa học từng bước.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     JAVASCRIPT LOGIC & SCROLL COUPLING
+════════════════════════════════════════════════════════════════════════ -->
+<script>
+  /* ══════════════════════════════════════
+     SECTION DETECTION — IntersectionObserver
+  ══════════════════════════════════════ */
+  const notebookSections = document.querySelectorAll('.hero, #sec-notebook-1, #sec-notebook-2, #sec-notebook-3, #sec-notebook-4, #sec-notebook-5');
+  const demoPanels = document.querySelectorAll('.demo-panel');
+
+  let currentActiveSec = null;
+
+  function setActiveSection(sec) {
+    if (currentActiveSec === sec) return;
+    currentActiveSec = sec;
+
+    const activeDemoNum = sec.dataset.demo;
+    const isDesktop = window.innerWidth > 920;
+
+    // 1. Highlight active section and fade others on desktop
+    notebookSections.forEach((s) => {
+      if (s === sec) {
+        s.classList.add('active-section');
+      } else {
+        s.classList.remove('active-section');
+      }
+    });
+
+    // 2. Activate the matching demo panel
+    demoPanels.forEach((panel) => {
+      if (panel.id === `demo-${activeDemoNum}`) {
+        panel.classList.add('active');
+      } else {
+        panel.classList.remove('active');
+      }
+    });
+
+    // 3. Specific widget triggers on entry
+    if (activeDemoNum === '3') {
+      startPistonSimulation();
+    } else {
+      stopPistonSimulation();
+    }
+  }
+
+  function observeSection(sec) {
+    const scroller = window.innerWidth > 920 ? document.querySelector('.notebook-panel') : null;
+    const options = {
+      root: scroller || null,
+      threshold: 0.2
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target);
+        }
+      });
+    }, options);
+    io.observe(sec);
+    return io;
+  }
+
+  let sectionObservers = [];
+
+  function initObservers() {
+    sectionObservers.forEach(io => io.disconnect());
+    sectionObservers = [];
+    notebookSections.forEach(sec => {
+      sectionObservers.push(observeSection(sec));
+    });
+  }
+
+  initObservers();
+
+
+  /* ══════════════════════════════════════
+     MOBILE RESPONSIVE ELEMENT RELOCATION
+  ══════════════════════════════════════ */
+  let wasDesktop = window.innerWidth > 920;
+
+  const relocateDemos = () => {
+    const isMobile = window.innerWidth <= 920;
+    const isDesktop = !isMobile;
+    
+    if (isDesktop !== wasDesktop) {
+      wasDesktop = isDesktop;
+      initObservers();
+    }
+
+    for (let i = 1; i <= 5; i++) {
+      const demo = document.getElementById(`demo-${i}`);
+      if (!demo) continue;
+      
+      if (isMobile) {
+        const mobContainer = document.getElementById(`mob-demo-${i}`);
+        if (mobContainer && demo.parentElement !== mobContainer) {
+          mobContainer.appendChild(demo);
+        }
+      } else {
+        const deskContainer = document.getElementById(`desk-demo-${i}`);
+        if (deskContainer && demo.parentElement !== deskContainer) {
+          deskContainer.appendChild(demo);
+        }
+      }
+    }
+    
+    if (isMobile) {
+      notebookSections.forEach((s) => {
+        const targets = Array.from(s.children).filter(c => !c.classList.contains('mobile-demo-placeholder'));
+        targets.forEach(t => t.style.opacity = ''); // Reset inline opacities on mobile
+      });
+      startPistonSimulation(); // Always run on mobile since layout isn't snapped
+    } else {
+      const activeDemoNum = currentActiveSec ? currentActiveSec.dataset.demo : '0';
+      if (activeDemoNum !== '3') stopPistonSimulation();
+    }
+  };
+
+  window.addEventListener('resize', relocateDemos);
+  window.addEventListener('DOMContentLoaded', relocateDemos);
+  setTimeout(relocateDemos, 150);
+
+
+  /* ══════════════════════════════════════
+     DEMO 1: AVOGADRO HEAP WIDGET LOGIC
+  ══════════════════════════════════════ */
+  const avoLens = document.getElementById('lens-particles');
+  const heapShape = document.getElementById('heap-shape');
+  const heapTitle = document.getElementById('heap-title');
+  const heapDesc = document.getElementById('heap-desc');
+
+  const heapData = {
+    fe: {
+      title: "Chất: Sắt (Fe)",
+      desc: "1 mol Sắt (Fe) nặng 56g. Chứa đúng 6,022 &times; 10²³ nguyên tử Fe xếp chồng chặt khít tạo thành khối kim loại màu xám bạc.",
+      color: "#7f8c8d",
+      shape: "M 80,140 Q 150,55 220,140 Z",
+      lensType: "grid-atoms",
+      atomColor: "#95a5a6"
+    },
+    h2o: {
+      title: "Chất: Nước (H₂O)",
+      desc: "1 mol Nước (H₂O) nặng 18g (tương đương 18ml). Chứa 6,022 &times; 10²³ phân tử H₂O liên kết với nhau bằng tương tác Hydro tạo chất lỏng không màu.",
+      color: "rgba(52, 152, 219, 0.75)",
+      shape: "M 85,140 Q 150,75 215,140 Z",
+      lensType: "mickey-molecule",
+      atomColor: "#3498db"
+    },
+    nacl: {
+      title: "Chất: Muối ăn (NaCl)",
+      desc: "1 mol Muối ăn (NaCl) nặng 58,5g. Chứa 6,022 &times; 10²³ cặp ion Na⁺ và Cl⁻ liên kết ion chặt chẽ tạo thành tinh thể muối dạng khối lập phương màu trắng.",
+      color: "#f3f3f3",
+      shape: "M 75,140 L 150,50 L 225,140 Z",
+      lensType: "ionic-cubes",
+      atomColor: "#fff"
+    },
+    c: {
+      title: "Chất: Than chì (C)",
+      desc: "1 mol Than chì (Carbon, C) nặng 12g. Chứa 6,022 &times; 10²³ nguyên tử Carbon liên kết cộng hóa trị tạo thành các lớp vòng hexagon màu đen xám.",
+      color: "#2c3e50",
+      shape: "M 90,140 Q 150,70 210,140 Z",
+      lensType: "honeycomb-sheet",
+      atomColor: "#34495e"
+    }
+  };
+
+  function drawLensParticles(type, color) {
+    avoLens.innerHTML = '';
+    
+    if (type === 'grid-atoms') {
+      // Close packing of metallic atoms
+      const coords = [
+        {cx: 195, cy: 55}, {cx: 210, cy: 55}, {cx: 225, cy: 55},
+        {cx: 188, cy: 68}, {cx: 203, cy: 68}, {cx: 218, cy: 68}, {cx: 233, cy: 68},
+        {cx: 195, cy: 81}, {cx: 210, cy: 81}, {cx: 225, cy: 81}
+      ];
+      coords.forEach(c => {
+        const circ = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circ.setAttribute('cx', c.cx);
+        circ.setAttribute('cy', c.cy);
+        circ.setAttribute('r', '7.5');
+        circ.setAttribute('fill', color);
+        circ.setAttribute('stroke', '#fff');
+        circ.setAttribute('stroke-width', '0.7');
+        avoLens.appendChild(circ);
+      });
+    } else if (type === 'mickey-molecule') {
+      // H2O molecules (O in center, 2 smaller H)
+      const centers = [
+        {x: 200, y: 56}, {x: 222, y: 72}, {x: 195, y: 82}
+      ];
+      centers.forEach(c => {
+        const oCirc = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        oCirc.setAttribute('cx', c.x);
+        oCirc.setAttribute('cy', c.y);
+        oCirc.setAttribute('r', '7.5');
+        oCirc.setAttribute('fill', '#e74c3c'); // oxygen red
+        
+        const h1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        h1.setAttribute('cx', c.x - 6.5);
+        h1.setAttribute('cy', c.y + 6);
+        h1.setAttribute('r', '4');
+        h1.setAttribute('fill', '#fff'); // hydrogen white
+        
+        const h2 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        h2.setAttribute('cx', c.x + 6.5);
+        h2.setAttribute('cy', c.y + 6);
+        h2.setAttribute('r', '4');
+        h2.setAttribute('fill', '#fff');
+        
+        avoLens.appendChild(oCirc);
+        avoLens.appendChild(h1);
+        avoLens.appendChild(h2);
+      });
+    } else if (type === 'ionic-cubes') {
+      // NaCl ionic grid. Alternate Green (Na+) and Grey (Cl-)
+      const ions = [
+        {x: 190, y: 55, r: 5, f: '#2ecc71'}, {x: 208, y: 55, r: 8, f: '#bdc3c7'}, {x: 226, y: 55, r: 5, f: '#2ecc71'},
+        {x: 190, y: 72, r: 8, f: '#bdc3c7'}, {x: 208, y: 72, r: 5, f: '#2ecc71'}, {x: 226, y: 72, r: 8, f: '#bdc3c7'},
+        {x: 190, y: 89, r: 5, f: '#2ecc71'}, {x: 208, y: 89, r: 8, f: '#bdc3c7'}, {x: 226, y: 89, r: 5, f: '#2ecc71'}
+      ];
+      ions.forEach(ion => {
+        const circ = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circ.setAttribute('cx', ion.x);
+        circ.setAttribute('cy', ion.y);
+        circ.setAttribute('r', ion.r);
+        circ.setAttribute('fill', ion.f);
+        circ.setAttribute('stroke', '#fff');
+        circ.setAttribute('stroke-width', '0.5');
+        avoLens.appendChild(circ);
+      });
+    } else if (type === 'honeycomb-sheet') {
+      // Carbon rings (Honeycomb sheets)
+      const lines = [
+        {x1: 195, y1: 52, x2: 210, y2: 52},
+        {x1: 210, y1: 52, x2: 218, y2: 64},
+        {x1: 218, y1: 64, x2: 210, y2: 76},
+        {x1: 210, y1: 76, x2: 195, y2: 76},
+        {x1: 195, y1: 76, x2: 187, y2: 64},
+        {x1: 187, y1: 64, x2: 195, y2: 52},
+        
+        {x1: 218, y1: 64, x2: 233, y2: 64},
+        {x1: 233, y1: 64, x2: 241, y2: 76},
+        {x1: 241, y1: 76, x2: 233, y2: 88},
+        {x1: 233, y1: 88, x2: 218, y2: 88},
+        {x1: 218, y1: 88, x2: 210, y2: 76}
+      ];
+      lines.forEach(l => {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', l.x1);
+        line.setAttribute('y1', l.y1);
+        line.setAttribute('x2', l.x2);
+        line.setAttribute('y2', l.y2);
+        line.setAttribute('stroke', '#aaa');
+        line.setAttribute('stroke-width', '1.5');
+        avoLens.appendChild(line);
+      });
+      
+      const atoms = [
+        {x: 195, y: 52}, {x: 210, y: 52}, {x: 218, y: 64}, {x: 210, y: 76}, {x: 195, y: 76}, {x: 187, y: 64},
+        {x: 233, y: 64}, {x: 241, y: 76}, {x: 233, y: 88}, {x: 218, y: 88}
+      ];
+      atoms.forEach(a => {
+        const circ = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circ.setAttribute('cx', a.x);
+        circ.setAttribute('cy', a.y);
+        circ.setAttribute('r', '3.5');
+        circ.setAttribute('fill', color);
+        avoLens.appendChild(circ);
+      });
+    }
+  }
+
+  function switchHeap(type) {
+    const data = heapData[type];
+    if (!data) return;
+
+    // Switch tab active classes
+    const buttons = ['fe', 'h2o', 'nacl', 'c'];
+    buttons.forEach(b => {
+      const btn = document.getElementById(`btn-heap-${b}`);
+      if (b === type) btn.classList.add('active');
+      else btn.classList.remove('active');
+    });
+
+    // Animate shape and color
+    heapShape.setAttribute('fill', data.color);
+    heapShape.setAttribute('d', data.shape);
+    
+    // Lens fade and redraw
+    avoLens.style.opacity = '0';
+    setTimeout(() => {
+      drawLensParticles(data.lensType, data.atomColor);
+      avoLens.style.opacity = '1';
+    }, 200);
+
+    heapTitle.textContent = data.title;
+    heapDesc.innerHTML = data.desc;
+  }
+
+  // Draw initial lens
+  drawLensParticles('grid-atoms', '#95a5a6');
+
+
+  /* ══════════════════════════════════════
+     DEMO 2: FORMULA TRIANGLE CALCULATOR
+  ══════════════════════════════════════ */
+  let currentFormulaMode = 'm'; // Options: m (calculate mass), n (calculate moles), M (calculate molar mass)
+
+  function selectFormulaMode(mode) {
+    currentFormulaMode = mode;
+    
+    // Manage active state classes on triangles
+    document.querySelectorAll('.tri-area').forEach(area => area.classList.remove('active-area'));
+    document.getElementById(`tri-${mode}`).classList.add('active-area');
+
+    const formulaText = document.getElementById('tri-formula-text');
+    const rowM = document.getElementById('slider-row-m');
+    const rowN = document.getElementById('slider-row-n');
+
+    if (mode === 'm') {
+      formulaText.textContent = 'Công thức hoạt động: m = n \u00d7 M';
+      rowM.style.display = 'none';
+      rowN.style.display = 'flex';
+    } else if (mode === 'n') {
+      formulaText.textContent = 'Công thức hoạt động: n = m / M';
+      rowM.style.display = 'flex';
+      rowN.style.display = 'none';
+    } else if (mode === 'M') {
+      formulaText.textContent = 'Công thức hoạt động: M = m / n';
+      rowM.style.display = 'flex';
+      rowN.style.display = 'flex';
+    }
+
+    updateTriangleCalc();
+  }
+
+  function updateTriangleCalc() {
+    const selectSub = document.getElementById('select-calc-substance');
+    const substanceName = selectSub.options[selectSub.selectedIndex].text.split(' | ')[0];
+    const molarMass = parseFloat(selectSub.options[selectSub.selectedIndex].dataset.molar);
+    
+    const sliderM = document.getElementById('slider-val-m');
+    const sliderN = document.getElementById('slider-val-n');
+    
+    const valM = parseFloat(sliderM.value);
+    const valN = parseFloat(sliderN.value);
+
+    document.getElementById('lbl-val-m').textContent = `${valM} g`;
+    document.getElementById('lbl-val-n').textContent = `${valN.toFixed(1)} mol`;
+
+    const resultBox = document.getElementById('tri-calc-result');
+
+    if (currentFormulaMode === 'm') {
+      // Calculate Mass: m = n * M
+      const massResult = valN * molarMass;
+      resultBox.innerHTML = `Tính Khối lượng (m) của ${valN.toFixed(1)} mol ${substanceName}:<br>` +
+                            `<strong>m = n &times; M = ${valN.toFixed(1)} &times; ${molarMass} = ${massResult.toFixed(2)} gam.</strong>`;
+    } else if (currentFormulaMode === 'n') {
+      // Calculate Moles: n = m / M
+      const molesResult = valM / molarMass;
+      resultBox.innerHTML = `Tính Số mol (n) của ${valM}g ${substanceName}:<br>` +
+                            `<strong>n = m / M = ${valM} / ${molarMass} = ${molesResult.toFixed(3)} mol.</strong>`;
+    } else if (currentFormulaMode === 'M') {
+      // Calculate Molar Mass: M = m / n
+      const molarResult = valM / valN;
+      resultBox.innerHTML = `Tính Khối lượng mol (M) khi có ${valN.toFixed(1)} mol nặng ${valM}g:<br>` +
+                            `<strong>M = m / n = ${valM} / ${valN.toFixed(1)} = ${molarResult.toFixed(2)} g/mol.</strong><br>` +
+                            `<span style="font-size:11px; color:#aaa;">(Chất đang chọn có M thực tế là ${molarMass} g/mol)</span>`;
+    }
+  }
+
+  // Init Triangle calc
+  updateTriangleCalc();
+
+
+  /* ══════════════════════════════════════
+     DEMO 3: GAS VOLUME PISTON SIMULATION
+  ══════════════════════════════════════ */
+  const canvas = document.getElementById('piston-canvas');
+  const ctx = canvas.getContext('2d');
+  
+  let animationRunning = false;
+  let animFrameId = null;
+
+  let currentGas = 'H2';
+  let currentGasColor = '#3498db';
+  let gasMolarMass = 2;
+
+  let molesGas = 1.0;
+  let particles = [];
+  
+  // Piston geometry
+  let currentPistonY = 80; // current height of piston top in canvas coordinates
+
+  function switchGas(gas, molar, color) {
+    currentGas = gas;
+    gasMolarMass = molar;
+    currentGasColor = color;
+
+    // Toggle active buttons
+    ['h2', 'o2', 'co2'].forEach(g => {
+      const btn = document.getElementById(`btn-gas-${g}`);
+      if (g === gas.toLowerCase()) btn.classList.add('active');
+      else btn.classList.remove('active');
+    });
+
+    updatePistonVol();
+    rebuildParticles();
+  }
+
+  function rebuildParticles() {
+    particles = [];
+    const count = Math.round(molesGas * 20); // 20 particles per mol
+    const speed = 4 / Math.sqrt(gasMolarMass); // speed inversely proportional to sqrt of mass!
+
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: 40 + Math.random() * 220,
+        y: currentPistonY + 10 + Math.random() * (160 - currentPistonY - 15),
+        vx: (Math.random() - 0.5) * speed * 2,
+        vy: (Math.random() - 0.5) * speed * 2,
+        r: 3 + Math.sqrt(gasMolarMass) * 0.3 // heavy gases are larger
+      });
+    }
+  }
+
+  function updatePistonVol() {
+    const slider = document.getElementById('slider-piston-n');
+    molesGas = parseFloat(slider.value);
+    document.getElementById('lbl-piston-n').textContent = `${molesGas.toFixed(1)} mol`;
+
+    const vol = molesGas * 24.79;
+
+    const titleEl = document.getElementById('piston-title-info');
+    const descEl = document.getElementById('piston-desc-info');
+
+    let gasName = "HYDRO (H₂)";
+    let particleNote = "nhẹ (M=2) chuyển động hỗn loạn nhiệt cực nhanh.";
+    if (currentGas === 'O2') {
+      gasName = "OXYGEN (O₂)";
+      particleNote = "nặng trung bình (M=32) chuyển động tốc độ vừa phải.";
+    } else if (currentGas === 'CO2') {
+      gasName = "CACBON ĐIOXIT (CO₂)";
+      particleNote = "rất nặng (M=44) chuyển động nhiệt tương đối chậm.";
+    }
+
+    titleEl.textContent = `THỂ TÍCH KHÍ ${gasName}`;
+    descEl.innerHTML = `Số mol khí n = ${molesGas.toFixed(1)} mol. <br>` +
+                        `Thể tích chiếm dụng ở đkc (25°C, 1 bar): <br>` +
+                        `<strong>V = n &times; 24,79 = ${molesGas.toFixed(1)} &times; 24,79 = ${vol.toFixed(2)} lít</strong>.` +
+                        `<br><i style="color:#aaa; font-size: 11.5px;">Phân tử ${currentGas} ${particleNote}</i>`;
+
+    rebuildParticles();
+  }
+
+  function drawPiston() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Target Piston Y position based on moles
+    // min moles 0.2 -> piston Y = 130
+    // max moles 3.0 -> piston Y = 40
+    const targetPistonY = 140 - (molesGas * 35);
+    
+    // Interpolate smoothly
+    currentPistonY += (targetPistonY - currentPistonY) * 0.1;
+
+    // Draw cylinder boundary
+    ctx.strokeStyle = '#aaa';
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(35, 20);
+    ctx.lineTo(35, 160);
+    ctx.lineTo(265, 160);
+    ctx.lineTo(265, 20);
+    ctx.stroke();
+
+    // Draw grid scale markers on cylinder
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 1;
+    ctx.font = '8px monospace';
+    ctx.fillStyle = '#666';
+    for (let y = 40; y <= 140; y += 20) {
+      ctx.beginPath();
+      ctx.moveTo(35, y);
+      ctx.lineTo(50, y);
+      ctx.stroke();
+      
+      const vMark = ((140 - y) / 35 + 0.2).toFixed(1);
+      ctx.fillText(`${vMark} mol`, 54, y + 3);
+    }
+
+    // Update & Draw particles
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // Collisions with cylinder walls
+      if (p.x - p.r < 37) { p.x = 37 + p.r; p.vx *= -1; }
+      if (p.x + p.r > 263) { p.x = 263 - p.r; p.vx *= -1; }
+      if (p.y + p.r > 158) { p.y = 158 - p.r; p.vy *= -1; }
+      
+      // Collision with moving piston head
+      if (p.y - p.r < currentPistonY + 6) {
+        p.y = currentPistonY + 6 + p.r;
+        p.vy *= -1;
+      }
+
+      ctx.fillStyle = currentGasColor;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Draw Piston Head
+    ctx.fillStyle = '#F39C12';
+    ctx.fillRect(36, currentPistonY, 228, 6);
+
+    // Draw piston shaft rod
+    ctx.fillStyle = '#d35400';
+    ctx.fillRect(146, 5, 8, currentPistonY);
+
+    if (animationRunning) {
+      animFrameId = requestAnimationFrame(drawPiston);
+    }
+  }
+
+  function startPistonSimulation() {
+    if (!animationRunning) {
+      animationRunning = true;
+      rebuildParticles();
+      drawPiston();
+    }
+  }
+
+  function stopPistonSimulation() {
+    animationRunning = false;
+    if (animFrameId) {
+      cancelAnimationFrame(animFrameId);
+      animFrameId = null;
+    }
+  }
+
+
+  /* ══════════════════════════════════════
+     DEMO 4: BALLOON BALANCE TILT
+  ══════════════════════════════════════ */
+  const gasDatabase = {
+    H2: { mass: 2, name: "Hiđro (H₂)" },
+    He: { mass: 4, name: "Heli (He)" },
+    N2: { mass: 28, name: "Nitơ (N₂)" },
+    Air: { mass: 29, name: "Không khí" },
+    O2: { mass: 32, name: "Oxi (O₂)" },
+    CO2: { mass: 44, name: "Cacbon đioxit (CO₂)" }
+  };
+
+  function updateScaleDensity() {
+    const gasASelect = document.getElementById('select-gas-a');
+    const gasBSelect = document.getElementById('select-gas-b');
+
+    const gasAKey = gasASelect.value;
+    const gasBKey = gasBSelect.value;
+
+    const dataA = gasDatabase[gasAKey];
+    const dataB = gasDatabase[gasBKey];
+
+    const colorA = gasASelect.options[gasASelect.selectedIndex].dataset.color;
+    const colorB = gasBSelect.options[gasBSelect.selectedIndex].dataset.color;
+
+    // Update balloon colors
+    document.getElementById('balloon-a-body').setAttribute('fill', colorA);
+    document.getElementById('balloon-b-body').setAttribute('fill', colorB);
+
+    // Calculate relative density
+    const dA_B = dataA.mass / dataB.mass;
+    const dA_kk = dataA.mass / 29;
+    const dB_kk = dataB.mass / 29;
+
+    // Apply rotation on beam based on mass difference
+    // If mass A > mass B, rotate counter-clockwise (A goes down, angle negative)
+    // If mass B > mass A, rotate clockwise (B goes down, angle positive)
+    let angle = 0;
+    const diff = dataB.mass - dataA.mass;
+    if (diff !== 0) {
+      angle = Math.max(-15, Math.min(15, diff * 0.7));
+    }
+
+    const beam = document.getElementById('scale-beam');
+    const leftGroup = document.getElementById('scale-left-group');
+    const rightGroup = document.getElementById('scale-right-group');
+
+    beam.style.transform = `rotate(${angle}deg)`;
+    // Counter-rotate balloons to stay vertical!
+    leftGroup.style.transform = `rotate(${-angle}deg)`;
+    rightGroup.style.transform = `rotate(${-angle}deg)`;
+
+    // Update text desc
+    const descEl = document.getElementById('scale-desc-info');
+    let tiltNote = "";
+    if (dataA.mass > dataB.mass) {
+      tiltNote = `Khí A nặng hơn khí B nên quả bóng A chìm xuống đè đĩa cân lệch trái.`;
+    } else if (dataA.mass < dataB.mass) {
+      tiltNote = `Khí B nặng hơn khí A nên quả bóng B chìm xuống đè đĩa cân lệch phải.`;
+    } else {
+      tiltNote = `Hai khí có khối lượng bằng nhau, cân thăng bằng nằm ngang.`;
+    }
+
+    let balloonRiseA = dataA.mass < 29 ? "nhẹ hơn không khí (bay lên)" : "nặng hơn không khí (rơi xuống)";
+    let balloonRiseB = dataB.mass < 29 ? "nhẹ hơn không khí (bay lên)" : "nặng hơn không khí (rơi xuống)";
+
+    descEl.innerHTML = `Khí A: <strong>${dataA.name}</strong> (M = ${dataA.mass} g/mol) &mdash; ${balloonRiseA}<br>` +
+                       `Khí B: <strong>${dataB.name}</strong> (M = ${dataB.mass} g/mol) &mdash; ${balloonRiseB}<br>` +
+                       `Tỉ khối d<sub>A/B</sub> = M<sub>A</sub> / M<sub>B</sub> = ${dataA.mass} / ${dataB.mass} = <strong>${dA_B.toFixed(3)}</strong>.<br>` +
+                       `<strong>Hiện tượng:</strong> ${tiltNote}`;
+  }
+
+  // Initial balance tilt
+  updateScaleDensity();
+
+
+  /* ══════════════════════════════════════
+     DEMO 5: STOICHIOMETRY SOLVER LOGIC
+  ══════════════════════════════════════ */
+  let activeStoichTimeout = [];
+
+  function updateStoichInputs() {
+    const slider = document.getElementById('slider-stoich-mg');
+    const val = parseFloat(slider.value);
+    document.getElementById('lbl-stoich-mg').textContent = `${val.toFixed(1)} g`;
+    
+    // Auto reset solver text when inputs change to avoid mismatch
+    const solveArea = document.getElementById('stoich-solve-area');
+    solveArea.innerHTML = `<div style="color:#aaa; font-style:italic;">Nhấp nút "Giải chi tiết" để xem cách giải định lượng hóa học ứng với khối lượng ${val.toFixed(1)}g Mg.</div>`;
+    document.getElementById('btn-stoich-reset').disabled = true;
+    document.getElementById('btn-stoich-run').disabled = false;
+    
+    // Clear any running animations
+    activeStoichTimeout.forEach(clearTimeout);
+    activeStoichTimeout = [];
+  }
+
+  function resetStoichSolver() {
+    const slider = document.getElementById('slider-stoich-mg');
+    const val = parseFloat(slider.value);
+    updateStoichInputs();
+  }
+
+  function runStoichSolver() {
+    const runBtn = document.getElementById('btn-stoich-run');
+    const resetBtn = document.getElementById('btn-stoich-reset');
+    
+    runBtn.disabled = true;
+    resetBtn.disabled = false;
+
+    const rxnVal = document.getElementById('select-stoich-rxn').value;
+    const mgMass = parseFloat(document.getElementById('slider-stoich-mg').value);
+    const solveArea = document.getElementById('stoich-solve-area');
+
+    solveArea.innerHTML = '';
+    
+    // Step calculations
+    const nMg = mgMass / 24; // Moles of Mg (using M_Mg = 24 for highschool SGK)
+    
+    let stepContent = [];
+
+    if (rxnVal === 'rxn1') {
+      // Mg + 2HCl -> MgCl2 + H2
+      const nHCl = nMg * 2;
+      const nMgCl2 = nMg;
+      const nH2 = nMg;
+      
+      const mMgCl2 = nMgCl2 * 95; // M = 24 + 35.5*2 = 95
+      const vH2 = nH2 * 24.79;
+
+      stepContent = [
+        `<strong>Bước 1: Viết và cân bằng phương trình phản ứng</strong><br>` +
+        `<span style="color:#F39C12; font-size:13.5px;">Mg + 2HCl &rarr; MgCl₂ + H₂&uarr;</span><br>` +
+        `Tỉ lệ mol: 1 mol Mg phản ứng với 2 mol HCl tạo 1 mol MgCl₂ và 1 mol H₂.`,
+        
+        `<strong>Bước 2: Tính số mol Mg đã tham gia phản ứng</strong><br>` +
+        `Ta có: n<sub>Mg</sub> = m / M = ${mgMass.toFixed(1)} / 24 = <strong>${nMg.toFixed(4)} mol</strong>.`,
+        
+        `<strong>Bước 3: Lập tỉ lệ số mol theo phương trình</strong><br>` +
+        `Theo phương trình phản ứng:<br>` +
+        `n<sub>MgCl₂</sub> = n<sub>Mg</sub> = <strong>${nMg.toFixed(4)} mol</strong>.<br>` +
+        `n<sub>H₂</sub> = n<sub>Mg</sub> = <strong>${nMg.toFixed(4)} mol</strong>.`,
+        
+        `<strong>Bước 4: Tính khối lượng muối MgCl₂ và thể tích khí H₂ sinh ra (đkc)</strong><br>` +
+        `Khối lượng muối:<br>` +
+        `m<sub>MgCl₂</sub> = n &times; M = ${nMg.toFixed(4)} &times; 95 = <strong>${mMgCl2.toFixed(2)} gam</strong>.<br>` +
+        `Thể tích khí Hydro sinh ra ở đkc mới (25°C, 1 bar):<br>` +
+        `V<sub>H₂</sub> = n &times; 24,79 = ${nH2.toFixed(4)} &times; 24,79 = <strong>${vH2.toFixed(2)} lít</strong>.`
+      ];
+    } else {
+      // 2Mg + O2 -> 2MgO
+      const nO2 = nMg / 2;
+      const nMgO = nMg;
+
+      const mMgO = nMgO * 40; // M = 24 + 16 = 40
+      const vO2 = nO2 * 24.79;
+
+      stepContent = [
+        `<strong>Bước 1: Viết và cân bằng phương trình phản ứng</strong><br>` +
+        `<span style="color:#F39C12; font-size:13.5px;">2Mg + O₂ <span style="font-size:11px;">&rarr; (t&deg;)</span> 2MgO</span><br>` +
+        `Tỉ lệ mol: 2 mol Mg phản ứng với 1 mol O₂ tạo ra 2 mol MgO.`,
+        
+        `<strong>Bước 2: Tính số mol Mg đã tham gia phản ứng</strong><br>` +
+        `Ta có: n<sub>Mg</sub> = m / M = ${mgMass.toFixed(1)} / 24 = <strong>${nMg.toFixed(4)} mol</strong>.`,
+        
+        `<strong>Bước 3: Lập tỉ lệ số mol phản ứng</strong><br>` +
+        `Theo hệ số tỉ lệ phương trình:<br>` +
+        `n<sub>O₂</sub> = n<sub>Mg</sub> / 2 = ${nMg.toFixed(4)} / 2 = <strong>${nO2.toFixed(4)} mol</strong>.<br>` +
+        `n<sub>MgO</sub> = n<sub>Mg</sub> = <strong>${nMg.toFixed(4)} mol</strong>.`,
+        
+        `<strong>Bước 4: Tính khối lượng chất MgO tạo thành và thể tích O₂ tham gia (đkc)</strong><br>` +
+        `Khối lượng oxit tạo thành:<br>` +
+        `m<sub>MgO</sub> = n &times; M = ${nMgO.toFixed(4)} &times; 40 = <strong>${mMgO.toFixed(2)} gam</strong>.<br>` +
+        `Thể tích khí Oxy đã phản ứng ở đkc mới (25°C, 1 bar):<br>` +
+        `V<sub>O₂</sub> = n &times; 24,79 = ${nO2.toFixed(4)} &times; 24,79 = <strong>${vO2.toFixed(2)} lít</strong>.`
+      ];
+    }
+
+    // Sequentially display steps with animation delay
+    activeStoichTimeout = [];
+    stepContent.forEach((stepHtml, index) => {
+      const stepDiv = document.createElement('div');
+      stepDiv.className = 'solve-step';
+      stepDiv.innerHTML = stepHtml;
+      solveArea.appendChild(stepDiv);
+
+      const tid = setTimeout(() => {
+        stepDiv.classList.add('show');
+      }, index * 800);
+      activeStoichTimeout.push(tid);
+    });
+  }
+</script>
+</body>
+</html>

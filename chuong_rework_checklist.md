@@ -9,6 +9,9 @@ Tài liệu này theo dõi tiến độ và đề xuất ý tưởng nâng cấp
 - [x] **Chương 4 — Phương trình hóa học** (`chuong-phuong-trinh-hoa-hoc-split.html`)
   * **Trang trái**: Cân bằng phương trình, bảo toàn nguyên tố, ba phản ứng cơ bản.
   * **Trang phải**: Mô phỏng 2D/3D liên kết, cốc thí nghiệm động (Neutralization, sủi bọt Zn, kết tủa trắng BaSO4), game cân bằng phương trình, quiz trắc nghiệm nhanh.
+- [x] **Chương 6 — Mol & Tính toán hóa học** (`chuong-mol-split.html`)
+  * **Trang trái**: Khái niệm mol, số Avogadro, khối lượng mol M, thể tích khí đkc mới (24.79 L/mol), tỉ khối khí, tính theo PTHH Mg+HCl.
+  * **Trang phải**: Đống hạt 1 mol, tam giác tương tác m/n/M, piston khí nén/giãn, cân tỉ khối bóng bay, máy giải toán PTHH từng bước.
 - [x] **Chương 1 — Cấu trúc nguyên tử** (`chuong-cau-truc-nguyen-tu.html`)
   * **Ý tưởng Trang trái**: Lịch sử nguyên tử, cấu tạo hạt (Proton, Neutron, Electron), lớp vỏ electron.
   * **Ý tưởng Trang phải**: Mô hình Rutherford/Bohr tương tác (click thêm hạt e, p, n để tự chế tạo nguyên tử), mô phỏng đám mây orbital dạng 3D, bảng phân bố electron theo phân lớp.
@@ -24,6 +27,9 @@ Tài liệu này theo dõi tiến độ và đề xuất ý tưởng nâng cấp
 - [ ] **Chương 6 — Phòng thí nghiệm** (`chuong-phong-thi-nghiem.html`)
   * **Ý tưởng Giao diện**: Tổng hợp dụng cụ thí nghiệm, quy tắc an toàn.
   * **Ý tưởng Trang phải**: Bàn dụng cụ ảo (kéo thả kẹp ống nghiệm, giá đỡ, đèn cồn để lắp ráp thành cụm thí nghiệm chưng cất hoặc nung nóng).
+- [x] **Chương 10 — Muối (Salts)** (`chuong-muoi-split.html`)
+  * **Trang trái**: Khái niệm muối, phân ly cation/anion, 4 tính chất hóa học đặc trưng, quy tắc tính tan, sơ đồ điều chế muối.
+  * **Trang phải**: Mô phỏng sự phân ly NaCl 2D, 4 phản ứng hóa học ảo của muối, bộ lập kế hoạch điều chế muối tương tác, bảng tính tan ống nghiệm, trắc nghiệm ôn tập 5 câu.
 
 ---
 

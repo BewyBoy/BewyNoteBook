@@ -133,6 +133,10 @@ Add the following CSS rules to your `<style>` tag to lock the viewport on deskto
 
 /* Desktop Scroll Snapping & Panel Locking (min-width: 921px) */
 @media (min-width: 921px) {
+  .hero {
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
   .scrolly-container {
     height: 100vh;
     overflow: hidden;
@@ -330,3 +334,88 @@ window.addEventListener('resize', relocateDemos);
 // Run once on load
 setTimeout(relocateDemos, 150);
 ```
+
+---
+
+## 5. UI & Visualizer Guidelines
+
+To maintain visual excellence, consistency, and high performance across all chapters, follow these UI design requirements:
+
+### A. Full-Screen Landing Pages (Hero Height)
+- On desktop devices (`@media (min-width: 921px)`), the `.hero` (Introduction) section must have `min-height: 100vh; box-sizing: border-box;`.
+- This ensures that the introduction occupies the full screen when landing on the page, successfully pushing Chapter 1 out of view until the user explicitly scrolls.
+
+### B. Chalkboard & 3D Canvas Wrappers
+- **Background Color**: Use a deep blackboard black (`#0b0f0a`) for the WebGL/Three.js or 2D canvas wrapper background.
+- **Borders**: Style canvas wrappers with a reflection-assisting thin gold or chalk-colored border (e.g., `#e2c07a` or `rgba(255, 255, 255, 0.1)`).
+- **Floating Labels**: 3D stage overlay text labels (`.stage-overlay`) must be fully transparent (`background: transparent; border: none; padding: 0;`), allowing text to float cleanly directly on the viewport without solid blocking backgrounds.
+
+### C. Three.js Slicing & Solid Capping (Filled Slices)
+- When utilizing local clipping planes to slice models (e.g., crystal lattices, cell structures), **do not leave sliced meshes hollow**.
+- Intersected components must appear solid. Place matching 2D capping geometries (`THREE.CircleGeometry` or similar) at clipping plane intersections.
+- Offset capping meshes slightly (`0.002`) along the plane normal towards the kept side to prevent z-fighting and self-clipping.
+
+### D. Typography & Handwritten Math Formatting
+- **No Raw LaTeX**: Do not use raw LaTeX math delimiters (`$...$`) or KaTeX/MathJax library imports inside the notebook panel.
+- **Responsive HTML/Unicode Math**: Format mathematical and chemical formulas using clean HTML tags (like `<sup>`, `<sub>`, `<i>`) and standard Unicode symbols (like `·`, `°C`, `³⁺`, `₂`, `₃`). This matches the handwritten sketchbook font styling seamlessly and loads instantly.
+
+### E. No Overview Panel for Hero Section
+- **Minimalist Landing State**: Do not create a `demo-0` overview panel or any initial widgets for the top `.hero` (Introduction) section.
+- **Empty Initial State**: The Hero section must use `data-demo="0"`, with no matching `#demo-0` container inside the right `.lab-panel`. This results in the right-side lab bench showing only the clean, empty chalkboard/blackboard background when the page initially loads, offering a premium minimalist layout before the student starts scrolling.
+
+---
+
+## 6. Adaptive Typography & Ruled Page Alignment
+
+To support high-density screens and large monitors, all scrollytelling pages must implement fluid font scaling that remains perfectly aligned with the notebook's ruled paper horizontal lines.
+
+### A. Fluid Variables in `:root`
+Define base variables in the root:
+```css
+:root {
+  --line-h:       30px;
+  --font-base:    15px;
+  --font-h2:      24px;
+  --font-h3:      16px;
+  --font-sub:     12px;
+  --ruled-top-offset: calc(var(--line-h) * 22 / 30);
+}
+```
+
+On screens wider than `920px`, redefine these variables dynamically using `clamp()` and viewport width (`vw`) units:
+```css
+@media (min-width: 921px) {
+  :root {
+    --line-h:       clamp(30px, 1.25vw + 18.5px, 42px);
+    --font-base:    clamp(15px, 0.6vw + 9.5px, 21px);
+    --font-h2:      clamp(24px, 1vw + 14.8px, 34px);
+    --font-h3:      clamp(16px, 0.7vw + 9.5px, 23px);
+    --font-sub:     clamp(12px, 0.5vw + 7.4px, 17px);
+  }
+}
+```
+
+### B. Proportional Ruled Lines & Margins
+All notebook lines and paddings must scale proportionally using `var(--line-h)` to maintain a perfect paper grid alignment:
+- **Ruled page background**:
+```css
+.ruled-page {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(90deg, transparent calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 73 / 30), transparent calc(var(--line-h) * 73 / 30)),
+    repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
+  background-attachment: local;
+  background-position: 0 0, 0 var(--ruled-top-offset);
+}
+```
+- **Paddings**:
+  - Hero section padding: `padding: calc(3 * var(--line-h)) calc(var(--line-h) * 40 / 30) calc(var(--line-h) * 40 / 30) calc(3.2 * var(--line-h));`
+  - Card section padding: `padding: calc(3 * var(--line-h)) calc(1.2 * var(--line-h)) calc(3 * var(--line-h)) calc(3.2 * var(--line-h));`
+- **Typography & Element Spacing**:
+  - `.card h2`: `font-size: var(--font-h2); line-height: var(--line-h); margin-bottom: var(--line-h);`
+  - `.card h3`: `font-size: var(--font-h3); line-height: var(--line-h); margin: calc(var(--line-h) / 2) 0 calc(var(--line-h) / 6);`
+  - `.card p`: `font-size: var(--font-base); line-height: var(--line-h); margin-bottom: calc(var(--line-h) / 2);`
+  - `.card ul`: `margin-left: 20px; margin-bottom: calc(var(--line-h) / 2);`
+  - `.card li`: `font-size: var(--font-base); line-height: var(--line-h);`
+
+
