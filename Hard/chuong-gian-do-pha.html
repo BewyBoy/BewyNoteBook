@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chương: Giản đồ pha Sắt - Cacbon (Fe-C)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Itim&family=Pacifico&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ══════════════════════════════════════
+       SPLIT NOTEBOOK & LAB BENCH SYSTEM
+       ══════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:        #FBF4E4;
+      --paper-dark:   #F2E7CE;
+      --ink:          #2A2520;
+      --ink-mid:      #4D4439;
+      --ink-light:    #8A7E6C;
+      --red-margin:   #C73C2E;
+      --blue-line:    rgba(111, 184, 209, 0.25);
+      --accent:       #D9633B;       /* Terracotta */
+      --accent-blue:  #1F6A52;       /* Jade green */
+      --highlight-y:  rgba(242, 181, 68, 0.40);
+      --highlight-g:  rgba(47, 143, 111, 0.25);
+      --line-h:       30px;
+      --font-base:    15px;
+      --font-h2:      24px;
+      --font-h3:      16px;
+      --font-sub:     12px;
+      --ruled-top-offset: calc(var(--line-h) * 22 / 30);
+    }
+
+    @media (min-width: 921px) {
+      :root {
+        --line-h:       clamp(30px, 1.25vw + 18.5px, 42px);
+        --font-base:    clamp(15px, 0.6vw + 9.5px, 21px);
+        --font-h2:      clamp(24px, 1vw + 14.8px, 34px);
+        --font-h3:      clamp(16px, 0.7vw + 9.5px, 23px);
+        --font-sub:     clamp(12px, 0.5vw + 7.4px, 17px);
+      }
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #3c483a;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #4f5e4c 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 80%, #293427 0%, transparent 55%),
+        repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+      color: var(--ink);
+      font-family: 'Itim', sans-serif;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    .scrolly-container {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Left Side - School Notebook */
+    .notebook-panel {
+      width: 50%;
+      position: relative;
+      background-color: var(--paper);
+      box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+      z-index: 5;
+    }
+
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(90deg, transparent calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 73 / 30), transparent calc(var(--line-h) * 73 / 30)),
+        repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
+      background-attachment: local;
+      background-position: 0 0, 0 var(--ruled-top-offset);
+    }
+
+    .hero {
+      padding: calc(3 * var(--line-h)) calc(var(--line-h) * 40 / 30) calc(var(--line-h) * 40 / 30) calc(3.2 * var(--line-h));
+      border-bottom: 2px solid rgba(42,37,32,0.12);
+      position: relative; overflow: hidden;
+      scroll-snap-align: start;
+    }
+    .hero::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #3c483a 0%, #3c483a 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+    .crumb { font-size: var(--font-sub); letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: var(--line-h); line-height: var(--line-h); }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+    .title { font-family: 'Pacifico', cursive; font-size: clamp(30px, 4vw, 55px); line-height: 60px; color: var(--ink); margin-bottom: 30px; font-weight: 700; }
+    .title-stroke { width: clamp(140px, 30vw, 300px); height: 3px; background: var(--accent); border-radius: 2px; margin-top: calc(-0.5 * var(--line-h)); margin-bottom: calc(0.4 * var(--line-h)); }
+    .subtitle { font-family: 'Itim', cursive; font-size: var(--font-sub); letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-blue); margin-bottom: var(--line-h); line-height: var(--line-h); }
+    .intro { max-width: 800px; font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); }
+
+    .card {
+      padding: calc(3 * var(--line-h)) calc(1.2 * var(--line-h)) calc(3 * var(--line-h)) calc(3.2 * var(--line-h));
+      border-top: 1px solid rgba(42,37,32,0.08);
+      position: relative; overflow: hidden;
+      min-height: 100vh;
+      box-sizing: border-box;
+      scroll-snap-align: start;
+      transition: background-color 0.3s;
+    }
+    .card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #3c483a 0%, #3c483a 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+
+    .card h2 {
+      font-size: var(--font-h2);
+      line-height: var(--line-h);
+      margin-bottom: var(--line-h);
+      font-weight: 600;
+      color: var(--accent-blue);
+    }
+    .card p {
+      font-size: var(--font-base);
+      line-height: var(--line-h);
+      margin-bottom: calc(var(--line-h) / 2);
+      color: var(--ink-mid);
+    }
+    .card ul {
+      margin-left: 20px;
+      margin-bottom: calc(var(--line-h) / 2);
+    }
+    .card li {
+      font-size: var(--font-base);
+      line-height: var(--line-h);
+      color: var(--ink-mid);
+    }
+
+    /* Right Side - Chalkboard Lab Bench */
+    .lab-panel {
+      width: 50%;
+      background: #111411;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(20, 26, 20, 0.6) 0%, #0c0f0c 100%),
+        repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.01) 40px, rgba(255,255,255,0.01) 41px);
+      position: fixed;
+      right: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1;
+      box-shadow: inset 5px 0 20px rgba(0,0,0,0.6);
+    }
+
+    .lab-sticky-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Desktop Snapping Rules */
+    @media (min-width: 921px) {
+      .hero {
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+      .scrolly-container {
+        height: 100vh;
+        overflow: hidden;
+      }
+      .notebook-panel {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scrollbar-width: none;
+      }
+      .notebook-panel::-webkit-scrollbar {
+        display: none;
+      }
+      .lab-panel {
+        position: relative;
+        right: auto;
+        top: auto;
+        height: 100vh;
+      }
+      .card > *:not(.mobile-demo-placeholder) {
+        opacity: 0.2;
+        transition: opacity 0.5s ease;
+      }
+      .card.active-section > *:not(.mobile-demo-placeholder) {
+        opacity: 1;
+      }
+      .hero > * {
+        opacity: 0.2;
+        transition: opacity 0.5s ease;
+      }
+      .hero.active-section > * {
+        opacity: 1;
+      }
+    }
+
+    /* Mobile Setup */
+    @media (max-width: 920px) {
+      .scrolly-container {
+        flex-direction: column;
+      }
+      .notebook-panel {
+        width: 100%;
+      }
+      .lab-panel {
+        display: none;
+      }
+      .mobile-demo-placeholder {
+        display: block;
+        width: 100%;
+        margin: 20px 0;
+      }
+      .demo-panel {
+        position: relative !important;
+        top: auto !important; bottom: auto !important; left: auto !important; right: auto !important;
+        opacity: 1 !important;
+        transform: none !important;
+        pointer-events: auto !important;
+        padding: 10px 0 !important;
+        margin-top: 15px;
+        height: auto !important;
+      }
+      .card {
+        min-height: auto;
+        padding-bottom: 30px;
+      }
+    }
+
+    /* ══════════════════════════════════════
+       DEMO SLOTS & VISUALIZER STYLING
+       ══════════════════════════════════════ */
+    .desk-demo-slot {
+      position: absolute;
+      top: 35px;
+      bottom: 35px;
+      left: 35px;
+      right: 35px;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .demo-panel {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      transform: scale(0.96) translateY(15px);
+      pointer-events: none;
+      transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .demo-panel.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    /* ══════════════════════════════════════
+       GLASSMETALLURGY CHALKBOARD STYLE
+       ══════════════════════════════════════ */
+    .dashboard-widget {
+      width: 100%;
+      height: 100%;
+      background: rgba(20, 26, 20, 0.8);
+      border: 2px solid rgba(226, 192, 122, 0.15); /* chalky-gold border */
+      border-radius: 12px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      padding: 18px;
+      box-sizing: border-box;
+      gap: 12px;
+      font-family: 'Inter', sans-serif;
+      color: #e2e8f0;
+    }
+
+    .widget-header {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #e2c07a; /* chalky-gold */
+      border-bottom: 1px solid rgba(226, 192, 122, 0.1);
+      padding-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .widget-body {
+      display: flex;
+      flex: 1;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .visual-left {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .visual-right {
+      flex: 0.8;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+      justify-content: center;
+      min-width: 160px;
+    }
+
+    .diagram-box {
+      width: 100%;
+      flex: 1;
+      background: rgba(10, 12, 10, 0.9);
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* SVG shapes styles */
+    .grid-line { stroke: rgba(255, 255, 255, 0.04); stroke-width: 1px; stroke-dasharray: 3,3; }
+    .grid-label { fill: #94a3b8; font-size: 10px; font-family: 'Fira Code', monospace; }
+    .phase-region { transition: fill-opacity 0.2s; cursor: crosshair; }
+    .phase-region:hover { fill-opacity: 0.22; }
+    .phase-region.active { fill-opacity: 0.28; }
+    .boundary-line { fill: none; stroke-width: 1.5px; }
+    .reticle-line { stroke: rgba(255,255,255,0.25); stroke-dasharray: 2,2; }
+    .reticle-center { fill: #fff; stroke: #3b82f6; stroke-width: 2px; }
+
+    /* Microscope View */
+    .microscope-container {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: #000;
+      box-shadow: 
+        0 0 0 8px #1e251e,
+        0 0 0 10px #3c483a,
+        inset 0 0 15px rgba(0,0,0,0.9);
+      overflow: hidden;
+    }
+    .microscope-container::after {
+      content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 60%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .microscope-canvas {
+      width: 100%; height: 100%; display: block; border-radius: 50%;
+    }
+
+    /* Sliders Card */
+    .controls-box {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .slider-row-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+    .slider-row-val {
+      font-family: 'Fira Code', monospace; color: #e2c07a; font-weight: 600;
+    }
+    .slider-input {
+      -webkit-appearance: none; width: 100%; height: 4px; background: #334155; border-radius: 2px; outline: none;
+    }
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #3b82f6; cursor: pointer;
+    }
+
+    /* Lever Rule */
+    .lever-box {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 11px;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .lever-bar {
+      height: 10px; background: #1e293b; border-radius: 5px; overflow: hidden; display: flex; margin: 6px 0;
+    }
+    .lever-bar-left { background: #3b82f6; height: 100%; }
+    .lever-bar-right { background: #ec4899; height: 100%; }
+    
+    .data-readout {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .readout-row {
+      display: flex;
+      justify-content: space-between;
+    }
+    .readout-val {
+      font-weight: 600; color: #e2c07a;
+    }
+
+    /* Lattice Wireframe View (Demo 2 Special) */
+    .lattice-canvas {
+      width: 100%; height: 100%; display: block;
+    }
+
+    /* Highlight Point Tooltips in SVG */
+    .diagram-tooltip {
+      position: absolute;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid #3b82f6;
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: #fff;
+      font-size: 10px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 10;
+      max-width: 160px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+
+<div class="scrolly-container">
+  
+  <!-- LEFT SIDE: NOTEBOOK COLUMN -->
+  <div class="notebook-panel">
+    
+    <!-- Hero / Header Section -->
+    <header class="hero ruled-page" data-demo="0">
+      <div class="crumb">
+        <a href="../Learning Resources Hub v4.html">Hóa học</a> › Vật liệu học
+      </div>
+      <h1 class="title">Giản đồ pha Fe-C</h1>
+      <div class="title-stroke"></div>
+      <p class="subtitle">Bản chép tay khoa học</p>
+      <p class="intro">
+        Chào mừng bạn đến với bài tự học về <b>Giản đồ trạng thái Sắt - Cacbon (Fe-C)</b>. 
+        Đây là nền tảng cốt lõi của môn học Vật liệu học, giúp xác định các tổ chức pha rắn 
+        và cơ lý tính của thép và gang ở các hàm lượng cacbon và nhiệt độ khác nhau.
+      </p>
+    </header>
+
+    <main class="layout">
+      
+      <!-- SECTION 1 -->
+      <section id="sec-notebook-1" class="card ruled-page" data-demo="1">
+        <h2>1. Khảo sát tự do hệ hợp kim Fe-C</h2>
+        <p>
+          Hợp kim sắt-cacbon được phân loại dựa vào hàm lượng cacbon:
+        </p>
+        <ul>
+          <li><b>Thép (Steel)</b>: Cacbon &le; 2.14%. Thép có tính dẻo, dai, dễ rèn và gia công áp lực.</li>
+          <li><b>Gang (Cast Iron)</b>: Cacbon &gt; 2.14% (thường đến 6.67%). Gang trắng rất cứng, giòn, khó gia công, nhưng có tính đúc cực tốt.</li>
+        </ul>
+        <p>
+          Đường lỏng (<i>Liquidus</i>) kết nối các điểm nhiệt độ bắt đầu kết tinh. Đường rắn (<i>Solidus</i>) kết nối các điểm kết thúc kết tinh hoàn toàn.
+        </p>
+        <p>
+          <i>Sử dụng bảng mô phỏng bên phải để tự do điều chỉnh thanh trượt Cacbon và Nhiệt độ nhằm tìm hiểu tổ chức tế vi tương ứng!</i>
+        </p>
+        
+        <div id="mob-demo-1" class="mobile-demo-placeholder"></div>
+      </section>
+
+      <!-- SECTION 2 -->
+      <section id="sec-notebook-2" class="card ruled-page" data-demo="2">
+        <h2>2. Austenit (γ) & Cấu trúc FCC</h2>
+        <p>
+          Khi nung thép cacbon lên trên nhiệt độ giới hạn <i>GS</i> (đường <i>A₃</i>), mạng tinh thể sắt chuyển đổi từ Lập phương tâm khối sang <b>Lập phương tâm mặt (FCC)</b>.
+        </p>
+        <p>
+          Pha rắn này được gọi là <b>Austenit (γ)</b>. Austenit có khả năng hòa tan cacbon rất tốt (lên tới 2.14% ở 1147°C) do các lỗ hổng xen kẽ trong cấu trúc FCC lớn hơn. Austenit dẻo, dai, không có từ tính và là cấu trúc nền tảng cho rèn dập nóng.
+        </p>
+        <p>
+          <i>Ở chế độ này, trạng thái được cố định tại 0.8% C, 950°C. Kính hiển vi hiển thị hạt Austenit đồng nhất, và mô hình 3D xoay biểu diễn ô cơ sở mạng tinh thể FCC (các nguyên tử Sắt màu xanh ở đỉnh/mặt, nguyên tử Cacbon màu cam nhỏ xen kẽ ở tâm).</i>
+        </p>
+        
+        <div id="mob-demo-2" class="mobile-demo-placeholder"></div>
+      </section>
+
+      <!-- SECTION 3 -->
+      <section id="sec-notebook-3" class="card ruled-page" data-demo="3">
+        <h2>3. Phản ứng Cùng Tích & Pêrlit (P)</h2>
+        <p>
+          Tại điểm <b>S (0.76% C, 727°C)</b>, Austenit nguội chậm xảy ra chuyển biến cùng tích:
+        </p>
+        <p style="text-align: center; font-weight: bold;">
+          Austenit (γ) &rarr; Ferit (α) + Xêmentit (Fe₃C)
+        </p>
+        <p>
+          Hỗn hợp hai pha rắn xếp lớp xen kẽ nhau (dạng tấm mỏng) được gọi là <b>Pêrlit (P)</b>. Ferit dẻo dai kết hợp với Xêmentit siêu cứng tạo ra một cấu trúc bền vững lý tưởng cho thép xây dựng.
+        </p>
+        <p>
+          <i>Xem mô phỏng: Hệ thống tự thiết lập về điểm 0.76% C, 700°C. Kính hiển vi hiển thị 100% hạt Pêrlit tấm (sọc vằn song song phân bố ngẫu nhiên trong mỗi hạt tinh thể).</i>
+        </p>
+        
+        <div id="mob-demo-3" class="mobile-demo-placeholder"></div>
+      </section>
+
+      <!-- SECTION 4 -->
+      <section id="sec-notebook-4" class="card ruled-page" data-demo="4">
+        <h2>4. Phản ứng Cùng Tinh & Gang Trắng</h2>
+        <p>
+          Tại điểm <b>C (4.3% C, 1147°C)</b>, pha lỏng xảy ra chuyển biến cùng tinh:
+        </p>
+        <p style="text-align: center; font-weight: bold;">
+          Lỏng (L) &rarr; Austenit (γ) + Xêmentit (Fe₃C)
+        </p>
+        <p>
+          Hỗn hợp cùng tinh này gọi là <b>Lêđêburit</b>. Ở nhiệt độ phòng, Austenit chuyển hóa thành Pêrlit, làm cho cấu trúc Lêđêburit nguội lạnh chứa hạt Pêrlit tròn nhỏ trên nền Xêmentit trắng giòn. Gang trắng chứa nhiều Lêđêburit nên cực kỳ cứng, chống mài mòn tốt nhưng không thể gia công cơ học.
+        </p>
+        <p>
+          <i>Mô phỏng tự động chuyển sang 4.3% C, 1100°C (Gang trắng cùng tinh). Bạn có thể quan sát cấu trúc hạt Lêđêburit chấm lốm đốm đặc trưng trên nền trắng xêmentit trong kính hiển vi.</i>
+        </p>
+        
+        <div id="mob-demo-4" class="mobile-demo-placeholder"></div>
+      </section>
+
+      <!-- SECTION 5 -->
+      <section id="sec-notebook-5" class="card ruled-page" data-demo="5">
+        <h2>5. Quy tắc Đòn bẩy luyện kim</h2>
+        <p>
+          Trong vùng hai pha, <b>Quy tắc đòn bẩy</b> được dùng để tính tỷ lệ khối lượng các pha rắn cân bằng.
+        </p>
+        <p>
+          Xét đường giằng nằm ngang vẽ qua điểm trạng thái ở nhiệt độ khảo sát. Đoạn thẳng kết nối từ điểm đó tới biên bên trái biểu thị cho tỷ lệ pha bên phải, và ngược lại.
+        </p>
+        <p>
+          <i>Trong phần này, nhiệt độ được khóa cố định tại 600°C. Hãy tự do kéo thanh trượt hàm lượng Cacbon ở bảng bên phải để quan sát sự thay đổi tức thời của phần trăm pha Ferit (màu xanh) và Xêmentit (màu hồng) trên thanh biểu đồ đòn bẩy!</i>
+        </p>
+        
+        <div id="mob-demo-5" class="mobile-demo-placeholder"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- RIGHT SIDE: ELEGANT LAB BENCH -->
+  <div class="lab-panel">
+    <div class="lab-sticky-wrapper">
+      
+      <!-- DESKTOP DEMO SLOTS -->
+      <div id="desk-demo-1" class="desk-demo-slot">
+        <div id="demo-1" class="demo-panel">
+          <!-- Interactive Widget 1 -->
+          <div class="dashboard-widget">
+            <div class="widget-header">
+              <span>Khảo Sát Tự Do</span>
+              <span id="reg-readout-1" style="color: #60a5fa;">Liquid (L)</span>
+            </div>
+            <div class="widget-body">
+              <div class="visual-left">
+                <div class="diagram-box" id="svg-box-1">
+                  <svg id="svg-diag-1" viewBox="0 0 400 280" preserveAspectRatio="none"></svg>
+                  <div id="tooltip-1" class="diagram-tooltip"></div>
+                </div>
+              </div>
+              <div class="visual-right">
+                <div class="microscope-container">
+                  <canvas id="micro-canvas-1" class="microscope-canvas" width="150" height="150"></canvas>
+                </div>
+                <div class="controls-box">
+                  <div class="slider-row">
+                    <div class="slider-row-header">
+                      <span>Cacbon</span>
+                      <span class="slider-row-val" id="slide-c-val-1">0.76 %</span>
+                    </div>
+                    <input type="range" class="slider-input" id="slide-c-1" min="0" max="6.67" step="0.005" value="0.76" />
+                  </div>
+                  <div class="slider-row">
+                    <div class="slider-row-header">
+                      <span>Nhiệt độ</span>
+                      <span class="slider-row-val" id="slide-t-val-1">727 °C</span>
+                    </div>
+                    <input type="range" class="slider-input" id="slide-t-1" min="0" max="1600" step="2" value="727" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="desk-demo-2" class="desk-demo-slot">
+        <div id="demo-2" class="demo-panel">
+          <!-- Interactive Widget 2 (Austenite / Lattice) -->
+          <div class="dashboard-widget">
+            <div class="widget-header">
+              <span>Austenit (γ) & Mạng FCC</span>
+              <span style="color:#0ea5e9;">950°C | 0.8% C</span>
+            </div>
+            <div class="widget-body">
+              <div class="visual-left">
+                <div class="diagram-box" id="svg-box-2">
+                  <svg id="svg-diag-2" viewBox="0 0 400 280" preserveAspectRatio="none"></svg>
+                </div>
+              </div>
+              <div class="visual-right">
+                <!-- Lattice Canvas (Unit cell simulation) -->
+                <div class="microscope-container">
+                  <canvas id="lattice-canvas-2" class="lattice-canvas" width="150" height="150"></canvas>
+                </div>
+                <div class="data-readout">
+                  <div class="readout-row"><span>Cấu trúc:</span><span class="readout-val">Lập phương tâm mặt</span></div>
+                  <div class="readout-row"><span>Tính từ:</span><span class="readout-val">Không từ tính</span></div>
+                  <div class="readout-row"><span>Độ dẻo:</span><span class="readout-val" style="color:#10b981;">Cực cao</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="desk-demo-3" class="desk-demo-slot">
+        <div id="demo-3" class="demo-panel">
+          <!-- Interactive Widget 3 (Pearlite Eutectoid) -->
+          <div class="dashboard-widget">
+            <div class="widget-header">
+              <span>Phản ứng Cùng Tích</span>
+              <span style="color:#a855f7;">700°C | 0.76% C</span>
+            </div>
+            <div class="widget-body">
+              <div class="visual-left">
+                <div class="diagram-box" id="svg-box-3">
+                  <svg id="svg-diag-3" viewBox="0 0 400 280" preserveAspectRatio="none"></svg>
+                </div>
+              </div>
+              <div class="visual-right">
+                <div class="microscope-container">
+                  <canvas id="micro-canvas-3" class="microscope-canvas" width="150" height="150"></canvas>
+                </div>
+                <div class="data-readout">
+                  <div class="readout-row"><span>Tổ chức:</span><span class="readout-val" style="color:#f472b6;">Pêrlit (P) 100%</span></div>
+                  <div class="readout-row"><span>Đặc tính:</span><span class="readout-val">Độ bền cao, dẻo tốt</span></div>
+                  <div class="readout-row"><span>Dạng tế vi:</span><span class="readout-val">Tấm xếp lớp (α+Fe₃C)</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="desk-demo-4" class="desk-demo-slot">
+        <div id="demo-4" class="demo-panel">
+          <!-- Interactive Widget 4 (Ledeburite Eutectic) -->
+          <div class="dashboard-widget">
+            <div class="widget-header">
+              <span>Gang Trắng Cùng Tinh</span>
+              <span style="color:#ec4899;">1100°C | 4.3% C</span>
+            </div>
+            <div class="widget-body">
+              <div class="visual-left">
+                <div class="diagram-box" id="svg-box-4">
+                  <svg id="svg-diag-4" viewBox="0 0 400 280" preserveAspectRatio="none"></svg>
+                </div>
+              </div>
+              <div class="visual-right">
+                <div class="microscope-container">
+                  <canvas id="micro-canvas-4" class="microscope-canvas" width="150" height="150"></canvas>
+                </div>
+                <div class="data-readout">
+                  <div class="readout-row"><span>Tổ chức:</span><span class="readout-val" style="color:#f472b6;">Lêđêburit (Lê)</span></div>
+                  <div class="readout-row"><span>Tính chất:</span><span class="readout-val" style="color:#ef4444;">Siêu cứng, giòn</span></div>
+                  <div class="readout-row"><span>Gia công:</span><span class="readout-val">Chỉ đúc được</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="desk-demo-5" class="desk-demo-slot">
+        <div id="demo-5" class="demo-panel">
+          <!-- Interactive Widget 5 (Lever Rule) -->
+          <div class="dashboard-widget">
+            <div class="widget-header">
+              <span>Đòn Bẩy Cân Bằng Pha (600°C)</span>
+              <span id="reg-readout-5" style="color: #60a5fa;">α + Fe₃C</span>
+            </div>
+            <div class="widget-body">
+              <div class="visual-left">
+                <div class="diagram-box" id="svg-box-5">
+                  <svg id="svg-diag-5" viewBox="0 0 400 280" preserveAspectRatio="none"></svg>
+                </div>
+                <div class="lever-box">
+                  <div style="display:flex; justify-content:space-between; font-weight:600;">
+                    <span>Tỷ lệ pha tương đối</span>
+                    <span id="lever-pct-val-5">--% / --%</span>
+                  </div>
+                  <div class="lever-bar">
+                    <div id="lever-bar-l-5" class="lever-bar-left" style="width: 50%;"></div>
+                    <div id="lever-bar-r-5" class="lever-bar-right" style="width: 50%;"></div>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; font-size:10px; color:#94a3b8; font-family:'Fira Code';">
+                    <span id="lever-name-l-5">Ferit (α): 0.008%C</span>
+                    <span id="lever-name-r-5">Cementite (Fe₃C): 6.67%C</span>
+                  </div>
+                </div>
+              </div>
+              <div class="visual-right">
+                <div class="microscope-container">
+                  <canvas id="micro-canvas-5" class="microscope-canvas" width="150" height="150"></canvas>
+                </div>
+                <div class="controls-box" style="margin-top: 5px;">
+                  <div class="slider-row">
+                    <div class="slider-row-header">
+                      <span>Cacbon (%C)</span>
+                      <span class="slider-row-val" id="slide-c-val-5">1.20 %</span>
+                    </div>
+                    <input type="range" class="slider-input" id="slide-c-5" min="0.008" max="6.67" step="0.005" value="1.20" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT SECTION CONTROL & PLOTTING
+     ══════════════════════════════════════ -->
+<script>
+  // 1. DATA MATHEMATICAL MODELS
+  const boundaries = {
+    liqAB: (c) => 1538 - 86 * c,
+    liqBC: (c) => -14.94 * c * c - 20.14 * c + 1508.88,
+    liqCD: (c) => 1147 + 43.46 * (c - 4.3),
+    solidusIE: (c) => 1495 - 176.65 * (c - 0.17),
+    solvusGS: (c) => 100 * c * c - 319 * c + 912,
+    solvusES: (c) => -50 * c * c + 449 * c + 414.5,
+    solvusGP: (c) => 912 - 8409 * c,
+    solvusPQ: (c) => 51948 * (c - 0.008),
+
+    c_GS: (t) => (319 - Math.sqrt(319*319 - 400*(912 - t))) / 200,
+    c_ES: (t) => (449 - Math.sqrt(449*449 - 200*(t - 414.5))) / 100,
+    c_GP: (t) => (912 - t) / 8409,
+    c_PQ: (t) => 0.008 + t / 51948,
+    c_liqBC: (t) => (-20.14 + Math.sqrt(20.14*20.14 - 59.76*(t - 1508.88))) / 29.88,
+    c_liqCD: (t) => 4.3 + (t - 1147) / 43.46,
+    c_solIE: (t) => 0.17 + (1495 - t) / 176.65
+  };
+
+  const regions = [
+    {
+      id: 'liquid',
+      name: 'Liquid (L)',
+      points: [
+        {c: 0, t: 1600}, {c: 0, t: 1538}, {c: 0.5, t: 1495},
+        {c: 4.3, t: 1147, type: 'curveBC'}, {c: 6.67, t: 1250}, {c: 6.67, t: 1600}
+      ],
+      color: 'rgba(239, 68, 68, 0.05)', strokeColor: 'rgba(239, 68, 68, 0.25)'
+    },
+    {
+      id: 'delta',
+      name: 'Delta Ferrite (δ)',
+      points: [{c: 0, t: 1394}, {c: 0, t: 1538}, {c: 0.09, t: 1495}, {c: 0.1, t: 1394}],
+      color: 'rgba(245, 158, 11, 0.06)', strokeColor: 'rgba(245, 158, 11, 0.25)'
+    },
+    {
+      id: 'delta_liquid',
+      name: 'δ + Liquid',
+      points: [{c: 0.09, t: 1495}, {c: 0, t: 1538}, {c: 0.5, t: 1495}, {c: 0.17, t: 1495}, {c: 0.09, t: 1495}],
+      color: 'rgba(217, 119, 6, 0.05)', strokeColor: 'rgba(217, 119, 6, 0.2)'
+    },
+    {
+      id: 'delta_gamma',
+      name: 'δ + Austenite (γ)',
+      points: [{c: 0, t: 1394}, {c: 0.1, t: 1394}, {c: 0.17, t: 1495}, {c: 0.09, t: 1495}],
+      color: 'rgba(16, 185, 129, 0.05)', strokeColor: 'rgba(16, 185, 129, 0.2)'
+    },
+    {
+      id: 'gamma_liquid',
+      name: 'Austenite (γ) + Liquid',
+      points: [
+        {c: 0.17, t: 1495}, {c: 0.5, t: 1495},
+        {c: 4.3, t: 1147, type: 'curveBC'}, {c: 2.14, t: 1147}, {c: 0.17, t: 1495}
+      ],
+      color: 'rgba(139, 92, 246, 0.05)', strokeColor: 'rgba(139, 92, 246, 0.2)'
+    },
+    {
+      id: 'gamma',
+      name: 'Austenite (γ)',
+      points: [
+        {c: 0, t: 912}, {c: 0, t: 1394}, {c: 0.1, t: 1394}, {c: 0.17, t: 1495},
+        {c: 2.14, t: 1147}, {c: 0.76, t: 727, type: 'curveES'}, {c: 0, t: 912, type: 'curveGS'}
+      ],
+      color: 'rgba(59, 130, 246, 0.07)', strokeColor: 'rgba(59, 130, 246, 0.25)'
+    },
+    {
+      id: 'liquid_cementite',
+      name: 'Liquid + Cementite',
+      points: [{c: 4.3, t: 1147}, {c: 6.67, t: 1250}, {c: 6.67, t: 1147}, {c: 4.3, t: 1147}],
+      color: 'rgba(236, 72, 153, 0.05)', strokeColor: 'rgba(236, 72, 153, 0.2)'
+    },
+    {
+      id: 'gamma_cementite',
+      name: 'Austenite (γ) + Cementite (Fe₃C)',
+      points: [
+        {c: 0.76, t: 727}, {c: 2.14, t: 1147, type: 'curveES'},
+        {c: 6.67, t: 1147}, {c: 6.67, t: 727}, {c: 0.76, t: 727}
+      ],
+      color: 'rgba(14, 165, 233, 0.05)', strokeColor: 'rgba(14, 165, 233, 0.2)'
+    },
+    {
+      id: 'alpha_gamma',
+      name: 'Ferrite (α) + Austenite (γ)',
+      points: [{c: 0, t: 912}, {c: 0.76, t: 727, type: 'curveGS'}, {c: 0.022, t: 727}, {c: 0, t: 912}],
+      color: 'rgba(20, 184, 166, 0.05)', strokeColor: 'rgba(20, 184, 166, 0.2)'
+    },
+    {
+      id: 'alpha',
+      name: 'Ferrite (α)',
+      points: [{c: 0, t: 0}, {c: 0, t: 912}, {c: 0.022, t: 727}, {c: 0.008, t: 0}],
+      color: 'rgba(101, 163, 13, 0.08)', strokeColor: 'rgba(101, 163, 13, 0.25)'
+    },
+    {
+      id: 'alpha_cementite',
+      name: 'Ferrite (α) + Cementite (Fe₃C)',
+      points: [{c: 0.008, t: 0}, {c: 0.022, t: 727}, {c: 6.67, t: 727}, {c: 6.67, t: 0}],
+      color: 'rgba(100, 116, 139, 0.08)', strokeColor: 'rgba(100, 116, 139, 0.25)'
+    }
+  ];
+
+  const specPoints = [
+    { id: 'A', c: 0,     t: 1538, name: 'A: Fe Nóng chảy' },
+    { id: 'C', c: 4.3,   t: 1147, name: 'C: Điểm Cùng tinh' },
+    { id: 'E', c: 2.14,  t: 1147, name: 'E: Giới hạn Austenit' },
+    { id: 'G', c: 0,     t: 912,  name: 'G: α ↔ γ' },
+    { id: 'S', c: 0.76,  t: 727,  name: 'S: Điểm Cùng tích' }
+  ];
+
+  let sampledRegions = [];
+  const svgPadding = { left: 35, right: 15, top: 15, bottom: 25 };
+  const svgW = 400;
+  const svgH = 280;
+  const graphW = svgW - svgPadding.left - svgPadding.right;
+  const graphH = svgH - svgPadding.top - svgPadding.bottom;
+
+  // Pre-sample curves
+  function getSampledPoints(points) {
+    let sampled = [];
+    if (points.length === 0) return sampled;
+    sampled.push({c: points[0].c, t: points[0].t});
+    for (let i = 1; i < points.length; i++) {
+      let p = points[i];
+      let prev = points[i-1];
+      if (p.type === 'curveBC') {
+        let steps = 10;
+        for (let s = 1; s <= steps; s++) {
+          let cc = prev.c + (p.c - prev.c) * (s / steps);
+          sampled.push({c: cc, t: boundaries.liqBC(cc)});
+        }
+      } else if (p.type === 'curveGS') {
+        let steps = 10;
+        for (let s = 1; s <= steps; s++) {
+          let cc = prev.c + (p.c - prev.c) * (s / steps);
+          sampled.push({c: cc, t: boundaries.solvusGS(cc)});
+        }
+      } else if (p.type === 'curveES') {
+        let steps = 10;
+        for (let s = 1; s <= steps; s++) {
+          let cc = prev.c + (p.c - prev.c) * (s / steps);
+          sampled.push({c: cc, t: boundaries.solvusES(cc)});
+        }
+      } else {
+        sampled.push({c: p.c, t: p.t});
+      }
+    }
+    return sampled;
+  }
+
+  function initSampledRegions() {
+    sampledRegions = regions.map(r => ({
+      ...r, poly: getSampledPoints(r.points)
+    }));
+  }
+
+  function pointInPolygon(point, vs) {
+    let x = point[0], y = point[1];
+    let inside = false;
+    for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+      let xi = vs[i][0], yi = vs[i][1];
+      let xj = vs[j][0], yj = vs[j][1];
+      let intersect = ((yi > y) != (yj > y))
+          && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+    }
+    return inside;
+  }
+
+  function findActiveRegion(c, t) {
+    for (let r of sampledRegions) {
+      if (pointInPolygon([c, t], r.poly.map(p => [p.c, p.t]))) {
+        return r;
+      }
+    }
+    return null;
+  }
+
+  // Helper coordinate mapping
+  function cToX(c, cMax) {
+    return svgPadding.left + (c / cMax) * graphW;
+  }
+  function tToY(t) {
+    return svgPadding.top + (1 - t / 1600) * graphH;
+  }
+  function xToC(x, cMax) {
+    let val = ((x - svgPadding.left) / graphW) * cMax;
+    return Math.max(0, Math.min(cMax, val));
+  }
+  function yToT(y) {
+    let val = 1600 - ((y - svgPadding.top) / graphH) * 1600;
+    return Math.max(0, Math.min(1600, val));
+  }
+
+  // Generate SVG path string
+  function generatePath(points, cMax) {
+    if (points.length === 0) return '';
+    let d = `M ${cToX(points[0].c, cMax)} ${tToY(points[0].t)}`;
+    for (let i = 1; i < points.length; i++) {
+      let p = points[i];
+      let prev = points[i-1];
+      if (p.type === 'curveBC') {
+        let steps = 10;
+        for (let s = 1; s <= steps; s++) {
+          let cc = prev.c + (p.c - prev.c) * (s / steps);
+          d += ` L ${cToX(cc, cMax)} ${tToY(boundaries.liqBC(cc))}`;
+        }
+      } else if (p.type === 'curveGS') {
+        let steps = 10;
+        for (let s = 1; s <= steps; s++) {
+          let cc = prev.c + (p.c - prev.c) * (s / steps);
+          d += ` L ${cToX(cc, cMax)} ${tToY(boundaries.solvusGS(cc))}`;
+        }
+      } else if (p.type === 'curveES') {
+        let steps = 10;
+        for (let s = 1; s <= steps; s++) {
+          let cc = prev.c + (p.c - prev.c) * (s / steps);
+          d += ` L ${cToX(cc, cMax)} ${tToY(boundaries.solvusES(cc))}`;
+        }
+      } else {
+        d += ` L ${cToX(p.c, cMax)} ${tToY(p.t)}`;
+      }
+    }
+    d += ' Z';
+    return d;
+  }
+
+  // 2. VORONOI SEED DATA GENERATOR FOR MICROSTRUCTURES
+  let voronoiGrains = [];
+  function initVoronoiCells() {
+    const count = 15;
+    let centers = [];
+    for (let i = 0; i < count; i++) {
+      let a = Math.random() * Math.PI * 2;
+      let r = Math.random() * 55;
+      let x = 75 + r * Math.cos(a);
+      let y = 75 + r * Math.sin(a);
+      
+      let ok = true;
+      for (let c of centers) {
+        if (Math.hypot(c.x - x, c.y - y) < 22) { ok = false; break; }
+      }
+      if (!ok) { i--; continue; }
+      centers.push({ x, y, angle: Math.random() * Math.PI, threshold: Math.random() });
+    }
+
+    const box = [{x: 0, y: 0}, {x: 150, y: 0}, {x: 150, y: 150}, {x: 0, y: 150}];
+    voronoiGrains = [];
+    
+    for (let i = 0; i < centers.length; i++) {
+      let poly = [...box];
+      let p_i = centers[i];
+      for (let j = 0; j < centers.length; j++) {
+        if (i === j) continue;
+        let p_j = centers[j];
+        let a = p_i.x - p_j.x;
+        let b = p_i.y - p_j.y;
+        let mx = (p_i.x + p_j.x) / 2;
+        let my = (p_i.y + p_j.y) / 2;
+        let c = -(a * mx + b * my);
+
+        let clipped = [];
+        for (let k = 0; k < poly.length; k++) {
+          let p1 = poly[k];
+          let p2 = poly[(k + 1) % poly.length];
+          let d1 = a * p1.x + b * p1.y + c;
+          let d2 = a * p2.x + b * p2.y + c;
+          if (d1 >= 0) clipped.push(p1);
+          if ((d1 >= 0 && d2 < 0) || (d1 < 0 && d2 >= 0)) {
+            let t = d1 / (d1 - d2);
+            clipped.push({ x: p1.x + t * (p2.x - p1.x), y: p1.y + t * (p2.y - p1.y) });
+          }
+        }
+        poly = clipped;
+      }
+      voronoiGrains.push({ center: p_i, polygon: poly });
+    }
+  }
+
+  // 3. MAIN CONTROLLER CLASS FOR DEMO WIDGETS
+  class FeCVisualizer {
+    constructor(id, initialC, initialT, options = {}) {
+      this.id = id;
+      this.c = initialC;
+      this.t = initialT;
+      this.options = {
+        cMax: options.cMax || 6.67,
+        lockTemp: options.lockTemp || null,
+        freePlay: options.freePlay !== undefined ? options.freePlay : false,
+        showSliders: options.showSliders || false,
+        showLever: options.showLever || false,
+        showLattice: options.showLattice || false
+      };
+
+      this.svg = document.getElementById(`svg-diag-${id}`);
+      this.canvas = document.getElementById(`micro-canvas-${id}`) || document.getElementById(`lattice-canvas-${id}`);
+      this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+
+      this.sliderC = document.getElementById(`slide-c-${id}`);
+      this.sliderT = document.getElementById(`slide-t-${id}`);
+      this.valC = document.getElementById(`slide-c-val-${id}`);
+      this.valT = document.getElementById(`slide-t-val-${id}`);
+
+      this.init();
+    }
+
+    init() {
+      this.drawSVG();
+      this.updateReticle();
+      this.renderGraphics();
+
+      if (this.options.showSliders) {
+        if (this.sliderC) {
+          this.sliderC.addEventListener('input', () => {
+            this.c = parseFloat(this.sliderC.value);
+            if (this.valC) this.valC.innerText = `${this.c.toFixed(2)} %`;
+            this.updateReticle();
+            this.renderGraphics();
+            this.updateLabels();
+          });
+        }
+        if (this.sliderT && this.options.lockTemp === null) {
+          this.sliderT.addEventListener('input', () => {
+            this.t = parseFloat(this.sliderT.value);
+            if (this.valT) this.valT.innerText = `${this.t} °C`;
+            this.updateReticle();
+            this.renderGraphics();
+            this.updateLabels();
+          });
+        }
+      }
+
+      if (this.options.freePlay && this.svg) {
+        this.svg.addEventListener('mousedown', (e) => {
+          this.handleSVGInteraction(e);
+        });
+        this.svg.addEventListener('mousemove', (e) => {
+          if (e.buttons === 1) this.handleSVGInteraction(e);
+        });
+      }
+
+      this.updateLabels();
+    }
+
+    handleSVGInteraction(e) {
+      const rect = this.svg.getBoundingClientRect();
+      let x = ((e.clientX - rect.left) / rect.width) * svgW;
+      let y = ((e.clientY - rect.top) / rect.height) * svgH;
+
+      this.c = xToC(x, this.options.cMax);
+      if (this.options.lockTemp === null) {
+        this.t = yToT(y);
+      }
+
+      if (this.sliderC) this.sliderC.value = this.c;
+      if (this.sliderT && this.options.lockTemp === null) this.sliderT.value = this.t;
+
+      if (this.valC) this.valC.innerText = `${this.c.toFixed(2)} %`;
+      if (this.valT && this.options.lockTemp === null) this.valT.innerText = `${this.t} °C`;
+
+      this.updateReticle();
+      this.renderGraphics();
+      this.updateLabels();
+    }
+
+    drawSVG() {
+      if (!this.svg) return;
+      let html = '';
+      let cMax = this.options.cMax;
+
+      for (let t = 400; t <= 1600; t += 400) {
+        let y = tToY(t);
+        html += `<line class="grid-line" x1="${svgPadding.left}" y1="${y}" x2="${svgW - svgPadding.right}" y2="${y}"></line>`;
+        html += `<text class="grid-label" x="${svgPadding.left - 6}" y="${y + 3}" text-anchor="end">${t}</text>`;
+      }
+      
+      let cStep = cMax > 3 ? 2.0 : 0.5;
+      for (let c = cStep; c < cMax; c += cStep) {
+        let x = cToX(c, cMax);
+        html += `<line class="grid-line" x1="${x}" y1="${svgPadding.top}" x2="${x}" y2="${svgH - svgPadding.bottom}"></line>`;
+        html += `<text class="grid-label" x="${x}" y="${svgH - svgPadding.bottom + 12}" text-anchor="middle">${c}%</text>`;
+      }
+
+      regions.forEach(r => {
+        let path = generatePath(r.points, cMax);
+        if (path) {
+          html += `<path id="reg-${this.id}-${r.id}" class="phase-region" d="${path}" fill="${r.color}" stroke="${r.strokeColor}" stroke-width="1"></path>`;
+        }
+      });
+
+      if (2.14 < cMax) {
+        html += `<line class="boundary-line" stroke="#ef4444" stroke-dasharray="2,2" x1="${cToX(2.14, cMax)}" y1="${tToY(1147)}" x2="${cToX(Math.min(6.67, cMax), cMax)}" y2="${tToY(1147)}"></line>`;
+      }
+      html += `<line class="boundary-line" stroke="#a855f7" stroke-dasharray="2,2" x1="${cToX(0.022, cMax)}" y1="${tToY(727)}" x2="${cToX(Math.min(6.67, cMax), cMax)}" y2="${tToY(727)}"></line>`;
+
+      specPoints.forEach(pt => {
+        if (pt.c <= cMax) {
+          let x = cToX(pt.c, cMax);
+          let y = tToY(pt.t);
+          html += `<circle cx="${x}" cy="${y}" r="3" fill="#f8fafc" stroke="#3b82f6" stroke-width="1"></circle>`;
+        }
+      });
+
+      html += `
+        <g id="reticle-group-${this.id}">
+          <line id="ret-v-${this.id}" class="reticle-line" x1="0" y1="0" x2="0" y2="${svgH}"></line>
+          <line id="ret-h-${this.id}" class="reticle-line" x1="0" y1="0" x2="${svgW}" y2="0"></line>
+          <circle id="ret-c-${this.id}" class="reticle-center" r="4"></circle>
+        </g>`;
+
+      this.svg.innerHTML = html;
+    }
+
+    updateReticle() {
+      let cMax = this.options.cMax;
+      let x = cToX(this.c, cMax);
+      let y = tToY(this.t);
+
+      let lineV = document.getElementById(`ret-v-${this.id}`);
+      let lineH = document.getElementById(`ret-h-${this.id}`);
+      let circle = document.getElementById(`ret-c-${this.id}`);
+
+      if (lineV) { lineV.setAttribute('x1', x); lineV.setAttribute('x2', x); }
+      if (lineH) { lineH.setAttribute('y1', y); lineH.setAttribute('y2', y); }
+      if (circle) { circle.setAttribute('cx', x); circle.setAttribute('cy', y); }
+
+      const activeReg = findActiveRegion(this.c, this.t);
+      regions.forEach(r => {
+        let pathEl = document.getElementById(`reg-${this.id}-${r.id}`);
+        if (pathEl) {
+          if (activeReg && r.id === activeReg.id) {
+            pathEl.classList.add('active');
+          } else {
+            pathEl.classList.remove('active');
+          }
+        }
+      });
+    }
+
+    updateLabels() {
+      const activeReg = findActiveRegion(this.c, this.t);
+      const label = document.getElementById(`reg-readout-${this.id}`);
+      if (label && activeReg) {
+        label.innerText = activeReg.name;
+      }
+      
+      if (this.options.showLever && activeReg) {
+        let lev = this.calculateLever(this.c, this.t, activeReg.id);
+        const barL = document.getElementById(`lever-bar-l-${this.id}`);
+        const barR = document.getElementById(`lever-bar-r-${this.id}`);
+        const valL = document.getElementById(`lever-name-l-${this.id}`);
+        const valR = document.getElementById(`lever-name-r-${this.id}`);
+        const textPct = document.getElementById(`lever-pct-val-${this.id}`);
+
+        if (lev) {
+          document.getElementById(`lever-bar-l-${this.id}`).parentElement.style.display = 'flex';
+          barL.style.width = `${lev.pctL}%`;
+          barR.style.width = `${lev.pctR}%`;
+          valL.innerText = `${lev.nameL}: ${lev.pctL}% (${lev.cLeft}%C)`;
+          valR.innerText = `${lev.nameR}: ${lev.pctR}% (${lev.cRight}%C)`;
+          textPct.innerText = `${lev.pctL}% / ${lev.pctR}%`;
+        } else {
+          barL.style.width = `100%`;
+          barR.style.width = `0%`;
+          valL.innerText = `${activeReg.name}: 100%`;
+          valR.innerText = ``;
+          textPct.innerText = `100%`;
+        }
+      }
+    }
+
+    calculateLever(c, t, regionId) {
+      let cLeft = 0, cRight = 6.67;
+      let phaseLName = 'Ferit (α)', phaseRName = 'Xêmentit (Fe₃C)';
+      
+      switch(regionId) {
+        case 'alpha_gamma':
+          cLeft = boundaries.c_GP(t); cRight = boundaries.c_GS(t);
+          phaseLName = 'Ferit (α)'; phaseRName = 'Austenit (γ)';
+          break;
+        case 'gamma_cementite':
+          cLeft = boundaries.c_ES(t); cRight = 6.67;
+          phaseLName = 'Austenit (γ)'; phaseRName = 'Xêmentit (Fe₃C)';
+          break;
+        case 'gamma_liquid':
+          cLeft = boundaries.c_solIE(t); cRight = boundaries.c_liqBC(t);
+          phaseLName = 'Austenit (γ)'; phaseRName = 'Lỏng (L)';
+          break;
+        case 'liquid_cementite':
+          cLeft = boundaries.c_liqCD(t); cRight = 6.67;
+          phaseLName = 'Lỏng (L)'; phaseRName = 'Xêmentit (Fe₃C)';
+          break;
+        case 'delta_liquid':
+          cLeft = boundaries.c_solIE(t); cRight = boundaries.c_liqBC(t);
+          phaseLName = 'Ferit delta (δ)'; phaseRName = 'Lỏng (L)';
+          break;
+        case 'delta_gamma':
+          cLeft = boundaries.c_GP(t); cRight = boundaries.c_solIE(t);
+          phaseLName = 'Ferit delta (δ)'; phaseRName = 'Austenit (γ)';
+          break;
+        case 'alpha_cementite':
+          cLeft = boundaries.c_PQ(t); cRight = 6.67;
+          phaseLName = 'Ferit (α)'; phaseRName = 'Xêmentit (Fe₃C)';
+          break;
+        default:
+          return null;
+      }
+
+      let clampedC = Math.max(cLeft, Math.min(cRight, c));
+      let range = cRight - cLeft;
+      let wRight = range > 0 ? ((clampedC - cLeft) / range) * 100 : 100;
+      let wLeft = 100 - wRight;
+
+      return {
+        pctL: Math.round(wLeft), pctR: Math.round(wRight),
+        cLeft: Math.round(cLeft * 1000) / 1000, cRight: Math.round(cRight * 1000) / 1000,
+        nameL: phaseLName, nameR: phaseRName
+      };
+    }
+
+    renderGraphics() {
+      if (!this.ctx) return;
+      if (this.options.showLattice) {
+        this.renderLattice();
+      } else {
+        this.renderMicrostructure();
+      }
+    }
+
+    renderLattice() {
+      const ctx = this.ctx;
+      ctx.clearRect(0,0,150,150);
+
+      let angleY = Date.now() * 0.001;
+      let angleX = 0.35;
+
+      function project(x, y, z) {
+        let scale = 50;
+        let x1 = x * Math.cos(angleY) - z * Math.sin(angleY);
+        let z1 = x * Math.sin(angleY) + z * Math.cos(angleY);
+        let y2 = y * Math.cos(angleX) - z1 * Math.sin(angleX);
+        let z2 = y * Math.sin(angleX) + z1 * Math.cos(angleX);
+        return { x: 75 + x1 * scale, y: 75 + y2 * scale, z: z2 };
+      }
+
+      const corners = [
+        [-0.5,-0.5,-0.5], [0.5,-0.5,-0.5], [0.5,0.5,-0.5], [-0.5,0.5,-0.5],
+        [-0.5,-0.5,0.5],  [0.5,-0.5,0.5],  [0.5,0.5,0.5],  [-0.5,0.5,0.5]
+      ];
+
+      const edges = [
+        [0,1], [1,2], [2,3], [3,0],
+        [4,5], [5,6], [6,7], [7,4],
+        [0,4], [1,5], [2,6], [3,7]
+      ];
+
+      const faces = [
+        [0, 0, -0.5], [0, 0, 0.5],
+        [0, -0.5, 0], [0, 0.5, 0],
+        [-0.5, 0, 0], [0.5, 0, 0]
+      ];
+
+      const carbon = [0, 0, 0];
+
+      let pCorners = corners.map(c => project(c[0], c[1], c[2]));
+      let pFaces = faces.map(f => project(f[0], f[1], f[2]));
+      let pCarbon = project(carbon[0], carbon[1], carbon[2]);
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+      ctx.lineWidth = 1.5;
+      edges.forEach(e => {
+        let p1 = pCorners[e[0]];
+        let p2 = pCorners[e[1]];
+        ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+      });
+
+      let atoms = [];
+      pCorners.forEach(p => atoms.push({x: p.x, y: p.y, z: p.z, r: 8, fill: '#60a5fa', stroke: '#1d4ed8'}));
+      pFaces.forEach(p => atoms.push({x: p.x, y: p.y, z: p.z, r: 8, fill: '#93c5fd', stroke: '#1d4ed8'}));
+      atoms.push({x: pCarbon.x, y: pCarbon.y, z: pCarbon.z, r: 5, fill: '#f97316', stroke: '#c2410c'});
+
+      atoms.sort((a,b) => b.z - a.z);
+
+      atoms.forEach(a => {
+        let grad = ctx.createRadialGradient(a.x - a.r*0.3, a.y - a.r*0.3, 1, a.x, a.y, a.r);
+        grad.addColorStop(0, '#ffffff'); grad.addColorStop(0.3, a.fill); grad.addColorStop(1, a.stroke);
+        ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); ctx.fillStyle = grad; ctx.fill();
+      });
+    }
+
+    renderMicrostructure() {
+      const ctx = this.ctx;
+      ctx.save();
+      ctx.clearRect(0,0,150,150);
+      
+      ctx.beginPath();
+      ctx.arc(75, 75, 68, 0, Math.PI * 2);
+      ctx.clip();
+
+      const activeReg = findActiveRegion(this.c, this.t);
+      if (!activeReg) {
+        ctx.fillStyle = '#000'; ctx.fill(); ctx.restore(); return;
+      }
+
+      const id = activeReg.id;
+
+      if (id === 'liquid') {
+        this.drawLiquid(ctx, 100);
+      } else if (id === 'gamma_liquid') {
+        let lev = this.calculateLever(this.c, this.t, id);
+        let pctSolid = lev ? lev.pctL : 50;
+        this.drawLiquid(ctx, 100 - pctSolid);
+        this.drawDendrites(ctx, pctSolid);
+      } else if (id === 'liquid_cementite') {
+        let lev = this.calculateLever(this.c, this.t, id);
+        let pctSolid = lev ? lev.pctR : 50;
+        this.drawLiquid(ctx, 100 - pctSolid);
+        this.drawNeedles(ctx, pctSolid);
+      } else if (id === 'delta_liquid') {
+        let lev = this.calculateLever(this.c, this.t, id);
+        let pctSolid = lev ? lev.pctL : 50;
+        this.drawLiquid(ctx, 100 - pctSolid);
+        this.drawGrains(ctx, id, pctSolid);
+      } else {
+        this.drawGrains(ctx, id);
+      }
+
+      ctx.restore();
+
+      ctx.beginPath(); ctx.arc(75, 75, 68, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 2; ctx.stroke();
+    }
+
+    drawLiquid(ctx, pctLiquid) {
+      let grad = ctx.createRadialGradient(75, 75, 0, 75, 75, 70);
+      grad.addColorStop(0, '#f97316'); grad.addColorStop(1, '#b45309');
+      ctx.fillStyle = grad; ctx.fillRect(0,0,150,150);
+
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.25)'; ctx.lineWidth = 1.5;
+      for (let i = 0; i < 4; i++) {
+        ctx.beginPath(); ctx.arc(75, 75, 10 + i * 15, Math.sin(Date.now() / 600 + i) * 0.3, Math.PI + Math.cos(Date.now() / 600 + i) * 0.3); ctx.stroke();
+      }
+    }
+
+    drawDendrites(ctx, pctAustenite) {
+      const positions = [
+        {x: 45, y: 45, size: 20, angle: 0.5}, {x: 105, y: 50, size: 28, angle: 1.2},
+        {x: 50, y: 100, size: 25, angle: -0.8}, {x: 100, y: 105, size: 22, angle: 2.3},
+        {x: 75, y: 75, size: 32, angle: -0.2}
+      ];
+
+      let scale = pctAustenite / 100;
+      positions.forEach(pos => {
+        let size = pos.size * scale;
+        if (size > 3) {
+          ctx.save(); ctx.translate(pos.x, pos.y); ctx.rotate(pos.angle);
+          ctx.strokeStyle = '#93c5fd'; ctx.lineWidth = size * 0.12;
+          ctx.beginPath(); ctx.moveTo(0, -size); ctx.lineTo(0, size); ctx.stroke();
+          for (let i = -size * 0.7; i <= size * 0.7; i += size * 0.3) {
+            if (Math.abs(i) < 0.5) continue;
+            let len = size * 0.5 * (1 - Math.abs(i) / size);
+            ctx.beginPath(); ctx.moveTo(-len, i); ctx.lineTo(len, i); ctx.stroke();
+          }
+          ctx.restore();
+        }
+      });
+    }
+
+    drawNeedles(ctx, pctCementite) {
+      const needles = [
+        {x: 40, y: 50, len: 60, ang: 0.3}, {x: 100, y: 45, len: 70, ang: -0.8},
+        {x: 50, y: 105, len: 80, ang: 1.4}, {x: 110, y: 100, len: 50, ang: -0.2}
+      ];
+
+      let scale = pctCementite / 100;
+      ctx.fillStyle = '#f8fafc'; ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1;
+
+      needles.forEach(n => {
+        let length = n.len * scale;
+        if (length > 6) {
+          ctx.save(); ctx.translate(n.x, n.y); ctx.rotate(n.ang);
+          ctx.beginPath(); ctx.moveTo(-length/2, 0); ctx.lineTo(0, -2); ctx.lineTo(length/2, 0); ctx.lineTo(0, 2);
+          ctx.closePath(); ctx.fill(); ctx.stroke();
+          ctx.restore();
+        }
+      });
+    }
+
+    drawGrains(ctx, id, solidPct = 100) {
+      let lev = this.calculateLever(this.c, this.t, id);
+
+      voronoiGrains.forEach(g => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(g.polygon[0].x, g.polygon[0].y);
+        for(let i=1; i<g.polygon.length; i++) ctx.lineTo(g.polygon[i].x, g.polygon[i].y);
+        ctx.closePath();
+        ctx.clip();
+
+        if (id === 'gamma') {
+          ctx.fillStyle = '#e8d8c8'; ctx.fill();
+        } else if (id === 'alpha') {
+          ctx.fillStyle = '#fafaf5'; ctx.fill();
+        } else if (id === 'delta') {
+          ctx.fillStyle = '#fef3c7'; ctx.fill();
+        } else if (id === 'delta_liquid') {
+          if (g.center.threshold < solidPct / 100) {
+            ctx.fillStyle = '#fef3c7'; ctx.fill();
+          } else {
+            ctx.fillStyle = '#d97706'; ctx.fill();
+          }
+        } else if (id === 'delta_gamma') {
+          let pctDelta = lev ? lev.pctL : 50;
+          ctx.fillStyle = (g.center.threshold < pctDelta / 100) ? '#fef3c7' : '#e8d8c8';
+          ctx.fill();
+        } else if (id === 'alpha_gamma') {
+          let pctAlpha = lev ? lev.pctL : 50;
+          ctx.fillStyle = (g.center.threshold < pctAlpha / 100) ? '#fafaf5' : '#e8d8c8';
+          ctx.fill();
+        } else if (id === 'gamma_cementite') {
+          ctx.fillStyle = '#e8d8c8'; ctx.fill();
+        } else if (id === 'alpha_cementite') {
+          if (this.c < 0.76) {
+            let pctP = this.c / 0.76;
+            if (g.center.threshold < pctP) {
+              this.drawPearliteCell(ctx, g.polygon, g.center.angle);
+            } else {
+              ctx.fillStyle = '#fafaf5'; ctx.fill();
+            }
+          } else if (Math.abs(this.c - 0.76) < 0.01) {
+            this.drawPearliteCell(ctx, g.polygon, g.center.angle);
+          } else if (this.c <= 2.14) {
+            this.drawPearliteCell(ctx, g.polygon, g.center.angle);
+          } else {
+            let pctL = lev ? lev.pctR : 50;
+            if (g.center.threshold < pctL / 100) {
+              this.drawLedeburiteCell(ctx, g.polygon);
+            } else {
+              this.drawPearliteCell(ctx, g.polygon, g.center.angle);
+            }
+          }
+        }
+
+        ctx.restore();
+
+        ctx.beginPath();
+        ctx.moveTo(g.polygon[0].x, g.polygon[0].y);
+        for(let i=1; i<g.polygon.length; i++) ctx.lineTo(g.polygon[i].x, g.polygon[i].y);
+        ctx.closePath();
+
+        if (id === 'gamma_cementite' || (id === 'alpha_cementite' && this.c > 0.76 && this.c <= 2.14)) {
+          let pctCem = lev ? lev.pctR : 10;
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 0.8 + (pctCem/100) * 3;
+        } else if (id === 'alpha_cementite' && this.c > 2.14) {
+          ctx.strokeStyle = '#f1f5f9';
+          ctx.lineWidth = 1.6;
+        } else {
+          ctx.strokeStyle = '#2d3748';
+          ctx.lineWidth = 0.8;
+        }
+        ctx.stroke();
+      });
+    }
+
+    drawPearliteCell(ctx, polygon, angle) {
+      ctx.fillStyle = '#fafaf5'; ctx.fill();
+      ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+      let cos = Math.cos(angle);
+      let sin = Math.sin(angle);
+      for (let d = -120; d < 120; d += 4.5) {
+        ctx.beginPath();
+        ctx.moveTo(75 + d * cos - 120 * sin, 75 + d * sin + 120 * cos);
+        ctx.lineTo(75 + d * cos + 120 * sin, 75 + d * sin - 120 * cos);
+        ctx.stroke();
+      }
+    }
+
+    drawLedeburiteCell(ctx, polygon) {
+      ctx.fillStyle = '#ffffff'; ctx.fill();
+      ctx.fillStyle = '#475569';
+      let minX = 150, maxX = 0, minY = 150, maxY = 0;
+      polygon.forEach(p => {
+        if(p.x < minX) minX = p.x; if(p.x > maxX) maxX = p.x;
+        if(p.y < minY) minY = p.y; if(p.y > maxY) maxY = p.y;
+      });
+      for (let x = minX - 4; x <= maxX + 4; x += 5) {
+        for (let y = minY - 4; y <= maxY + 4; y += 5) {
+          if (pointInPolygon([x, y], polygon.map(p => [p.x, p.y]))) {
+            ctx.beginPath(); ctx.arc(x + (Math.random() - 0.5) * 1.5, y + (Math.random() - 0.5) * 1.5, 1, 0, Math.PI * 2); ctx.fill();
+          }
+        }
+      }
+    }
+  }
+
+  // 4. SCROLL DETECTION INTERSECTION OBSERVER
+  const notebookSections = document.querySelectorAll('.hero, #sec-notebook-1, #sec-notebook-2, #sec-notebook-3, #sec-notebook-4, #sec-notebook-5');
+  const demoPanels = document.querySelectorAll('.demo-panel');
+  let visualizers = {};
+
+  let currentActiveSec = null;
+
+  function setActiveSection(sec) {
+    if (currentActiveSec === sec) return;
+    currentActiveSec = sec;
+
+    const activeDemoNum = sec.dataset.demo;
+    const isDesktop = window.innerWidth > 920;
+
+    notebookSections.forEach((s) => {
+      s.classList.toggle('active-section', s === sec);
+    });
+
+    demoPanels.forEach((panel) => {
+      panel.classList.toggle('active', panel.id === `demo-${activeDemoNum}`);
+    });
+
+    let vis = visualizers[activeDemoNum];
+    if (vis) {
+      vis.renderGraphics();
+    }
+  }
+
+  function observeSection(sec) {
+    const scroller = window.innerWidth > 920 ? document.querySelector('.notebook-panel') : null;
+    const options = {
+      root: scroller || null,
+      threshold: 0.3
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target);
+        }
+      });
+    }, options);
+    io.observe(sec);
+    return io;
+  }
+
+  let sectionObservers = [];
+  function initObservers() {
+    sectionObservers.forEach(io => io.disconnect());
+    sectionObservers = [];
+    notebookSections.forEach(sec => {
+      sectionObservers.push(observeSection(sec));
+    });
+  }
+
+  // 5. MOBILE ELEMENT RELOCATION
+  let wasDesktop = window.innerWidth > 920;
+
+  const relocateDemos = () => {
+    const isMobile = window.innerWidth <= 920;
+    const isDesktop = !isMobile;
+    
+    if (isDesktop !== wasDesktop) {
+      wasDesktop = isDesktop;
+      initObservers();
+    }
+
+    for (let i = 1; i <= 5; i++) {
+      const demo = document.getElementById(`demo-${i}`);
+      if (!demo) continue;
+      
+      if (isMobile) {
+        const mobContainer = document.getElementById(`mob-demo-${i}`);
+        if (mobContainer && demo.parentElement !== mobContainer) {
+          mobContainer.appendChild(demo);
+        }
+      } else {
+        const deskContainer = document.getElementById(`desk-demo-${i}`);
+        if (deskContainer && demo.parentElement !== deskContainer) {
+          deskContainer.appendChild(demo);
+        }
+      }
+    }
+    
+    if (isMobile) {
+      notebookSections.forEach((s) => {
+        const targets = Array.from(s.children).filter(c => !c.classList.contains('mobile-demo-placeholder'));
+        targets.forEach(t => t.style.opacity = '');
+      });
+    }
+
+    Object.values(visualizers).forEach(vis => vis.renderGraphics());
+  };
+
+  window.addEventListener('resize', relocateDemos);
+
+  // 6. GLOBAL INITIALIZATION
+  window.onload = function() {
+    initSampledRegions();
+    initVoronoiCells();
+
+    visualizers['1'] = new FeCVisualizer('1', 0.76, 727, { showSliders: true, freePlay: true, showLever: false });
+    visualizers['2'] = new FeCVisualizer('2', 0.8, 950, { showSliders: false, showLattice: true, cMax: 2.14 });
+    visualizers['3'] = new FeCVisualizer('3', 0.76, 700, { showSliders: false, cMax: 2.14 });
+    visualizers['4'] = new FeCVisualizer('4', 4.3, 1100, { showSliders: false });
+    visualizers['5'] = new FeCVisualizer('5', 1.20, 600, { showSliders: true, lockTemp: 600, showLever: true });
+
+    function animateLattice() {
+      if (visualizers['2'] && document.getElementById('demo-2').classList.contains('active')) {
+        visualizers['2'].renderGraphics();
+      }
+      requestAnimationFrame(animateLattice);
+    }
+    requestAnimationFrame(animateLattice);
+
+    initObservers();
+    setTimeout(relocateDemos, 150);
+  };
+</script>
+
+</body>
+</html>

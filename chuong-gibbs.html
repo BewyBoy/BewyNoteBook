@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hóa học · Chương 17B — Năng lượng tự do Gibbs (Split Notebook)</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SPLIT NOTEBOOK & LAB BENCH SYSTEM
+    ══════════════════════════════════════ */
+    @import url('https://fonts.googleapis.com/css2?family=Itim&family=Pacifico&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:        #F5F0E0;
+      --paper-dark:   #EDE5CC;
+      --ink:          #1A1208;
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #00A3C4; /* Ocean Cyan Accent */
+      --accent-deep:  #007A99;
+      --accent-red:   #E05050;
+      --accent-blue:  #00597A;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-p:  rgba(0, 163, 196, 0.15);
+      --line-h:       30px;
+      --font-base:    15px;
+      --font-h2:      24px;
+      --font-h3:      16px;
+      --font-sub:     12px;
+      --ruled-top-offset: calc(var(--line-h) * 22 / 30);
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #3A4F54;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #4E686E 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #29383C 0%, transparent 50%),
+        repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+      color: var(--ink);
+      font-family: 'Itim', cursive;
+    }
+    ::selection { background: var(--highlight-p); color: var(--ink); }
+
+    .back-link {
+      position: absolute; top: 24px; left: 96px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Itim', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.15);
+      transform: rotate(0.8deg); transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent); }
+
+    /* ══════════════════════════════════════
+       SPLIT LAYOUT CONTAINER
+     ══════════════════════════════════════ */
+    .scrolly-container {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Left Side - School Notebook */
+    .notebook-panel {
+      width: 50%;
+      position: relative;
+      background-color: var(--paper);
+      box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+      z-index: 5;
+    }
+
+    /* Ruled paper background classes */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(90deg, transparent calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 73 / 30), transparent calc(var(--line-h) * 73 / 30)),
+        repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
+      background-attachment: local;
+      background-position: 0 0, 0 var(--ruled-top-offset);
+    }
+
+    .hero {
+      padding: calc(3 * var(--line-h)) calc(var(--line-h) * 40 / 30) calc(var(--line-h) * 30 / 30) calc(3.2 * var(--line-h));
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+      position: relative; overflow: hidden;
+      scroll-snap-align: start;
+    }
+    .hero::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #5C767D 0%, #5C767D 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+      z-index: 2;
+    }
+    .crumb { font-size: var(--font-sub); letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: var(--line-h); line-height: var(--line-h); font-family: 'Itim', cursive; }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+    .title { font-family: 'Pacifico', cursive; font-size: clamp(28px, 4.2vw, 56px); line-height: 60px; color: var(--ink); margin-bottom: 30px; font-weight: 700; }
+    .title-stroke { width: clamp(140px, 30vw, 300px); height: 3px; background: var(--accent); border-radius: 2px; margin-top: calc(-0.5 * var(--line-h)); margin-bottom: calc(0.4 * var(--line-h)); }
+    .subtitle { font-family: 'Itim', cursive; font-size: var(--font-sub); letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-deep); margin-bottom: var(--line-h); line-height: var(--line-h); }
+    .intro { max-width: 800px; font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); }
+
+    .card {
+      padding: calc(3 * var(--line-h)) calc(1.2 * var(--line-h)) calc(3 * var(--line-h)) calc(3.2 * var(--line-h));
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative; overflow: hidden;
+      min-height: 100vh;
+      box-sizing: border-box;
+      scroll-snap-align: start;
+      transition: background-color 0.3s;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+    .card.ruled-page:nth-child(even) { background-color: var(--paper-dark); }
+    .card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #5C767D 0%, #5C767D 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+
+    /* Active section highlight on notebook */
+    .card.active-section {
+      background-color: rgba(235, 248, 250, 0.45);
+    }
+
+    @media (min-width: 921px) {
+      :root {
+        --line-h:       clamp(30px, 1.25vw + 18.5px, 42px);
+        --font-base:    clamp(15px, 0.6vw + 9.5px, 21px);
+        --font-h2:      clamp(24px, 1vw + 14.8px, 34px);
+        --font-h3:      clamp(16px, 0.7vw + 9.5px, 23px);
+        --font-sub:     clamp(12px, 0.5vw + 7.4px, 17px);
+      }
+      .hero {
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+      .scrolly-container {
+        height: 100vh;
+        overflow: hidden;
+      }
+      .notebook-panel {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scrollbar-width: none;
+      }
+      .notebook-panel::-webkit-scrollbar {
+        display: none;
+      }
+      .lab-panel {
+        position: relative;
+        right: auto;
+        top: auto;
+        height: 100vh;
+      }
+      .card > *:not(.mobile-demo-placeholder) {
+        opacity: 0.15;
+        transition: opacity 0.5s ease;
+      }
+      .card.active-section > *:not(.mobile-demo-placeholder) {
+        opacity: 1;
+      }
+      .hero > * {
+        opacity: 0.15;
+        transition: opacity 0.5s ease;
+      }
+      .hero.active-section > * {
+        opacity: 1;
+      }
+    }
+
+    .card h2 { font-family: 'Pacifico', cursive; font-size: var(--font-h2); color: var(--ink); line-height: var(--line-h); font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 0px; margin-bottom: var(--line-h); display: inline-block; }
+    .card p { font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); margin-bottom: 30px; }
+    .card p:last-child { margin-bottom: 0; }
+    .card .key { color: var(--accent); font-weight: bold; }
+
+    .formula-box {
+      background: rgba(0, 163, 196, 0.05);
+      border-left: 3px solid var(--accent);
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 1.1rem;
+      color: var(--ink-mid);
+    }
+
+    /* ══════════════════════════════════════
+       Right Side - Elegant Lab Bench / Chalkboard
+    ══════════════════════════════════════ */
+    .lab-panel {
+      width: 50%;
+      background: #172124;
+      background-image: 
+        radial-gradient(ellipse at 50% 20%, #1e3338 0%, transparent 65%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px);
+      position: fixed;
+      right: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    .lab-sticky-wrapper {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .blackboard-title {
+      position: absolute;
+      top: 24px;
+      left: 40px;
+      font-family: 'Pacifico', cursive;
+      font-size: 20px;
+      color: #bce1e6;
+      opacity: 0.85;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 8px rgba(0, 163, 196, 0.3);
+    }
+
+    /* Demonstration containers on the right */
+    .demo-panel {
+      position: absolute;
+      top: 60px;
+      bottom: 30px;
+      left: 40px;
+      right: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 1;
+    }
+    .demo-panel.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    /* Blackboard/Lab bench card overlay */
+    .glass-bench {
+      background: rgba(23, 38, 41, 0.70);
+      border: 1.5px solid rgba(0, 163, 196, 0.25);
+      border-radius: 12px;
+      box-shadow: 
+        0 15px 35px rgba(0,0,0,0.5), 
+        inset 0 0 20px rgba(0, 163, 196, 0.1);
+      padding: 24px;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(10px);
+      color: #eaeaea;
+      box-sizing: border-box;
+    }
+
+    .bench-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 22px;
+      color: #bce1e6;
+      margin-bottom: 8px;
+      text-align: center;
+      border-bottom: 1px dashed rgba(255,255,255,0.15);
+      padding-bottom: 8px;
+    }
+
+    .canvas-stage {
+      flex: 1;
+      width: 100%;
+      background: #0d1214;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .canvas-stage canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .control-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 8px;
+      background: rgba(0,0,0,0.25);
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .control-item {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 4px;
+    }
+    .control-item label {
+      color: #a4bcc2;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+    }
+
+    /* Buttons */
+    .btn-action {
+      background: #008ca8;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-family: 'Itim', cursive;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+    .btn-action:hover { background: #00A3C4; }
+    .btn-action:active { transform: translateY(1px); }
+    .btn-action:disabled {
+      background: #2c3a3d;
+      color: #637578;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Mobile Relocated Elements placeholders */
+    .mobile-demo-placeholder {
+      display: none;
+      margin: 20px 0;
+      width: 100%;
+    }
+
+    @media (max-width: 920px) {
+      .scrolly-container {
+        flex-direction: column;
+      }
+      .notebook-panel {
+        width: 100%;
+        box-shadow: none;
+      }
+      .lab-panel {
+        display: none; /* Hidden on desktop-fixed bench, relocated elements inside cards instead */
+      }
+      .mobile-demo-placeholder {
+        display: block;
+      }
+      .demo-panel {
+        position: relative;
+        top: 0; left: 0; right: 0; bottom: 0;
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      .glass-bench {
+        box-shadow: none;
+        background: rgba(23, 38, 41, 0.95);
+      }
+      .canvas-stage {
+        height: 220px;
+      }
+      .back-link {
+        left: 20px;
+        top: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nút quay lại Mục lục chính -->
+  <a href="Muc Luc.html" class="back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    Mục lục
+  </a>
+
+  <div class="scrolly-container">
+    
+    <!-- CỘT TRÁI: VỞ GHI BÀI HỌC (NOTEBOOK) -->
+    <div class="notebook-panel">
+      
+      <!-- HERO -->
+      <div class="hero ruled-page active-section" data-demo="0">
+        <div class="crumb">Hóa học &gt; Phần IV &gt; <a href="Muc Luc.html">Mục lục</a></div>
+        <h1 class="title">Năng lượng tự do Gibbs</h1>
+        <div class="title-stroke"></div>
+        <p class="subtitle">Thế đẳng áp · Spontaneity · Chiều hướng tự phát</p>
+        <div class="intro">
+          Tại sao củi khô tự cháy khi mồi lửa, nhưng tro bụi không bao giờ tự biến ngược lại thành gỗ? Tại sao nước tự chảy từ trên cao xuống, và sắt tự rỉ sét trong không khí ẩm? 
+          <br><br>
+          Để dự đoán chính xác xem một phản ứng hóa học có <span class="key">tự diễn biến (spontaneous)</span> hay không, chúng ta không thể chỉ nhìn vào sự tỏa nhiệt (Enthalpy) hay sự hỗn loạn (Entropy) riêng lẻ. Nhà bác học Mỹ <strong>J. Willard Gibbs</strong> đã gộp cả hai xu hướng này vào một đại lượng duy nhất cực kỳ quyền lực: <strong>Năng lượng tự do Gibbs ($G$)</strong>.
+        </div>
+      </div>
+
+      <!-- SECTION 1 -->
+      <div class="card ruled-page" id="sec-notebook-1" data-demo="1">
+        <h2>1. Định nghĩa thế đẳng áp Gibbs</h2>
+        <p>
+          Ở điều kiện nhiệt độ ($T$) và áp suất ($P$) không đổi, biến thiên năng lượng tự do Gibbs (<span class="key">$\Delta G$</span>) của một hệ phản ứng được tính bằng biểu thức:
+        </p>
+        <div class="formula-box">
+          $$\Delta G = \Delta H - T \cdot \Delta S$$
+        </div>
+        <p>
+          Trong đó:
+          <br>• <strong>$\Delta H$</strong> (kJ/mol): Biến thiên Enthalpy. Đại diện cho <strong>xu hướng năng lượng</strong> (hệ muốn tỏa nhiệt để đạt trạng thái bền hơn).
+          <br>• <strong>$\Delta S$</strong> (J/mol.K): Biến thiên Entropy. Đại diện cho <strong>xu hướng hỗn loạn</strong> (hệ muốn tăng độ hỗn loạn).
+          <br>• <strong>$T$</strong> (Kelvin): Nhiệt độ tuyệt đối của phản ứng ($T(K) = t(^\circ\text{C}) + 273.15$).
+        </p>
+        <p>
+          > [!NOTE]
+          > Vì $\Delta H$ thường tính bằng <strong>kJ</strong> và $\Delta S$ bằng <strong>J/K</strong>, bạn phải đổi $\Delta S$ chia cho 1000 trước khi ráp vào công thức!
+        </p>
+
+        <!-- Placeholder for Mobile Relocation -->
+        <div class="mobile-demo-placeholder" id="mob-demo-1"></div>
+      </div>
+
+      <!-- SECTION 2 -->
+      <div class="card ruled-page" id="sec-notebook-2" data-demo="2">
+        <h2>2. Tiêu chuẩn tự phát của phản ứng</h2>
+        <p>
+          Biến thiên năng lượng Gibbs ($\Delta G$) chính là thước đo "động lực" đẩy phản ứng xảy ra. Giá trị của $\Delta G$ quyết định chiều hướng tự phát của hệ:
+        </p>
+        <p>
+          🔴 <strong>$\Delta G > 0$</strong>: Phản ứng <span class="key">không tự phát</span> theo chiều thuận. Muốn phản ứng xảy ra, ta buộc phải liên tục cung cấp năng lượng hoặc công từ bên ngoài.
+          <br><br>
+          🔵 <strong>$\Delta G < 0$</strong>: Phản ứng xảy ra <span class="key">tự phát</span> theo chiều thuận. Năng lượng tự do của hệ giảm xuống, giải phóng năng lượng có ích ra môi trường.
+          <br><br>
+          🟢 <strong>$\Delta G = 0$</strong>: Hệ đạt trạng thái <span class="key">cân bằng hóa học</span>. Tốc độ phản ứng thuận bằng tốc độ phản ứng nghịch, không có sự biến đổi vĩ mô nào thêm.
+        </p>
+
+        <!-- Placeholder for Mobile Relocation -->
+        <div class="mobile-demo-placeholder" id="mob-demo-2"></div>
+      </div>
+
+      <!-- SECTION 3 -->
+      <div class="card ruled-page" id="sec-notebook-3" data-demo="3">
+        <h2>3. Ảnh hưởng của Nhiệt độ lên ΔG</h2>
+        <p>
+          Nhiệt độ $T$ hoạt động như một "bộ nhân" (multiplier) cho Entropy. Sự cạnh tranh giữa $\Delta H$ và $T\Delta S$ chia thế giới phản ứng thành 4 kịch bản thú vị:
+        </p>
+        <p>
+          1. <strong>$\Delta H < 0$ (Tỏa nhiệt) &amp; $\Delta S > 0$ (Tăng hỗn loạn)</strong>:
+          <br>$\Delta G = (-) - T(+)$ luôn âm. Phản ứng <strong>tự phát ở mọi nhiệt độ</strong>.
+          <br><br>
+          2. <strong>$\Delta H > 0$ (Thu nhiệt) &amp; $\Delta S < 0$ (Giảm hỗn loạn)</strong>:
+          <br>$\Delta G = (+) - T(-)$ luôn dương. Phản ứng <strong>không tự phát ở mọi nhiệt độ</strong>.
+          <br><br>
+          3. <strong>$\Delta H < 0$ (Tỏa nhiệt) &amp; $\Delta S < 0$ (Giảm hỗn loạn)</strong>:
+          <br>Tự phát ở <strong>nhiệt độ thấp</strong> (khi số hạng tỏa nhiệt $\Delta H$ chiếm ưu thế hơn entropy).
+          <br><br>
+          4. <strong>$\Delta H > 0$ (Thu nhiệt) &amp; $\Delta S > 0$ (Tăng hỗn loạn)</strong>:
+          <br>Tự phát ở <strong>nhiệt độ cao</strong> (khi $T\Delta S$ đủ lớn để lấn át mức thu nhiệt $\Delta H$).
+        </p>
+
+        <!-- Placeholder for Mobile Relocation -->
+        <div class="mobile-demo-placeholder" id="mob-demo-3"></div>
+      </div>
+
+      <!-- SECTION 4 -->
+      <div class="card ruled-page" id="sec-notebook-4" data-demo="4">
+        <h2>4. Phản ứng ghép cặp (Coupled Reactions)</h2>
+        <p>
+          Trong tế bào sinh vật, có rất nhiều phản ứng cần thiết cho sự sống nhưng có $\Delta G > 0$ (không tự phát, ví dụ như tổng hợp protein hay glucose-6-phosphate). Làm sao tế bào thực hiện được chúng?
+        </p>
+        <p>
+          Giải pháp chính là <span class="key">ghép cặp phản ứng (reaction coupling)</span>. Tế bào sẽ "ép" một phản ứng không tự phát xảy ra đồng thời với một phản ứng tự phát rất mạnh khác (thường là thủy phân phân tử mang năng lượng **ATP** thành ADP, có $\Delta G \approx -30.5$ kJ/mol).
+        </p>
+        <div class="formula-box">
+          Phản ứng A: Glucose + Pi → G-6-P ($\Delta G_1 = +13.8$ kJ/mol)
+          <br>Phản ứng B: ATP → ADP + Pi ($\Delta G_2 = -30.5$ kJ/mol)
+          <br><strong>Ghép cặp: Glucose + ATP → G-6-P + ADP ($\Delta G_{\text{net}} = -16.7$ kJ/mol &lt; 0)</strong>
+        </div>
+        <p>
+          Vì tổng biến thiên năng lượng Gibbs của hệ thống ghép cặp ($\Delta G_{\text{net}}$) là số âm, phản ứng tổng hợp lập tức diễn ra trơn tru như được kéo bởi một động cơ mạnh mẽ!
+        </p>
+
+        <!-- Placeholder for Mobile Relocation -->
+        <div class="mobile-demo-placeholder" id="mob-demo-4"></div>
+      </div>
+
+      <!-- SECTION 5 -->
+      <div class="card ruled-page" id="sec-notebook-5" data-demo="5">
+        <h2>5. Thử thách ôn tập Gibbs</h2>
+        <p>
+          Hãy thử sức với bài trắc nghiệm tương tác 5 câu hỏi để nắm vững cách tính toán và suy luận chiều hướng tự phát của phản ứng dựa trên các đại lượng Enthalpy, Entropy và Năng lượng Gibbs.
+        </p>
+
+        <!-- Placeholder for Mobile Relocation -->
+        <div class="mobile-demo-placeholder" id="mob-demo-5"></div>
+      </div>
+
+    </div>
+
+    <!-- CỘT PHẢI: BÀN THÍ NGHIỆM ĐỒNG BỘ (LAB BENCH) -->
+    <div class="lab-panel">
+      <div class="lab-sticky-wrapper">
+        <div class="blackboard-title">Gibbs Free Energy Laboratory</div>
+
+        <!-- DEMO 0: INTRO BENCH -->
+        <div class="demo-panel active" id="demo-0">
+          <div class="glass-bench" style="justify-content: center; align-items: center; text-align: center;">
+            <div style="font-size: 60px; margin-bottom: 20px;">🔬</div>
+            <h3 style="font-family: 'Pacifico'; font-size: 28px; color: #bce1e6; margin-bottom: 15px;">Chamber of Spontaneity</h3>
+            <p style="font-size: 14px; line-height: 1.6; color: #a4bcc2; max-width: 340px;">
+              Cuộn trang vở ghi bên trái để kích hoạt các mô phỏng hạt chuyển động, đồ thị tọa độ Gibbs, cân đĩa nhiệt động lực học và mô hình bánh răng ghép cặp sinh học ở bảng này.
+            </p>
+            <div style="font-size: 11px; color: #637578; margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; width: 80%;">
+              Thermodynamics Simulation Suite v1.2
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 1: GIBBS SPONTANEITY SANDBOX -->
+        <div class="demo-panel" id="demo-1">
+          <div class="glass-bench">
+            <div class="bench-title">Đồ thị tọa độ &amp; Biên giới Tự phát</div>
+            <div class="canvas-stage">
+              <canvas id="canvas-gibbs-sandbox"></canvas>
+            </div>
+            <div style="font-size: 12.5px; display: flex; justify-content: space-between; padding: 0 4px; color: #caa596; background: rgba(0,0,0,0.15); padding: 6px; border-radius: 4px;">
+              <span>Tọa độ: <strong id="coord-vals">Click đồ thị</strong></span>
+              <span>Trạng thái: <strong id="spont-status" style="color: #00FFD1;">Chưa chọn</strong></span>
+            </div>
+            <div class="control-row">
+              <div class="control-item">
+                <label>Nhiệt độ tuyệt đối (T): <span id="val-t1" style="font-weight:bold; color:var(--accent);">298</span> K</label>
+                <input type="range" id="param-t1" min="0" max="1000" value="298" style="accent-color: var(--accent);" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 2: MOLECULAR SPONTANEITY SIMULATOR -->
+        <div class="demo-panel" id="demo-2">
+          <div class="glass-bench">
+            <div class="bench-title">Động lực học phân tử tự phát</div>
+            <div class="canvas-stage">
+              <canvas id="canvas-gibbs-molecules"></canvas>
+            </div>
+            <div style="font-size: 13px; display: flex; justify-content: space-between; padding: 0 4px; color: #a4bcc2; background: rgba(0,0,0,0.15); padding: 6px; border-radius: 4px;">
+              <span>Biến thiên Gibbs: <strong id="val-dg" style="color: #00FFD1;">0.0 kJ/mol</strong></span>
+              <span>Chiều hướng: <strong id="dir-status" style="color: #fff;">Cân bằng</strong></span>
+            </div>
+            <div class="control-row" style="flex-wrap: wrap; gap: 8px;">
+              <div class="control-item" style="min-width: 100px;">
+                <label>Nhiệt độ (T): <span id="val-t2" style="font-weight:bold; color:var(--accent);">300</span> K</label>
+                <input type="range" id="param-t2" min="100" max="1000" value="300" style="accent-color: var(--accent);" />
+              </div>
+              <div class="control-item" style="min-width: 80px;">
+                <label>Enthalpy (ΔH):</label>
+                <select id="param-dh" style="background:#172629; color:#fff; border:1.5px solid #2a3d42; padding:4px; font-family:'Itim';">
+                  <option value="-50">Tỏa nhiệt (-50 kJ)</option>
+                  <option value="50">Thu nhiệt (+50 kJ)</option>
+                </select>
+              </div>
+              <div class="control-item" style="min-width: 80px;">
+                <label>Entropy (ΔS):</label>
+                <select id="param-ds" style="background:#172629; color:#fff; border:1.5px solid #2a3d42; padding:4px; font-family:'Itim';">
+                  <option value="150">Tăng hỗn loạn (+150 J/K)</option>
+                  <option value="-150">Giảm hỗn loạn (-150 J/K)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 3: THERMODYNAMIC BALANCE SCALE -->
+        <div class="demo-panel" id="demo-3">
+          <div class="glass-bench">
+            <div class="bench-title">Cân đĩa nhiệt động lực học ΔG</div>
+            <div class="canvas-stage">
+              <canvas id="canvas-gibbs-balance"></canvas>
+            </div>
+            <div style="font-size: 13px; display: flex; justify-content: space-between; padding: 0 4px; color: #a4bcc2; background: rgba(0,0,0,0.15); padding: 6px; border-radius: 4px;">
+              <span>Mức cân: <span id="balance-readout" style="font-weight:bold; color:#00FFD1;">Đang cân...</span></span>
+            </div>
+            <div class="control-row">
+              <div class="control-item">
+                <label>Nhiệt độ tuyệt đối (T): <span id="val-t3" style="font-weight:bold; color:var(--accent);">298</span> K</label>
+                <input type="range" id="param-t3" min="0" max="1000" value="298" style="accent-color: var(--accent);" />
+              </div>
+              <div class="control-item" style="min-width: 85px; flex: 0.5;">
+                <label>Hệ phản ứng:</label>
+                <select id="balance-sys" style="background:#172629; color:#fff; border:1.5px solid #2a3d42; padding:4px; font-family:'Itim';">
+                  <option value="case1">Tỏa nhiệt &amp; Tăng hỗn loạn</option>
+                  <option value="case2">Thu nhiệt &amp; Giảm hỗn loạn</option>
+                  <option value="case3" selected>Nung vôi (Thu nhiệt &amp; Tăng hỗn loạn)</option>
+                  <option value="case4">Đông băng nước (Tỏa nhiệt &amp; Giảm hỗn loạn)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 4: COUPLED REACTION GEAR MACHINE -->
+        <div class="demo-panel" id="demo-4">
+          <div class="glass-bench">
+            <div class="bench-title">Động cơ ghép cặp phản ứng sinh học</div>
+            <div class="canvas-stage">
+              <canvas id="canvas-gibbs-coupling"></canvas>
+            </div>
+            <div class="control-row" style="justify-content: space-between;">
+              <div style="font-size: 12.5px; color: #a4bcc2; max-width: 70%;">
+                Trạng thái: <strong id="coupling-status" style="color: #FF7373;">Chưa ghép cặp (Hệ thống bị khóa)</strong>
+              </div>
+              <button class="btn-action" id="btn-toggle-coupling">Ghép cặp ATP ⚡</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 5: MULTIPLE CHOICE QUIZ -->
+        <div class="demo-panel" id="demo-5">
+          <div class="glass-bench" style="justify-content: space-between;">
+            <div class="bench-title">Đánh giá Năng lực Gibbs</div>
+            
+            <!-- Quiz Card Container -->
+            <div id="quiz-card" style="flex:1; display:flex; flex-direction:column; justify-content:center; padding:10px 0; box-sizing:border-box;">
+              
+              <!-- Progress Bar -->
+              <div style="width:100%; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; margin-bottom:12px; overflow:hidden;">
+                <div id="quiz-progress-bar" style="width:20%; height:100%; background:var(--accent); transition:width 0.3s;"></div>
+              </div>
+
+              <!-- Question Statement -->
+              <div id="quiz-question" style="font-size:14px; line-height:1.5; color:#fff; margin-bottom:12px; font-weight:bold;">
+                Đang tải câu hỏi...
+              </div>
+
+              <!-- Option Buttons -->
+              <div id="quiz-options-container" style="display:flex; flex-direction:column; gap:8px;">
+                <!-- Generated by JS -->
+              </div>
+
+              <!-- Answer Explanation Box -->
+              <div id="quiz-explanation" style="display:none; margin-top:12px; padding:10px; background:rgba(0,163,196,0.08); border-left:3px solid var(--accent); border-radius:4px; font-size:12px; line-height:1.4; color:#caa6f2;">
+                <!-- Generated by JS -->
+              </div>
+            </div>
+
+            <!-- Quiz Result View -->
+            <div id="quiz-result" style="display:none; flex:1; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+              <span style="font-size: 48px;">🏆</span>
+              <h3 id="result-headline" style="font-family: 'Pacifico'; font-size: 24px; color: #bce1e6;">Kết quả của bạn</h3>
+              <div style="font-size: 36px; font-weight: bold; color: var(--accent);" id="score-num">0/5</div>
+              <p id="result-desc" style="font-size: 14px; line-height: 1.5; color: #a4bcc2; max-width: 300px;">
+                Giải thích tổng quát...
+              </p>
+              <button class="btn-action" id="quiz-restart-btn" style="margin-top: 10px;">Làm lại thử thách 🔄</button>
+            </div>
+
+            <button class="btn-action" id="quiz-next-btn" style="margin-top: 12px;" disabled>Câu tiếp theo</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src="./support.js"></script>
+  <script>
+    (function() {
+      // Setup scrolling trigger and matching demo panel
+      const notebookSections = document.querySelectorAll('.hero, #sec-notebook-1, #sec-notebook-2, #sec-notebook-3, #sec-notebook-4, #sec-notebook-5');
+      const demoPanels = document.querySelectorAll('.demo-panel');
+
+      let activeDemoNum = '0';
+      const activeLoops = {
+        sandbox: null,
+        molecules: null,
+        balance: null,
+        coupling: null
+      };
+
+      function clearAllActiveLoops() {
+        for (const k in activeLoops) {
+          if (activeLoops[k]) {
+            cancelAnimationFrame(activeLoops[k]);
+            activeLoops[k] = null;
+          }
+        }
+      }
+
+      function setActiveSection(secElement) {
+        notebookSections.forEach(s => s.classList.remove('active-section'));
+        secElement.classList.add('active-section');
+
+        const demoNum = secElement.getAttribute('data-demo');
+        if (demoNum === activeDemoNum) return;
+
+        activeDemoNum = demoNum;
+
+        // Toggle active panel on the right
+        demoPanels.forEach(panel => {
+          panel.classList.remove('active');
+          if (panel.id === `demo-${demoNum}`) {
+            panel.classList.add('active');
+          }
+        });
+
+        // Kill active canvas animation frames
+        clearAllActiveLoops();
+
+        // Trigger canvas resize and init on active panel
+        if (activeDemoNum === '1') {
+          initSandboxDemo();
+        } else if (activeDemoNum === '2') {
+          initMoleculesDemo();
+        } else if (activeDemoNum === '3') {
+          initBalanceDemo();
+        } else if (activeDemoNum === '4') {
+          initCouplingDemo();
+        }
+      }
+
+      function observeSection(sec) {
+        const scroller = window.innerWidth > 920 ? document.querySelector('.notebook-panel') : null;
+        const options = {
+          root: scroller || null,
+          threshold: 0.2
+        };
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveSection(entry.target);
+            }
+          });
+        }, options);
+        io.observe(sec);
+        return io;
+      }
+
+      let sectionObservers = [];
+
+      function initObservers() {
+        sectionObservers.forEach(io => io.disconnect());
+        sectionObservers = [];
+        notebookSections.forEach(sec => {
+          sectionObservers.push(observeSection(sec));
+        });
+      }
+
+      initObservers();
+
+      /* ══════════════════════════════════════
+         MOBILE RESPONSIVE ELEMENT RELOCATION
+      ══════════════════════════════════════ */
+      let wasDesktop = window.innerWidth > 920;
+
+      const relocateDemos = () => {
+        const isMobile = window.innerWidth <= 920;
+        const isDesktop = !isMobile;
+        if (isDesktop !== wasDesktop) {
+          wasDesktop = isDesktop;
+          initObservers();
+        }
+
+        for (let i = 0; i <= 5; i++) {
+          const demo = document.getElementById(`demo-${i}`);
+          if (!demo) continue;
+          if (isMobile) {
+            const mobContainer = document.getElementById(`mob-demo-${i}`);
+            if (mobContainer && demo.parentElement !== mobContainer) {
+              mobContainer.appendChild(demo);
+            }
+          } else {
+            const deskContainer = document.querySelector('.lab-sticky-wrapper');
+            if (deskContainer && demo.parentElement !== deskContainer) {
+              deskContainer.appendChild(demo);
+            }
+          }
+        }
+
+        // Re-trigger layout sizes on active canvas
+        if (activeDemoNum === '1') initSandboxDemo();
+        else if (activeDemoNum === '2') initMoleculesDemo();
+        else if (activeDemoNum === '3') initBalanceDemo();
+        else if (activeDemoNum === '4') initCouplingDemo();
+      };
+
+      window.addEventListener('resize', relocateDemos);
+      window.addEventListener('load', relocateDemos);
+      setTimeout(relocateDemos, 100);
+
+      /* ══════════════════════════════════════
+         DEMO 1: GIBBS SPONTANEITY SANDBOX
+      ══════════════════════════════════════ */
+      let sandboxData = { ds: 100, dh: 25 }; // Default clicked points
+      
+      function initSandboxDemo() {
+        const canvas = document.getElementById('canvas-gibbs-sandbox');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight || 180;
+
+        const tempSlider = document.getElementById('param-t1');
+        const tempLabel = document.getElementById('val-t1');
+        const coordLabel = document.getElementById('coord-vals');
+        const statusLabel = document.getElementById('spont-status');
+
+        const mapX = (ds) => {
+          return canvas.width / 2 + (ds / 200) * (canvas.width * 0.42);
+        };
+        const mapY = (dh) => {
+          return canvas.height / 2 - (dh / 100) * (canvas.height * 0.40);
+        };
+
+        const unmapX = (cx) => {
+          return ((cx - canvas.width / 2) / (canvas.width * 0.42)) * 200;
+        };
+        const unmapY = (cy) => {
+          return -((cy - canvas.height / 2) / (canvas.height * 0.40)) * 100;
+        };
+
+        canvas.onclick = (e) => {
+          const rect = canvas.getBoundingClientRect();
+          const cx = e.clientX - rect.left;
+          const cy = e.clientY - rect.top;
+          
+          let ds = unmapX(cx);
+          let dh = unmapY(cy);
+
+          ds = Math.max(-200, Math.min(200, ds));
+          dh = Math.max(-100, Math.min(100, dh));
+
+          sandboxData.ds = ds;
+          sandboxData.dh = dh;
+          updateSandbox();
+        };
+
+        function calculateSpontaneity(dh, ds, t) {
+          const dg = dh - t * (ds / 1000);
+          if (dg < -2) return { val: dg, txt: 'Tự phát (ΔG < 0) 🟢', color: '#00FFD1' };
+          else if (dg > 2) return { val: dg, txt: 'Không tự phát (ΔG > 0) 🔴', color: '#FF7373' };
+          else return { val: dg, txt: 'Cân bằng (ΔG ≈ 0) 🟡', color: '#FFEB60' };
+        }
+
+        function drawSandboxGrid(t) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          const w = canvas.width;
+          const h = canvas.height;
+          const cx = w / 2;
+          const cy = h / 2;
+
+          const slope = t / 1000;
+
+          const leftDH = -200 * slope;
+          const rightDH = 200 * slope;
+
+          const lx = mapX(-200);
+          const ly = mapY(leftDH);
+          const rx = mapX(200);
+          const ry = mapY(rightDH);
+
+          ctx.beginPath();
+          ctx.moveTo(lx, ly);
+          ctx.lineTo(rx, ry);
+          ctx.lineTo(w, h);
+          ctx.lineTo(0, h);
+          ctx.closePath();
+          ctx.fillStyle = 'rgba(0, 163, 196, 0.08)';
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.moveTo(lx, ly);
+          ctx.lineTo(rx, ry);
+          ctx.lineTo(w, 0);
+          ctx.lineTo(0, 0);
+          ctx.closePath();
+          ctx.fillStyle = 'rgba(224, 80, 80, 0.06)';
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.moveTo(0, cy); ctx.lineTo(w, cy);
+          ctx.moveTo(cx, 0); ctx.lineTo(cx, h);
+          ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+
+          ctx.fillStyle = '#9fb2b8';
+          ctx.font = '10px Itim';
+          ctx.fillText('+ΔS (Tăng hỗn loạn)', w - 95, cy + 12);
+          ctx.fillText('-ΔS (Giảm hỗn loạn)', 5, cy + 12);
+          ctx.fillText('+ΔH (Thu nhiệt)', cx + 6, 15);
+          ctx.fillText('-ΔH (Tỏa nhiệt)', cx + 6, h - 8);
+
+          ctx.beginPath();
+          ctx.moveTo(lx, ly);
+          ctx.lineTo(rx, ry);
+          ctx.strokeStyle = '#00FFD1';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([4, 4]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.fillStyle = '#00FFD1';
+          ctx.fillText('Đường biên ΔG = 0', rx - 100, ry - 6);
+
+          const px = mapX(sandboxData.ds);
+          const py = mapY(sandboxData.dh);
+
+          ctx.beginPath();
+          ctx.arc(px, py, 9 + Math.sin(Date.now() / 150) * 2, 0, Math.PI*2);
+          ctx.fillStyle = 'rgba(0,255,209,0.2)';
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.arc(px, py, 5, 0, Math.PI*2);
+          ctx.fillStyle = '#ffffff';
+          ctx.strokeStyle = '#008ca8';
+          ctx.lineWidth = 1.5;
+          ctx.fill();
+          ctx.stroke();
+        }
+
+        function updateSandbox() {
+          const t = parseInt(tempSlider.value);
+          tempLabel.textContent = t;
+
+          const ds = sandboxData.ds;
+          const dh = sandboxData.dh;
+
+          coordLabel.textContent = `ΔH = ${dh.toFixed(1)} kJ, ΔS = ${ds.toFixed(1)} J/K`;
+
+          const result = calculateSpontaneity(dh, ds, t);
+          statusLabel.textContent = result.txt;
+          statusLabel.style.color = result.color;
+
+          drawSandboxGrid(t);
+        }
+
+        tempSlider.oninput = updateSandbox;
+        updateSandbox();
+
+        if (activeLoops.sandbox) cancelAnimationFrame(activeLoops.sandbox);
+        function animLoop() {
+          if (activeDemoNum === '1') {
+            drawSandboxGrid(parseInt(tempSlider.value));
+            activeLoops.sandbox = requestAnimationFrame(animLoop);
+          }
+        }
+        animLoop();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 2: MOLECULAR SPONTANEITY SIMULATOR
+      ══════════════════════════════════════ */
+      function initMoleculesDemo() {
+        const canvas = document.getElementById('canvas-gibbs-molecules');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight || 180;
+
+        const tempSlider = document.getElementById('param-t2');
+        const tempLabel = document.getElementById('val-t2');
+        const dhSelect = document.getElementById('param-dh');
+        const dsSelect = document.getElementById('param-ds');
+        const dgLabel = document.getElementById('val-dg');
+        const dirLabel = document.getElementById('dir-status');
+
+        let particles = [];
+        const numParticles = 40;
+
+        class ReactantParticle {
+          constructor(type) {
+            this.type = type;
+            this.r = type === 'AB' ? 7 : 5;
+            this.x = Math.random() * (canvas.width - this.r * 2) + this.r;
+            this.y = Math.random() * (canvas.height - this.r * 2) + this.r;
+            
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 1.2;
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed;
+          }
+
+          update() {
+            this.x += this.vx;
+            this.y += this.vy;
+
+            if (this.x - this.r < 0) { this.x = this.r; this.vx *= -1; }
+            if (this.x + this.r > canvas.width) { this.x = canvas.width - this.r; this.vx *= -1; }
+            if (this.y - this.r < 0) { this.y = this.r; this.vy *= -1; }
+            if (this.y + this.r > canvas.height) { this.y = canvas.height - this.r; this.vy *= -1; }
+          }
+
+          draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+            if (this.type === 'A') {
+              ctx.fillStyle = '#FF5C5C';
+            } else if (this.type === 'B') {
+              ctx.fillStyle = '#5C8CFF';
+            } else {
+              ctx.fillStyle = '#00FFD1';
+              ctx.shadowBlur = 4;
+              ctx.shadowColor = '#00FFD1';
+            }
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
+        }
+
+        for (let i = 0; i < numParticles / 2; i++) {
+          particles.push(new ReactantParticle('A'));
+          particles.push(new ReactantParticle('B'));
+        }
+
+        function runMoleculesPhysics() {
+          const t = parseInt(tempSlider.value);
+          const dh = parseFloat(dhSelect.value);
+          const ds = parseFloat(dsSelect.value);
+
+          tempLabel.textContent = t;
+
+          const dg = dh - t * (ds / 1000);
+          dgLabel.textContent = `${dg.toFixed(1)} kJ/mol`;
+
+          if (dg < -5) {
+            dirLabel.textContent = 'Thuận tự phát (Tạo sản phẩm) ➔';
+            dirLabel.style.color = '#00FFD1';
+          } else if (dg > 5) {
+            dirLabel.textContent = '⬅ Nghịch tự phát (Phân hủy sản phẩm)';
+            dirLabel.style.color = '#FF7373';
+          } else {
+            dirLabel.textContent = 'Cân bằng hóa học (Hai chiều bằng nhau) ⇌';
+            dirLabel.style.color = '#FFEB60';
+          }
+
+          particles.forEach(p => p.update());
+
+          const pForward = Math.max(0, -dg * 0.002);
+          const pReverse = Math.max(0, dg * 0.002);
+
+          if (dg < 0) {
+            for (let i = 0; i < particles.length; i++) {
+              for (let j = i + 1; j < particles.length; j++) {
+                const p1 = particles[i];
+                const p2 = particles[j];
+                if (((p1.type === 'A' && p2.type === 'B') || (p1.type === 'B' && p2.type === 'A')) && Math.random() < pForward) {
+                  const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+                  if (dist < 18) {
+                    p1.type = 'AB';
+                    p1.r = 7;
+                    particles.splice(j, 1);
+                    j--;
+                  }
+                }
+              }
+            }
+          } 
+          
+          if (dg > 0) {
+            particles.forEach((p, idx) => {
+              if (p.type === 'AB' && Math.random() < pReverse) {
+                p.type = 'A';
+                p.r = 5;
+                const b = new ReactantParticle('B');
+                b.x = p.x + (Math.random() * 10 - 5);
+                b.y = p.y + (Math.random() * 10 - 5);
+                particles.push(b);
+              }
+            });
+          }
+
+          if (Math.abs(dg) <= 5) {
+            particles.forEach((p, idx) => {
+              if (p.type === 'AB' && Math.random() < 0.005) {
+                p.type = 'A';
+                p.r = 5;
+                const b = new ReactantParticle('B');
+                b.x = p.x + (Math.random() * 10 - 5);
+                b.y = p.y + (Math.random() * 10 - 5);
+                particles.push(b);
+              }
+            });
+            for (let i = 0; i < particles.length; i++) {
+              for (let j = i + 1; j < particles.length; j++) {
+                const p1 = particles[i];
+                const p2 = particles[j];
+                if (((p1.type === 'A' && p2.type === 'B') || (p1.type === 'B' && p2.type === 'A')) && Math.random() < 0.005) {
+                  const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+                  if (dist < 18) {
+                    p1.type = 'AB';
+                    p1.r = 7;
+                    particles.splice(j, 1);
+                    j--;
+                  }
+                }
+              }
+            }
+          }
+
+          ctx.clearRect(0,0,canvas.width,canvas.height);
+          particles.forEach(p => p.draw());
+
+          let countA = particles.filter(p => p.type === 'A').length;
+          let countB = particles.filter(p => p.type === 'B').length;
+          let countAB = particles.filter(p => p.type === 'AB').length;
+
+          ctx.fillStyle = 'rgba(255,255,255,0.7)';
+          ctx.font = '11px Itim';
+          ctx.fillText(`Chất phản ứng A+B: ${countA + countB} hạt`, 10, 20);
+          ctx.fillText(`Sản phẩm AB: ${countAB} hạt`, 10, 35);
+        }
+
+        [tempSlider, dhSelect, dsSelect].forEach(el => {
+          el.oninput = runMoleculesPhysics;
+          el.onchange = runMoleculesPhysics;
+        });
+
+        if (activeLoops.molecules) cancelAnimationFrame(activeLoops.molecules);
+        function animLoop() {
+          if (activeDemoNum === '2') {
+            runMoleculesPhysics();
+            activeLoops.molecules = requestAnimationFrame(animLoop);
+          }
+        }
+        animLoop();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 3: THERMODYNAMIC BALANCE SCALE
+      ══════════════════════════════════════ */
+      function initBalanceDemo() {
+        const canvas = document.getElementById('canvas-gibbs-balance');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight || 180;
+
+        const tempSlider = document.getElementById('param-t3');
+        const tempLabel = document.getElementById('val-t3');
+        const systemSelect = document.getElementById('balance-sys');
+        const balanceReadout = document.getElementById('balance-readout');
+
+        let currentAngle = 0;
+
+        function drawBalance() {
+          const t = parseInt(tempSlider.value);
+          tempLabel.textContent = t;
+
+          const sysVal = systemSelect.value;
+          let dh = 0, ds = 0, name = '';
+
+          if (sysVal === 'case1') {
+            dh = -40; ds = 120;
+            name = 'Tỏa nhiệt & Tăng Entropy (ΔH < 0, ΔS > 0)';
+          } else if (sysVal === 'case2') {
+            dh = 40; ds = -120;
+            name = 'Thu nhiệt & Giảm Entropy (ΔH > 0, ΔS > 0)';
+          } else if (sysVal === 'case3') {
+            dh = 178; ds = 160;
+            name = 'Nung vôi CaCO₃ (Thu nhiệt & Tăng dS)';
+          } else if (sysVal === 'case4') {
+            dh = -6; ds = -22;
+            name = 'Đông băng nước (Tỏa nhiệt & Giảm dS)';
+          }
+
+          const dg = dh - t * (ds / 1000);
+
+          const maxAngle = 0.22;
+          let targetAngle = 0;
+
+          if (dg < -5) {
+            targetAngle = maxAngle;
+            balanceReadout.textContent = `ΔG = ${dg.toFixed(1)} kJ < 0 ➔ Phản ứng Tự phát (Ưu thế tạo Sản phẩm)`;
+            balanceReadout.style.color = '#00FFD1';
+          } else if (dg > 5) {
+            targetAngle = -maxAngle;
+            balanceReadout.textContent = `ΔG = ${dg.toFixed(1)} kJ > 0 ➔ Không tự phát (Ưu thế Chất phản ứng)`;
+            balanceReadout.style.color = '#FF7373';
+          } else {
+            targetAngle = 0;
+            balanceReadout.textContent = `ΔG = ${dg.toFixed(1)} kJ ≈ 0 ➔ Trạng thái Cân bằng hóa học`;
+            balanceReadout.style.color = '#FFEB60';
+          }
+
+          currentAngle += (targetAngle - currentAngle) * 0.08;
+
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          const cx = canvas.width / 2;
+          const cy = canvas.height - 20;
+
+          ctx.beginPath();
+          ctx.moveTo(cx - 30, cy);
+          ctx.lineTo(cx + 30, cy);
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx, cy - 110);
+          ctx.strokeStyle = '#5E7478';
+          ctx.lineWidth = 6;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(cx, cy - 110, 7, 0, Math.PI*2);
+          ctx.fillStyle = '#8FB2B8';
+          ctx.fill();
+
+          const armLen = 80;
+          const leftEndX = cx - Math.cos(currentAngle) * armLen;
+          const leftEndY = (cy - 110) - Math.sin(currentAngle) * armLen;
+          const rightEndX = cx + Math.cos(currentAngle) * armLen;
+          const rightEndY = (cy - 110) + Math.sin(currentAngle) * armLen;
+
+          ctx.beginPath();
+          ctx.moveTo(leftEndX, leftEndY);
+          ctx.lineTo(rightEndX, rightEndY);
+          ctx.strokeStyle = '#8FB2B8';
+          ctx.lineWidth = 4;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(leftEndX, leftEndY, 4, 0, Math.PI*2);
+          ctx.arc(rightEndX, rightEndY, 4, 0, Math.PI*2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+
+          const panH = 50;
+          const panW = 40;
+
+          ctx.beginPath();
+          ctx.moveTo(leftEndX, leftEndY);
+          ctx.lineTo(leftEndX - 15, leftEndY + panH);
+          ctx.lineTo(leftEndX + 15, leftEndY + panH);
+          ctx.closePath();
+          ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(leftEndX - panW, leftEndY + panH);
+          ctx.lineTo(leftEndX + panW, leftEndY + panH);
+          ctx.strokeStyle = '#C2E5EC';
+          ctx.lineWidth = 4;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(rightEndX, rightEndY);
+          ctx.lineTo(rightEndX - 15, rightEndY + panH);
+          ctx.lineTo(rightEndX + 15, rightEndY + panH);
+          ctx.closePath();
+          ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(rightEndX - panW, rightEndY + panH);
+          ctx.lineTo(rightEndX + panW, rightEndY + panH);
+          ctx.strokeStyle = '#C2E5EC';
+          ctx.lineWidth = 4;
+          ctx.stroke();
+
+          ctx.fillStyle = '#FF5C5C';
+          ctx.beginPath();
+          ctx.arc(leftEndX - 15, leftEndY + panH - 6, 6, 0, Math.PI*2);
+          ctx.arc(leftEndX - 5, leftEndY + panH - 6, 6, 0, Math.PI*2);
+          ctx.fillStyle = '#5C8CFF';
+          ctx.arc(leftEndX + 5, leftEndY + panH - 6, 6, 0, Math.PI*2);
+          ctx.arc(leftEndX + 15, leftEndY + panH - 6, 6, 0, Math.PI*2);
+          ctx.fill();
+
+          ctx.fillStyle = '#00FFD1';
+          ctx.beginPath();
+          ctx.arc(rightEndX - 10, rightEndY + panH - 7, 7, 0, Math.PI*2);
+          ctx.arc(rightEndX + 5, rightEndY + panH - 7, 7, 0, Math.PI*2);
+          ctx.shadowBlur = 4;
+          ctx.shadowColor = '#00FFD1';
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '11px Itim';
+          ctx.fillText('Reactants', leftEndX - 24, leftEndY + panH + 15);
+          ctx.fillText('Products', rightEndX - 22, rightEndY + panH + 15);
+
+          ctx.fillStyle = '#a4bcc2';
+          ctx.font = '11px Itim';
+          ctx.fillText(name, 10, 20);
+        }
+
+        [tempSlider, systemSelect].forEach(el => {
+          el.oninput = drawBalance;
+          el.onchange = drawBalance;
+        });
+
+        if (activeLoops.balance) cancelAnimationFrame(activeLoops.balance);
+        function animLoop() {
+          if (activeDemoNum === '3') {
+            drawBalance();
+            activeLoops.balance = requestAnimationFrame(animLoop);
+          }
+        }
+        animLoop();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 4: COUPLED REACTION GEAR MACHINE
+      ══════════════════════════════════════ */
+      function initCouplingDemo() {
+        const canvas = document.getElementById('canvas-gibbs-coupling');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight || 180;
+
+        const btnToggle = document.getElementById('btn-toggle-coupling');
+        const statusBox = document.getElementById('coupling-status');
+
+        let isCoupled = false;
+        let gearAngle = 0;
+        let pinHeight = 15;
+
+        btnToggle.onclick = () => {
+          isCoupled = !isCoupled;
+          if (isCoupled) {
+            btnToggle.textContent = 'Tách rời ATP';
+            btnToggle.style.background = '#E05050';
+            statusBox.innerHTML = 'Hệ ghép cặp: Glucose + ATP → G-6-P + ADP. <strong style="color: #00FFD1;">ΔG_net = -16.7 kJ < 0</strong>. Hệ chuyển động tự phát!';
+          } else {
+            btnToggle.textContent = 'Ghép cặp ATP ⚡';
+            btnToggle.style.background = '#008ca8';
+            statusBox.innerHTML = 'Phản ứng đơn lẻ Glucose + Pi có <strong style="color:#FF7373;">ΔG = +13.8 kJ > 0</strong>. Hệ thống bị khóa do không tự phát!';
+          }
+        };
+
+        function drawGears() {
+          ctx.clearRect(0,0,canvas.width,canvas.height);
+
+          const w = canvas.width;
+          const h = canvas.height;
+
+          const cx1 = w * 0.35;
+          const cy1 = h / 2 - 5;
+          const r1 = 50;
+
+          const cx2 = w * 0.65;
+          const cy2 = h / 2 - 5;
+          const r2 = 50;
+
+          const targetPin = isCoupled ? 0 : 18;
+          pinHeight += (targetPin - pinHeight) * 0.1;
+
+          if (isCoupled) {
+            gearAngle += 0.025;
+          }
+
+          drawSingleGear(cx1, cy1, r1, gearAngle, isCoupled ? 'rgba(0, 163, 196, 0.4)' : 'rgba(224, 80, 80, 0.25)', '#fff');
+          drawSingleGear(cx2, cy2, r2, -gearAngle + 0.3, isCoupled ? 'rgba(0, 163, 196, 0.7)' : 'rgba(255, 255, 255, 0.08)', '#00FFD1');
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '10px Itim';
+          ctx.textAlign = 'center';
+          ctx.fillText('Glucose + Pi', cx1, cy1 - 4);
+          ctx.fillText('ΔG = +13.8', cx1, cy1 + 8);
+
+          ctx.fillText('ATP → ADP', cx2, cy2 - 4);
+          ctx.fillText('ΔG = -30.5', cx2, cy2 + 8);
+          ctx.textAlign = 'left';
+
+          ctx.save();
+          ctx.translate(cx1, cy1 - r1 - 10 + pinHeight);
+          ctx.fillStyle = '#FF7373';
+          ctx.fillRect(-4, -12, 8, 16);
+          ctx.strokeStyle = '#5E7478';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(-6, -18, 12, 8);
+          ctx.restore();
+
+          if (!isCoupled) {
+            ctx.fillStyle = '#FF7373';
+            ctx.font = '11px Itim';
+            ctx.fillText('🔒 Bị khóa (ΔG > 0)', cx1 - 45, cy1 - r1 - 18);
+          } else {
+            ctx.fillStyle = '#00FFD1';
+            ctx.font = '11px Itim';
+            ctx.fillText('🔓 Đang chạy', cx1 - 32, cy1 - r1 - 18);
+            
+            ctx.beginPath();
+            ctx.arc(w/2, cy2, 40, -Math.PI * 0.4, Math.PI * 0.4);
+            ctx.strokeStyle = 'rgba(0,255,209,0.35)';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+          }
+        }
+
+        function drawSingleGear(cx, cy, r, angle, fillStyle, strokeStyle) {
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(angle);
+
+          ctx.beginPath();
+          ctx.arc(0, 0, r, 0, Math.PI*2);
+          ctx.fillStyle = fillStyle;
+          ctx.fill();
+          ctx.strokeStyle = strokeStyle;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          const teeth = 12;
+          for (let i = 0; i < teeth; i++) {
+            ctx.rotate(Math.PI * 2 / teeth);
+            ctx.beginPath();
+            ctx.rect(-6, -r - 4, 12, 10);
+            ctx.fillStyle = strokeStyle;
+            ctx.fill();
+          }
+
+          ctx.beginPath();
+          ctx.arc(0, 0, 15, 0, Math.PI*2);
+          ctx.fillStyle = '#0d1214';
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.restore();
+        }
+
+        if (activeLoops.coupling) cancelAnimationFrame(activeLoops.coupling);
+        function animLoop() {
+          if (activeDemoNum === '4') {
+            drawGears();
+            activeLoops.coupling = requestAnimationFrame(animLoop);
+          }
+        }
+        animLoop();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 5: INTERACTIVE QUIZ SYSTEM
+      ══════════════════════════════════════ */
+      const quizQuestions = [
+        {
+          q: "1. Biến thiên năng lượng tự do Gibbs được xác định bằng công thức nào ở nhiệt độ, áp suất không đổi?",
+          opts: ["ΔG = ΔH + TΔS", "ΔG = ΔH - TΔS", "ΔG = ΔS - TΔH", "ΔG = TΔH - ΔS"],
+          correct: 1,
+          exp: "Công thức chuẩn thế đẳng áp Gibbs: ΔG = ΔH - TΔS. Nó gộp xu hướng năng lượng (ΔH) và xu hướng hỗn loạn (ΔS) nhân nhiệt độ tuyệt đối T (Kelvin)."
+        },
+        {
+          q: "2. Để một phản ứng hóa học tự xảy ra (tự phát) theo chiều thuận, điều kiện của biến thiên Gibbs (ΔG) là gì?",
+          opts: ["ΔG > 0", "ΔG = 0", "ΔG < 0", "ΔG ≥ 0"],
+          correct: 2,
+          exp: "Tiêu chuẩn tự phát: ΔG < 0. Khi đó năng lượng tự do của hệ giảm xuống, giải phóng năng lượng khả dụng ra ngoài."
+        },
+        {
+          q: "3. Một phản ứng có ΔH > 0 (thu nhiệt) và ΔS > 0 (tăng hỗn loạn). Phản ứng này sẽ:",
+          opts: ["Tự phát ở mọi nhiệt độ", "Tự phát ở nhiệt độ thấp", "Tự phát ở nhiệt độ cao", "Không tự phát ở bất kỳ nhiệt độ nào"],
+          correct: 2,
+          exp: "Vì ΔG = ΔH - TΔS = (+) - T(+). Muốn ΔG âm, số hạng TΔS phải lớn hơn ΔH, tức là nhiệt độ T phải đủ cao."
+        },
+        {
+          q: "4. Cơ thể sinh vật đẩy các phản ứng sinh hóa không tự phát xảy ra bằng cách nào?",
+          opts: ["Tăng nhiệt độ cơ thể lên cực cao", "Ghép cặp phản ứng đó với phản ứng thủy phân ATP", "Sử dụng lực cơ học đẩy phân tử", "Chờ phản ứng xảy ra ngẫu nhiên"],
+          correct: 1,
+          exp: "Ghép cặp phản ứng (reaction coupling) kết hợp phản ứng thu công (+ΔG) với phản ứng tỏa công mạnh của ATP (-ΔG) để tổng ΔG_net âm."
+        },
+        {
+          q: "5. Nếu một phản ứng có ΔG° = 0, hệ phản ứng đang ở trạng thái nào?",
+          opts: ["Phản ứng đã dừng hoàn toàn", "Phản ứng đạt trạng thái cân bằng hóa học", "Phản ứng chỉ chạy một chiều thuận", "Phản ứng bùng nổ tỏa nhiệt mạnh"],
+          correct: 1,
+          exp: "ΔG = 0 tương ứng với trạng thái cân bằng hóa học, tại đó tốc độ phản ứng thuận và nghịch bằng nhau."
+        }
+      ];
+
+      let currentQuizQIdx = 0;
+      let quizScore = 0;
+      let answered = false;
+
+      function loadQuizQuestion() {
+        if (currentQuizQIdx >= quizQuestions.length) {
+          showQuizResults();
+          return;
+        }
+
+        answered = false;
+        document.getElementById('quiz-next-btn').disabled = true;
+        document.getElementById('quiz-explanation').style.display = 'none';
+
+        const qData = quizQuestions[currentQuizQIdx];
+        document.getElementById('quiz-question').innerHTML = qData.q;
+        document.getElementById('quiz-progress-bar').style.width = `${((currentQuizQIdx + 1) / quizQuestions.length) * 100}%`;
+
+        const optContainer = document.getElementById('quiz-options-container');
+        optContainer.innerHTML = '';
+
+        qData.opts.forEach((opt, idx) => {
+          const btn = document.createElement('button');
+          btn.style.width = '100%';
+          btn.style.textAlign = 'left';
+          btn.style.padding = '8px 12px';
+          btn.style.margin = '4px 0';
+          btn.style.borderRadius = '4px';
+          btn.style.border = '1.5px solid rgba(255,255,255,0.15)';
+          btn.style.background = 'rgba(255,255,255,0.04)';
+          btn.style.color = '#fff';
+          btn.style.cursor = 'pointer';
+          btn.style.fontFamily = 'Itim';
+          btn.style.fontSize = '13.5px';
+          btn.style.transition = 'all 0.15s';
+
+          btn.onmouseover = () => {
+            if (!answered) {
+              btn.style.background = 'rgba(0,163,196,0.15)';
+              btn.style.borderColor = 'var(--accent)';
+            }
+          };
+          btn.onmouseout = () => {
+            if (!answered) {
+              btn.style.background = 'rgba(255,255,255,0.04)';
+              btn.style.borderColor = 'rgba(255,255,255,0.15)';
+            }
+          };
+
+          btn.onclick = () => {
+            if (answered) return;
+            answered = true;
+            
+            if (idx === qData.correct) {
+              btn.style.background = 'rgba(80, 180, 100, 0.25)';
+              btn.style.borderColor = '#50B464';
+              quizScore++;
+            } else {
+              btn.style.background = 'rgba(224, 80, 80, 0.25)';
+              btn.style.borderColor = '#E05050';
+              optContainer.children[qData.correct].style.background = 'rgba(80, 180, 100, 0.25)';
+              optContainer.children[qData.correct].style.borderColor = '#50B464';
+            }
+
+            const expBox = document.getElementById('quiz-explanation');
+            expBox.innerHTML = `<strong>Giải thích:</strong> ${qData.exp}`;
+            expBox.style.display = 'block';
+
+            document.getElementById('quiz-next-btn').disabled = false;
+          };
+
+          btn.textContent = opt;
+          optContainer.appendChild(btn);
+        });
+      }
+
+      document.getElementById('quiz-next-btn').onclick = () => {
+        currentQuizQIdx++;
+        loadQuizQuestion();
+      };
+
+      function showQuizResults() {
+        document.getElementById('quiz-card').style.display = 'none';
+        document.getElementById('quiz-next-btn').style.display = 'none';
+        const resView = document.getElementById('quiz-result');
+        resView.style.display = 'flex';
+
+        document.getElementById('score-num').textContent = `${quizScore}/${quizQuestions.length}`;
+        const desc = document.getElementById('result-desc');
+
+        if (quizScore === 5) {
+          desc.textContent = "Xuất sắc! Bạn đã trả lời đúng 100% câu hỏi và hoàn toàn nắm giữ quy luật dòng chảy tự phát của năng lượng Gibbs.";
+        } else if (quizScore >= 3) {
+          desc.textContent = "Khá tốt! Bạn đã hiểu được các khái niệm cơ bản về nhiệt động lực học và cách tính biến thiên tự do Gibbs.";
+        } else {
+          desc.textContent = "Hãy ôn lại lý thuyết về các trường hợp tự phát theo nhiệt độ và làm lại bài kiểm tra nhé.";
+        }
+      }
+
+      document.getElementById('quiz-restart-btn').onclick = () => {
+        currentQuizQIdx = 0;
+        quizScore = 0;
+        document.getElementById('quiz-card').style.display = 'flex';
+        document.getElementById('quiz-next-btn').style.display = 'block';
+        document.getElementById('quiz-result').style.display = 'none';
+        loadQuizQuestion();
+      };
+
+      loadQuizQuestion();
+
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giản đồ pha Sắt - Cacbon (Fe-C) Tương tác</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ══════════════════════════════════════
+       DESIGN SYSTEM & VARIABLES (DARK MODE)
+       ══════════════════════════════════════ */
+    :root {
+      --bg-dark: #0f172a;
+      --bg-panel: rgba(30, 41, 59, 0.7);
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-orange: #f97316;
+      --accent-cyan: #06b6d4;
+      --accent-violet: #8b5cf6;
+      --accent-yellow: #eab308;
+      --accent-green: #10b981;
+      --accent-pink: #ec4899;
+      --accent-blue: #3b82f6;
+      --glow-shadow: 0 0 25px rgba(59, 130, 246, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(30, 58, 138, 0.2) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(88, 28, 135, 0.15) 0%, transparent 40%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 24px 40px;
+      border-bottom: 1px solid var(--border-glass);
+      backdrop-filter: blur(8px);
+      background: rgba(15, 23, 42, 0.5);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-title h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, #60a5fa, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-title p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ══════════════════════════════════════
+       MAIN DASHBOARD LAYOUT
+       ══════════════════════════════════════ */
+    .dashboard {
+      display: flex;
+      flex: 1;
+      padding: 24px;
+      gap: 24px;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .column-left {
+      flex: 1.3;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      min-width: 0; /* Prevents flex item overflow */
+    }
+
+    .column-right {
+      flex: 0.8;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      min-width: 380px;
+    }
+
+    .card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+      transition: border-color 0.3s ease;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-glass);
+      padding-bottom: 10px;
+      color: #cbd5e1;
+    }
+
+    /* ══════════════════════════════════════
+       INTERACTIVE SVG DIAGRAM
+       ══════════════════════════════════════ */
+    .diagram-container {
+      position: relative;
+      width: 100%;
+      height: 520px;
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-glass);
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      user-select: none;
+    }
+
+    .grid-line {
+      stroke: rgba(255, 255, 255, 0.05);
+      stroke-dasharray: 4, 4;
+      stroke-width: 1px;
+    }
+
+    .grid-label {
+      fill: var(--text-muted);
+      font-size: 11px;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .phase-region {
+      transition: fill-opacity 0.2s ease, stroke-width 0.2s ease;
+      cursor: crosshair;
+    }
+
+    .phase-region:hover {
+      fill-opacity: 0.25;
+      stroke-width: 1.5px;
+    }
+
+    .phase-region.active {
+      fill-opacity: 0.35;
+      stroke-width: 2px;
+    }
+
+    .boundary-line {
+      fill: none;
+      stroke-width: 2px;
+      pointer-events: none;
+    }
+
+    .reaction-point {
+      cursor: pointer;
+      transition: r 0.2s, fill 0.2s;
+    }
+
+    .reaction-point:hover {
+      r: 6;
+      fill: #ffffff;
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+    }
+
+    .reticle-line {
+      stroke: rgba(255, 255, 255, 0.3);
+      stroke-dasharray: 2, 2;
+      pointer-events: none;
+    }
+
+    .reticle-center {
+      fill: #ffffff;
+      stroke: var(--accent-blue);
+      stroke-width: 2px;
+      pointer-events: none;
+      filter: drop-shadow(0 0 6px var(--accent-blue));
+    }
+
+    /* Tooltip styling in SVG */
+    .svg-tooltip {
+      position: absolute;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--accent-blue);
+      border-radius: 8px;
+      padding: 10px;
+      color: #fff;
+      font-size: 12px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 10;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      max-width: 220px;
+    }
+
+    /* Legend */
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
+      margin-top: 16px;
+      padding: 12px;
+      background: rgba(15, 23, 42, 0.3);
+      border-radius: 8px;
+      border: 1px solid var(--border-glass);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* ══════════════════════════════════════
+       CONTROL PANEL
+       ══════════════════════════════════════ */
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slider-label {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .slider-value {
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-glass);
+    }
+
+    .input-range {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #334155;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .input-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+      transition: transform 0.1s, background-color 0.1s;
+    }
+
+    .input-range::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      background: #60a5fa;
+    }
+
+    .toggle-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .btn-toggle {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-glass);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-toggle:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+    }
+
+    .btn-toggle.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: var(--accent-blue);
+      color: #60a5fa;
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.1);
+    }
+
+    /* ══════════════════════════════════════
+       MICROSCOPE MICROSTRUCTURE SIMULATOR
+       ══════════════════════════════════════ */
+    .microscope-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .microscope-viewport {
+      position: relative;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: #000;
+      box-shadow: 
+        0 0 0 12px #1e293b,
+        0 0 0 14px #334155,
+        0 0 20px 8px rgba(0,0,0,0.6),
+        inset 0 0 20px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+    }
+
+    /* Glossy reflection on lens */
+    .microscope-viewport::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 30%, transparent 50%, rgba(0,0,0,0.2) 100%);
+      pointer-events: none;
+      border-radius: 50%;
+    }
+
+    #microscope-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 50%;
+    }
+
+    .microscope-scale {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+      border-top: 1px solid var(--border-glass);
+      padding-top: 6px;
+      width: 120px;
+      text-align: center;
+      position: relative;
+    }
+
+    .microscope-scale::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 20px;
+      right: 20px;
+      height: 3px;
+      border-left: 1px solid var(--text-muted);
+      border-right: 1px solid var(--text-muted);
+    }
+
+    /* ══════════════════════════════════════
+       DATA DISP & LEVER RULE BREAKDOWN
+       ══════════════════════════════════════ */
+    .data-readout {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .data-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .data-val {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .lever-container {
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid var(--border-glass);
+      margin-top: 8px;
+    }
+
+    .lever-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .lever-bar-outer {
+      height: 16px;
+      background: #1e293b;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 12px;
+    }
+
+    .lever-bar-left {
+      height: 100%;
+      background: var(--accent-blue);
+      transition: width 0.1s ease;
+    }
+
+    .lever-bar-right {
+      height: 100%;
+      background: var(--accent-pink);
+      transition: width 0.1s ease;
+    }
+
+    .lever-details {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .lever-point-left { color: #60a5fa; }
+    .lever-point-right { color: #f472b6; }
+
+    /* ══════════════════════════════════════
+       EDUCATIONAL DETAILS PANEL
+       ══════════════════════════════════════ */
+    .edu-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .phase-details-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 8px;
+    }
+
+    .phase-type-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-steel { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .badge-iron { background: rgba(236, 72, 153, 0.15); color: #ec4899; border: 1px solid rgba(236, 72, 153, 0.3); }
+
+    .phase-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+
+    .reaction-info-box {
+      margin-top: 16px;
+      padding: 12px;
+      background: rgba(59, 130, 246, 0.05);
+      border-left: 3px solid var(--accent-blue);
+      border-radius: 0 8px 8px 0;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .reaction-title {
+      font-weight: 600;
+      color: #93c5fd;
+      margin-bottom: 4px;
+    }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE DESIGN (<= 980px)
+       ══════════════════════════════════════ */
+    @media (max-width: 980px) {
+      .dashboard {
+        flex-direction: column;
+      }
+      .column-right {
+        min-width: 100%;
+      }
+      .diagram-container {
+        height: 400px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-title">
+      <h1>Giản Đồ Pha Sắt - Cacbon (Fe-C) Tương Tác</h1>
+      <p>Mô phỏng động học tế vi, tổ chức pha và Quy tắc đòn bẩy thép/hợp kim</p>
+    </div>
+    <div class="toggle-group">
+      <button id="btn-zoom" class="btn-toggle" onclick="toggleZoomMode()">
+        <svg style="width:16px;height:16px;vertical-align:middle;display:inline;" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M15.5,14L20.3,18.8L18.8,20.3L14,15.5V14.5L13.6,14.1C12.4,15.2 10.8,15.8 9,15.8C5.1,15.8 2,12.7 2,8.8C2,4.9 5.1,1.8 9,1.8C12.9,1.8 16,4.9 16,8.8C16,10.6 15.4,12.2 14.3,13.4L14.7,13.8H15.7M9,13.8C11.8,13.8 14,11.6 14,8.8C14,6 11.8,3.8 9,3.8C6.2,3.8 4,6 4,8.8C4,11.6 6.2,13.8 9,13.8Z" />
+        </svg>
+        <span>Phóng to Thép (0 - 2.14% C)</span>
+      </button>
+      <button id="btn-labels" class="btn-toggle active" onclick="toggleLabels()">
+        <span>Hiện Tên Pha</span>
+      </button>
+      <button id="btn-points" class="btn-toggle active" onclick="togglePoints()">
+        <span>Hiện Điểm Đặc Biệt</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <!-- CỘT BÊN TRÁI: GIẢN ĐỒ & THÔNG TIN GIẢI THÍCH -->
+    <div class="column-left">
+      <div class="card" style="flex: 1; display: flex; flex-direction: column;">
+        <div class="card-title">
+          <svg style="width:18px;height:18px;" viewBox="0 0 24 24"><path fill="currentColor" d="M19,3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.89,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.89 20.1,3 19,3M19,19H5V5H19V19M7,10H9V17H7V10M11,7H13V17H11V7M15,13H17V17H15V13" /></svg>
+          <span>Giản đồ trạng thái Hệ Sắt - Cacbon</span>
+        </div>
+        
+        <div class="diagram-container" id="svg-container">
+          <svg id="fe-c-svg" viewBox="0 0 800 500" preserveAspectRatio="none">
+            <!-- Dynamic Elements created by JavaScript -->
+            <g id="svg-grid"></g>
+            <g id="svg-regions"></g>
+            <g id="svg-lines"></g>
+            <g id="svg-points"></g>
+            <g id="svg-reticle">
+              <line id="reticle-v" class="reticle-line" x1="0" y1="0" x2="0" y2="500"></line>
+              <line id="reticle-h" class="reticle-line" x1="0" y1="0" x2="800" y2="0"></line>
+              <circle id="reticle-c" class="reticle-center" r="5"></circle>
+            </g>
+          </svg>
+          <!-- Tooltip element -->
+          <div id="diagram-tooltip" class="svg-tooltip"></div>
+        </div>
+
+        <div class="legend" id="diagram-legend">
+          <!-- Legend filled by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Khối Thông Tin Chi Tiết Về Pha -->
+      <div class="card edu-panel">
+        <div class="card-title">
+          <svg style="width:18px;height:18px;" viewBox="0 0 24 24"><path fill="currentColor" d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,17H13V11H11V17M11,9H13V7H11V9Z" /></svg>
+          <span>Chi tiết Trạng thái Pha & Phản ứng</span>
+        </div>
+        <div id="phase-details-content">
+          <div class="phase-details-title" id="active-phase-name">Austenite (γ)</div>
+          <span class="phase-type-badge badge-steel" id="active-phase-badge">Thép</span>
+          <p class="phase-desc" id="active-phase-desc">
+            Austenite là dung dịch rắn xen kẽ của cacbon trong sắt mạng lập phương tâm mặt (Fe-FCC). Trạng thái này có tính dẻo cao và không có từ tính ở nhiệt độ cao.
+          </p>
+          <div id="reaction-box" class="reaction-info-box">
+            <div class="reaction-title" id="reaction-title">Phản ứng Cùng Tích (Eutectoid)</div>
+            <p id="reaction-desc">Tại 727°C và 0.76% C, Austenite rắn phân hủy đồng thời thành hỗn hợp hai pha cơ học Ferrite và Cementite gọi là Pearlite (P).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CỘT BÊN PHẢI: KÍNH HIỂN VI, ĐIỀU KHIỂN & ĐÒN BẨY -->
+    <div class="column-right">
+      <!-- Mô phỏng Kính Hiển Vi -->
+      <div class="card microscope-section">
+        <div class="card-title" style="width: 100%;">
+          <svg style="width:18px;height:18px;" viewBox="0 0 24 24"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z" /></svg>
+          <span>Tổ chức tế vi hạt (Dưới kính hiển vi)</span>
+        </div>
+        
+        <div class="microscope-viewport">
+          <canvas id="microscope-canvas" width="240" height="240"></canvas>
+        </div>
+        <div class="microscope-scale">50 μm</div>
+      </div>
+
+      <!-- Bộ Điều Khiển Tương Tác -->
+      <div class="card">
+        <div class="card-title">
+          <svg style="width:18px;height:18px;" viewBox="0 0 24 24"><path fill="currentColor" d="M3,17V19H9V17H3M3,5V7H13V5H3M13,19V17H21V19H13M7,9V11H21V9H7M3,9V11H5V9H3M17,13V15H21V13H17M3,13V15H15V13H3" /></svg>
+          <span>Tham số Trạng thái</span>
+        </div>
+        
+        <div class="control-row">
+          <div class="slider-group">
+            <div class="slider-header">
+              <span class="slider-label">Hàm lượng Cacbon (%C)</span>
+              <span class="slider-value" id="val-carbon">0.76 %</span>
+            </div>
+            <input type="range" class="input-range" id="slider-carbon" min="0" max="6.67" step="0.005" value="0.76" oninput="updateFromSliders()" />
+          </div>
+          
+          <div class="slider-group">
+            <div class="slider-header">
+              <span class="slider-label">Nhiệt độ (T °C)</span>
+              <span class="slider-value" id="val-temp">727 °C</span>
+            </div>
+            <input type="range" class="input-range" id="slider-temp" min="0" max="1600" step="2" value="727" oninput="updateFromSliders()" />
+          </div>
+        </div>
+
+        <div class="data-readout">
+          <div class="data-row">
+            <span class="data-label">Phân loại hợp kim:</span>
+            <span class="data-val" id="alloy-class" style="color: #60a5fa;">Thép cùng tích</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Trạng thái pha:</span>
+            <span class="data-val" id="phase-state" style="color: #34d399;">Austenite + Pearlite</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quy Tắc Đòn Bẩy -->
+      <div class="card">
+        <div class="card-title">
+          <svg style="width:18px;height:18px;" viewBox="0 0 24 24"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,11A1,1 0 0,0 11,12A1,1 0 0,0 12,13A1,1 0 0,0 13,12A1,1 0 0,0 12,11Z" /></svg>
+          <span>Quy tắc đòn bẩy (Tỷ lệ pha)</span>
+        </div>
+        
+        <div id="lever-rule-area">
+          <div class="lever-container">
+            <div class="lever-title">
+              <span>Biểu đồ tỷ lệ phần trăm các pha</span>
+              <span id="lever-fraction-val" style="font-family:'Fira Code';">50% / 50%</span>
+            </div>
+            <div class="lever-bar-outer">
+              <div id="lever-bar-l" class="lever-bar-left" style="width: 50%;"></div>
+              <div id="lever-bar-r" class="lever-bar-right" style="width: 50%;"></div>
+            </div>
+            <div class="lever-details">
+              <span id="lever-name-l" class="lever-point-left">Pha L: 0.022% C</span>
+              <span id="lever-name-r" class="lever-point-right">Pha R: 6.67% C</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ══════════════════════════════════════
+       JAVASCRIPT LOGIC
+       ══════════════════════════════════════ -->
+  <script>
+    // 1. STATE VARIABLES
+    let state = {
+      carbon: 0.76,
+      temp: 727,
+      zoomMode: false, // false: full (0-6.67% C), true: steel (0-2.14% C)
+      showLabels: true,
+      showPoints: true,
+      cMax: 6.67,
+      currentCMax: 6.67,
+      tMax: 1600,
+      tMin: 0
+    };
+
+    // Screen padding for SVG
+    const padding = { left: 55, right: 30, top: 35, bottom: 45 };
+    const graphWidth = 800 - padding.left - padding.right;
+    const graphHeight = 500 - padding.top - padding.bottom;
+
+    // 2. COORDINATE TRANSFORMATIONS
+    function cToX(c) {
+      return padding.left + (c / state.currentCMax) * graphWidth;
+    }
+    function tToY(t) {
+      return padding.top + (1 - (t - state.tMin) / (state.tMax - state.tMin)) * graphHeight;
+    }
+    function xToC(x) {
+      let val = ((x - padding.left) / graphWidth) * state.currentCMax;
+      return Math.max(0, Math.min(state.currentCMax, val));
+    }
+    function yToT(y) {
+      let val = state.tMax - ((y - padding.top) / graphHeight) * (state.tMax - state.tMin);
+      return Math.max(state.tMin, Math.min(state.tMax, val));
+    }
+
+    // 3. PHASE BOUNDARY EQUATIONS (CLOSED-FORM MATHEMATICAL MODELS)
+    const boundaries = {
+      // Liquidus curves
+      liqAB: (c) => 1538 - 86 * c,
+      liqBC: (c) => -14.94 * c * c - 20.14 * c + 1508.88,
+      liqCD: (c) => 1147 + 43.46 * (c - 4.3),
+      
+      // Solidus/Solvus curves
+      solidusIE: (c) => 1495 - 176.65 * (c - 0.17),
+      solvusGS: (c) => 100 * c * c - 319 * c + 912,
+      solvusES: (c) => -50 * c * c + 449 * c + 414.5,
+      solvusGP: (c) => 912 - 8409 * c,
+      solvusPQ: (c) => 51948 * (c - 0.008),
+
+      // Inverses (solving C for given T)
+      c_GS: (t) => (319 - Math.sqrt(319*319 - 400*(912 - t))) / 200,
+      c_ES: (t) => (449 - Math.sqrt(449*449 - 200*(t - 414.5))) / 100,
+      c_GP: (t) => (912 - t) / 8409,
+      c_PQ: (t) => 0.008 + t / 51948,
+      c_liqBC: (t) => (-20.14 + Math.sqrt(20.14*20.14 - 59.76*(t - 1508.88))) / 29.88,
+      c_liqCD: (t) => 4.3 + (t - 1147) / 43.46,
+      c_solIE: (t) => 0.17 + (1495 - t) / 176.65
+    };
+
+    // Key invariant metallurgical points on Fe-C phase diagram
+    const specPoints = [
+      { id: 'A', c: 0,     t: 1538, name: 'A (Nóng chảy Fe)', desc: 'Điểm nóng chảy của sắt tinh khiết (1538°C).' },
+      { id: 'B', c: 0.5,   t: 1495, name: 'B (Liquidus peritectic)', desc: 'Nồng độ lỏng giới hạn xảy ra phản ứng bao tinh (1495°C).' },
+      { id: 'C', c: 4.3,   t: 1147, name: 'C (Cùng tinh / Eutectic)', desc: 'Điểm cùng tinh của gang (1147°C). Pha lỏng chuyển thành Lêđêburit.' },
+      { id: 'D', c: 6.67,  t: 1250, name: 'D (Nóng chảy Fe₃C)', desc: 'Nhiệt độ nóng chảy giả định của Xêmentit sơ cấp.' },
+      { id: 'E', c: 2.14,  t: 1147, name: 'E (Độ hòa tan tối đa)', desc: 'Giới hạn hòa tan cacbon tối đa trong Austenit (1147°C). Điểm phân chia Thép và Gang.' },
+      { id: 'G', c: 0,     t: 912,  name: 'G (Đồng hình α ↔ γ)', desc: 'Điểm chuyển biến thù hình Sắt tinh khiết (Fe-α ↔ Fe-γ) ở 912°C.' },
+      { id: 'H', c: 0.09,  t: 1495, name: 'H (delta peritectic)', desc: 'Giới hạn hòa tan cacbon tối đa trong sắt delta ở 1495°C.' },
+      { id: 'I', c: 0.17,  t: 1495, name: 'I (Bao tinh / Peritectic)', desc: 'Điểm bao tinh xảy ra phản ứng ở 1495°C giữa delta và lỏng tạo ra Austenit.' },
+      { id: 'P', c: 0.022, t: 727,  name: 'P (Giới hạn Ferit)', desc: 'Giới hạn hòa tan cacbon tối đa trong Ferit ở 727°C (0.022% C).' },
+      { id: 'S', c: 0.76,  t: 727,  name: 'S (Cùng tích / Eutectoid)', desc: 'Điểm cùng tích của thép (727°C). Austenit chuyển thành Pêrlit.' }
+    ];
+
+    // 4. DEFINE ALL PHASE FIELDS POLYGONS FOR INTERACTION
+    const regions = [
+      {
+        id: 'liquid',
+        name: 'Liquid (L)',
+        desc: 'Pha lỏng. Dung dịch lỏng đồng nhất của sắt và cacbon. Độ nhớt thấp, khả năng hòa tan cacbon vô hạn.',
+        points: [
+          {c: 0, t: 1600},
+          {c: 0, t: 1538},
+          {c: 0.5, t: 1495},
+          {c: 4.3, t: 1147, type: 'curveBC'},
+          {c: 6.67, t: 1250},
+          {c: 6.67, t: 1600}
+        ],
+        color: 'rgba(239, 68, 68, 0.08)',
+        strokeColor: 'rgba(239, 68, 68, 0.4)',
+        textColor: '#ef4444'
+      },
+      {
+        id: 'delta',
+        name: 'Delta Ferrite (δ)',
+        desc: 'Ferit δ. Dung dịch rắn xen kẽ của cacbon trong sắt mạng lập phương tâm khối (Fe-BCC) ở nhiệt độ cao. Chỉ ổn định trên 1394°C.',
+        points: [
+          {c: 0, t: 1394},
+          {c: 0, t: 1538},
+          {c: 0.09, t: 1495},
+          {c: 0.1, t: 1394}
+        ],
+        color: 'rgba(245, 158, 11, 0.1)',
+        strokeColor: 'rgba(245, 158, 11, 0.4)',
+        textColor: '#f59e0b'
+      },
+      {
+        id: 'delta_liquid',
+        name: 'δ + Liquid',
+        desc: 'Vùng hai pha gồm Ferit δ và Pha lỏng đang trong quá trình chuyển biến bao tinh (Peritectic).',
+        points: [
+          {c: 0.09, t: 1495},
+          {c: 0, t: 1538},
+          {c: 0.5, t: 1495},
+          {c: 0.17, t: 1495},
+          {c: 0.09, t: 1495}
+        ],
+        color: 'rgba(217, 119, 6, 0.08)',
+        strokeColor: 'rgba(217, 119, 6, 0.3)',
+        textColor: '#d97706'
+      },
+      {
+        id: 'delta_gamma',
+        name: 'δ + Austenite (γ)',
+        desc: 'Vùng hỗn hợp hai pha rắn gồm Ferit delta (δ) và Austenit (γ) ở nhiệt độ cao.',
+        points: [
+          {c: 0, t: 1394},
+          {c: 0.1, t: 1394},
+          {c: 0.17, t: 1495},
+          {c: 0.09, t: 1495}
+        ],
+        color: 'rgba(16, 185, 129, 0.08)',
+        strokeColor: 'rgba(16, 185, 129, 0.3)',
+        textColor: '#10b981'
+      },
+      {
+        id: 'gamma_liquid',
+        name: 'Austenite (γ) + Liquid',
+        desc: 'Vùng hỗn hợp lỏng và rắn Austenit. Tinh thể Austenit dạng nhánh cây (dendrite) bắt đầu đông đặc từ pha lỏng.',
+        points: [
+          {c: 0.17, t: 1495},
+          {c: 0.5, t: 1495},
+          {c: 4.3, t: 1147, type: 'curveBC'},
+          {c: 2.14, t: 1147},
+          {c: 0.17, t: 1495}
+        ],
+        color: 'rgba(139, 92, 246, 0.08)',
+        strokeColor: 'rgba(139, 92, 246, 0.3)',
+        textColor: '#8b5cf6'
+      },
+      {
+        id: 'gamma',
+        name: 'Austenite (γ)',
+        desc: 'Austenit. Dung dịch rắn xen kẽ của cacbon trong sắt mạng lập phương tâm mặt (Fe-FCC). Có độ dẻo cao, thích hợp cho rèn, cán nóng. Không có từ tính.',
+        points: [
+          {c: 0, t: 912},
+          {c: 0, t: 1394},
+          {c: 0.1, t: 1394},
+          {c: 0.17, t: 1495},
+          {c: 2.14, t: 1147},
+          {c: 0.76, t: 727, type: 'curveES'},
+          {c: 0, t: 912, type: 'curveGS'}
+        ],
+        color: 'rgba(59, 130, 246, 0.1)',
+        strokeColor: 'rgba(59, 130, 246, 0.4)',
+        textColor: '#3b82f6'
+      },
+      {
+        id: 'liquid_cementite',
+        name: 'Liquid + Cementite (Fe₃C)',
+        desc: 'Hỗn hợp lỏng và các tinh thể Xêmentit sơ cấp giòn, cứng (dạng tấm dài) kết tinh trực tiếp từ pha lỏng.',
+        points: [
+          {c: 4.3, t: 1147},
+          {c: 6.67, t: 1250},
+          {c: 6.67, t: 1147},
+          {c: 4.3, t: 1147}
+        ],
+        color: 'rgba(236, 72, 153, 0.08)',
+        strokeColor: 'rgba(236, 72, 153, 0.3)',
+        textColor: '#ec4899'
+      },
+      {
+        id: 'gamma_cementite',
+        name: 'Austenite (γ) + Cementite (Fe₃C)',
+        desc: 'Trạng thái thép sau cùng tích hoặc gang trắng trước cùng tinh ở nhiệt độ cao. Austenit rắn bao quanh mạng lưới Xêmentit thứ cấp kết tủa ở biên giới hạt.',
+        points: [
+          {c: 0.76, t: 727},
+          {c: 2.14, t: 1147, type: 'curveES'},
+          {c: 6.67, t: 1147},
+          {c: 6.67, t: 727},
+          {c: 0.76, t: 727}
+        ],
+        color: 'rgba(14, 165, 233, 0.08)',
+        strokeColor: 'rgba(14, 165, 233, 0.3)',
+        textColor: '#0ea5e9'
+      },
+      {
+        id: 'alpha_gamma',
+        name: 'Ferrite (α) + Austenite (γ)',
+        desc: 'Vùng hai pha mềm và dẻo xen kẽ. Thép trước cùng tích đang trong quá trình chuyển biến thù hình từ mạng lập phương tâm mặt (Austenit) sang lập phương tâm khối (Ferit).',
+        points: [
+          {c: 0, t: 912},
+          {c: 0.76, t: 727, type: 'curveGS'},
+          {c: 0.022, t: 727},
+          {c: 0, t: 912}
+        ],
+        color: 'rgba(20, 184, 166, 0.08)',
+        strokeColor: 'rgba(20, 184, 166, 0.3)',
+        textColor: '#14b8a6'
+      },
+      {
+        id: 'alpha',
+        name: 'Ferrite (α)',
+        desc: 'Ferit. Dung dịch rắn xen kẽ của cacbon trong sắt mạng lập phương tâm khối (Fe-BCC). Rất mềm, độ dẻo cao, dẫn điện tốt và có từ tính mạnh ở nhiệt độ thường.',
+        points: [
+          {c: 0, t: 0},
+          {c: 0, t: 912},
+          {c: 0.022, t: 727},
+          {c: 0.008, t: 0}
+        ],
+        color: 'rgba(101, 163, 13, 0.1)',
+        strokeColor: 'rgba(101, 163, 13, 0.4)',
+        textColor: '#65a30d'
+      },
+      {
+        id: 'alpha_cementite',
+        name: 'Ferrite (α) + Cementite (Fe₃C)',
+        desc: 'Trạng thái nguội bình thường của thép và gang. Chứa tổ chức Pêrlit (hỗn hợp cùng tích của Ferit và Xêmentit) kết hợp với Ferit dư hoặc Xêmentit dư mạng lưới.',
+        points: [
+          {c: 0.008, t: 0},
+          {c: 0.022, t: 727},
+          {c: 6.67, t: 727},
+          {c: 6.67, t: 0}
+        ],
+        color: 'rgba(100, 116, 139, 0.1)',
+        strokeColor: 'rgba(100, 116, 139, 0.4)',
+        textColor: '#64748b'
+      }
+    ];
+
+    // Pre-sampled polygons for fast mathematical containment check
+    let sampledRegions = [];
+
+    // Helper: Sample curves to create polygon vertices
+    function getSampledPoints(points) {
+      let sampled = [];
+      if (points.length === 0) return sampled;
+      
+      sampled.push({c: points[0].c, t: points[0].t});
+      for (let i = 1; i < points.length; i++) {
+        let p = points[i];
+        let prev = points[i-1];
+        if (p.type === 'curveBC') {
+          let steps = 15;
+          for (let s = 1; s <= steps; s++) {
+            let currC = prev.c + (p.c - prev.c) * (s / steps);
+            let currT = boundaries.liqBC(currC);
+            sampled.push({c: currC, t: currT});
+          }
+        } else if (p.type === 'curveGS') {
+          let steps = 15;
+          for (let s = 1; s <= steps; s++) {
+            let currC = prev.c + (p.c - prev.c) * (s / steps);
+            let currT = boundaries.solvusGS(currC);
+            sampled.push({c: currC, t: currT});
+          }
+        } else if (p.type === 'curveES') {
+          let steps = 15;
+          for (let s = 1; s <= steps; s++) {
+            let currC = prev.c + (p.c - prev.c) * (s / steps);
+            let currT = boundaries.solvusES(currC);
+            sampled.push({c: currC, t: currT});
+          }
+        } else {
+          sampled.push({c: p.c, t: p.t});
+        }
+      }
+      return sampled;
+    }
+
+    function initSampledRegions() {
+      sampledRegions = regions.map(r => ({
+        ...r,
+        poly: getSampledPoints(r.points)
+      }));
+    }
+
+    // Ray casting algorithm for point-in-polygon check
+    function pointInPolygon(point, vs) {
+      let x = point[0], y = point[1];
+      let inside = false;
+      for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+        let xi = vs[i][0], yi = vs[i][1];
+        let xj = vs[j][0], yj = vs[j][1];
+        let intersect = ((yi > y) != (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+      }
+      return inside;
+    }
+
+    function findActiveRegion(c, t) {
+      for (let r of sampledRegions) {
+        if (pointInPolygon([c, t], r.poly.map(p => [p.c, p.t]))) {
+          return r;
+        }
+      }
+      return null;
+    }
+
+    // 5. ANIMATION FOR SMOOTH ZOOM TRANSITION
+    let animationStartTime = 0;
+    const animationDuration = 350; // ms
+
+    function animateZoom(timestamp) {
+      if (!animationStartTime) animationStartTime = timestamp;
+      let elapsed = timestamp - animationStartTime;
+      let progress = Math.min(elapsed / animationDuration, 1);
+      
+      // cubic easeInOut
+      let ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+      
+      state.currentCMax = state.currentCMax + (state.cMax - state.currentCMax) * ease;
+      
+      drawDiagram();
+      updateReticle();
+
+      if (progress < 1) {
+        requestAnimationFrame(animateZoom);
+      } else {
+        state.currentCMax = state.cMax;
+        drawDiagram();
+        updateReticle();
+        animationStartTime = 0;
+      }
+    }
+
+    function toggleZoomMode() {
+      state.zoomMode = !state.zoomMode;
+      state.cMax = state.zoomMode ? 2.14 : 6.67;
+      
+      // Update carbon slider bounds dynamically
+      const carbonSlider = document.getElementById('slider-carbon');
+      carbonSlider.max = state.zoomMode ? 2.14 : 6.67;
+      if (parseFloat(carbonSlider.value) > state.cMax) {
+        carbonSlider.value = state.cMax;
+        state.carbon = state.cMax;
+      }
+
+      document.getElementById('btn-zoom').classList.toggle('active', state.zoomMode);
+      animationStartTime = 0;
+      requestAnimationFrame(animateZoom);
+    }
+
+    // Labels and Points state updates
+    function toggleLabels() {
+      state.showLabels = !state.showLabels;
+      document.getElementById('btn-labels').classList.toggle('active', state.showLabels);
+      drawDiagram();
+    }
+
+    function togglePoints() {
+      state.showPoints = !state.showPoints;
+      document.getElementById('btn-points').classList.toggle('active', state.showPoints);
+      drawDiagram();
+    }
+
+    // 6. SVG DRAWING FUNCTIONS
+    function generatePathString(points) {
+      if (points.length === 0) return '';
+      let d = `M ${cToX(points[0].c)} ${tToY(points[0].t)}`;
+      for (let i = 1; i < points.length; i++) {
+        let p = points[i];
+        let prev = points[i-1];
+        if (p.type === 'curveBC') {
+          let steps = 10;
+          for (let s = 1; s <= steps; s++) {
+            let currC = prev.c + (p.c - prev.c) * (s / steps);
+            let currT = boundaries.liqBC(currC);
+            d += ` L ${cToX(currC)} ${tToY(currT)}`;
+          }
+        } else if (p.type === 'curveGS') {
+          let steps = 10;
+          for (let s = 1; s <= steps; s++) {
+            let currC = prev.c + (p.c - prev.c) * (s / steps);
+            let currT = boundaries.solvusGS(currC);
+            d += ` L ${cToX(currC)} ${tToY(currT)}`;
+          }
+        } else if (p.type === 'curveES') {
+          let steps = 10;
+          for (let s = 1; s <= steps; s++) {
+            let currC = prev.c + (p.c - prev.c) * (s / steps);
+            let currT = boundaries.solvusES(currC);
+            d += ` L ${cToX(currC)} ${tToY(currT)}`;
+          }
+        } else {
+          d += ` L ${cToX(p.c)} ${tToY(p.t)}`;
+        }
+      }
+      d += ' Z';
+      return d;
+    }
+
+    function drawDiagram() {
+      const gridG = document.getElementById('svg-grid');
+      const regionsG = document.getElementById('svg-regions');
+      const linesG = document.getElementById('svg-lines');
+      const pointsG = document.getElementById('svg-points');
+      
+      gridG.innerHTML = '';
+      regionsG.innerHTML = '';
+      linesG.innerHTML = '';
+      pointsG.innerHTML = '';
+
+      // A. DRAW GRID & AXES
+      // Temp grid (horizontal)
+      for (let t = 200; t <= 1600; t += 200) {
+        let y = tToY(t);
+        gridG.innerHTML += `<line class="grid-line" x1="${padding.left}" y1="${y}" x2="${800 - padding.right}" y2="${y}"></line>`;
+        gridG.innerHTML += `<text class="grid-label" x="${padding.left - 8}" y="${y + 4}" text-anchor="end">${t}</text>`;
+      }
+      // Y-axis title
+      gridG.innerHTML += `<text fill="var(--text-muted)" font-size="12" x="15" y="24" transform="rotate(-90 15 24)" text-anchor="end">Nhiệt độ (T °C)</text>`;
+
+      // Carbon grid (vertical)
+      let cStep = state.currentCMax > 3 ? 1.0 : 0.2;
+      for (let c = cStep; c < state.currentCMax; c += cStep) {
+        c = Math.round(c * 10) / 10;
+        let x = cToX(c);
+        gridG.innerHTML += `<line class="grid-line" x1="${x}" y1="${padding.top}" x2="${x}" y2="${500 - padding.bottom}"></line>`;
+        gridG.innerHTML += `<text class="grid-label" x="${x}" y="${500 - padding.bottom + 16}" text-anchor="middle">${c}%</text>`;
+      }
+      // X-axis label
+      gridG.innerHTML += `<text fill="var(--text-muted)" font-size="12" x="${400}" y="${500 - 8}" text-anchor="middle">Hàm lượng Cacbon (% Khối lượng C)</text>`;
+
+      // Border axes
+      gridG.innerHTML += `<line stroke="rgba(255,255,255,0.2)" x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${500 - padding.bottom}"></line>`;
+      gridG.innerHTML += `<line stroke="rgba(255,255,255,0.2)" x1="${padding.left}" y1="${500 - padding.bottom}" x2="${800 - padding.right}" y2="${500 - padding.bottom}"></line>`;
+
+      // B. DRAW PHASE FIELD POLYGONS
+      regions.forEach(r => {
+        let pathData = generatePathString(r.points);
+        if (pathData) {
+          let activeReg = findActiveRegion(state.carbon, state.temp);
+          let isActive = activeReg && activeReg.id === r.id;
+          let fillOpacity = isActive ? 0.3 : 0.08;
+          let strokeWidth = isActive ? 1.5 : 1;
+          
+          regionsG.innerHTML += `
+            <path id="region-${r.id}" class="phase-region ${isActive ? 'active' : ''}" 
+                  d="${pathData}" fill="${r.color}" fill-opacity="${fillOpacity}" 
+                  stroke="${r.strokeColor}" stroke-width="${strokeWidth}"
+                  onclick="selectCoordinatesFromSVG(event)">
+            </path>`;
+        }
+      });
+
+      // C. DRAW REACTION TEMPERATURE LINES
+      if (2.14 < state.currentCMax) {
+        linesG.innerHTML += `<line class="boundary-line" stroke="#ef4444" stroke-dasharray="3,3" x1="${cToX(2.14)}" y1="${tToY(1147)}" x2="${cToX(Math.min(6.67, state.currentCMax))}" y2="${tToY(1147)}"></line>`;
+      }
+      linesG.innerHTML += `<line class="boundary-line" stroke="#a855f7" stroke-dasharray="3,3" x1="${cToX(0.022)}" y1="${tToY(727)}" x2="${cToX(Math.min(6.67, state.currentCMax))}" y2="${tToY(727)}"></line>`;
+      
+      // A3 Solvus Line GS
+      let gsPath = `M ${cToX(0)} ${tToY(912)}`;
+      for (let c = 0.01; c <= 0.76; c += 0.05) {
+        if (c > state.currentCMax) break;
+        gsPath += ` L ${cToX(c)} ${tToY(boundaries.solvusGS(c))}`;
+      }
+      linesG.innerHTML += `<path class="boundary-line" stroke="#06b6d4" d="${gsPath}"></path>`;
+
+      // Acm Solvus Line ES
+      if (0.76 < state.currentCMax) {
+        let esPath = `M ${cToX(0.76)} ${tToY(727)}`;
+        for (let c = 0.8; c <= 2.14; c += 0.1) {
+          if (c > state.currentCMax) break;
+          esPath += ` L ${cToX(c)} ${tToY(boundaries.solvusES(c))}`;
+        }
+        linesG.innerHTML += `<path class="boundary-line" stroke="#10b981" d="${esPath}"></path>`;
+      }
+
+      // D. DRAW LABELS OVERLAY (If enabled)
+      if (state.showLabels) {
+        const labels = [
+          { name: 'Lỏng (L)', c: 3.5, t: 1450 },
+          { name: 'Austenit (γ)', c: 1.0, t: 950 },
+          { name: 'α + γ', c: 0.35, t: 800 },
+          { name: 'Ferit (α)', c: 0.005, t: 500, rotate: -90 },
+          { name: 'γ + Fe₃C', c: 1.5, t: 850 },
+          { name: 'α + Fe₃C (Pêrlit + Fe₃C mạng lưới)', c: 1.4, t: 400 },
+          { name: 'Lỏng + γ', c: 1.8, t: 1320 },
+          { name: 'Lỏng + Fe₃C', c: 5.5, t: 1200 }
+        ];
+
+        labels.forEach(lbl => {
+          if (lbl.c < state.currentCMax) {
+            let x = cToX(lbl.c);
+            let y = tToY(lbl.t);
+            let rot = lbl.rotate ? `transform="rotate(${lbl.rotate} ${x} ${y})"` : '';
+            gridG.innerHTML += `
+              <text fill="rgba(255,255,255,0.25)" font-size="11" font-weight="600"
+                    x="${x}" y="${y}" text-anchor="middle" ${rot}>
+                ${lbl.name}
+              </text>`;
+          }
+        });
+      }
+
+      // E. DRAW SPECIAL METALLURGICAL POINTS
+      if (state.showPoints) {
+        specPoints.forEach(pt => {
+          if (pt.c <= state.currentCMax) {
+            let x = cToX(pt.c);
+            let y = tToY(pt.t);
+            pointsG.innerHTML += `
+              <circle class="reaction-point" cx="${x}" cy="${y}" r="4.5" fill="#f8fafc" stroke="#3b82f6" stroke-width="1.5"
+                      onmouseenter="showPointTooltip(event, '${pt.name}', '${pt.desc}')"
+                      onmouseleave="hidePointTooltip()">
+              </circle>`;
+          }
+        });
+      }
+    }
+
+    // 7. INTERACTIVE CONTROL HANDLING
+    function updateReticle() {
+      let x = cToX(state.carbon);
+      let y = tToY(state.temp);
+
+      document.getElementById('reticle-v').setAttribute('x1', x);
+      document.getElementById('reticle-v').setAttribute('x2', x);
+      document.getElementById('reticle-h').setAttribute('y1', y);
+      document.getElementById('reticle-h').setAttribute('y2', y);
+      
+      const cCircle = document.getElementById('reticle-c');
+      cCircle.setAttribute('cx', x);
+      cCircle.setAttribute('cy', y);
+
+      // Highlight active region in SVG
+      const activeReg = findActiveRegion(state.carbon, state.temp);
+      document.querySelectorAll('.phase-region').forEach(el => {
+        el.classList.remove('active');
+        el.setAttribute('fill-opacity', '0.08');
+        el.setAttribute('stroke-width', '1');
+      });
+      if (activeReg) {
+        const el = document.getElementById(`region-${activeReg.id}`);
+        if (el) {
+          el.classList.add('active');
+          el.setAttribute('fill-opacity', '0.32');
+          el.setAttribute('stroke-width', '2');
+        }
+      }
+    }
+
+    function selectCoordinatesFromSVG(event) {
+      const svg = document.getElementById('fe-c-svg');
+      const rect = svg.getBoundingClientRect();
+      let clickX = event.clientX - rect.left;
+      let clickY = event.clientY - rect.top;
+
+      let svgX = (clickX / rect.width) * 800;
+      let svgY = (clickY / rect.height) * 500;
+
+      let c = xToC(svgX);
+      let t = yToT(svgY);
+
+      state.carbon = Math.round(c * 1000) / 1000;
+      state.temp = Math.round(t);
+
+      // Sync Sliders
+      document.getElementById('slider-carbon').value = state.carbon;
+      document.getElementById('slider-temp').value = state.temp;
+
+      updateUI();
+    }
+
+    function updateFromSliders() {
+      state.carbon = parseFloat(document.getElementById('slider-carbon').value);
+      state.temp = parseFloat(document.getElementById('slider-temp').value);
+      updateUI();
+    }
+
+    // Tooltip handling
+    const tooltipEl = document.getElementById('diagram-tooltip');
+    
+    function showPointTooltip(event, title, desc) {
+      const containerRect = document.getElementById('svg-container').getBoundingClientRect();
+      let x = event.clientX - containerRect.left + 12;
+      let y = event.clientY - containerRect.top - 12;
+
+      tooltipEl.innerHTML = `<strong style="color:#60a5fa">${title}</strong><p style="margin-top:4px">${desc}</p>`;
+      tooltipEl.style.left = `${x}px`;
+      tooltipEl.style.top = `${y}px`;
+      tooltipEl.style.opacity = '1';
+    }
+
+    function hidePointTooltip() {
+      tooltipEl.style.opacity = '0';
+    }
+
+    // 8. METALLURGICAL CALCULATIONS & LEVER RULE RESOLVER
+    function getAlloyClassification(c) {
+      if (c < 0.022) return 'Sắt nguyên chất công nghiệp (Ferit)';
+      if (c < 0.76) return 'Thép trước cùng tích (Hypoeutectoid)';
+      if (c === 0.76) return 'Thép cùng tích (Eutectoid)';
+      if (c < 2.14) return 'Thép sau cùng tích (Hypereutectoid)';
+      if (c < 4.3) return 'Gang trắng trước cùng tinh (Hypoeutectic)';
+      if (c === 4.3) return 'Gang trắng cùng tinh (Eutectic)';
+      return 'Gang trắng sau cùng tinh (Hypereutectic)';
+    }
+
+    function calculateLeverPercentages(c, t, regionId) {
+      let cLeft = 0, cRight = 6.67;
+      let phaseLName = 'Ferit (α)', phaseRName = 'Xêmentit (Fe₃C)';
+      
+      switch(regionId) {
+        case 'alpha_gamma':
+          cLeft = boundaries.c_GP(t);
+          cRight = boundaries.c_GS(t);
+          phaseLName = 'Ferit (α)';
+          phaseRName = 'Austenit (γ)';
+          break;
+        case 'gamma_cementite':
+          cLeft = boundaries.c_ES(t);
+          cRight = 6.67;
+          phaseLName = 'Austenit (γ)';
+          phaseRName = 'Xêmentit (Fe₃C)';
+          break;
+        case 'gamma_liquid':
+          cLeft = boundaries.c_solIE(t);
+          cRight = boundaries.c_liqBC(t);
+          phaseLName = 'Austenit (γ)';
+          phaseRName = 'Pha lỏng (L)';
+          break;
+        case 'liquid_cementite':
+          cLeft = boundaries.c_liqCD(t);
+          cRight = 6.67;
+          phaseLName = 'Pha lỏng (L)';
+          phaseRName = 'Xêmentit (Fe₃C)';
+          break;
+        case 'delta_liquid':
+          cLeft = boundaries.c_solIE(t);
+          cRight = boundaries.c_liqBC(t);
+          phaseLName = 'Ferit delta (δ)';
+          phaseRName = 'Pha lỏng (L)';
+          break;
+        case 'delta_gamma':
+          cLeft = boundaries.c_GP(t);
+          cRight = boundaries.c_solIE(t);
+          phaseLName = 'Ferit delta (δ)';
+          phaseRName = 'Austenit (γ)';
+          break;
+        case 'alpha_cementite':
+          cLeft = boundaries.c_PQ(t);
+          cRight = 6.67;
+          phaseLName = 'Ferit (α)';
+          phaseRName = 'Xêmentit (Fe₃C)';
+          break;
+        default:
+          return null;
+      }
+
+      // Clamp input C to prevent numerical out-of-bounds due to precision
+      let clampedC = Math.max(cLeft, Math.min(cRight, c));
+      let range = cRight - cLeft;
+      
+      let wRight = range > 0 ? ((clampedC - cLeft) / range) * 100 : 100;
+      let wLeft = 100 - wRight;
+
+      return {
+        pctL: Math.round(wLeft),
+        pctR: Math.round(wRight),
+        cLeft: Math.round(cLeft * 1000) / 1000,
+        cRight: Math.round(cRight * 1000) / 1000,
+        nameL: phaseLName,
+        nameR: phaseRName
+      };
+    }
+
+    function getReactionExplanation(c, t) {
+      if (Math.abs(t - 1495) <= 15 && c >= 0.09 && c <= 0.5) {
+        return {
+          title: 'Phản ứng Bao Tinh (Peritectic Reaction) - 1495°C',
+          desc: 'Pha lỏng có nồng độ cacbon 0.5% tương tác với chất rắn delta ferrite (0.09% C) để chuyển hóa hoàn toàn thành pha rắn Austenit (γ) tại 0.17% C.'
+        };
+      }
+      if (Math.abs(t - 1147) <= 20 && c >= 2.14 && c <= 6.67) {
+        return {
+          title: 'Phản ứng Cùng Tinh (Eutectic Reaction) - 1147°C',
+          desc: 'Tại 1147°C, pha lỏng nguội nguội dần đến điểm C (4.3% C) kết tinh đồng thời thành hỗn hợp cùng tinh gồm Austenit (γ) và Xêmentit (Fe₃C) cơ học, tổ chức này gọi là Lêđêburit.'
+        };
+      }
+      if (Math.abs(t - 727) <= 15 && c >= 0.022 && c <= 6.67) {
+        return {
+          title: 'Phản ứng Cùng Tích (Eutectoid Reaction) - 727°C',
+          desc: 'Tại nhiệt độ không đổi 727°C, Austenit rắn nguội nguội dần đến nồng độ S (0.76% C) phân rã đồng thời thành hỗn hợp cùng tích mịn của Ferit (α) và Xêmentit (Fe₃C), gọi là Pêrlit (P).'
+        };
+      }
+      return null;
+    }
+
+    // 9. UPDATE DATA PANELS
+    function updateUI() {
+      document.getElementById('val-carbon').innerText = `${state.carbon.toFixed(3)} %`;
+      document.getElementById('val-temp').innerText = `${state.temp} °C`;
+
+      const activeReg = findActiveRegion(state.carbon, state.temp);
+      const alloyClass = getAlloyClassification(state.carbon);
+
+      const alloyEl = document.getElementById('alloy-class');
+      alloyEl.innerText = alloyClass;
+      if (state.carbon < 2.14) {
+        alloyEl.style.color = '#38bdf8'; // Steel
+      } else {
+        alloyEl.style.color = '#ec4899'; // Cast Iron
+      }
+
+      const activePhaseNameEl = document.getElementById('active-phase-name');
+      const activePhaseBadgeEl = document.getElementById('active-phase-badge');
+      const activePhaseDescEl = document.getElementById('active-phase-desc');
+      const phaseStateEl = document.getElementById('phase-state');
+
+      if (activeReg) {
+        activePhaseNameEl.innerText = activeReg.name;
+        activePhaseDescEl.innerText = activeReg.desc;
+        phaseStateEl.innerText = activeReg.name;
+        phaseStateEl.style.color = activeReg.textColor;
+
+        if (state.carbon < 2.14) {
+          activePhaseBadgeEl.className = 'phase-type-badge badge-steel';
+          activePhaseBadgeEl.innerText = 'Thép (Steel)';
+        } else {
+          activePhaseBadgeEl.className = 'phase-type-badge badge-iron';
+          activePhaseBadgeEl.innerText = 'Gang Trắng (Cast Iron)';
+        }
+      } else {
+        activePhaseNameEl.innerText = 'Ngoài giới hạn';
+        activePhaseDescEl.innerText = 'Hệ trục pha nằm ngoài phạm vi khảo sát hoặc vùng tính toán không hợp lệ.';
+        phaseStateEl.innerText = 'N/A';
+        phaseStateEl.style.color = '#94a3b8';
+      }
+
+      const reactionBox = document.getElementById('reaction-box');
+      const rx = getReactionExplanation(state.carbon, state.temp);
+      if (rx) {
+        reactionBox.style.display = 'block';
+        document.getElementById('reaction-title').innerText = rx.title;
+        document.getElementById('reaction-desc').innerText = rx.desc;
+      } else {
+        reactionBox.style.display = 'none';
+      }
+
+      const leverArea = document.getElementById('lever-rule-area');
+      if (activeReg) {
+        const lever = calculateLeverPercentages(state.carbon, state.temp, activeReg.id);
+        if (lever) {
+          leverArea.style.display = 'block';
+          document.getElementById('lever-fraction-val').innerText = `${lever.pctL}% / ${lever.pctR}%`;
+          document.getElementById('lever-bar-l').style.width = `${lever.pctL}%`;
+          document.getElementById('lever-bar-r').style.width = `${lever.pctR}%`;
+          document.getElementById('lever-name-l').innerText = `${lever.nameL}: ${lever.pctL}% (${lever.cLeft}%C)`;
+          document.getElementById('lever-name-r').innerText = `${lever.nameR}: ${lever.pctR}% (${lever.cRight}%C)`;
+        } else {
+          leverArea.style.display = 'block';
+          document.getElementById('lever-fraction-val').innerText = '100%';
+          document.getElementById('lever-bar-l').style.width = '100%';
+          document.getElementById('lever-bar-r').style.width = '0%';
+          document.getElementById('lever-name-l').innerText = `${activeReg.name}: 100%`;
+          document.getElementById('lever-name-r').innerText = '';
+        }
+      } else {
+        leverArea.style.display = 'none';
+      }
+
+      updateReticle();
+      renderMicrostructure();
+    }
+
+    // 10. VORONOI GRAIN GENERATOR FOR MICROSTRUCTURE
+    let voronoiGrains = [];
+    const canvas = document.getElementById('microscope-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function generateVoronoiCells() {
+      const numGrains = 18;
+      let centers = [];
+      
+      for (let i = 0; i < numGrains; i++) {
+        let angle = Math.random() * Math.PI * 2;
+        let r = Math.random() * 85;
+        let x = 120 + r * Math.cos(angle);
+        let y = 120 + r * Math.sin(angle);
+        
+        let ok = true;
+        for (let c of centers) {
+          if (Math.hypot(c.x - x, c.y - y) < 32) { ok = false; break; }
+        }
+        if (!ok) { i--; continue; }
+        
+        centers.push({
+          x: x,
+          y: y,
+          angle: Math.random() * Math.PI,
+          threshold: Math.random()
+        });
+      }
+
+      voronoiGrains = [];
+      const box = [
+        {x: 0, y: 0}, {x: 240, y: 0}, {x: 240, y: 240}, {x: 0, y: 240}
+      ];
+
+      for (let i = 0; i < centers.length; i++) {
+        let poly = [...box];
+        let p_i = centers[i];
+        
+        for (let j = 0; j < centers.length; j++) {
+          if (i === j) continue;
+          let p_j = centers[j];
+          
+          let a = p_i.x - p_j.x;
+          let b = p_i.y - p_j.y;
+          let mx = (p_i.x + p_j.x) / 2;
+          let my = (p_i.y + p_j.y) / 2;
+          let c = -(a * mx + b * my);
+
+          let clipped = [];
+          for (let k = 0; k < poly.length; k++) {
+            let p1 = poly[k];
+            let p2 = poly[(k + 1) % poly.length];
+            let d1 = a * p1.x + b * p1.y + c;
+            let d2 = a * p2.x + b * p2.y + c;
+            
+            if (d1 >= 0) clipped.push(p1);
+            if ((d1 >= 0 && d2 < 0) || (d1 < 0 && d2 >= 0)) {
+              let t = d1 / (d1 - d2);
+              clipped.push({
+                x: p1.x + t * (p2.x - p1.x),
+                y: p1.y + t * (p2.y - p1.y)
+              });
+            }
+          }
+          poly = clipped;
+        }
+
+        voronoiGrains.push({
+          center: p_i,
+          polygon: poly
+        });
+      }
+    }
+
+    // 11. RENDERING MICROSTRUCTURE DESIGNS
+    function renderMicrostructure() {
+      ctx.save();
+      ctx.clearRect(0,0,240,240);
+      
+      ctx.beginPath();
+      ctx.arc(120, 120, 108, 0, Math.PI * 2);
+      ctx.clip();
+
+      const activeReg = findActiveRegion(state.carbon, state.temp);
+      if (!activeReg) {
+        ctx.fillStyle = '#000000';
+        ctx.fill();
+        ctx.restore();
+        return;
+      }
+
+      const id = activeReg.id;
+
+      if (id === 'liquid') {
+        renderLiquid(ctx, 100);
+      } else if (id === 'gamma_liquid') {
+        let lev = calculateLeverPercentages(state.carbon, state.temp, id);
+        let pctSolid = lev ? lev.pctL : 50;
+        renderLiquid(ctx, 100 - pctSolid);
+        renderDendrites(ctx, pctSolid);
+      } else if (id === 'liquid_cementite') {
+        let lev = calculateLeverPercentages(state.carbon, state.temp, id);
+        let pctSolid = lev ? lev.pctR : 50;
+        renderLiquid(ctx, 100 - pctSolid);
+        renderNeedles(ctx, pctSolid);
+      } else if (id === 'delta_liquid') {
+        let lev = calculateLeverPercentages(state.carbon, state.temp, id);
+        let pctSolid = lev ? lev.pctL : 50;
+        renderLiquid(ctx, 100 - pctSolid);
+        renderGrains(id, pctSolid);
+      } else {
+        renderGrains(id);
+      }
+
+      ctx.restore();
+
+      ctx.beginPath();
+      ctx.arc(120, 120, 108, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+
+    function renderLiquid(ctx, pctLiquid) {
+      let grad = ctx.createRadialGradient(120, 120, 0, 120, 120, 110);
+      grad.addColorStop(0, '#f97316');
+      grad.addColorStop(1, '#b45309');
+      
+      ctx.fillStyle = grad;
+      ctx.fillRect(0,0,240,240);
+
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.3)';
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        ctx.arc(120, 120, 20 + i * 18, Math.sin(Date.now() / 500 + i) * 0.3, Math.PI + Math.cos(Date.now() / 500 + i) * 0.3);
+        ctx.stroke();
+      }
+    }
+
+    function renderDendrites(ctx, pctAustenite) {
+      const numDendrites = 5;
+      const positions = [
+        {x: 70, y: 70, size: 30, angle: 0.5},
+        {x: 170, y: 80, size: 45, angle: 1.2},
+        {x: 80, y: 160, size: 40, angle: -0.8},
+        {x: 160, y: 165, size: 35, angle: 2.3},
+        {x: 120, y: 120, size: 50, angle: -0.2}
+      ];
+
+      let scale = pctAustenite / 100;
+      positions.forEach(pos => {
+        let size = pos.size * scale;
+        if (size > 5) {
+          drawSingleDendrite(ctx, pos.x, pos.y, size, pos.angle);
+        }
+      });
+    }
+
+    function drawSingleDendrite(ctx, x, y, size, angle) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      
+      ctx.strokeStyle = '#93c5fd';
+      ctx.fillStyle = '#60a5fa';
+      ctx.lineWidth = size * 0.12;
+
+      ctx.beginPath();
+      ctx.moveTo(0, -size);
+      ctx.lineTo(0, size);
+      ctx.stroke();
+
+      for (let i = -size * 0.7; i <= size * 0.7; i += size * 0.25) {
+        if (Math.abs(i) < 1) continue;
+        let len = size * 0.6 * (1 - Math.abs(i) / size);
+        ctx.beginPath();
+        ctx.moveTo(-len, i);
+        ctx.lineTo(len, i);
+        ctx.stroke();
+
+        ctx.lineWidth = size * 0.06;
+        ctx.beginPath();
+        ctx.moveTo(-len/2, i - size*0.08);
+        ctx.lineTo(-len/2, i + size*0.08);
+        ctx.moveTo(len/2, i - size*0.08);
+        ctx.lineTo(len/2, i + size*0.08);
+        ctx.stroke();
+        ctx.lineWidth = size * 0.12;
+      }
+      ctx.restore();
+    }
+
+    function renderNeedles(ctx, pctCementite) {
+      const needles = [
+        {x: 60, y: 80, len: 90, ang: 0.3},
+        {x: 160, y: 70, len: 110, ang: -0.8},
+        {x: 80, y: 170, len: 120, ang: 1.4},
+        {x: 170, y: 160, len: 80, ang: -0.2},
+        {x: 120, y: 120, len: 130, ang: 0.8}
+      ];
+
+      let scale = pctCementite / 100;
+      ctx.fillStyle = '#f8fafc';
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1;
+
+      needles.forEach(n => {
+        let length = n.len * scale;
+        if (length > 10) {
+          ctx.save();
+          ctx.translate(n.x, n.y);
+          ctx.rotate(n.ang);
+          
+          ctx.beginPath();
+          ctx.moveTo(-length/2, 0);
+          ctx.lineTo(0, -3.5);
+          ctx.lineTo(length/2, 0);
+          ctx.lineTo(0, 3.5);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        }
+      });
+    }
+
+    function renderGrains(id, solidPct = 100) {
+      let activeReg = findActiveRegion(state.carbon, state.temp);
+      let lev = null;
+      if (activeReg) {
+        lev = calculateLeverPercentages(state.carbon, state.temp, activeReg.id);
+      }
+
+      voronoiGrains.forEach(g => {
+        ctx.save();
+        
+        ctx.beginPath();
+        ctx.moveTo(g.polygon[0].x, g.polygon[0].y);
+        for(let i=1; i<g.polygon.length; i++) {
+          ctx.lineTo(g.polygon[i].x, g.polygon[i].y);
+        }
+        ctx.closePath();
+        ctx.clip();
+
+        if (id === 'gamma') {
+          ctx.fillStyle = '#e8d8c8';
+          ctx.fill();
+        } 
+        else if (id === 'alpha') {
+          ctx.fillStyle = '#fafaf5';
+          ctx.fill();
+        } 
+        else if (id === 'delta') {
+          ctx.fillStyle = '#fef3c7';
+          ctx.fill();
+        }
+        else if (id === 'delta_liquid') {
+          if (g.center.threshold < solidPct / 100) {
+            ctx.fillStyle = '#fef3c7';
+            ctx.fill();
+          } else {
+            renderCellLiquid(ctx);
+          }
+        }
+        else if (id === 'delta_gamma') {
+          let pctDelta = lev ? lev.pctL : 50;
+          if (g.center.threshold < pctDelta / 100) {
+            ctx.fillStyle = '#fef3c7';
+          } else {
+            ctx.fillStyle = '#e8d8c8';
+          }
+          ctx.fill();
+        }
+        else if (id === 'alpha_gamma') {
+          let pctAlpha = lev ? lev.pctL : 50;
+          if (g.center.threshold < pctAlpha / 100) {
+            ctx.fillStyle = '#fafaf5';
+          } else {
+            ctx.fillStyle = '#e8d8c8';
+          }
+          ctx.fill();
+        }
+        else if (id === 'gamma_cementite') {
+          ctx.fillStyle = '#e8d8c8';
+          ctx.fill();
+        }
+        else if (id === 'alpha_cementite') {
+          if (state.carbon < 0.76) {
+            let pctPearlite = state.carbon / 0.76;
+            if (g.center.threshold < pctPearlite) {
+              drawPearlite(ctx, g.polygon, g.center.angle);
+            } else {
+              ctx.fillStyle = '#fafaf5';
+              ctx.fill();
+            }
+          } 
+          else if (Math.abs(state.carbon - 0.76) < 0.01) {
+            drawPearlite(ctx, g.polygon, g.center.angle);
+          } 
+          else if (state.carbon <= 2.14) {
+            drawPearlite(ctx, g.polygon, g.center.angle);
+          }
+          else {
+            let pctLedeburite = lev ? lev.pctR : 50;
+            if (g.center.threshold < pctLedeburite / 100) {
+              drawLedeburite(ctx, g.polygon);
+            } else {
+              drawPearlite(ctx, g.polygon, g.center.angle);
+            }
+          }
+        }
+        
+        ctx.restore();
+
+        ctx.beginPath();
+        ctx.moveTo(g.polygon[0].x, g.polygon[0].y);
+        for(let i=1; i<g.polygon.length; i++) {
+          ctx.lineTo(g.polygon[i].x, g.polygon[i].y);
+        }
+        ctx.closePath();
+
+        if (id === 'gamma_cementite' || (id === 'alpha_cementite' && state.carbon > 0.76 && state.carbon <= 2.14)) {
+          let pctCem = lev ? lev.pctR : 10;
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.0 + (pctCem / 100) * 4.5;
+        } else if (id === 'alpha_cementite' && state.carbon > 2.14) {
+          ctx.strokeStyle = '#f1f5f9';
+          ctx.lineWidth = 2.5;
+        } else {
+          ctx.strokeStyle = '#2d3748';
+          ctx.lineWidth = 1.2;
+        }
+        ctx.stroke();
+      });
+    }
+
+    function renderCellLiquid(ctx) {
+      ctx.fillStyle = '#d97706';
+      ctx.fill();
+    }
+
+    function drawPearlite(ctx, polygon, angle) {
+      ctx.fillStyle = '#fafaf5';
+      ctx.fill();
+
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 1.4;
+
+      let cos = Math.cos(angle);
+      let sin = Math.sin(angle);
+      
+      for (let d = -200; d < 200; d += 5.5) {
+        ctx.beginPath();
+        ctx.moveTo(120 + d * cos - 200 * sin, 120 + d * sin + 200 * cos);
+        ctx.lineTo(120 + d * cos + 200 * sin, 120 + d * sin - 200 * cos);
+        ctx.stroke();
+      }
+    }
+
+    function drawLedeburite(ctx, polygon) {
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+
+      ctx.fillStyle = '#475569';
+      
+      let minX = 240, maxX = 0, minY = 240, maxY = 0;
+      polygon.forEach(p => {
+        if(p.x < minX) minX = p.x;
+        if(p.x > maxX) maxX = p.x;
+        if(p.y < minY) minY = p.y;
+        if(p.y > maxY) maxY = p.y;
+      });
+
+      for (let x = minX - 5; x <= maxX + 5; x += 8) {
+        for (let y = minY - 5; y <= maxY + 5; y += 8) {
+          if (pointInPolygon([x, y], polygon.map(p => [p.x, p.y]))) {
+            ctx.beginPath();
+            let jx = x + (Math.random() - 0.5) * 3;
+            let jy = y + (Math.random() - 0.5) * 3;
+            ctx.arc(jx, jy, 1.8, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+    }
+
+    // 12. INITIALIZATION
+    window.onload = function() {
+      const legendEl = document.getElementById('diagram-legend');
+      regions.forEach(r => {
+        legendEl.innerHTML += `
+          <div class="legend-item">
+            <div class="legend-color" style="background:${r.color}; border-color:${r.strokeColor}"></div>
+            <span>${r.name}</span>
+          </div>`;
+      });
+
+      generateVoronoiGrains = generateVoronoiCells; // alias
+      generateVoronoiCells();
+      initSampledRegions();
+
+      drawDiagram();
+      updateUI();
+      
+      // Hook up mouse hover effect for SVG coordinate readout (optional enhancement)
+      document.getElementById('fe-c-svg').addEventListener('mousemove', (e) => {
+        // Only update on move if mouse button is down (drag effect)
+        if (e.buttons === 1) {
+          selectCoordinatesFromSVG(e);
+        }
+      });
+    };
+
+    window.onresize = function() {
+      drawDiagram();
+      updateReticle();
+    };
+  </script>
+</body>
+</html>

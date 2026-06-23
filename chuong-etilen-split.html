@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hóa học hữu cơ · Chương 20 — C₂H₄ Etilen (Split Notebook)</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SPLIT NOTEBOOK & LAB BENCH SYSTEM
+    ══════════════════════════════════════ */
+    @import url('https://fonts.googleapis.com/css2?family=Itim&family=Pacifico&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:        #F5F0E0;
+      --paper-dark:   #EDE5CC;
+      --ink:          #1A1208;
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #10B981; /* Mint Green Accent */
+      --accent-deep:  #059669;
+      --accent-red:   #EF4444;
+      --accent-blue:  #3B82F6;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-p:  rgba(16, 185, 129, 0.15);
+      --line-h:       30px;
+      --font-base:    15px;
+      --font-h2:      24px;
+      --font-h3:      16px;
+      --font-sub:     12px;
+      --ruled-top-offset: calc(var(--line-h) * 22 / 30);
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #112F24; /* Dark Forest Green for Organic Chem */
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #1B4D3E 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #0A1F18 0%, transparent 50%),
+        repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+      color: var(--ink);
+      font-family: 'Itim', cursive;
+    }
+    ::selection { background: var(--highlight-p); color: var(--ink); }
+
+    .back-link {
+      position: absolute; top: 24px; left: 96px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent-deep);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Itim', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.15);
+      transform: rotate(0.8deg); transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent); }
+
+    /* ══════════════════════════════════════
+       SPLIT LAYOUT CONTAINER
+     ══════════════════════════════════════ */
+    .scrolly-container {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Left Side - School Notebook */
+    .notebook-panel {
+      width: 50%;
+      position: relative;
+      background-color: var(--paper);
+      box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+      z-index: 5;
+    }
+
+    /* Ruled paper background classes */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(90deg, transparent calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 73 / 30), transparent calc(var(--line-h) * 73 / 30)),
+        repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
+      background-attachment: local;
+      background-position: 0 0, 0 var(--ruled-top-offset);
+    }
+
+    .hero {
+      padding: calc(3 * var(--line-h)) calc(var(--line-h) * 40 / 30) calc(var(--line-h) * 30 / 30) calc(3.2 * var(--line-h));
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+      position: relative; overflow: hidden;
+      scroll-snap-align: start;
+    }
+    .hero::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #1A4638 0%, #1A4638 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+      z-index: 2;
+    }
+    .crumb { font-size: var(--font-sub); letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: var(--line-h); line-height: var(--line-h); font-family: 'Itim', cursive; }
+    .crumb a { color: var(--accent-deep); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+    .title { font-family: 'Pacifico', cursive; font-size: clamp(28px, 4.2vw, 56px); line-height: 60px; color: var(--ink); margin-bottom: 30px; font-weight: 700; }
+    .title-stroke { width: clamp(140px, 30vw, 300px); height: 3px; background: var(--accent); border-radius: 2px; margin-top: calc(-0.5 * var(--line-h)); margin-bottom: calc(0.4 * var(--line-h)); }
+    .subtitle { font-family: 'Itim', cursive; font-size: var(--font-sub); letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-deep); margin-bottom: var(--line-h); line-height: var(--line-h); }
+    .intro { max-width: 800px; font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); }
+
+    .card {
+      padding: calc(3 * var(--line-h)) calc(1.2 * var(--line-h)) calc(3 * var(--line-h)) calc(3.2 * var(--line-h));
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative; overflow: hidden;
+      min-height: 100vh;
+      box-sizing: border-box;
+      scroll-snap-align: start;
+      transition: background-color 0.3s;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+    .card.ruled-page:nth-child(even) { background-color: var(--paper-dark); }
+    .card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #1A4638 0%, #1A4638 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+
+    /* Active section highlight on notebook */
+    .card.active-section {
+      background-color: rgba(235, 250, 243, 0.45);
+    }
+
+    @media (min-width: 921px) {
+      :root {
+        --line-h:       clamp(30px, 1.25vw + 18.5px, 42px);
+        --font-base:    clamp(15px, 0.6vw + 9.5px, 21px);
+        --font-h2:      clamp(24px, 1vw + 14.8px, 34px);
+        --font-h3:      clamp(16px, 0.7vw + 9.5px, 23px);
+        --font-sub:     clamp(12px, 0.5vw + 7.4px, 17px);
+      }
+      .hero {
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+      .scrolly-container {
+        height: 100vh;
+        overflow: hidden;
+      }
+      .notebook-panel {
+        height: 100%;
+        overflow-y: auto;
+        scroll-snap-type: y mandatory;
+        scrollbar-width: thin;
+      }
+      .notebook-panel::-webkit-scrollbar { width: 6px; }
+      .notebook-panel::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); }
+      .notebook-panel::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 3px; }
+    }
+
+    .card h2 { font-family: 'Pacifico', cursive; font-size: var(--font-h2); color: var(--ink); line-height: var(--line-h); font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 0px; margin-bottom: var(--line-h); display: inline-block; }
+    .card p { font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); margin-bottom: 30px; }
+    .card p:last-child { margin-bottom: 0; }
+    .card .key { color: var(--accent-deep); font-weight: bold; }
+
+    .formula-box {
+      background: rgba(16, 185, 129, 0.05);
+      border-left: 3px solid var(--accent);
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 1.1rem;
+      color: var(--ink-mid);
+    }
+
+    /* ══════════════════════════════════════
+       Right Side - Elegant Lab Bench / Chalkboard
+    ══════════════════════════════════════ */
+    .lab-panel {
+      width: 50%;
+      background: #0b1a15;
+      background-image: 
+        radial-gradient(ellipse at 50% 20%, #102e24 0%, transparent 65%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px);
+      position: fixed;
+      right: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    .lab-sticky-wrapper {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .blackboard-title {
+      position: absolute;
+      top: 24px;
+      left: 40px;
+      font-family: 'Pacifico', cursive;
+      font-size: 20px;
+      color: #a7f3d0;
+      opacity: 0.85;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Demonstration containers on the right */
+    .demo-panel {
+      position: absolute;
+      top: 60px;
+      bottom: 30px;
+      left: 40px;
+      right: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 1;
+    }
+    .demo-panel.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    /* Blackboard/Lab bench card overlay */
+    .glass-bench {
+      background: rgba(11, 26, 21, 0.70);
+      border: 1.5px solid rgba(16, 185, 129, 0.25);
+      border-radius: 12px;
+      box-shadow: 
+        0 15px 35px rgba(0,0,0,0.5), 
+        inset 0 0 20px rgba(16, 185, 129, 0.1);
+      padding: 24px;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(10px);
+      color: #eaeaea;
+      box-sizing: border-box;
+    }
+
+    .bench-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 22px;
+      color: #a7f3d0;
+      margin-bottom: 8px;
+      text-align: center;
+      border-bottom: 1px dashed rgba(255,255,255,0.15);
+      padding-bottom: 8px;
+    }
+
+    .canvas-stage {
+      flex: 1;
+      width: 100%;
+      background: #060e0c;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .canvas-stage canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .control-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 8px;
+      background: rgba(0,0,0,0.25);
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .control-item {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 4px;
+    }
+    .control-item label {
+      color: #9ca3af;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+    }
+
+    /* Buttons */
+    .btn-action {
+      background: #047857;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-family: 'Itim', cursive;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+    .btn-action:hover { background: #10B981; }
+    .btn-action:active { transform: translateY(1px); }
+    .btn-action:disabled {
+      background: #1f2937;
+      color: #4b5563;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Mobile Relocated Elements placeholders */
+    .mobile-demo-placeholder {
+      display: none;
+      margin: 20px 0;
+      width: 100%;
+    }
+
+    @media (max-width: 920px) {
+      .scrolly-container {
+        flex-direction: column;
+      }
+      .notebook-panel {
+        width: 100%;
+        box-shadow: none;
+      }
+      .lab-panel {
+        display: none; /* Hidden on desktop-fixed bench, relocated elements inside cards instead */
+      }
+      .mobile-demo-placeholder {
+        display: block;
+      }
+      .demo-panel {
+        position: relative;
+        top: 0; left: 0; right: 0; bottom: 0;
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      .glass-bench {
+        box-shadow: none;
+        background: rgba(11, 26, 21, 0.95);
+      }
+      .canvas-stage {
+        height: 220px;
+      }
+      .back-link {
+        left: 20px;
+        top: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nút quay lại Mục lục chính -->
+  <a href="Muc Luc.html" class="back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    Mục lục
+  </a>
+
+  <div class="scrolly-container">
+    
+    <!-- CỘT TRÁI: VỞ GHI BÀI HỌC (NOTEBOOK) -->
+    <div class="notebook-panel">
+      
+      <!-- HERO -->
+      <div class="hero ruled-page active-section" data-demo="0">
+        <div class="crumb">Hóa học &gt; Phần V &gt; <a href="Muc Luc.html">Mục lục</a></div>
+        <h1 class="title">C₂H₄ Etilen</h1>
+        <div class="title-stroke"></div>
+        <p class="subtitle">Alkene đơn giản nhất · Khí kích chín · Nguyên liệu polymer</p>
+        <div class="intro">
+          Tiếp tục hành trình khám phá hóa học hữu cơ, chúng ta chuyển từ Metan (hydrocarbon no) sang một dòng hydrocarbon hoàn toàn mới: hydrocarbon không no. Thành viên đầu tiên và quan trọng nhất của dòng này là <strong>Etilen ($C_2H_4$)</strong>.
+          <br><br>
+          Với sự xuất hiện của liên kết đôi hoạt động hóa học mạnh mẽ, etilen mở ra vô vàn phản ứng ứng dụng, đặc biệt là việc làm nguyên liệu tổng hợp nên nhựa dẻo Polyethylene (PE) - loại nhựa được sản xuất nhiều nhất trên thế giới hiện nay.
+        </div>
+      </div>
+
+      <!-- SECTION 1 -->
+      <div class="card ruled-page" id="sec-notebook-1" data-demo="1">
+        <h2>1. Cấu tạo phân tử Etilen</h2>
+        <p>
+          Trong phân tử Etilen (<span class="key">$C_2H_4$</span>), hai nguyên tử Carbon ở trạng thái <span class="key">lai hóa $sp^2$</span>.
+        </p>
+        <p>
+          Chúng liên kết với nhau bằng <strong>liên kết đôi ($C=C$)</strong>. Liên kết đôi này bao gồm:
+          <br>• <strong>1 liên kết $\sigma$ (sigma)</strong>: rất bền vững, được tạo thành do xen phủ trục của các orbital lai hóa.
+          <br>• <strong>1 liên kết $\pi$ (pi)</strong>: kém bền hơn nhiều, được tạo thành do xen phủ bên của 2 orbital p tự do không lai hóa. Liên kết $\pi$ này dễ bị bẻ gãy khi tham gia phản ứng hóa học.
+        </p>
+        <div class="formula-box">
+          • Công thức phân tử: <strong>$C_2H_4$</strong>
+          <br>• Hình học phân tử: <strong>Đồng phẳng (Coplanar)</strong>. Cả 6 nguyên tử đều nằm trên cùng một mặt phẳng phẳng.
+          <br>• Góc liên kết $H-C-H$ và $H-C-C$: xấp xỉ <strong>$120^\circ$</strong>.
+        </div>
+        <p>
+          Hãy kéo chuột xoay mô hình 3D ở bên phải để thấy rõ cấu trúc phẳng đồng dạng và liên kết đôi cong của phân tử etilen!
+        </p>
+
+        <!-- Placeholder for Mobile Relocation -->
+        <div class="mobile-demo-placeholder" id="mob-demo-1"></div>
+      </div>
+
+      <!-- SECTION 2 -->
+      <div class="card ruled-page" id="sec-notebook-2" data-demo="2">
+        <h2>2. Tính chất vật lý &amp; Hormone chín trái cây</h2>
+        <p>
+          Etilen là chất khí không màu, không mùi, nhẹ hơn không khí ($d = 28/29 \approx 0.97$), rất ít tan trong nước nhưng tan nhiều trong dung môi hữu cơ.
+        </p>
+        <p>
+          <span class="key">Tác dụng sinh học thú vị</span>: Etilen là một phytohormone (hormone thực vật) tự nhiên. Nó được giải phóng từ các mô thực vật đang trưởng thành (nhất là quả chín) để báo hiệu các quả xanh xung quanh bắt đầu chín theo chuỗi. Quá trình chín chuyển hóa tinh bột không vị thành các đường đơn ngọt lịm (glucose, fructose), làm mềm vách tế bào quả.
+        </p>
+        <p>
+          Ở phòng thí nghiệm bên cạnh, hãy thử bơm khí etilen vào buồng chứa chuối xanh để quan sát sự chín thần tốc dưới tác động của loại hormone hữu cơ này!
+        </p>
+
+        <!-- Placeholder for Mobile Relocation -->
+        <div class="mobile-demo-placeholder" id="mob-demo-2"></div>
+      </div>
+
+      <!-- SECTION 3 -->
+      <div class="card ruled-page" id="sec-notebook-3" data-demo="3">
+        <h2>3. Phản ứng cộng Brom (Unsaturation Test)</h2>
+        <p>
+          Do liên kết đôi $C=C$ chứa liên kết $\pi$ kém bền dễ đứt, etilen có khả năng tham gia phản ứng đặc trưng của hydrocarbon không no: <strong>phản ứng cộng (addition reaction)</strong>.
+        </p>
+        <p>
+          Khi dẫn khí etilen vào dung dịch nước Brom ($Br_2$) màu đỏ nâu, liên kết $\pi$ đứt ra, hai nguyên tử Brom gắn trực tiếp vào hai nguyên tử Carbon, tạo thành hợp chất 1,2-dibromoethane không màu. Dung dịch nước brom lập tức <span class="key">mất màu đỏ nâu</span>:
+        </p>
+        <div class="formula-box">
+          $$CH_2=CH_2 + Br_2 \rightarrow CH_2Br-CH_2Br$$
+        </div>
+        <p>
+          Phản ứng này được ứng dụng làm **thử nghiệm định tính đặc trưng** để nhận biết và phân biệt các hydrocarbon không no (alkene, alkyne) với các hydrocarbon no (alkane) không làm mất màu nước Brom.
+        </p>
+        <p>
+          Nhấn nút sục khí etilen ở bàn thí nghiệm bên phải để quan sát sự chuyển màu của dung dịch Brom.
+        </p>
+
+        <!-- Placeholder for Mobile Relocation -->
+        <div class="mobile-demo-placeholder" id="mob-demo-3"></div>
+      </div>
+
+      <!-- SECTION 4 -->
+      <div class="card ruled-page" id="sec-notebook-4" data-demo="4">
+        <h2>4. Phản ứng trùng hợp (Polymerization)</h2>
+        <p>
+          Dưới tác dụng của nhiệt độ cao, áp suất lớn và chất xúc tác thích hợp, các phân tử etilen tự liên kết với nhau bằng cách bẻ gãy liên kết $\pi$ kém bền để tạo thành các mạch carbon cực kỳ dài. Phản ứng đó gọi là <strong>phản ứng trùng hợp (polymerization)</strong>.
+        </p>
+        <div class="formula-box">
+          $$n CH_2=CH_2 \xrightarrow{t^\circ, p, xt} -(CH_2-CH_2)-_n$$
+          <span style="font-size:12px; color:var(--accent-deep);">(Sản phẩm: Polyethylene - Nhựa PE)</span>
+        </div>
+        <p>
+          Trong phương trình trên:
+          <br>• $CH_2=CH_2$ gọi là **monomer** (phân tử mắt xích ban đầu).
+          <br>• $-(CH_2-CH_2)-_n$ gọi là **polymer** (sản phẩm đại phân tử).
+          <br>• Nhựa PE thu được là chất dẻo, bền hóa học, cách điện tốt, ứng dụng làm màng bọc thực phẩm, túi nilon, chai lọ, ống dẫn nước...
+        </p>
+        <p>
+          Hãy bấm kích hoạt lò trùng hợp ở Demo bên cạnh để quan sát các phân tử etilen bẻ gãy liên kết đôi và nối đuôi nhau tạo ra chuỗi nhựa PE.
+        </p>
+
+        <!-- Placeholder for Mobile Relocation -->
+        <div class="mobile-demo-placeholder" id="mob-demo-4"></div>
+      </div>
+
+      <!-- SECTION 5 -->
+      <div class="card ruled-page" id="sec-notebook-5" data-demo="5">
+        <h2>5. Đánh giá kiến thức Etilen</h2>
+        <p>
+          Bạn đã ghi nhớ cấu tạo liên kết đôi phẳng đồng phẳng, vai trò hormone chín quả, phản ứng cộng nước Brom làm mất màu đặc trưng, và phản ứng trùng hợp tạo nhựa PE của khí etilen?
+        </p>
+        <p>
+          Hãy thử thách trả lời nhanh 5 câu hỏi kiểm tra ở bảng bên cạnh để củng cố kiến thức hữu cơ alkene này nhé!
+        </p>
+
+        <!-- Placeholder for Mobile Relocation -->
+        <div class="mobile-demo-placeholder" id="mob-demo-5"></div>
+      </div>
+
+    </div>
+
+    <!-- CỘT PHẢI: BÀN THÍ NGHIỆM ĐỒNG BỘ (LAB BENCH) -->
+    <div class="lab-panel">
+      <div class="lab-sticky-wrapper">
+        <div class="blackboard-title">Organic Chemistry Lab · Ethylene Suite</div>
+
+        <!-- DEMO 0: INTRO BENCH -->
+        <div class="demo-panel active" id="demo-0">
+          <div class="glass-bench" style="justify-content: center; align-items: center; text-align: center;">
+            <div style="font-size: 60px; margin-bottom: 20px;">🍇</div>
+            <h3 style="font-family: 'Pacifico'; font-size: 28px; color: #a7f3d0; margin-bottom: 15px;">Organic Chemistry · Alkene</h3>
+            <p style="font-size: 14px; line-height: 1.6; color: #9ca3af; max-width: 340px;">
+              Cuộn trang vở ghi bên trái để khởi chạy các mô phỏng: Mô hình xoay 3D phẳng của etilen, buồng chín trái cây tự nhiên, sục khí làm mất màu nước Brom và trùng hợp nhựa PE.
+            </p>
+            <div style="font-size: 11px; color: #4b5563; margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; width: 80%;">
+              Organic Alkene Simulator v1.0
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 1: 3D MODEL OF ETHYLENE -->
+        <div class="demo-panel" id="demo-1">
+          <div class="glass-bench">
+            <div class="bench-title">Mô hình phân tử C₂H₄ 3D</div>
+            <div class="canvas-stage">
+              <canvas id="canvas-ethylene-3d"></canvas>
+            </div>
+            <div style="font-size: 12.5px; display: flex; justify-content: space-between; padding: 6px; color: #a7f3d0; background: rgba(0,0,0,0.25); border-radius: 4px;">
+              <span>C (đen) lai hóa sp², H (trắng)</span>
+              <span>Liên kết đôi: <strong style="color: #10B981;">C=C (1 sigma, 1 pi)</strong></span>
+            </div>
+            <div class="control-row" style="justify-content: center; text-align: center;">
+              <span style="font-size:12px; color:#9ca3af;">Nhấn giữ và kéo chuột/tay trên canvas để xoay phân tử phẳng đồng phẳng!</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 2: RIPENING HORMONE CHAMBER -->
+        <div class="demo-panel" id="demo-2">
+          <div class="glass-bench">
+            <div class="bench-title">Tác dụng kích thích chín trái cây</div>
+            <div class="canvas-stage">
+              <canvas id="canvas-ripening-chamber"></canvas>
+            </div>
+            <div style="font-size: 13px; display: flex; justify-content: space-between; padding: 6px; color: #a7f3d0; background: rgba(0,0,0,0.25); border-radius: 4px;">
+              <span id="ripen-desc">Nhấn các nút để thực hiện dẫn khí etilen vào buồng quả.</span>
+            </div>
+            <div class="control-row" style="justify-content: space-around; gap: 8px;">
+              <button class="btn-action" id="btn-pump-ethylene">Bơm khí Etilen (C₂H₄) 💨</button>
+              <button class="btn-action" id="btn-reset-ripen" style="background:#4b5563;">Khôi phục xanh quả 🔄</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 3: BROMINE DECOLORIZATION TEST -->
+        <div class="demo-panel" id="demo-3">
+          <div class="glass-bench">
+            <div class="bench-title">Thử nghiệm cộng nước Brom (Br₂)</div>
+            <div class="canvas-stage">
+              <canvas id="canvas-bromine-test"></canvas>
+            </div>
+            <div style="font-size: 13px; display: flex; justify-content: space-between; padding: 6px; color: #a7f3d0; background: rgba(0,0,0,0.25); border-radius: 4px;">
+              <span id="brom-desc">Nhấn sục khí etilen để phá vỡ liên kết pi.</span>
+            </div>
+            <div class="control-row" style="justify-content: space-around; gap: 8px;">
+              <button class="btn-action" id="btn-suc-brom">Sục khí Etilen 🫧</button>
+              <button class="btn-action" id="btn-reset-brom" style="background:#4b5563;">Làm mới nước Brom 🔄</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 4: PE POLYMERIZATION SIMULATOR -->
+        <div class="demo-panel" id="demo-4">
+          <div class="glass-bench">
+            <div class="bench-title">Trùng hợp Polyethylene (PE)</div>
+            <div class="canvas-stage">
+              <canvas id="canvas-polymerization"></canvas>
+            </div>
+            <div style="font-size: 12.5px; display: flex; justify-content: space-between; padding: 6px; color: #a7f3d0; background: rgba(0,0,0,0.25); border-radius: 4px;">
+              <span id="poly-desc">Nhiệt độ, áp suất & xúc tác sẽ nối các mắt xích.</span>
+            </div>
+            <div class="control-row" style="justify-content: space-between; gap: 8px;">
+              <button class="btn-action" id="btn-poly-trigger">Trùng hợp nhựa PE ⚡</button>
+              <button class="btn-action" id="btn-poly-reset" style="background:#4b5563;">Giải trùng hợp 🔄</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 5: MULTIPLE CHOICE QUIZ -->
+        <div class="demo-panel" id="demo-5">
+          <div class="glass-bench" style="justify-content: space-between;">
+            <div class="bench-title">Bài tập trắc nghiệm Etilen</div>
+            
+            <!-- Quiz Card Container -->
+            <div id="quiz-card" style="flex:1; display:flex; flex-direction:column; justify-content:center; padding:10px 0; box-sizing:border-box;">
+              
+              <!-- Progress Bar -->
+              <div style="width:100%; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; margin-bottom:12px; overflow:hidden;">
+                <div id="quiz-progress-bar" style="width:20%; height:100%; background:var(--accent); transition:width 0.3s;"></div>
+              </div>
+
+              <!-- Question Statement -->
+              <div id="quiz-question" style="font-size:14px; line-height:1.5; color:#fff; margin-bottom:12px; font-weight:bold;">
+                Đang tải câu hỏi...
+              </div>
+
+              <!-- Option Buttons -->
+              <div id="quiz-options-container" style="display:flex; flex-direction:column; gap:8px;">
+                <!-- Generated by JS -->
+              </div>
+
+              <!-- Answer Explanation Box -->
+              <div id="quiz-explanation" style="display:none; margin-top:12px; padding:10px; background:rgba(16,185,129,0.08); border-left:3px solid var(--accent); border-radius:4px; font-size:12px; line-height:1.4; color:#a7f3d0;">
+                <!-- Generated by JS -->
+              </div>
+            </div>
+
+            <!-- Quiz Result View -->
+            <div id="quiz-result" style="display:none; flex:1; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+              <span style="font-size: 48px;">🏆</span>
+              <h3 id="result-headline" style="font-family: 'Pacifico'; font-size: 24px; color: #a7f3d0;">Kết quả kiểm tra</h3>
+              <div style="font-size: 36px; font-weight: bold; color: var(--accent);" id="score-num">0/5</div>
+              <p id="result-desc" style="font-size: 14px; line-height: 1.5; color: #9ca3af; max-width: 300px;">
+                Giải thích kết quả...
+              </p>
+              <button class="btn-action" id="quiz-restart-btn" style="margin-top: 15px;">Làm lại thử thách 🔄</button>
+            </div>
+
+            <button class="btn-action" id="quiz-next-btn" style="margin-top: 12px;" disabled>Câu tiếp theo</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src="./support.js"></script>
+  <script>
+    (function() {
+      // Setup scrolling trigger and matching demo panel
+      const notebookSections = document.querySelectorAll('.hero, #sec-notebook-1, #sec-notebook-2, #sec-notebook-3, #sec-notebook-4, #sec-notebook-5');
+      const demoPanels = document.querySelectorAll('.demo-panel');
+
+      let activeDemoNum = '0';
+      const activeLoops = {
+        ethylene3d: null,
+        ripen: null,
+        bromine: null,
+        poly: null
+      };
+
+      function clearAllActiveLoops() {
+        for (const k in activeLoops) {
+          if (activeLoops[k]) {
+            cancelAnimationFrame(activeLoops[k]);
+            activeLoops[k] = null;
+          }
+        }
+      }
+
+      function setActiveSection(secElement) {
+        notebookSections.forEach(s => s.classList.remove('active-section'));
+        secElement.classList.add('active-section');
+
+        const demoNum = secElement.getAttribute('data-demo');
+        if (demoNum === activeDemoNum) return;
+
+        activeDemoNum = demoNum;
+
+        // Toggle active panel on the right
+        demoPanels.forEach(panel => {
+          panel.classList.remove('active');
+          if (panel.id === `demo-${demoNum}`) {
+            panel.classList.add('active');
+          }
+        });
+
+        // Kill active canvas animation loops
+        clearAllActiveLoops();
+
+        // Trigger canvas resize and init on active panel
+        if (activeDemoNum === '1') {
+          initEthylene3dDemo();
+        } else if (activeDemoNum === '2') {
+          initRipeningDemo();
+        } else if (activeDemoNum === '3') {
+          initBromineDemo();
+        } else if (activeDemoNum === '4') {
+          initPolymerizationDemo();
+        } else if (activeDemoNum === '5') {
+          initQuizDemo();
+        }
+      }
+
+      function observeSection(sec) {
+        const scroller = window.innerWidth > 920 ? document.querySelector('.notebook-panel') : null;
+        const options = {
+          root: scroller || null,
+          threshold: 0.2
+        };
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveSection(entry.target);
+            }
+          });
+        }, options);
+        io.observe(sec);
+        return io;
+      }
+
+      let sectionObservers = [];
+
+      function initObservers() {
+        sectionObservers.forEach(io => io.disconnect());
+        sectionObservers = [];
+        notebookSections.forEach(sec => {
+          sectionObservers.push(observeSection(sec));
+        });
+      }
+
+      initObservers();
+
+      /* ══════════════════════════════════════
+         MOBILE RESPONSIVE ELEMENT RELOCATION
+      ══════════════════════════════════════ */
+      let wasDesktop = window.innerWidth > 920;
+
+      const relocateDemos = () => {
+        const isMobile = window.innerWidth <= 920;
+        const isDesktop = !isMobile;
+        if (isDesktop !== wasDesktop) {
+          wasDesktop = isDesktop;
+          initObservers();
+        }
+
+        for (let i = 0; i <= 5; i++) {
+          const demo = document.getElementById(`demo-${i}`);
+          if (!demo) continue;
+          if (isMobile) {
+            const mobContainer = document.getElementById(`mob-demo-${i}`);
+            if (mobContainer && demo.parentElement !== mobContainer) {
+              mobContainer.appendChild(demo);
+            }
+          } else {
+            const deskContainer = document.querySelector('.lab-sticky-wrapper');
+            if (deskContainer && demo.parentElement !== deskContainer) {
+              deskContainer.appendChild(demo);
+            }
+          }
+        }
+
+        // Re-trigger layout sizes on active canvas
+        if (activeDemoNum === '1') initEthylene3dDemo();
+        else if (activeDemoNum === '2') initRipeningDemo();
+        else if (activeDemoNum === '3') initBromineDemo();
+        else if (activeDemoNum === '4') initPolymerizationDemo();
+        else if (activeDemoNum === '5') initQuizDemo();
+      };
+
+      window.addEventListener('resize', relocateDemos);
+      window.addEventListener('load', relocateDemos);
+      setTimeout(relocateDemos, 100);
+
+      /* ══════════════════════════════════════
+         DEMO 1: 3D ETHYLENE PLANAR MODEL
+      ══════════════════════════════════════ */
+      function initEthylene3dDemo() {
+        const canvas = document.getElementById('canvas-ethylene-3d');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight || 180;
+
+        let rotX = 0.5;
+        let rotY = 0.5;
+        let isDragging = false;
+        let lastMouseX = 0, lastMouseY = 0;
+
+        // C2H4 planar structure
+        const rawVertices = [
+          { id: 'C1', name: 'C', x: -35, y: 0, z: 0, rad: 22, color: '#1f2937' },
+          { id: 'C2', name: 'C', x: 35, y: 0, z: 0, rad: 22, color: '#1f2937' },
+          // H attached to C1
+          { id: 'H1', name: 'H', x: -78.3, y: 25, z: 0, rad: 13, color: '#f3f4f6' },
+          { id: 'H2', name: 'H', x: -78.3, y: -25, z: 0, rad: 13, color: '#f3f4f6' },
+          // H attached to C2
+          { id: 'H3', name: 'H', x: 78.3, y: 25, z: 0, rad: 13, color: '#f3f4f6' },
+          { id: 'H4', name: 'H', x: 78.3, y: -25, z: 0, rad: 13, color: '#f3f4f6' }
+        ];
+
+        // 3D double bond curves control points
+        const rawControls = [
+          { id: 'cp1', x: 0, y: 18, z: 0 },
+          { id: 'cp2', x: 0, y: -18, z: 0 }
+        ];
+
+        function rotateX(p, angle) {
+          const cos = Math.cos(angle), sin = Math.sin(angle);
+          return { ...p, x: p.x, y: p.y * cos - p.z * sin, z: p.y * sin + p.z * cos };
+        }
+
+        function rotateY(p, angle) {
+          const cos = Math.cos(angle), sin = Math.sin(angle);
+          return { ...p, x: p.x * cos + p.z * sin, y: p.y, z: -p.x * sin + p.z * cos };
+        }
+
+        const onStartDrag = (clientX, clientY) => {
+          isDragging = true;
+          lastMouseX = clientX;
+          lastMouseY = clientY;
+        };
+
+        const onMoveDrag = (clientX, clientY) => {
+          if (!isDragging) return;
+          const dx = clientX - lastMouseX;
+          const dy = clientY - lastMouseY;
+          rotY += dx * 0.008;
+          rotX += dy * 0.008;
+          lastMouseX = clientX;
+          lastMouseY = clientY;
+        };
+
+        const onEndDrag = () => { isDragging = false; };
+
+        canvas.onmousedown = (e) => { e.preventDefault(); onStartDrag(e.clientX, e.clientY); };
+        canvas.ontouchstart = (e) => { onStartDrag(e.touches[0].clientX, e.touches[0].clientY); };
+
+        window.addEventListener('mousemove', (e) => onMoveDrag(e.clientX, e.clientY));
+        window.addEventListener('touchmove', (e) => onMoveDrag(e.touches[0].clientX, e.touches[0].clientY));
+        window.addEventListener('mouseup', onEndDrag);
+        window.addEventListener('touchend', onEndDrag);
+
+        function drawSphere(cx, cy, r, colorBase) {
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          const grad = ctx.createRadialGradient(cx - r*0.3, cy - r*0.3, r*0.1, cx, cy, r);
+          if (colorBase === '#1f2937') {
+            grad.addColorStop(0, '#52525b');
+            grad.addColorStop(0.7, '#18181b');
+            grad.addColorStop(1, '#09090b');
+          } else {
+            grad.addColorStop(0, '#ffffff');
+            grad.addColorStop(0.8, '#e4e4e7');
+            grad.addColorStop(1, '#a1a1aa');
+          }
+          ctx.fillStyle = grad;
+          ctx.fill();
+          ctx.strokeStyle = colorBase === '#1f2937' ? '#3f3f46' : '#71717a';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+
+        function loop() {
+          if (!isDragging) {
+            rotY += 0.005;
+          }
+
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          const centerX = canvas.width / 2;
+          const centerY = canvas.height / 2;
+
+          // Rotate vertices
+          const rotated = rawVertices.map(v => {
+            let p1 = rotateY(v, rotY);
+            let p2 = rotateX(p1, rotX);
+            return {
+              ...v,
+              tx: p2.x + centerX,
+              ty: -p2.y + centerY,
+              tz: p2.z
+            };
+          });
+
+          // Rotate double bond controls
+          const rotatedControls = rawControls.map(cp => {
+            let p1 = rotateY(cp, rotY);
+            let p2 = rotateX(p1, rotX);
+            return {
+              ...cp,
+              tx: p2.x + centerX,
+              ty: -p2.y + centerY,
+              tz: p2.z
+            };
+          });
+
+          const c1 = rotated.find(v => v.id === 'C1');
+          const c2 = rotated.find(v => v.id === 'C2');
+
+          const elements = [];
+
+          // C-H Single bonds
+          const chBonds = [
+            { h: rotated.find(v => v.id === 'H1'), c: c1 },
+            { h: rotated.find(v => v.id === 'H2'), c: c1 },
+            { h: rotated.find(v => v.id === 'H3'), c: c2 },
+            { h: rotated.find(v => v.id === 'H4'), c: c2 }
+          ];
+
+          chBonds.forEach(bond => {
+            elements.push({
+              type: 'bond-ch',
+              z: (bond.h.tz + bond.c.tz) / 2,
+              draw: () => {
+                ctx.beginPath();
+                ctx.moveTo(bond.c.tx, bond.c.ty);
+                ctx.lineTo(bond.h.tx, bond.h.ty);
+                ctx.strokeStyle = '#4b5563';
+                ctx.lineWidth = 5;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+                // shiny core
+                ctx.beginPath();
+                ctx.moveTo(bond.c.tx, bond.c.ty);
+                ctx.lineTo(bond.h.tx, bond.h.ty);
+                ctx.strokeStyle = '#9ca3af';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+              }
+            });
+          });
+
+          // C=C Double bonds curves
+          elements.push({
+            type: 'bond-cc-double',
+            z: (c1.tz + c2.tz) / 2,
+            draw: () => {
+              // Two quadratic curves representing double bond
+              rotatedControls.forEach(cp => {
+                ctx.beginPath();
+                ctx.moveTo(c1.tx, c1.ty);
+                ctx.quadraticCurveTo(cp.tx, cp.ty, c2.tx, c2.ty);
+                ctx.strokeStyle = '#4b5563';
+                ctx.lineWidth = 6;
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(c1.tx, c1.ty);
+                ctx.quadraticCurveTo(cp.tx, cp.ty, c2.tx, c2.ty);
+                ctx.strokeStyle = '#10B981'; // Mint Green double bond indicator
+                ctx.lineWidth = 2;
+                ctx.stroke();
+              });
+            }
+          });
+
+          // Atoms
+          rotated.forEach(at => {
+            elements.push({
+              type: 'atom',
+              z: at.tz,
+              draw: () => drawSphere(at.tx, at.ty, at.rad, at.color)
+            });
+          });
+
+          // Sort depth back-to-front
+          elements.sort((a, b) => a.z - b.z);
+          elements.forEach(el => el.draw());
+
+          activeLoops.ethylene3d = requestAnimationFrame(loop);
+        }
+
+        loop();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 2: RIPENING HORMONE CHAMBER
+      ══════════════════════════════════════ */
+      function initRipeningDemo() {
+        const canvas = document.getElementById('canvas-ripening-chamber');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight || 180;
+
+        const btnPump = document.getElementById('btn-pump-ethylene');
+        const btnReset = document.getElementById('btn-reset-ripen');
+        const descText = document.getElementById('ripen-desc');
+
+        let isPumping = false;
+        let etilenLevel = 0;
+        let ripenProgress = 0; // 0 (green) to 1 (ripe yellow)
+        const gasParticles = [];
+
+        btnPump.onclick = () => {
+          isPumping = true;
+          descText.textContent = 'Đang bơm Etilen ( phytohormone)... Khí lan tỏa kích thích chín nhanh quả.';
+          btnPump.disabled = true;
+        };
+
+        btnReset.onclick = () => {
+          isPumping = false;
+          etilenLevel = 0;
+          ripenProgress = 0;
+          gasParticles.length = 0;
+          descText.textContent = 'Đã khôi phục trạng thái quả xanh lúc đầu. Bạn có thể bơm khí lại.';
+          btnPump.disabled = false;
+        };
+
+        function loop() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // Draw Chamber Container
+          ctx.fillStyle = '#060e0c';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          // Wood shelf
+          ctx.fillStyle = '#78350f';
+          ctx.fillRect(0, canvas.height * 0.85, canvas.width, 15);
+
+          // Draw banana hanging
+          const bX = canvas.width / 2;
+          const bY = canvas.height * 0.35;
+
+          // Hanger hook
+          ctx.beginPath();
+          ctx.moveTo(bX, 0);
+          ctx.lineTo(bX, bY - 30);
+          ctx.strokeStyle = '#6b7280';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          // Pumping gas logic
+          if (isPumping) {
+            etilenLevel = Math.min(etilenLevel + 0.005, 1);
+            if (ripenProgress < 1) {
+              ripenProgress += 0.003;
+            } else {
+              isPumping = false;
+              descText.textContent = 'Quả đã chín hoàn toàn! Tinh bột hóa đường ngọt lịm (Glucose tăng).';
+            }
+
+            // Spawn gas particles
+            if (Math.random() < 0.15 && gasParticles.length < 50) {
+              gasParticles.push({
+                x: 0,
+                y: canvas.height * 0.7 - Math.random() * 40,
+                vx: Math.random() * 3 + 1,
+                vy: Math.random() * 2 - 1,
+                alpha: 0.8
+              });
+            }
+          }
+
+          // Move & draw gas particles
+          gasParticles.forEach((p, idx) => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.alpha -= 0.008;
+            if (p.alpha <= 0 || p.x > canvas.width) {
+              gasParticles.splice(idx, 1);
+            } else {
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
+              ctx.fillStyle = `rgba(132, 204, 22, ${p.alpha})`; // Lime Green etilen gas
+              ctx.fill();
+            }
+          });
+
+          // Draw Gas Tank on the bottom-left
+          ctx.fillStyle = '#1e293b';
+          ctx.fillRect(10, canvas.height * 0.55, 30, 60);
+          ctx.fillStyle = '#475569';
+          ctx.fillRect(15, canvas.height * 0.53, 20, 8);
+          // Label
+          ctx.font = 'bold 9px Itim';
+          ctx.fillStyle = '#e2e8f0';
+          ctx.fillText('C₂H₄', 15, canvas.height * 0.62);
+
+          // Draw Banana
+          // Interpolate color from green (#10B981) to ripe yellow (#eab308) to brown spots
+          let r = Math.round(16 + ripenProgress * (234 - 16));
+          let g = Math.round(185 + ripenProgress * (179 - 185));
+          let b = Math.round(129 + ripenProgress * (8 - 129));
+          const bananaColor = `rgb(${r}, ${g}, ${b})`;
+
+          ctx.save();
+          ctx.translate(bX, bY);
+          
+          // Draw 3 connected banana curves to look like a bunch
+          ctx.strokeStyle = bananaColor;
+          ctx.lineWidth = 14;
+          ctx.lineCap = 'round';
+
+          // Banana 1
+          ctx.beginPath();
+          ctx.arc(-10, 0, 40, Math.PI * 0.1, Math.PI * 0.8);
+          ctx.stroke();
+
+          // Banana 2 (slightly offset)
+          ctx.beginPath();
+          ctx.arc(10, 5, 40, Math.PI * 0.2, Math.PI * 0.9);
+          ctx.stroke();
+
+          // Stem connector
+          ctx.fillStyle = '#4b5563';
+          ctx.fillRect(-15, -28, 25, 8);
+
+          // Draw some brown ripen spots
+          if (ripenProgress > 0.8) {
+            ctx.fillStyle = 'rgba(78, 53, 15, 0.7)';
+            ctx.beginPath();
+            ctx.arc(-30, 20, 2, 0, Math.PI*2);
+            ctx.arc(-10, 35, 1.5, 0, Math.PI*2);
+            ctx.arc(10, 25, 2, 0, Math.PI*2);
+            ctx.arc(25, 32, 1.8, 0, Math.PI*2);
+            ctx.fill();
+          }
+
+          ctx.restore();
+
+          // Ripening info dashboard overlay
+          ctx.fillStyle = 'rgba(0,0,0,0.4)';
+          ctx.fillRect(canvas.width - 130, 10, 120, 65);
+          ctx.strokeStyle = 'rgba(16, 185, 129, 0.2)';
+          ctx.strokeRect(canvas.width - 130, 10, 120, 65);
+
+          ctx.font = '10px Itim';
+          ctx.fillStyle = '#a7f3d0';
+          ctx.fillText('ĐỒNG HỒ ĐO QUẢ CHÍN', canvas.width - 125, 24);
+          ctx.fillStyle = '#fff';
+          ctx.fillText(`Tinh bột: ${Math.round((1 - ripenProgress)*100)}%`, canvas.width - 125, 40);
+          ctx.fillText(`Đường ngọt: ${Math.round(ripenProgress*100)}%`, canvas.width - 125, 55);
+
+          activeLoops.ripen = requestAnimationFrame(loop);
+        }
+
+        loop();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 3: BROMINE DECOLORIZATION TEST
+      ══════════════════════════════════════ */
+      function initBromineDemo() {
+        const canvas = document.getElementById('canvas-bromine-test');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight || 180;
+
+        const btnSuc = document.getElementById('btn-suc-brom');
+        const btnReset = document.getElementById('btn-reset-brom');
+        const descText = document.getElementById('brom-desc');
+
+        let isBubbling = false;
+        let colorFading = 0; // 0 (dark brown) to 1 (colorless)
+        let bubbleTimer = 0;
+        const bubbles = [];
+
+        btnSuc.onclick = () => {
+          isBubbling = !isBubbling;
+          if (isBubbling) {
+            btnSuc.textContent = 'Dừng sục khí ⏹️';
+            descText.textContent = 'Etilen đang sục vào dung dịch Brom. Liên kết pi bị bẻ gãy tạo dibromoethan không màu.';
+          } else {
+            btnSuc.textContent = 'Sục khí Etilen 🫧';
+          }
+        };
+
+        btnReset.onclick = () => {
+          isBubbling = false;
+          colorFading = 0;
+          bubbles.length = 0;
+          btnSuc.textContent = 'Sục khí Etilen 🫧';
+          descText.textContent = 'Đã đặt lại dung dịch nước Brom màu đỏ nâu lúc đầu.';
+        };
+
+        function loop() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          const tubeLeft = canvas.width / 2;
+          const tubeBottom = canvas.height * 0.85;
+
+          // Draw delivery gas pipe from left
+          ctx.beginPath();
+          ctx.moveTo(0, tubeBottom - 80);
+          ctx.lineTo(tubeLeft - 5, tubeBottom - 80);
+          ctx.lineTo(tubeLeft - 5, tubeBottom - 20);
+          ctx.strokeStyle = '#9ca3af';
+          ctx.lineWidth = 4;
+          ctx.stroke();
+
+          // Inverted beaker/tube containing Bromine water
+          // We compute the color based on colorFading: dark reddish brown to transparent pale yellow
+          // Original Bromine water: RGB (154, 52, 18) -> colorFading -> RGB (13, 18, 20) / Transparent
+          let r = Math.round(154 + colorFading * (240 - 154));
+          let g = Math.round(52 + colorFading * (240 - 52));
+          let b = Math.round(18 + colorFading * (240 - 18));
+          let alpha = 0.7 - colorFading * 0.65; // Fade to almost clear transparent
+
+          // Draw test tube container
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+          ctx.fillRect(tubeLeft - 30, tubeBottom - 100, 60, 110);
+          ctx.strokeStyle = '#e5e7eb';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(tubeLeft - 30, tubeBottom - 100, 60, 110);
+
+          // Draw liquid Bromine water inside
+          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+          ctx.fillRect(tubeLeft - 29, tubeBottom - 60, 58, 69);
+
+          // Bubbling logic
+          if (isBubbling) {
+            bubbleTimer++;
+            colorFading = Math.min(colorFading + 0.002, 1);
+            if (colorFading === 1) {
+              isBubbling = false;
+              btnSuc.textContent = 'Sục khí Etilen 🫧';
+              descText.textContent = 'Nước Brom mất màu đỏ nâu hoàn toàn! Phản ứng cộng alkene hoàn tất.';
+            }
+
+            if (bubbleTimer % 8 === 0) {
+              bubbles.push({
+                x: tubeLeft - 5 + (Math.random() * 8 - 4),
+                y: tubeBottom - 20,
+                radius: Math.random() * 2 + 2.5,
+                speedY: Math.random() * 1.5 + 1.2
+              });
+            }
+          }
+
+          // Move & draw bubbles
+          for (let i = bubbles.length - 1; i >= 0; i--) {
+            const bub = bubbles[i];
+            bub.y -= bub.speedY;
+            ctx.beginPath();
+            ctx.arc(bub.x, bub.y, bub.radius, 0, Math.PI*2);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.fill();
+            ctx.stroke();
+
+            // pop bubble at surface
+            if (bub.y < tubeBottom - 60) {
+              bubbles.splice(i, 1);
+            }
+          }
+
+          // Label
+          ctx.font = '12px Itim';
+          ctx.fillStyle = colorFading > 0.8 ? '#10b981' : '#f97316';
+          ctx.textAlign = 'center';
+          ctx.fillText(colorFading > 0.8 ? 'Dung dịch Mất Màu (C₂H₄Br₂)' : 'Dung dịch Brom đỏ nâu (Br₂)', tubeLeft, tubeBottom - 80);
+
+          activeLoops.bromine = requestAnimationFrame(loop);
+        }
+
+        loop();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 4: PE POLYMERIZATION SIMULATOR
+      ══════════════════════════════════════ */
+      function initPolymerizationDemo() {
+        const canvas = document.getElementById('canvas-polymerization');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight || 180;
+
+        const btnTrigger = document.getElementById('btn-poly-trigger');
+        const btnReset = document.getElementById('btn-poly-reset');
+        const descText = document.getElementById('poly-desc');
+
+        let isPolymerizing = false;
+        let progress = 0;
+
+        // 3 monomers initially
+        const monomers = [
+          { cx: canvas.width * 0.2, cy: canvas.height * 0.5, HOffset: 30, doubleBondOpen: 0 },
+          { cx: canvas.width * 0.5, cy: canvas.height * 0.5, HOffset: 30, doubleBondOpen: 0 },
+          { cx: canvas.width * 0.8, cy: canvas.height * 0.5, HOffset: 30, doubleBondOpen: 0 }
+        ];
+
+        btnTrigger.onclick = () => {
+          isPolymerizing = true;
+          btnTrigger.disabled = true;
+          descText.textContent = 'Nhiệt độ & Áp suất cắt liên kết pi. Các liên kết đôi mở ra và ghép nối liên tục.';
+        };
+
+        btnReset.onclick = () => {
+          isPolymerizing = false;
+          progress = 0;
+          monomers.forEach(m => {
+            m.doubleBondOpen = 0;
+          });
+          btnTrigger.disabled = false;
+          descText.textContent = 'Đặt lại các phân tử khí etilen đứng độc lập.';
+        };
+
+        function drawMethyleneUnit(mx, my, HOffset, linkProgress, openFactor) {
+          // Draw 2 Carbon atoms
+          // C1 (left), C2 (right)
+          const cDistance = 35;
+          const c1x = mx - cDistance/2;
+          const c2x = mx + cDistance/2;
+
+          // Draw double bond C=C
+          if (openFactor < 0.95) {
+            // Upper line of double bond
+            ctx.beginPath();
+            ctx.moveTo(c1x, my - 4);
+            ctx.lineTo(c2x, my - 4);
+            ctx.strokeStyle = `rgba(16, 185, 129, ${1 - openFactor})`; // double bond fades
+            ctx.lineWidth = 3;
+            ctx.stroke();
+          }
+
+          // Lower line of double bond (remains as single sigma bond)
+          ctx.beginPath();
+          ctx.moveTo(c1x, my + 4);
+          ctx.lineTo(c2x, my + 4);
+          ctx.strokeStyle = '#4b5563';
+          ctx.lineWidth = 4;
+          ctx.stroke();
+
+          // Draw C-H bonds
+          const hBonds = [
+            { hx: c1x - 20, hy: my - HOffset },
+            { hx: c1x - 20, hy: my + HOffset },
+            { hx: c2x + 20, hy: my - HOffset },
+            { hx: c2x + 20, hy: my + HOffset }
+          ];
+
+          hBonds.forEach(hb => {
+            ctx.beginPath();
+            ctx.moveTo(hb.hx > mx ? c2x : c1x, my);
+            ctx.lineTo(hb.hx, hb.hy);
+            ctx.strokeStyle = '#4b5563';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Hydrogen spheres
+            ctx.beginPath();
+            ctx.arc(hb.hx, hb.hy, 7, 0, Math.PI*2);
+            ctx.fillStyle = '#f3f4f6';
+            ctx.fill();
+            ctx.strokeStyle = '#9ca3af';
+            ctx.stroke();
+          });
+
+          // Draw Carbon spheres
+          ctx.beginPath();
+          ctx.arc(c1x, my, 12, 0, Math.PI*2);
+          ctx.arc(c2x, my, 12, 0, Math.PI*2);
+          ctx.fillStyle = '#1f2937';
+          ctx.fill();
+          ctx.strokeStyle = '#3f3f46';
+          ctx.stroke();
+
+          // Draw extending links to next monomers
+          if (openFactor > 0.1) {
+            const linkLen = openFactor * 25;
+            
+            // Left link from C1
+            ctx.beginPath();
+            ctx.moveTo(c1x, my);
+            ctx.lineTo(c1x - linkLen, my);
+            ctx.strokeStyle = '#10B981';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Right link from C2
+            ctx.beginPath();
+            ctx.moveTo(c2x, my);
+            ctx.lineTo(c2x + linkLen, my);
+            ctx.strokeStyle = '#10B981';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+          }
+        }
+
+        function loop() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // Draw polymerization reactor box
+          ctx.strokeStyle = 'rgba(16, 185, 129, 0.15)';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+
+          if (isPolymerizing) {
+            progress = Math.min(progress + 0.008, 1);
+            if (progress === 1) {
+              isPolymerizing = false;
+              descText.textContent = 'Hoàn tất trùng hợp! Chuỗi Polyethylene polymer dẻo dai (Nhựa PE).';
+            }
+          }
+
+          // Move monomers closer as polymerization progress increases
+          const targetY = canvas.height * 0.5;
+          const targetSpacing = canvas.width * 0.28;
+
+          monomers.forEach((m, idx) => {
+            const openFactor = progress;
+            
+            // Initial positions: scattered
+            // Final positions: aligned in a single straight chain
+            const initialX = idx === 0 ? canvas.width * 0.18 : (idx === 1 ? canvas.width * 0.5 : canvas.width * 0.82);
+            const finalX = (canvas.width / 2) + (idx - 1) * targetSpacing;
+            
+            const currentX = initialX + progress * (finalX - initialX);
+
+            drawMethyleneUnit(currentX, targetY, m.HOffset, progress, openFactor);
+          });
+
+          // Draw monomer formula labels
+          if (progress < 0.2) {
+            ctx.font = '10px Itim';
+            ctx.fillStyle = '#9ca3af';
+            ctx.textAlign = 'center';
+            monomers.forEach(m => {
+              ctx.fillText('Monomer Etilen', m.cx, m.cy + 55);
+            });
+          } else if (progress > 0.9) {
+            ctx.font = 'bold 12px Itim';
+            ctx.fillStyle = '#10B981';
+            ctx.textAlign = 'center';
+            ctx.fillText('Chuỗi Polyethylene (PE) polymer nhựa dẻo', canvas.width / 2, targetY - 55);
+          }
+
+          activeLoops.poly = requestAnimationFrame(loop);
+        }
+
+        loop();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 5: MULTIPLE CHOICE QUIZ
+      ══════════════════════════════════════ */
+      function initQuizDemo() {
+        const quizQuestions = [
+          {
+            q: "Chất khí hữu cơ nào sau đây là thành viên đầu tiên và đơn giản nhất của dãy alkene?",
+            options: [
+              "Metan (CH₄)",
+              "Etilen (C₂H₄)",
+              "Axetilen (C₂H₂)",
+              "Propan (C₃H₈)"
+            ],
+            ans: 1,
+            explain: "Etilen (C₂H₄) là hydrocarbon chứa 1 liên kết đôi đơn giản nhất, thuộc nhóm alkene (olefin)."
+          },
+          {
+            q: "Liên kết đôi C=C trong phân tử etilen bao gồm các loại liên kết nào?",
+            options: [
+              "Hai liên kết pi bền vững",
+              "Hai liên kết sigma rất bền vững",
+              "Một liên kết sigma bền vững và một liên kết pi kém bền",
+              "Một liên kết đơn cộng hóa trị thông thường"
+            ],
+            ans: 2,
+            explain: "Liên kết đôi C=C gồm một liên kết sigma đồng trục bền vững và một liên kết pi bên kém bền dễ bị đứt."
+          },
+          {
+            q: "Hormone khí tự nhiên nào dùng để thúc đẩy trái cây xanh chín nhanh đồng loạt trong kho bảo quản?",
+            options: [
+              "Khí Carbonic (CO₂)",
+              "Khí Metan (CH₄)",
+              "Khí Etilen (C₂H₄)",
+              "Khí Oxy (O₂)"
+            ],
+            ans: 2,
+            explain: "Khí etilen là một hormone thực vật (phytohormone) dạng khí, điều hòa sinh trưởng kích thích trái chín."
+          },
+          {
+            q: "Hiện tượng xảy ra khi dẫn dòng khí etilen dư đi qua dung dịch nước Brom là gì?",
+            options: [
+              "Dung dịch xuất hiện kết tủa trắng tinh",
+              "Dung dịch chuyển sang màu tím hồng",
+              "Dung dịch Brom bị mất màu đỏ nâu",
+              "Không có hiện tượng gì xảy ra"
+            ],
+            ans: 2,
+            explain: "Etilen tham gia phản ứng cộng trực tiếp vào nối đôi với Brom, làm mất màu đỏ nâu của nước Brom."
+          },
+          {
+            q: "Sản phẩm polyme thu được từ phản ứng trùng hợp etilen có tên viết tắt là gì?",
+            options: [
+              "Nhựa PVC",
+              "Nhựa PE",
+              "Nhựa PP",
+              "Tơ nilon-6"
+            ],
+            ans: 1,
+            explain: "Trùng hợp etilen (ethylene) tạo ra Polyethylene, viết tắt là nhựa PE làm túi nilon, màng bọc."
+          }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+        let answerSelected = false;
+
+        const card = document.getElementById('quiz-card');
+        const resultView = document.getElementById('quiz-result');
+        const qStatement = document.getElementById('quiz-question');
+        const optionsContainer = document.getElementById('quiz-options-container');
+        const progressBar = document.getElementById('quiz-progress-bar');
+        const expBox = document.getElementById('quiz-explanation');
+        const btnNext = document.getElementById('quiz-next-btn');
+        const btnRestart = document.getElementById('quiz-restart-btn');
+
+        function loadQuestion(idx) {
+          answerSelected = false;
+          btnNext.disabled = true;
+          expBox.style.display = 'none';
+          
+          const progress = ((idx) / quizQuestions.length) * 100;
+          progressBar.style.width = `${progress}%`;
+
+          const question = quizQuestions[idx];
+          qStatement.textContent = `Câu ${idx + 1}: ${question.q}`;
+          optionsContainer.innerHTML = '';
+
+          question.options.forEach((opt, oIdx) => {
+            const btn = document.createElement('button');
+            btn.style.width = '100%';
+            btn.style.padding = '10px 14px';
+            btn.style.background = 'rgba(255,255,255,0.05)';
+            btn.style.color = '#fff';
+            btn.style.border = '1px solid rgba(255,255,255,0.15)';
+            btn.style.borderRadius = '6px';
+            btn.style.fontFamily = 'Itim';
+            btn.style.fontSize = '13.5px';
+            btn.style.textAlign = 'left';
+            btn.style.cursor = 'pointer';
+            btn.style.transition = 'all 0.2s';
+            
+            btn.onmouseover = () => {
+              if (!answerSelected) btn.style.background = 'rgba(16, 185, 129, 0.1)';
+            };
+            btn.onmouseout = () => {
+              if (!answerSelected) btn.style.background = 'rgba(255,255,255,0.05)';
+            };
+
+            btn.onclick = () => selectAnswer(oIdx, btn);
+            optionsContainer.appendChild(btn);
+            
+            btn.textContent = opt;
+          });
+        }
+
+        function selectAnswer(oIdx, selectedBtn) {
+          if (answerSelected) return;
+          answerSelected = true;
+
+          const question = quizQuestions[currentQ];
+          const buttons = optionsContainer.querySelectorAll('button');
+
+          buttons.forEach((btn, idx) => {
+            btn.style.cursor = 'not-allowed';
+            if (idx === question.ans) {
+              btn.style.background = 'rgba(16, 185, 129, 0.3)';
+              btn.style.borderColor = '#10B981';
+            }
+          });
+
+          if (oIdx === question.ans) {
+            score++;
+            selectedBtn.style.background = 'rgba(16, 185, 129, 0.35)';
+            selectedBtn.style.borderColor = '#10B981';
+          } else {
+            selectedBtn.style.background = 'rgba(239, 68, 68, 0.3)';
+            selectedBtn.style.borderColor = '#EF4444';
+          }
+
+          expBox.textContent = `💡 Giải thích: ${question.explain}`;
+          expBox.style.display = 'block';
+          btnNext.disabled = false;
+        }
+
+        btnNext.onclick = () => {
+          currentQ++;
+          if (currentQ < quizQuestions.length) {
+            loadQuestion(currentQ);
+          } else {
+            progressBar.style.width = '100%';
+            card.style.display = 'none';
+            resultView.style.display = 'flex';
+            btnNext.style.display = 'none';
+
+            document.getElementById('score-num').textContent = `${score}/${quizQuestions.length}`;
+            
+            let headline = 'Cố gắng lên!';
+            let desc = 'Hãy đọc kỹ lại vở lý thuyết bên trái và làm lại bài kiểm tra nhé.';
+            
+            if (score === quizQuestions.length) {
+              headline = 'Xuất sắc! 🎉';
+              desc = 'Bạn đã nắm tuyệt đối 100% kiến thức về cấu trúc và phản ứng hóa học của alkene Etilen!';
+            } else if (score >= 3) {
+              headline = 'Rất tốt! 👍';
+              desc = 'Bạn đã hiểu hầu hết tính chất hóa học quan trọng của etilen.';
+            }
+
+            document.getElementById('result-headline').textContent = headline;
+            document.getElementById('result-desc').textContent = desc;
+          }
+        };
+
+        btnRestart.onclick = () => {
+          currentQ = 0;
+          score = 0;
+          card.style.display = 'flex';
+          resultView.style.display = 'none';
+          btnNext.style.display = 'block';
+          loadQuestion(0);
+        };
+
+        loadQuestion(0);
+      }
+    })();
+  </script>
+</body>
+</html>

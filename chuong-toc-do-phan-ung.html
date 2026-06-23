@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hóa học · Chương 7B — Tốc độ phản ứng và chất xúc tác (Split Notebook)</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SPLIT NOTEBOOK & LAB BENCH SYSTEM
+    ══════════════════════════════════════ */
+    @import url('https://fonts.googleapis.com/css2?family=Itim&family=Pacifico&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:        #F5F0E0;
+      --paper-dark:   #EDE5CC;
+      --ink:          #1A1208;
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #D9531E; /* Amber/Orange Accent */
+      --accent-deep:  #A3360D;
+      --accent-red:   #C44010;
+      --accent-blue:  #1A4FA0;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-p:  rgba(217, 83, 30, 0.20);
+      --line-h:       30px;
+      --font-base:    15px;
+      --font-h2:      24px;
+      --font-h3:      16px;
+      --font-sub:     12px;
+      --ruled-top-offset: calc(var(--line-h) * 22 / 30);
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #5E4A32;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #7A6548 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #4E3E28 0%, transparent 50%),
+        repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+      color: var(--ink);
+      font-family: 'Itim', cursive;
+    }
+    ::selection { background: var(--highlight-p); color: var(--ink); }
+
+    .back-link {
+      position: absolute; top: 24px; left: 96px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Itim', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.15);
+      transform: rotate(0.8deg); transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent); }
+
+    /* ══════════════════════════════════════
+       SPLIT LAYOUT CONTAINER
+     ══════════════════════════════════════ */
+    .scrolly-container {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Left Side - School Notebook */
+    .notebook-panel {
+      width: 50%;
+      position: relative;
+      background-color: var(--paper);
+      box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+      z-index: 5;
+    }
+
+    /* Ruled paper background classes */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(90deg, transparent calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 73 / 30), transparent calc(var(--line-h) * 73 / 30)),
+        repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
+      background-attachment: local;
+      background-position: 0 0, 0 var(--ruled-top-offset);
+    }
+
+    .hero {
+      padding: calc(3 * var(--line-h)) calc(var(--line-h) * 40 / 30) calc(var(--line-h) * 30 / 30) calc(3.2 * var(--line-h));
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+      position: relative; overflow: hidden;
+      scroll-snap-align: start;
+    }
+    .hero::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #7A6548 0%, #7A6548 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+      z-index: 2;
+    }
+    .crumb { font-size: var(--font-sub); letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: var(--line-h); line-height: var(--line-h); font-family: 'Itim', cursive; }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+    .title { font-family: 'Pacifico', cursive; font-size: clamp(28px, 4.2vw, 56px); line-height: 60px; color: var(--ink); margin-bottom: 30px; font-weight: 700; }
+    .title-stroke { width: clamp(140px, 30vw, 300px); height: 3px; background: var(--accent); border-radius: 2px; margin-top: calc(-0.5 * var(--line-h)); margin-bottom: calc(0.4 * var(--line-h)); }
+    .subtitle { font-family: 'Itim', cursive; font-size: var(--font-sub); letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-deep); margin-bottom: var(--line-h); line-height: var(--line-h); }
+    .intro { max-width: 800px; font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); }
+
+    .card {
+      padding: calc(3 * var(--line-h)) calc(1.2 * var(--line-h)) calc(3 * var(--line-h)) calc(3.2 * var(--line-h));
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative; overflow: hidden;
+      min-height: 100vh;
+      box-sizing: border-box;
+      scroll-snap-align: start;
+      transition: background-color 0.3s;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+    .card.ruled-page:nth-child(even) { background-color: var(--paper-dark); }
+    .card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #7A6548 0%, #7A6548 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+
+    /* Active section highlight on notebook */
+    .card.active-section {
+      background-color: rgba(253, 246, 227, 0.45);
+    }
+
+    @media (min-width: 921px) {
+      :root {
+        --line-h:       clamp(30px, 1.25vw + 18.5px, 42px);
+        --font-base:    clamp(15px, 0.6vw + 9.5px, 21px);
+        --font-h2:      clamp(24px, 1vw + 14.8px, 34px);
+        --font-h3:      clamp(16px, 0.7vw + 9.5px, 23px);
+        --font-sub:     clamp(12px, 0.5vw + 7.4px, 17px);
+      }
+      .hero {
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+      .scrolly-container {
+        height: 100vh;
+        overflow: hidden;
+      }
+      .notebook-panel {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scrollbar-width: none;
+      }
+      .notebook-panel::-webkit-scrollbar {
+        display: none;
+      }
+      .lab-panel {
+        position: relative;
+        right: auto;
+        top: auto;
+        height: 100vh;
+      }
+      .card > *:not(.mobile-demo-placeholder) {
+        opacity: 0.15;
+        transition: opacity 0.5s ease;
+      }
+      .card.active-section > *:not(.mobile-demo-placeholder) {
+        opacity: 1;
+      }
+      .hero > * {
+        opacity: 0.15;
+        transition: opacity 0.5s ease;
+      }
+      .hero.active-section > * {
+        opacity: 1;
+      }
+    }
+
+    .card h2 { font-family: 'Pacifico', cursive; font-size: var(--font-h2); color: var(--ink); line-height: var(--line-h); font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 0px; margin-bottom: var(--line-h); display: inline-block; }
+    .card p { font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); margin-bottom: 30px; }
+    .card p:last-child { margin-bottom: 0; }
+    .card .key { color: var(--accent); font-weight: bold; }
+
+    .formula-box {
+      background: rgba(217, 83, 30, 0.05);
+      border-left: 3px solid var(--accent);
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 1.1rem;
+      color: var(--ink-mid);
+    }
+
+    /* ══════════════════════════════════════
+       Right Side - Elegant Lab Bench / Chalkboard
+    ══════════════════════════════════════ */
+    .lab-panel {
+      width: 50%;
+      background: #1d1715;
+      background-image: 
+        radial-gradient(ellipse at 50% 20%, #30201c 0%, transparent 65%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px);
+      position: fixed;
+      right: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    .lab-sticky-wrapper {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .blackboard-title {
+      position: absolute;
+      top: 24px;
+      left: 40px;
+      font-family: 'Pacifico', cursive;
+      font-size: 20px;
+      color: #e6b29c;
+      opacity: 0.85;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 8px rgba(217, 83, 30, 0.3);
+    }
+
+    /* Demonstration containers on the right */
+    .demo-panel {
+      position: absolute;
+      top: 60px;
+      bottom: 30px;
+      left: 40px;
+      right: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 1;
+    }
+    .demo-panel.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    /* Blackboard/Lab bench card overlay */
+    .glass-bench {
+      background: rgba(43, 32, 28, 0.65);
+      border: 1.5px solid rgba(230, 160, 130, 0.25);
+      border-radius: 12px;
+      box-shadow: 
+        0 15px 35px rgba(0,0,0,0.5), 
+        inset 0 0 20px rgba(217, 83, 30, 0.1);
+      padding: 24px;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(10px);
+      color: #eaeaea;
+      box-sizing: border-box;
+    }
+
+    .bench-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 22px;
+      color: #e6b29c;
+      margin-bottom: 8px;
+      text-align: center;
+      border-bottom: 1px dashed rgba(255,255,255,0.15);
+      padding-bottom: 8px;
+    }
+
+    .canvas-stage {
+      flex: 1;
+      width: 100%;
+      background: #120c0a;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .canvas-stage canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .control-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 8px;
+      background: rgba(0,0,0,0.2);
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .control-item {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 4px;
+    }
+
+    .control-item label {
+      color: #caa596;
+      font-weight: bold;
+    }
+
+    .btn-action {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-family: 'Itim';
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.15s;
+    }
+    .btn-action:hover {
+      background: var(--accent-deep);
+    }
+    .btn-action:disabled {
+      background: #443c3a;
+      color: #888;
+      cursor: not-allowed;
+    }
+
+    /* ══════════════════════════════════════
+       MOBILE LAYOUT (COAXIAL / SINGLE COLUMN)
+    ══════════════════════════════════════ */
+    @media (max-width: 920px) {
+      .scrolly-container {
+        flex-direction: column;
+      }
+      .notebook-panel {
+        width: 100%;
+        box-shadow: none;
+      }
+      .lab-panel {
+        display: none; /* Hide standard right panel */
+      }
+      .hero, .card {
+        min-height: auto;
+        padding: 40px 20px 40px 44px;
+      }
+      .hero::before, .card::before {
+        background-size: 36px 60px;
+      }
+
+      /* Mobile Relocation placeholders */
+      .mobile-demo-placeholder {
+        margin-top: 24px;
+        width: 100%;
+        height: 380px;
+        background: #1d1715;
+        border-radius: 12px;
+        border: 2px solid #5E4A32;
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        overflow: hidden;
+      }
+      .mobile-demo-placeholder .glass-bench {
+        height: 100%;
+        background: transparent;
+        border: none;
+        backdrop-filter: none;
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Breadcrumb back link -->
+  <a href="Muc Luc.html" class="back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    Hóa học · Mục lục
+  </a>
+
+  <div class="scrolly-container">
+
+    <!-- ══════════════════════════════════════
+       LEFT SIDE: SCHOOL NOTEBOOK
+    ══════════════════════════════════════ -->
+    <div class="notebook-panel ruled-page">
+
+      <!-- HERO SECTION -->
+      <div class="hero active-section" data-demo="0">
+        <div class="crumb"><a href="Muc Luc.html">Hóa học</a> › Chương 7B</div>
+        <h1 class="title">Tốc độ phản ứng &amp; Chất xúc tác</h1>
+        <div class="title-stroke"></div>
+        <div class="subtitle">Khái niệm tốc độ · Thuyết va chạm · Các yếu tố ảnh hưởng · Vai trò xúc tác</div>
+        <div class="intro">
+          <p>Tại sao một vụ nổ thuốc súng diễn ra trong tích tắc, trong khi phản ứng rỉ sét của tấm tôn kim loại lại kéo dài hàng năm trời? Tốc độ nhanh chậm của phản ứng hóa học quyết định sự sống của sinh vật và tính khả thi của mọi ngành công nghiệp.</p>
+          <p>Trong chương học này, chúng ta sẽ đi sâu vào <span class="key">động hóa học sơ đẳng</span>: Tìm hiểu cách định nghĩa tốc độ phản ứng, cách các hạt va chạm và phản ứng với nhau, và làm thế nào để tăng tốc hoặc kìm hãm một phản ứng hóa học thông qua xúc tác và các yếu tố vật lý khác.</p>
+        </div>
+        <div class="mobile-demo-placeholder">
+          <div id="mob-demo-0"></div>
+        </div>
+      </div>
+
+      <!-- CARD 1: KHÁI NIỆM TỐC ĐỘ PHẢN ỨNG -->
+      <div class="card ruled-page" id="sec-notebook-1" data-demo="1">
+        <h2>1. Khái niệm Tốc độ phản ứng</h2>
+        <p>Để đánh giá mức độ nhanh hay chậm của một phản ứng hóa học, người ta sử dụng khái niệm **Tốc độ phản ứng**.</p>
+        <p>📌 **Định nghĩa**: Tốc độ phản ứng hóa học là độ biến thiên nồng độ của một trong các chất phản ứng hoặc sản phẩm trong một đơn vị thời gian.</p>
+        <p>Công thức tính tốc độ phản ứng trung bình ($v_{tb}$) cho phản ứng tổng quát: $A \to B$</p>
+        
+        <div class="formula-box">
+          $$v_{tb} = -\frac{\Delta C_A}{\Delta t} = \frac{\Delta C_B}{\Delta t}$$<br>
+          Trong đó:<br>
+          - $\Delta C_A = C_{A, cuối} - C_{A, đầu}$ (biến thiên nồng độ chất phản ứng - luôn mang giá trị âm nên cần có dấu trừ phía trước để tốc độ mang giá trị dương).<br>
+          - $\Delta C_B$ là biến thiên nồng độ sản phẩm ($M$ hoặc $mol/L$).<br>
+          - $\Delta t$ là thời gian phản ứng ($s$, $min$, $hour$).
+        </div>
+        <p>Đơn vị phổ biến của tốc độ phản ứng là **$mol/(L \cdot s)$** hoặc viết gọn là **$M/s$**.</p>
+        <div class="mobile-demo-placeholder">
+          <div id="mob-demo-1"></div>
+        </div>
+      </div>
+
+      <!-- CARD 2: CÁC YẾU TỐ ẢNH HƯỞNG ĐẾN TỐC ĐỘ -->
+      <div class="card ruled-page" id="sec-notebook-2" data-demo="2">
+        <h2>2. Các yếu tố ảnh hưởng đến Tốc độ</h2>
+        <p>Tốc độ phản ứng có thể thay đổi rõ rệt khi ta thay đổi các điều kiện vật lý và hóa học xung quanh. Có 5 yếu tố chính:</p>
+        <p>1. <span class="key">Nồng độ</span>: Tăng nồng độ chất phản ứng làm tăng mật độ hạt, dẫn đến số va chạm trong một đơn vị thời gian tăng lên, do đó tốc độ phản ứng tăng.</p>
+        <p>2. <span class="key">Diện tích tiếp xúc</span>: Đối với chất rắn, nghiền nhỏ chất rắn làm tăng diện tích tiếp xúc với chất phản ứng khác, tạo nhiều điểm va chạm hơn, làm tăng tốc độ.</p>
+        <p>3. <span class="key">Nhiệt độ</span>: Tăng nhiệt độ làm các phân tử chuyển động nhanh hơn (tăng động năng), số va chạm tăng và tỷ lệ va chạm có năng lượng cao vượt ngưỡng phản ứng cũng tăng mạnh.</p>
+        <p>4. <span class="key">Áp suất</span>: Đối với phản ứng có chất khí, tăng áp suất tương đương với tăng nồng độ chất khí, làm tăng mật độ hạt và tăng tốc độ.</p>
+        <p>5. <span class="key">Chất xúc tác</span>: Giúp phản ứng xảy ra qua con đường khác dễ dàng hơn.</p>
+        <div class="mobile-demo-placeholder">
+          <div id="mob-demo-2"></div>
+        </div>
+      </div>
+
+      <!-- CARD 3: THUYẾT VA CHẠM HOẠT ĐỘNG & NĂNG LƯỢNG HOẠT HÓA -->
+      <div class="card ruled-page" id="sec-notebook-3" data-demo="3">
+        <h2>3. Thuyết va chạm &amp; Năng lượng hoạt hóa</h2>
+        <p>Tại sao không phải va chạm nào giữa các phân tử cũng tạo ra phản ứng?</p>
+        <p>Để xảy ra phản ứng, các phân tử va chạm phải đáp ứng hai điều kiện cốt lõi:</p>
+        <p>📌 **Va chạm đúng hướng**: Các nhóm nguyên tử phản ứng phải tiếp xúc trực diện đúng vị trí liên kết cần phá vỡ và hình thành.</p>
+        <p>📌 **Năng lượng hoạt hóa ($E_a$)**: Là năng lượng tối thiểu mà các phân tử va chạm cần có để bẻ gãy liên kết cũ và bắt đầu phản ứng. Những va chạm có năng lượng lớn hơn hoặc bằng $E_a$ được gọi là **va chạm hiệu quả**.</p>
+        <div class="formula-box">
+          Nếu Động năng của hai hạt va chạm: $E_k \ge E_a$ &amp; Đúng hướng $\to$ Phản ứng xảy ra!<br>
+          Nếu $E_k < E_a \to$ Các hạt nảy ra xa nhau mà không phản ứng.
+        </div>
+        <p>Đồ thị đồi năng lượng biểu thị trạng thái chuyển tiếp hoạt hóa cao nhất trước khi rơi xuống tạo sản phẩm bền vững có năng lượng thấp hơn.</p>
+        <div class="mobile-demo-placeholder">
+          <div id="mob-demo-3"></div>
+        </div>
+      </div>
+
+      <!-- CARD 4: VAI TRÒ CỦA CHẤT XÚC TÁC -->
+      <div class="card ruled-page" id="sec-notebook-4" data-demo="4">
+        <h2>4. Vai trò của Chất xúc tác</h2>
+        <p>📌 **Chất xúc tác** là chất làm tăng tốc độ phản ứng nhưng không bị biến đổi về mặt hóa học và khối lượng sau khi phản ứng kết thúc.</p>
+        <p>Cơ chế hoạt động của chất xúc tác:</p>
+        <p>Chất xúc tác tham gia vào phản ứng để mở ra một con đường phản ứng mới (cơ chế phản ứng mới) có **năng lượng hoạt hóa ($E_a'$) thấp hơn rất nhiều** so với năng lượng hoạt hóa ban đầu ($E_a$).</p>
+        <div class="formula-box">
+          Phản ứng không xúc tác: $A + B \to [A..B]^\ddagger \to C \quad (E_a \text{ cao})$<br>
+          Phản ứng có xúc tác $X$:<br>
+          Bước 1: $A + X \to AX \quad (E_{a1} \text{ thấp})$<br>
+          Bước 2: $AX + B \to C + X \quad (E_{a2} \text{ thấp})$<br>
+          Chất xúc tác $X$ được tái sinh nguyên vẹn!
+        </div>
+        <p>Ví dụ kinh điển: Khí oxy già $H_2O_2$ tự phân hủy rất chậm ở nhiệt độ phòng. Nhưng khi thêm một ít bột màu đen mangan đioxit ($MnO_2$) làm chất xúc tác, phản ứng phân hủy giải phóng khí $O_2$ diễn ra cực kỳ mãnh liệt và tức thời.</p>
+        <div class="mobile-demo-placeholder">
+          <div id="mob-demo-4"></div>
+        </div>
+      </div>
+
+      <!-- CARD 5: BÀI TẬP TRẮC NGHIỆM -->
+      <div class="card ruled-page" id="sec-notebook-5" data-demo="5">
+        <h2>5. Bài tập trắc nghiệm củng cố</h2>
+        <p>Hãy trả lời các câu hỏi trắc nghiệm nhanh ở bảng tương tác bên phải để tự đánh giá mức độ hiểu bài của mình nhé!</p>
+        <div class="mobile-demo-placeholder">
+          <div id="mob-demo-5"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══════════════════════════════════════
+       RIGHT SIDE: ELEGANT LAB BENCH / CHALKBOARD
+    ══════════════════════════════════════ -->
+    <div class="lab-panel">
+      <div class="lab-sticky-wrapper">
+        <div class="blackboard-title">Bản đồ Thí nghiệm Động học</div>
+
+        <!-- DEMO 0: INTRO COVER -->
+        <div class="demo-panel active" id="demo-0">
+          <div class="glass-bench">
+            <div class="bench-title">Học viện Động hóa học</div>
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 15px;">
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#D9531E" stroke-width="1.5" style="filter: drop-shadow(0 0 8px rgba(217,83,30,0.5));">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <h3 style="font-family: 'Pacifico'; font-size: 26px; color: #e6b29c;">Kinetics Lab</h3>
+              <p style="font-size: 14px; line-height: 1.6; color: #d0c0b8; max-width: 320px;">
+                Cuộn trang vở ghi bên trái để kích hoạt các mô phỏng hạt động, thí nghiệm phản ứng kẽm và giản đồ năng lượng hoạt hóa bên bảng này.
+              </p>
+            </div>
+            <div style="font-size: 12px; color: #887872; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+              Chemistry Virtual Lab Bench v1.0
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 1: COLLISION THEORY SIMULATOR -->
+        <div class="demo-panel" id="demo-1">
+          <div class="glass-bench">
+            <div class="bench-title">Thuyết va chạm phân tử</div>
+            <div class="canvas-stage">
+              <canvas id="canvas-collision"></canvas>
+            </div>
+            <div style="font-size: 13px; display: flex; justify-content: space-between; padding: 0 4px; color: #caa596;">
+              <span>Tổng va chạm: <strong id="coll-total">0</strong></span>
+              <span>Va chạm hiệu quả: <strong id="coll-effective" style="color: #FFD700;">0</strong></span>
+              <span>Tỉ lệ phản ứng: <strong id="coll-rate">0.0%</strong></span>
+            </div>
+            <div class="control-row">
+              <div class="control-item">
+                <label>Nhiệt độ (Tốc độ):</label>
+                <input type="range" id="param-temp" min="1" max="10" value="4" style="accent-color: var(--accent);" />
+              </div>
+              <div class="control-item">
+                <label>Nồng độ (Số hạt):</label>
+                <input type="range" id="param-conc" min="10" max="60" value="30" style="accent-color: var(--accent);" />
+              </div>
+              <div class="control-item">
+                <label>Hướng va chạm:</label>
+                <select id="param-align" style="background: #2b201c; color: #fff; border: 1px solid rgba(255,255,255,0.15); padding: 4px; border-radius: 4px; font-family: 'Itim';">
+                  <option value="random">Ngẫu nhiên</option>
+                  <option value="aligned">Tối ưu (Định hướng)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 2: Zn + HCl FACTORS EXPERIMENT -->
+        <div class="demo-panel" id="demo-2">
+          <div class="glass-bench">
+            <div class="bench-title">Mô phỏng tốc độ phản ứng Zn + HCl</div>
+            <div class="canvas-stage" style="display: flex; gap: 10px; padding: 10px; box-sizing: border-box;">
+              <div style="width: 50%; height: 100%; border-right: 1px dashed rgba(255,255,255,0.1); position: relative;">
+                <canvas id="canvas-bubbles"></canvas>
+              </div>
+              <div style="width: 50%; height: 100%; position: relative;">
+                <canvas id="canvas-rate-graph"></canvas>
+              </div>
+            </div>
+            <div class="control-row" style="flex-wrap: wrap; gap: 8px;">
+              <div class="control-item" style="min-width: 100px;">
+                <label>HCl Acid:</label>
+                <select id="factor-hcl" style="background:#2b201c; color:#fff; border:1px solid #443c3a; padding:4px; font-family:'Itim';">
+                  <option value="0.1">Loãng (0.1M)</option>
+                  <option value="2.0" selected>Đặc (2M)</option>
+                </select>
+              </div>
+              <div class="control-item" style="min-width: 100px;">
+                <label>Kẽm (Zn):</label>
+                <select id="factor-zn" style="background:#2b201c; color:#fff; border:1px solid #443c3a; padding:4px; font-family:'Itim';">
+                  <option value="chunk">Dạng cục / miếng</option>
+                  <option value="powder" selected>Dạng bột mịn</option>
+                </select>
+              </div>
+              <div class="control-item" style="min-width: 100px;">
+                <label>Nhiệt độ:</label>
+                <select id="factor-temp" style="background:#2b201c; color:#fff; border:1px solid #443c3a; padding:4px; font-family:'Itim';">
+                  <option value="25">Thường (25°C)</option>
+                  <option value="60">Nóng (60°C)</option>
+                </select>
+              </div>
+              <button class="btn-action" id="btn-start-exp" style="flex-shrink: 0; align-self: flex-end; margin-bottom: 2px;">Phản ứng ⚡</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 3: ACTIVATION ENERGY HILL -->
+        <div class="demo-panel" id="demo-3">
+          <div class="glass-bench">
+            <div class="bench-title">Giản đồ Năng lượng hoạt hóa (Ea)</div>
+            <div class="canvas-stage">
+              <canvas id="canvas-energy-hill"></canvas>
+            </div>
+            <div style="font-size: 13px; text-align: center; color: #caa596; margin-bottom: 4px;" id="energy-hill-status">
+              Mức cản năng lượng hoạt hóa (Ea) cao. Rất ít phân tử vượt qua được!
+            </div>
+            <div class="control-row" style="justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="color: #caa596; font-weight: bold;">Chất xúc tác:</span>
+                <button class="btn-action" id="btn-toggle-catalyst" style="background: #443c3a;">Không có</button>
+              </div>
+              <button class="btn-action" id="btn-spawn-particles">Bắn phân tử 🟢</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 4: H2O2 CATALYTIC DECOMPOSITION -->
+        <div class="demo-panel" id="demo-4">
+          <div class="glass-bench">
+            <div class="bench-title">Xúc tác phân hủy Oxy già (H2O2)</div>
+            <div class="canvas-stage" style="position: relative;">
+              <canvas id="canvas-h2o2"></canvas>
+              <!-- Drag spoon overlay or click button to drop MnO2 -->
+              <div id="drag-spoon-instruction" style="position: absolute; top: 12px; left: 12px; right: 12px; text-align: center; font-size: 12px; color: #ffd1bd; background: rgba(0,0,0,0.5); padding: 6px; border-radius: 4px; pointer-events: none;">
+                Nhấn nút bên dưới để xúc tác MnO2 bột đen rơi vào cốc!
+              </div>
+            </div>
+            <div style="font-size:13px; text-align: center; color: #caa596;" id="h2o2-equation">
+              2H₂O₂ (lỏng) → 2H₂O (lỏng) + O₂ (khí) (Tự phát rất chậm)
+            </div>
+            <div class="control-row" style="justify-content: center;">
+              <button class="btn-action" id="btn-add-mno2">Thêm bột xúc tác MnO₂ 🥄</button>
+              <button class="btn-action" id="btn-reset-h2o2" style="background:#443c3a;">Làm lại</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 5: 5-QUESTION QUIZ -->
+        <div class="demo-panel" id="demo-5">
+          <div class="glass-bench">
+            <div class="bench-title">Bài tập trắc nghiệm củng cố</div>
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;" id="quiz-question-card">
+              <div style="display: flex; justify-content: space-between; font-size: 12px; color: #caa596; margin-bottom: 8px;">
+                <span id="quiz-num">Câu hỏi 1 / 5</span>
+                <span id="quiz-score-indicator" style="font-weight: bold;">Điểm số: 0</span>
+              </div>
+              <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-bottom: 15px; overflow: hidden;">
+                <div id="quiz-progress-bar" style="width: 20%; height: 100%; background: var(--accent); transition: width 0.3s;"></div>
+              </div>
+              <h4 id="quiz-text" style="font-size: clamp(14px, 1.3vw, 17px); font-family: 'Itim'; line-height: 1.4; color: #fff; margin-bottom: 16px;">
+                Tốc độ phản ứng hóa học được định nghĩa là gì?
+              </h4>
+              <div style="display: flex; flex-direction: column; gap: 8px;" id="quiz-options">
+                <!-- Buttons will be rendered dynamically -->
+              </div>
+              <div id="quiz-explain" style="display: none; margin-top: 12px; padding: 10px; background: rgba(217, 83, 30, 0.08); border-left: 2px solid var(--accent); border-radius: 4px; font-size: 13px; color: #d9c0b5; line-height: 1.4;">
+                Giải thích đáp án...
+              </div>
+            </div>
+
+            <!-- RESULTS CARD -->
+            <div style="display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 15px; flex: 1;" id="quiz-results">
+              <span style="font-size: 48px;">🏆</span>
+              <h3 id="result-headline" style="font-family: 'Pacifico'; font-size: 24px; color: #e6b29c;">Kết quả của bạn</h3>
+              <div style="font-size: 36px; font-weight: bold; color: var(--accent);" id="score-num">0/5</div>
+              <p id="result-desc" style="font-size: 14px; line-height: 1.5; color: #caa596; max-width: 300px;">
+                Giải thích tổng quát...
+              </p>
+              <button class="btn-action" id="quiz-restart-btn" style="margin-top: 10px;">Làm lại thử thách 🔄</button>
+            </div>
+
+            <button class="btn-action" id="quiz-next-btn" style="margin-top: 12px;" disabled>Câu tiếp theo</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src="./support.js"></script>
+  <script>
+    (function() {
+      // Setup scrolling trigger and matching demo panel
+      const notebookSections = document.querySelectorAll('.hero, #sec-notebook-1, #sec-notebook-2, #sec-notebook-3, #sec-notebook-4, #sec-notebook-5');
+      const demoPanels = document.querySelectorAll('.demo-panel');
+
+      let activeDemoNum = '0';
+      const activeLoops = {
+        collision: null,
+        bubbles: null,
+        energyHill: null,
+        h2o2: null
+      };
+
+      function clearAllActiveLoops() {
+        for (const k in activeLoops) {
+          if (activeLoops[k]) {
+            cancelAnimationFrame(activeLoops[k]);
+            activeLoops[k] = null;
+          }
+        }
+      }
+
+      function setActiveSection(secElement) {
+        notebookSections.forEach(s => s.classList.remove('active-section'));
+        secElement.classList.add('active-section');
+
+        const demoNum = secElement.getAttribute('data-demo');
+        if (demoNum === activeDemoNum) return;
+
+        activeDemoNum = demoNum;
+
+        // Toggle active panel on the right
+        demoPanels.forEach(panel => {
+          panel.classList.remove('active');
+          if (panel.id === `demo-${demoNum}`) {
+            panel.classList.add('active');
+          }
+        });
+
+        // Kill active canvas animation frames
+        clearAllActiveLoops();
+
+        // Trigger canvas resize and init on active panel
+        if (activeDemoNum === '1') {
+          initCollisionDemo();
+        } else if (activeDemoNum === '2') {
+          initFactorsDemo();
+        } else if (activeDemoNum === '3') {
+          initEnergyHillDemo();
+        } else if (activeDemoNum === '4') {
+          initH2O2Demo();
+        }
+      }
+
+      function observeSection(sec) {
+        const scroller = window.innerWidth > 920 ? document.querySelector('.notebook-panel') : null;
+        const options = {
+          root: scroller || null,
+          threshold: 0.2
+        };
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveSection(entry.target);
+            }
+          });
+        }, options);
+        io.observe(sec);
+        return io;
+      }
+
+      let sectionObservers = [];
+
+      function initObservers() {
+        sectionObservers.forEach(io => io.disconnect());
+        sectionObservers = [];
+        notebookSections.forEach(sec => {
+          sectionObservers.push(observeSection(sec));
+        });
+      }
+
+      initObservers();
+
+      /* ══════════════════════════════════════
+         MOBILE RESPONSIVE ELEMENT RELOCATION
+      ══════════════════════════════════════ */
+      let wasDesktop = window.innerWidth > 920;
+
+      const relocateDemos = () => {
+        const isMobile = window.innerWidth <= 920;
+        const isDesktop = !isMobile;
+        if (isDesktop !== wasDesktop) {
+          wasDesktop = isDesktop;
+          initObservers();
+        }
+
+        for (let i = 0; i <= 5; i++) {
+          const demo = document.getElementById(`demo-${i}`);
+          if (!demo) continue;
+          if (isMobile) {
+            const mobContainer = document.getElementById(`mob-demo-${i}`);
+            if (mobContainer && demo.parentElement !== mobContainer) {
+              mobContainer.appendChild(demo);
+            }
+          } else {
+            const deskContainer = document.querySelector('.lab-sticky-wrapper');
+            if (deskContainer && demo.parentElement !== deskContainer) {
+              // Append to wrapper, maintaining reference order
+              deskContainer.appendChild(demo);
+            }
+          }
+        }
+
+        // Re-trigger layout sizes on active canvas
+        if (activeDemoNum === '1') initCollisionDemo();
+        else if (activeDemoNum === '2') initFactorsDemo();
+        else if (activeDemoNum === '3') initEnergyHillDemo();
+        else if (activeDemoNum === '4') initH2O2Demo();
+      };
+
+      window.addEventListener('resize', relocateDemos);
+      window.addEventListener('load', relocateDemos);
+      setTimeout(relocateDemos, 100);
+
+      /* ══════════════════════════════════════
+         DEMO 1: COLLISION THEORY (CANVAS 2D)
+      ══════════════════════════════════════ */
+      function initCollisionDemo() {
+        const canvas = document.getElementById('canvas-collision');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight || 180;
+
+        let particles = [];
+        let totalCollisions = 0;
+        let effectiveCollisions = 0;
+
+        const tempSlider = document.getElementById('param-temp');
+        const concSlider = document.getElementById('param-conc');
+        const alignSelect = document.getElementById('param-align');
+
+        class Particle {
+          constructor(type) {
+            this.type = type; // 'A' (red) or 'B' (blue) or 'AB' (yellow product)
+            this.r = type === 'AB' ? 7 : 5;
+            this.x = Math.random() * (canvas.width - this.r * 2) + this.r;
+            this.y = Math.random() * (canvas.height - this.r * 2) + this.r;
+            
+            const speedScale = parseFloat(tempSlider.value) * 0.4 + 0.5;
+            const angle = Math.random() * Math.PI * 2;
+            this.vx = Math.cos(angle) * speedScale;
+            this.vy = Math.sin(angle) * speedScale;
+          }
+
+          update() {
+            this.x += this.vx;
+            this.y += this.vy;
+
+            // Bounce off walls
+            if (this.x - this.r < 0) { this.x = this.r; this.vx *= -1; }
+            if (this.x + this.r > canvas.width) { this.x = canvas.width - this.r; this.vx *= -1; }
+            if (this.y - this.r < 0) { this.y = this.r; this.vy *= -1; }
+            if (this.y + this.r > canvas.height) { this.y = canvas.height - this.r; this.vy *= -1; }
+          }
+
+          draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+            if (this.type === 'A') {
+              ctx.fillStyle = '#FF4136'; // Red
+            } else if (this.type === 'B') {
+              ctx.fillStyle = '#0074D9'; // Blue
+            } else {
+              ctx.fillStyle = '#FFD700'; // Gold product AB
+              ctx.shadowBlur = 8;
+              ctx.shadowColor = '#FFD700';
+            }
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
+        }
+
+        const buildParticles = () => {
+          particles = [];
+          const count = parseInt(concSlider.value);
+          const half = Math.floor(count / 2);
+          for (let i = 0; i < half; i++) particles.push(new Particle('A'));
+          for (let i = 0; i < half; i++) particles.push(new Particle('B'));
+        };
+
+        buildParticles();
+
+        concSlider.oninput = buildParticles;
+        tempSlider.oninput = () => {
+          const speedScale = parseFloat(tempSlider.value) * 0.4 + 0.5;
+          particles.forEach(p => {
+            if (p.type !== 'AB') {
+              const curSpeed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+              if (curSpeed > 0) {
+                p.vx = (p.vx / curSpeed) * speedScale;
+                p.vy = (p.vy / curSpeed) * speedScale;
+              }
+            }
+          });
+        };
+
+        const ripples = [];
+
+        function addRipple(x, y) {
+          ripples.push({ x, y, r: 2, alpha: 1 });
+        }
+
+        function handleCollisions() {
+          for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+              const p1 = particles[i];
+              const p2 = particles[j];
+              
+              if (p1.type === 'AB' || p2.type === 'AB') continue;
+              if (p1.type === p2.type) continue; // Same type, bounce off or ignore
+
+              const dx = p2.x - p1.x;
+              const dy = p2.y - p1.y;
+              const dist = Math.sqrt(dx*dx + dy*dy);
+              const minDist = p1.r + p2.r;
+
+              if (dist < minDist) {
+                // Collision!
+                totalCollisions++;
+
+                // Resolve overlaps simple bounce
+                const overlap = minDist - dist;
+                const nx = dx / dist;
+                const ny = dy / dist;
+                p1.x -= nx * (overlap/2);
+                p2.x += nx * (overlap/2);
+                p1.y -= ny * (overlap/2);
+                p2.y += ny * (overlap/2);
+
+                // Swap velocities
+                const kx = p1.vx - p2.vx;
+                const ky = p1.vy - p2.vy;
+                p1.vx -= nx * (nx * kx + ny * ky);
+                p1.vy -= ny * (nx * kx + ny * ky);
+                p2.vx += nx * (nx * kx + ny * ky);
+                p2.vy += ny * (nx * kx + ny * ky);
+
+                // Check if effective collision (Reaction)
+                // Threshold energy is scaled by temp slider (simulating higher kinetic energy)
+                const tempVal = parseFloat(tempSlider.value);
+                const alignVal = alignSelect.value;
+                
+                let successProb = tempVal * 0.08; // higher temp = more kinetic energy >= Ea
+                if (alignVal === 'aligned') {
+                  successProb *= 2.2; // much higher probability if aligned
+                }
+
+                if (Math.random() < successProb) {
+                  effectiveCollisions++;
+                  addRipple((p1.x + p2.x)/2, (p1.y + p2.y)/2);
+                  
+                  // Convert one to product AB, remove the other
+                  p1.type = 'AB';
+                  p1.r = 7;
+                  p1.vx *= 0.5; // moves slower as product
+                  p1.vy *= 0.5;
+                  
+                  particles.splice(j, 1);
+                  j--; // align loop index
+
+                  // Respawn reactant particles at edges after 1.5s to keep simulator running
+                  setTimeout(() => {
+                    // Remove product
+                    const idx = particles.indexOf(p1);
+                    if (idx !== -1) particles.splice(idx, 1);
+                    // Add new reactants
+                    particles.push(new Particle('A'));
+                    particles.push(new Particle('B'));
+                  }, 1500);
+                }
+              }
+            }
+          }
+        }
+
+        if (activeLoops.collision) cancelAnimationFrame(activeLoops.collision);
+
+        function render() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // Update & draw particles
+          particles.forEach(p => {
+            p.update();
+            p.draw();
+          });
+
+          handleCollisions();
+
+          // Draw explosion ripples
+          for (let i = 0; i < ripples.length; i++) {
+            const rip = ripples[i];
+            rip.r += 1.5;
+            rip.alpha -= 0.04;
+            if (rip.alpha <= 0) {
+              ripples.splice(i, 1);
+              i--;
+            } else {
+              ctx.beginPath();
+              ctx.arc(rip.x, rip.y, rip.r, 0, Math.PI*2);
+              ctx.strokeStyle = `rgba(255,215,0,${rip.alpha})`;
+              ctx.lineWidth = 2;
+              ctx.stroke();
+            }
+          }
+
+          // Update indicators
+          document.getElementById('coll-total').textContent = totalCollisions;
+          document.getElementById('coll-effective').textContent = effectiveCollisions;
+          const rate = totalCollisions > 0 ? ((effectiveCollisions / totalCollisions) * 100).toFixed(1) : '0.0';
+          document.getElementById('coll-rate').textContent = `${rate}%`;
+
+          activeLoops.collision = requestAnimationFrame(render);
+        }
+        render();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 2: Zn + HCl BUBBLES & GRAPH
+      ══════════════════════════════════════ */
+      function initFactorsDemo() {
+        const canvasB = document.getElementById('canvas-bubbles');
+        const canvasG = document.getElementById('canvas-rate-graph');
+        if (!canvasB || !canvasG) return;
+
+        const ctxB = canvasB.getContext('2d');
+        const ctxG = canvasG.getContext('2d');
+
+        canvasB.width = canvasB.parentElement.clientWidth;
+        canvasB.height = canvasB.parentElement.clientHeight || 180;
+        canvasG.width = canvasG.parentElement.clientWidth;
+        canvasG.height = canvasG.parentElement.clientHeight || 180;
+
+        let bubblesList = [];
+        let reactionActive = false;
+        let reactionProgress = 0; // 0 to 100
+        let hclVal = 2.0;
+        let znVal = 'powder';
+        let tempVal = 25;
+        let reactionRateFactor = 1.0;
+        let dataPoints = [];
+        let expTimer = 0;
+
+        const btnStart = document.getElementById('btn-start-exp');
+
+        const calculateRateFactor = () => {
+          hclVal = parseFloat(document.getElementById('factor-hcl').value);
+          znVal = document.getElementById('factor-zn').value;
+          tempVal = parseInt(document.getElementById('factor-temp').value);
+
+          let r = 1.0;
+          r *= (hclVal === 2.0) ? 2.5 : 0.4;
+          r *= (znVal === 'powder') ? 3.0 : 0.8;
+          r *= (tempVal === 60) ? 2.2 : 1.0;
+          reactionRateFactor = r;
+        };
+
+        btnStart.onclick = () => {
+          calculateRateFactor();
+          reactionActive = true;
+          reactionProgress = 0;
+          bubblesList = [];
+          dataPoints = [{ x: 0, y: 0 }];
+          expTimer = 0;
+          btnStart.disabled = true;
+        };
+
+        if (activeLoops.bubbles) cancelAnimationFrame(activeLoops.bubbles);
+
+        function drawBubblesStage() {
+          ctxB.clearRect(0,0,canvasB.width,canvasB.height);
+
+          // Draw test tube
+          const w = 45;
+          const h = 130;
+          const tx = canvasB.width / 2 - w / 2;
+          const ty = canvasB.height - h - 10;
+
+          // Draw liquid background
+          ctxB.fillStyle = 'rgba(255,255,255,0.06)';
+          ctxB.fillRect(tx, ty + 20, w, h - 20);
+
+          // Tube glass outline
+          ctxB.beginPath();
+          ctxB.moveTo(tx, ty);
+          ctxB.lineTo(tx, ty + h - 15);
+          ctxB.arc(tx + w/2, ty + h - 15, w/2, Math.PI, 0, true);
+          ctxB.lineTo(tx + w, ty);
+          ctxB.strokeStyle = 'rgba(255,255,255,0.3)';
+          ctxB.lineWidth = 2;
+          ctxB.stroke();
+
+          // Zinc at bottom
+          ctxB.fillStyle = '#777';
+          if (reactionActive) {
+            // Depleting kẽm
+            const znHeight = (znVal === 'chunk') ? Math.max(3, 10 - reactionProgress * 0.1) : 0;
+            if (znVal === 'chunk') {
+              ctxB.fillRect(tx + w/2 - 10, ty + h - 15 - znHeight, 20, znHeight);
+            } else {
+              // Powder sand at bottom
+              ctxB.beginPath();
+              ctxB.arc(tx + w/2, ty + h - 5, w/2 - 4, Math.PI, 0);
+              ctxB.fill();
+            }
+          } else {
+            // Init Zinc
+            if (znVal === 'chunk') {
+              ctxB.fillRect(tx + w/2 - 10, ty + h - 25, 20, 10);
+            } else {
+              ctxB.beginPath();
+              ctxB.arc(tx + w/2, ty + h - 5, w/2 - 4, Math.PI, 0);
+              ctxB.fill();
+            }
+          }
+
+          if (reactionActive && reactionProgress < 100) {
+            // Spawn bubbles based on rate factor
+            const spawnCount = Math.floor(Math.random() * (reactionRateFactor * 0.8)) + 1;
+            for (let i = 0; i < spawnCount; i++) {
+              bubblesList.push({
+                x: tx + 5 + Math.random() * (w - 10),
+                y: ty + h - 15 - Math.random() * 8,
+                r: Math.random() * 2 + 1,
+                vy: (Math.random() * 1.5 + 1) * (1 + (tempVal - 25) * 0.02)
+              });
+            }
+
+            reactionProgress += 0.15 * reactionRateFactor;
+            expTimer += 0.016;
+
+            // Log graph data
+            // H2 volume approaches a ceiling (say 80ml) asymptotically
+            const maxVol = 80;
+            const currentVol = maxVol * (1 - Math.exp(-0.06 * reactionRateFactor * expTimer));
+            if (dataPoints.length === 0 || expTimer - dataPoints[dataPoints.length - 1].x > 0.15) {
+              dataPoints.push({ x: expTimer, y: currentVol });
+            }
+          } else if (reactionProgress >= 100) {
+            reactionActive = false;
+            btnStart.disabled = false;
+          }
+
+          // Update & Draw bubbles
+          bubblesList.forEach((b, idx) => {
+            b.y -= b.vy;
+            ctxB.beginPath();
+            ctxB.arc(b.x, b.y, b.r, 0, Math.PI*2);
+            ctxB.fillStyle = 'rgba(255,255,255,0.7)';
+            ctxB.fill();
+
+            // Pop bubbles at top of liquid
+            if (b.y < ty + 30) {
+              bubblesList.splice(idx, 1);
+            }
+          });
+
+          // Draw Graph next door
+          drawGraph();
+
+          activeLoops.bubbles = requestAnimationFrame(drawBubblesStage);
+        }
+
+        function drawGraph() {
+          ctxG.clearRect(0,0,canvasG.width,canvasG.height);
+
+          const originX = 35;
+          const originY = canvasG.height - 30;
+          const gW = canvasG.width - 50;
+          const gH = canvasG.height - 50;
+
+          // Draw Axes
+          ctxG.beginPath();
+          ctxG.moveTo(originX, originY - gH);
+          ctxG.lineTo(originX, originY);
+          ctxG.lineTo(originX + gW, originY);
+          ctxG.strokeStyle = '#888';
+          ctxG.lineWidth = 1.5;
+          ctxG.stroke();
+
+          // Labels
+          ctxG.fillStyle = '#caa596';
+          ctxG.font = '11px Itim';
+          ctxG.fillText('V(H₂) ml', originX - 30, originY - gH - 5);
+          ctxG.fillText('Thời gian (s)', originX + gW - 60, originY + 20);
+
+          // Grid lines
+          ctxG.strokeStyle = 'rgba(255,255,255,0.05)';
+          ctxG.lineWidth = 1;
+          for (let y = 20; y <= 80; y += 20) {
+            const valY = originY - (y / 100) * gH;
+            ctxG.beginPath();
+            ctxG.moveTo(originX, valY);
+            ctxG.lineTo(originX + gW, valY);
+            ctxG.stroke();
+            ctxG.fillText(y, originX - 22, valY + 4);
+          }
+
+          // Plot reaction curves
+          if (dataPoints.length > 1) {
+            ctxG.beginPath();
+            const getX = (t) => originX + Math.min(1, t / 15) * gW; // max 15 seconds scale
+            const getY = (v) => originY - (v / 100) * gH;
+
+            ctxG.moveTo(getX(dataPoints[0].x), getY(dataPoints[0].y));
+            for (let i = 1; i < dataPoints.length; i++) {
+              ctxG.lineTo(getX(dataPoints[i].x), getY(dataPoints[i].y));
+            }
+            ctxG.strokeStyle = '#D9531E'; // Orange line
+            ctxG.lineWidth = 2.5;
+            ctxG.shadowBlur = 4;
+            ctxG.shadowColor = '#D9531E';
+            ctxG.stroke();
+            ctxG.shadowBlur = 0;
+          }
+        }
+
+        drawBubblesStage();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 3: ACTIVATION ENERGY HILL (2D PHYSICS)
+      ══════════════════════════════════════ */
+      function initEnergyHillDemo() {
+        const canvas = document.getElementById('canvas-energy-hill');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight || 180;
+
+        let hasCatalyst = false;
+        let particlesList = [];
+
+        const btnCatalyst = document.getElementById('btn-toggle-catalyst');
+        const btnSpawn = document.getElementById('btn-spawn-particles');
+        const statusBox = document.getElementById('energy-hill-status');
+
+        btnCatalyst.onclick = () => {
+          hasCatalyst = !hasCatalyst;
+          if (hasCatalyst) {
+            btnCatalyst.textContent = 'Đang có';
+            btnCatalyst.style.background = 'var(--accent)';
+            statusBox.innerHTML = 'Chất xúc tác làm <strong style="color: #FFD700;">giảm Ea</strong>! Các phân tử vượt qua quả đồi dễ dàng hơn.';
+          } else {
+            btnCatalyst.textContent = 'Không có';
+            btnCatalyst.style.background = '#443c3a';
+            statusBox.innerHTML = 'Mức cản năng lượng hoạt hóa (Ea) cao. Rất ít phân tử vượt qua được!';
+          }
+        };
+
+        btnSpawn.onclick = () => {
+          // Spawn 12 particles with random initial velocities (kinetic energy)
+          for (let i = 0; i < 12; i++) {
+            const vx0 = 2.2 + Math.random() * 2.0; // range 2.2 to 4.2
+            particlesList.push({
+              x: 10 + Math.random() * 20,
+              y: 0,
+              r: 5,
+              vx0: vx0,
+              vx: vx0,
+              vy: 0,
+              direction: 1, // 1: right/up, -1: left/down
+              state: 'reactant'
+            });
+          }
+        };
+
+        if (activeLoops.energyHill) cancelAnimationFrame(activeLoops.energyHill);
+
+        const getHillY = (x) => {
+          const w = canvas.width;
+          const peakX = w * 0.55;
+          const reactantY = canvas.height - 40;
+          const productY = canvas.height - 15;
+          
+          // Hill shape
+          const hillHeight = hasCatalyst ? 55 : 95; // Catalyst drops activation energy hill!
+
+          if (x < peakX) {
+            // Going up
+            const t = x / peakX;
+            return reactantY - Math.sin(t * Math.PI / 2) * hillHeight;
+          } else {
+            // Going down
+            const t = (x - peakX) / (w - peakX);
+            const totalDrop = reactantY - hillHeight - productY;
+            return (reactantY - hillHeight) - Math.sin(t * Math.PI / 2) * totalDrop;
+          }
+        };
+
+        function drawEnergyHill() {
+          ctx.clearRect(0,0,canvas.width,canvas.height);
+
+          const w = canvas.width;
+          const h = canvas.height;
+
+          // 1. Draw Energy Hill outline
+          ctx.beginPath();
+          ctx.moveTo(0, getHillY(0));
+          for (let x = 0; x <= w; x += 3) {
+            ctx.lineTo(x, getHillY(x));
+          }
+          ctx.strokeStyle = '#caa596';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          // Color the fill under the hill
+          ctx.lineTo(w, h);
+          ctx.lineTo(0, h);
+          ctx.fillStyle = 'rgba(230,160,130,0.04)';
+          ctx.fill();
+
+          // 2. Text Labels
+          ctx.fillStyle = '#fff';
+          ctx.font = '12px Itim';
+          ctx.fillText('Chất phản ứng', 15, h - 50);
+          ctx.fillText('Sản phẩm', w - 80, h - 25);
+          
+          // Draw peak barrier Ea
+          const peakX = w * 0.55;
+          const peakY = getHillY(peakX);
+          ctx.beginPath();
+          ctx.setLineDash([2, 4]);
+          ctx.moveTo(peakX, peakY);
+          ctx.lineTo(peakX, h);
+          ctx.strokeStyle = '#aaa';
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.fillStyle = hasCatalyst ? '#FFD700' : '#E05050';
+          ctx.fillText(hasCatalyst ? "Ea' (Có xúc tác)" : "Ea (Không xúc tác)", peakX - 50, peakY - 10);
+
+          // Update & Draw particles
+          const reactantY = h - 40;
+          particlesList.forEach((p, idx) => {
+            if (p.state === 'product') {
+              p.x += p.vx;
+              p.y = getHillY(p.x) - p.r;
+              if (p.x > w - 10) {
+                particlesList.splice(idx, 1);
+                return;
+              }
+            } else {
+              // Reactant climbing the hill
+              const curHeight = reactantY - getHillY(p.x);
+              const g = 0.08;
+              const ke = 0.5 * p.vx0 * p.vx0 - g * curHeight;
+
+              if (ke <= 0.03 && p.direction === 1) {
+                p.direction = -1;
+              }
+
+              const speed = Math.sqrt(Math.max(0.1, 2 * ke));
+              p.vx = p.direction * speed;
+              p.x += p.vx;
+              p.y = getHillY(p.x) - p.r;
+
+              if (p.x > peakX) {
+                p.state = 'product';
+                p.vx = 1.5; // speed to roll down the other side
+              } else if (p.x < 5) {
+                particlesList.splice(idx, 1);
+                return;
+              }
+            }
+
+            // Draw particle
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+            ctx.fillStyle = p.state === 'product' ? '#FFD700' : '#88D49E';
+            if (p.state === 'product') {
+              ctx.shadowBlur = 6;
+              ctx.shadowColor = '#FFD700';
+            }
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          });
+
+          activeLoops.energyHill = requestAnimationFrame(drawEnergyHill);
+        }
+
+        drawEnergyHill();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 4: H2O2 CATALYST DECOMPOSITION
+      ══════════════════════════════════════ */
+      function initH2O2Demo() {
+        const canvas = document.getElementById('canvas-h2o2');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight || 180;
+
+        let hasMnO2 = false;
+        let mno2Progress = 0; // 0 to 100
+        let oxygenBubbles = [];
+        let steamParticles = [];
+
+        const btnAdd = document.getElementById('btn-add-mno2');
+        const btnReset = document.getElementById('btn-reset-h2o2');
+        const equationBox = document.getElementById('h2o2-equation');
+
+        btnAdd.onclick = () => {
+          hasMnO2 = true;
+          btnAdd.disabled = true;
+          equationBox.innerHTML = '2H₂O₂ <strong style="color: #FFD700;">→ (MnO₂ xúc tác) →</strong> 2H₂O + O₂ ↑ (Phản ứng tỏa nhiệt mạnh!)';
+        };
+
+        btnReset.onclick = () => {
+          hasMnO2 = false;
+          mno2Progress = 0;
+          oxygenBubbles = [];
+          steamParticles = [];
+          btnAdd.disabled = false;
+          equationBox.innerHTML = '2H₂O₂ (lỏng) → 2H₂O (lỏng) + O₂ (khí) (Tự phát rất chậm)';
+        };
+
+        if (activeLoops.h2o2) cancelAnimationFrame(activeLoops.h2o2);
+
+        function drawH2O2Stage() {
+          ctx.clearRect(0,0,canvas.width,canvas.height);
+
+          const cx = canvas.width / 2;
+          const cy = canvas.height - 10;
+          const w = 70;
+          const h = 100;
+
+          // Draw beaker background liquid
+          ctx.fillStyle = 'rgba(127,180,255,0.06)';
+          ctx.fillRect(cx - w, cy - h + 10, w * 2, h - 10);
+
+          // Draw beaker lines
+          ctx.beginPath();
+          ctx.moveTo(cx - w, cy - h);
+          ctx.lineTo(cx - w, cy);
+          ctx.lineTo(cx + w, cy);
+          ctx.lineTo(cx + w, cy - h);
+          ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+
+          // Before catalyst, very slow bubbles
+          if (!hasMnO2 && Math.random() < 0.01) {
+            oxygenBubbles.push({
+              x: cx - w + 10 + Math.random() * (w * 2 - 20),
+              y: cy - 5,
+              r: 1,
+              vy: Math.random() * 0.4 + 0.2
+            });
+          }
+
+          // Manganese dioxide falling into beaker
+          if (hasMnO2) {
+            if (mno2Progress < 100) {
+              mno2Progress += 1.5;
+            }
+
+            // Draw black catalyst particles sinking
+            ctx.fillStyle = '#0f0c0b';
+            const particleY = cy - h + 15 + (mno2Progress / 100) * (h - 25);
+            for (let i = 0; i < 20; i++) {
+              ctx.beginPath();
+              // scattered points
+              const px = cx + (Math.sin(i * 45) * w * 0.8) * (mno2Progress / 100);
+              const py = cy - h + 15 + (mno2Progress / 100) * (h - 22) + (Math.cos(i * 12) * 8);
+              if (py < cy - 2) {
+                ctx.arc(px, py, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+              }
+            }
+
+            // Settle MnO2 at bottom
+            if (mno2Progress >= 95) {
+              ctx.fillStyle = '#111';
+              ctx.fillRect(cx - w + 8, cy - 6, w * 2 - 16, 5);
+            }
+
+            // High rate bubble storm
+            const bubbleRates = Math.max(0, 7 - Math.floor(mno2Progress / 18)); // declines slowly as reactant depletes
+            for (let i = 0; i < bubbleRates; i++) {
+              oxygenBubbles.push({
+                x: cx - w + 10 + Math.random() * (w * 2 - 20),
+                y: cy - 6 - Math.random() * 5,
+                r: Math.random() * 3.5 + 1.2,
+                vy: Math.random() * 3 + 2.5
+              });
+            }
+
+            // Spawn steam/smoke particles reflecting exothermic reaction
+            if (Math.random() < 0.15) {
+              steamParticles.push({
+                x: cx - w + Math.random() * w * 2,
+                y: cy - h + 5,
+                r: Math.random() * 10 + 5,
+                vy: Math.random() * 0.8 + 0.4,
+                alpha: 0.6
+              });
+            }
+          }
+
+          // Draw bubbles
+          oxygenBubbles.forEach((b, idx) => {
+            b.y -= b.vy;
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.fill();
+
+            if (b.y < cy - h + 15) {
+              oxygenBubbles.splice(idx, 1);
+            }
+          });
+
+          // Draw steam/smoke clouds rising out of beaker
+          steamParticles.forEach((s, idx) => {
+            s.y -= s.vy;
+            s.alpha -= 0.015;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255,255,255,${Math.max(0, s.alpha)})`;
+            ctx.fill();
+
+            if (s.alpha <= 0 || s.y < 5) {
+              steamParticles.splice(idx, 1);
+            }
+          });
+
+          activeLoops.h2o2 = requestAnimationFrame(drawH2O2Stage);
+        }
+
+        drawH2O2Stage();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 5: 5-QUESTION INTERACTIVE QUIZ
+      ══════════════════════════════════════ */
+      const quizQuestions = [
+        {
+          q: "Tốc độ trung bình của phản ứng được xác định bằng đại lượng nào dưới đây?",
+          options: [
+            "Khối lượng chất rắn tăng thêm trong một đơn vị thời gian",
+            "Độ biến thiên nồng độ của một chất trong một đơn vị thời gian",
+            "Thể tích dung dịch tăng lên trong một giây",
+            "Nhiệt độ của hệ phản ứng thay đổi theo thời gian"
+          ],
+          answer: 1,
+          explain: "Đúng! Tốc độ phản ứng đo bằng độ biến thiên nồng độ chất phản ứng hoặc sản phẩm trong một đơn vị thời gian (M/s)."
+        },
+        {
+          q: "Vì sao khi nghiền than đá thành bột mịn trước khi đưa vào lò đốt lại giúp than cháy nhanh hơn?",
+          options: [
+            "Nhiệt độ của bột than lớn hơn than cục",
+            "Bột than có năng lượng hoạt hóa Ea thấp hơn",
+            "Nồng độ khí oxi xung quanh tăng lên",
+            "Làm tăng diện tích tiếp xúc giữa than và oxi"
+          ],
+          answer: 3,
+          explain: "Đúng! Việc tán mịn kẽm bột hoặc than bột giúp làm tăng diện tích tiếp xúc bề mặt rắn, làm tăng tần suất va chạm hiệu quả."
+        },
+        {
+          q: "Điều kiện cần để xảy ra một va chạm hoạt động hiệu quả giữa các phân tử phản ứng là gì?",
+          options: [
+            "Các phân tử phải di chuyển chậm lại trước khi chạm",
+            "Va chạm phải đúng hướng và có năng lượng lớn hơn hoặc bằng Ea",
+            "Hệ phản ứng phải được làm lạnh đột ngột",
+            "Các phân tử phải va chạm với vận tốc gần tốc độ ánh sáng"
+          ],
+          answer: 1,
+          explain: "Đúng! Thuyết va chạm hoạt động khẳng định va chạm muốn tạo phản ứng phải có năng lượng tối thiểu (Ea) và định hướng hình học đúng đắn."
+        },
+        {
+          q: "Chất xúc tác có vai trò gì trong việc tăng tốc độ phản ứng hóa học?",
+          options: [
+            "Làm tăng năng lượng hoạt hóa Ea ban đầu",
+            "Mở ra cơ chế phản ứng mới có năng lượng hoạt hóa thấp hơn",
+            "Trực tiếp kết hợp và bị tiêu hao dần trong sản phẩm",
+            "Làm tăng áp suất tổng thể của hệ phản ứng"
+          ],
+          answer: 1,
+          explain: "Đúng! Chất xúc tác tăng tốc phản ứng bằng cách hạ thấp rào cản năng lượng hoạt hóa (Ea) thông qua một cơ chế phản ứng trung gian mới."
+        },
+        {
+          q: "Khi tăng nhiệt độ lên 10°C, tốc độ phản ứng tăng 3 lần. Nếu tăng nhiệt độ từ 20°C lên 50°C, tốc độ phản ứng tăng lên bao nhiêu lần?",
+          options: [
+            "9 lần",
+            "27 lần",
+            "6 lần",
+            "81 lần"
+          ],
+          answer: 1,
+          explain: "Đúng! Theo hệ số Van't Hoff: v_sau / v_dau = γ^( (T_sau - T_dau)/10 ) = 3^( (50-20)/10 ) = 3^3 = 27 lần."
+        }
+      ];
+
+      let currentQuizQIdx = 0;
+      let quizScore = 0;
+      let answered = false;
+
+      const renderQuizQuestion = () => {
+        answered = false;
+        document.getElementById('quiz-explain').style.display = 'none';
+        document.getElementById('quiz-next-btn').disabled = true;
+
+        const qData = quizQuestions[currentQuizQIdx];
+        document.getElementById('quiz-num').textContent = `Câu hỏi ${currentQuizQIdx + 1} / ${quizQuestions.length}`;
+        document.getElementById('quiz-progress-bar').style.width = `${((currentQuizQIdx + 1) / quizQuestions.length) * 100}%`;
+        document.getElementById('quiz-text').textContent = qData.q;
+
+        const optionsBox = document.getElementById('quiz-options');
+        optionsBox.innerHTML = '';
+
+        qData.options.forEach((opt, idx) => {
+          const btn = document.createElement('button');
+          btn.style.width = '100%';
+          btn.style.padding = '10px 14px';
+          btn.style.background = 'rgba(255,255,255,0.04)';
+          btn.style.border = '1px solid rgba(255,255,255,0.1)';
+          btn.style.borderRadius = '6px';
+          btn.style.color = '#fff';
+          btn.style.textAlign = 'left';
+          btn.style.fontFamily = 'Itim';
+          btn.style.cursor = 'pointer';
+          btn.style.transition = 'all 0.15s';
+          btn.textContent = opt;
+
+          btn.onmouseover = () => { if (!answered) btn.style.background = 'rgba(217,83,30,0.15)'; };
+          btn.onmouseout = () => { if (!answered) btn.style.background = 'rgba(255,255,255,0.04)'; };
+
+          btn.onclick = () => {
+            if (answered) return;
+            handleOptionSelect(idx, btn);
+          };
+
+          optionsBox.appendChild(btn);
+        });
+      };
+
+      const handleOptionSelect = (selectedIdx, clickedBtn) => {
+        answered = true;
+        const qData = quizQuestions[currentQuizQIdx];
+        const optionsBox = document.getElementById('quiz-options');
+        const buttons = optionsBox.querySelectorAll('button');
+
+        buttons.forEach((btn, idx) => {
+          btn.disabled = true;
+          if (idx === qData.answer) {
+            btn.style.background = 'rgba(80, 180, 100, 0.25)';
+            btn.style.borderColor = '#50B464';
+          }
+        });
+
+        if (selectedIdx === qData.answer) {
+          quizScore++;
+          document.getElementById('quiz-score-indicator').textContent = `Điểm số: ${quizScore}`;
+        } else {
+          clickedBtn.style.background = 'rgba(224, 80, 80, 0.25)';
+          clickedBtn.style.borderColor = '#E05050';
+        }
+
+        const expBox = document.getElementById('quiz-explain');
+        expBox.textContent = qData.explain;
+        expBox.style.display = 'block';
+
+        document.getElementById('quiz-next-btn').disabled = false;
+        if (currentQuizQIdx === quizQuestions.length - 1) {
+          document.getElementById('quiz-next-btn').textContent = 'Xem kết quả';
+        } else {
+          document.getElementById('quiz-next-btn').textContent = 'Câu tiếp theo';
+        }
+      };
+
+      const showQuizResults = () => {
+        document.getElementById('quiz-progress-bar').style.width = '100%';
+        document.getElementById('quiz-question-card').style.display = 'none';
+        document.getElementById('quiz-next-btn').style.display = 'none';
+        
+        const resultsBox = document.getElementById('quiz-results');
+        resultsBox.style.display = 'flex';
+        
+        document.getElementById('score-num').textContent = `${quizScore}/${quizQuestions.length}`;
+        
+        const headline = document.getElementById('result-headline');
+        const desc = document.getElementById('result-desc');
+
+        if (quizScore === quizQuestions.length) {
+          headline.textContent = 'Xuất sắc! 🎉';
+          desc.textContent = 'Tuyệt vời! Bạn đã hoàn toàn làm chủ kiến thức về động hóa học, thuyết va chạm và chất xúc tác!';
+        } else if (quizScore >= 3) {
+          headline.textContent = 'Khá tốt! 👍';
+          desc.textContent = 'Bạn hiểu rõ cách thức tăng tốc phản ứng. Hãy xem lại các công thức Van\'t Hoff để đạt điểm tối đa nhé.';
+        } else {
+          headline.textContent = 'Cần cố gắng! 📚';
+          desc.textContent = 'Đọc lại nội dung vở ghi bên trái và rèn luyện thêm bài tập động hóa để nắm vững bài hơn nhé.';
+        }
+      };
+
+      document.getElementById('quiz-next-btn').addEventListener('click', () => {
+        if (currentQuizQIdx < quizQuestions.length - 1) {
+          currentQuizQIdx++;
+          renderQuizQuestion();
+        } else {
+          showQuizResults();
+        }
+      });
+
+      document.getElementById('quiz-restart-btn').addEventListener('click', () => {
+        currentQuizQIdx = 0;
+        quizScore = 0;
+        document.getElementById('quiz-score-indicator').textContent = 'Điểm số: 0';
+        document.getElementById('quiz-question-card').style.display = 'flex';
+        document.getElementById('quiz-next-btn').style.display = 'block';
+        document.getElementById('quiz-results').style.display = 'none';
+        renderQuizQuestion();
+      });
+
+      renderQuizQuestion();
+    })();
+  </script>
+</body>
+</html>

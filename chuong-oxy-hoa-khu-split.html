@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hóa học · Chương 7C — Phản ứng Oxi hóa - Khử (Split Notebook)</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SPLIT NOTEBOOK & LAB BENCH SYSTEM
+    ══════════════════════════════════════ */
+    @import url('https://fonts.googleapis.com/css2?family=Itim&family=Pacifico&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:        #FBF4E4;   /* warm cream — default page bg */
+      --paper-dark:   #F2E7CE;   /* slightly toasted paper */
+      --paper-shadow: #E8D9B6;
+      --ink:          #2A2520;   /* warm black — primary ink */
+      --ink-mid:      #4D4439;   /* secondary ink, for body */
+      --ink-light:    #8A7E6C;   /* tertiary, captions */
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #D9633B;   /* Terracotta */
+      --accent-deep:  #B04A26;
+      --accent-blue:  #1A4FA0;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-p:  rgba(217, 83, 30, 0.20);
+      --line-h:       30px;
+      --font-base:    15px;
+      --font-h2:      24px;
+      --font-h3:      16px;
+      --font-sub:     12px;
+      --ruled-top-offset: calc(var(--line-h) * 22 / 30);
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #5E4A32;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #7A6548 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #4E3E28 0%, transparent 50%),
+        repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+      color: var(--ink);
+      font-family: 'Itim', cursive;
+    }
+    ::selection { background: var(--highlight-p); color: var(--ink); }
+
+    .back-link {
+      position: absolute; top: 24px; left: 96px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Itim', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.15);
+      transform: rotate(-0.5deg); transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent); }
+
+    /* ══════════════════════════════════════
+       SPLIT LAYOUT CONTAINER
+     ══════════════════════════════════════ */
+    .scrolly-container {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Left Side - School Notebook */
+    .notebook-panel {
+      width: 50%;
+      position: relative;
+      background-color: var(--paper);
+      box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+      z-index: 5;
+    }
+
+    /* Ruled paper background classes */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(90deg, transparent calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 73 / 30), transparent calc(var(--line-h) * 73 / 30)),
+        repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
+      background-attachment: local;
+      background-position: 0 0, 0 var(--ruled-top-offset);
+    }
+
+    .hero {
+      padding: calc(3 * var(--line-h)) calc(var(--line-h) * 40 / 30) calc(var(--line-h) * 30 / 30) calc(3.2 * var(--line-h));
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+      position: relative; overflow: hidden;
+      scroll-snap-align: start;
+    }
+    .hero::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #7A6548 0%, #7A6548 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+      z-index: 2;
+    }
+    .crumb { font-size: var(--font-sub); letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: var(--line-h); line-height: var(--line-h); }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+    .title { font-family: 'Pacifico', cursive; font-size: clamp(28px, 4.2vw, 56px); line-height: 60px; color: var(--ink); margin-bottom: 30px; font-weight: 700; }
+    .title-stroke { width: clamp(140px, 30vw, 300px); height: 3px; background: var(--accent); border-radius: 2px; margin-top: calc(-0.5 * var(--line-h)); margin-bottom: calc(0.4 * var(--line-h)); }
+    .subtitle { font-family: 'Itim', cursive; font-size: var(--font-sub); letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-deep); margin-bottom: var(--line-h); line-height: var(--line-h); }
+    .intro { max-width: 800px; font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); }
+
+    .card {
+      padding: calc(3 * var(--line-h)) calc(1.2 * var(--line-h)) calc(3 * var(--line-h)) calc(3.2 * var(--line-h));
+      border-top: 1px solid rgba(26,18,8,0.08);
+      position: relative; overflow: hidden;
+      min-height: 100vh;
+      box-sizing: border-box;
+      scroll-snap-align: start;
+      transition: background-color 0.3s;
+    }
+    .card:last-child { border-bottom: 1px solid rgba(26,18,8,0.08); }
+    .card.ruled-page:nth-child(even) { background-color: var(--paper-dark); }
+    .card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #7A6548 0%, #7A6548 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+
+    /* Active section highlight on notebook */
+    .card.active-section {
+      background-color: rgba(251, 244, 228, 0.45);
+    }
+
+    @media (min-width: 921px) {
+      :root {
+        --line-h:       clamp(30px, 1.25vw + 18.5px, 42px);
+        --font-base:    clamp(15px, 0.6vw + 9.5px, 21px);
+        --font-h2:      clamp(24px, 1vw + 14.8px, 34px);
+        --font-h3:      clamp(16px, 0.7vw + 9.5px, 23px);
+        --font-sub:     clamp(12px, 0.5vw + 7.4px, 17px);
+      }
+      .hero {
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+      .scrolly-container {
+        height: 100vh;
+        overflow: hidden;
+      }
+      .notebook-panel {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scrollbar-width: none;
+      }
+      .notebook-panel::-webkit-scrollbar {
+        display: none;
+      }
+      .lab-panel {
+        position: relative;
+        right: auto;
+        top: auto;
+        height: 100vh;
+      }
+      .card > *:not(.mobile-demo-placeholder) {
+        opacity: 0.15;
+        transition: opacity 0.5s ease;
+      }
+      .card.active-section > *:not(.mobile-demo-placeholder) {
+        opacity: 1;
+      }
+      .hero > * {
+        opacity: 0.15;
+        transition: opacity 0.5s ease;
+      }
+      .hero.active-section > * {
+        opacity: 1;
+      }
+    }
+
+    .card h2 { font-family: 'Pacifico', cursive; font-size: var(--font-h2); color: var(--ink); line-height: var(--line-h); font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 0px; margin-bottom: var(--line-h); display: inline-block; }
+    .card h3 { font-family: 'Pacifico', cursive; font-size: var(--font-h3); color: var(--accent-deep); line-height: var(--line-h); margin: calc(var(--line-h) / 2) 0 calc(var(--line-h) / 6); }
+    .card p { font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); margin-bottom: calc(var(--line-h) / 2); }
+    .card p:last-child { margin-bottom: 0; }
+    .card ul { margin-left: 20px; margin-bottom: calc(var(--line-h) / 2); }
+    .card li { font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); }
+    .card .key { color: var(--accent); font-weight: bold; }
+
+    .formula-box {
+      background: rgba(217, 99, 59, 0.05);
+      border-left: 3px solid var(--accent);
+      padding: 12px;
+      margin: 15px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 1.1rem;
+      color: var(--ink-mid);
+    }
+    
+    .rule-item {
+      margin-bottom: 10px;
+      line-height: var(--line-h);
+    }
+
+    /* ══════════════════════════════════════
+       Right Side - Elegant Lab Bench / Chalkboard
+    ══════════════════════════════════════ */
+    .lab-panel {
+      width: 50%;
+      background: #0b0f0a; /* blackboard black */
+      background-image: 
+        radial-gradient(ellipse at 50% 20%, #202b1b 0%, transparent 65%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.008) 0px, rgba(255,255,255,0.008) 1px, transparent 1px, transparent 30px);
+      position: fixed;
+      right: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    .lab-sticky-wrapper {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .blackboard-title {
+      position: absolute;
+      top: 24px;
+      left: 40px;
+      font-family: 'Pacifico', cursive;
+      font-size: 20px;
+      color: #cbd7c2;
+      opacity: 0.85;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 8px rgba(47, 143, 111, 0.3);
+    }
+
+    /* Demonstration containers on the right */
+    .demo-panel {
+      position: absolute;
+      top: 60px;
+      bottom: 30px;
+      left: 40px;
+      right: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 1;
+    }
+    .demo-panel.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    /* Blackboard/Lab bench card overlay */
+    .glass-bench {
+      background: rgba(20, 25, 18, 0.75);
+      border: 1.5px solid rgba(47, 143, 111, 0.25);
+      border-radius: 12px;
+      box-shadow: 
+        0 15px 35px rgba(0,0,0,0.5), 
+        inset 0 0 20px rgba(47, 143, 111, 0.1);
+      padding: 24px;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(10px);
+      color: #eaeaea;
+      box-sizing: border-box;
+    }
+
+    .bench-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 22px;
+      color: #a3d9c9;
+      margin-bottom: 8px;
+      text-align: center;
+      border-bottom: 1px dashed rgba(255,255,255,0.15);
+      padding-bottom: 8px;
+    }
+
+    .canvas-wrap {
+      flex: 1;
+      width: 100%;
+      background: #080b07;
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .svg-canvas-board {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Controls & sliders inside lab */
+    .ctrl-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+      margin-top: 5px;
+    }
+    
+    .btn-lab {
+      flex-grow: 1;
+      background: rgba(47, 143, 111, 0.15);
+      border: 1.5px solid var(--accent);
+      color: var(--paper);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-family: 'Itim', cursive;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, transform 0.1s, border-color 0.2s;
+      outline: none;
+      font-weight: bold;
+    }
+    .btn-lab:hover:not(:disabled) {
+      background: var(--accent);
+      color: #0b0f0a;
+      transform: translateY(-1px);
+    }
+    .btn-lab:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+    .btn-lab:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none !important;
+      background: rgba(255,255,255,0.05) !important;
+      border-color: rgba(255,255,255,0.1) !important;
+      color: #666 !important;
+    }
+    .btn-lab.active {
+      background: var(--accent);
+      color: #0b0f0a;
+      box-shadow: 0 0 10px rgba(217, 99, 59, 0.4);
+    }
+
+    .select-lab {
+      flex-grow: 1;
+      background: #080b07;
+      border: 1px solid rgba(47, 143, 111, 0.3);
+      color: #fff;
+      padding: 8px;
+      border-radius: 6px;
+      font-family: 'Itim', cursive;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .info-display-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    .info-display-card .title-info {
+      font-weight: bold;
+      color: var(--accent);
+      margin-bottom: 4px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .info-display-card p {
+      font-size: 12.5px;
+      line-height: 18px;
+      color: #ccc;
+      margin: 0;
+    }
+
+    /* Floating stages on canvas overlay */
+    .stage-overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 10;
+    }
+
+    .stage-overlay .label-text {
+      color: #fff;
+      font-size: 12px;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    /* Mobile Responsive Setup (max-width: 920px) */
+    @media (max-width: 920px) {
+      .scrolly-container {
+        flex-direction: column;
+      }
+      .notebook-panel {
+        width: 100%;
+      }
+      .lab-panel {
+        display: none;
+      }
+      .mobile-demo-placeholder {
+        display: block;
+        width: 100%;
+        margin: 20px 0;
+      }
+      .demo-panel {
+        position: relative;
+        top: auto; bottom: auto; left: auto; right: auto;
+        opacity: 1 !important;
+        transform: none !important;
+        pointer-events: auto !important;
+        padding: 0;
+        margin-top: 10px;
+        height: 480px; /* fixed height on mobile for display */
+      }
+      .card {
+        min-height: auto;
+        padding-bottom: 30px;
+      }
+      .hero {
+        padding-top: 40px;
+      }
+    }
+
+    /* SVG design styles */
+    .beaker-glass {
+      fill: none;
+      stroke: #fff;
+      stroke-width: 2.5px;
+      stroke-linejoin: round;
+      opacity: 0.6;
+    }
+    .electron-dot {
+      fill: #ffd54f;
+      filter: drop-shadow(0 0 3px #ffb300);
+    }
+    .chemical-text {
+      font-family: 'Itim', cursive;
+      font-size: 12px;
+      fill: #fff;
+      text-shadow: 1px 1px 1px #000;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+    .arrow-indicator {
+      stroke: #e05050;
+      stroke-width: 1.5;
+      fill: none;
+      stroke-dasharray: 3;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Back button to main hub -->
+  <a href="Learning Resources Hub v4.html" class="back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    Trung tâm học liệu
+  </a>
+
+  <div class="scrolly-container">
+    
+    <!-- LEFT SIDE: NOTEBOOK COLUMN (STUDENT'S NOTEBOOK) -->
+    <div class="notebook-panel">
+      
+      <!-- HERO SECTION -->
+      <header class="hero ruled-page" data-demo="0">
+        <div class="crumb">
+          <a href="Learning Resources Hub v4.html">Hóa học</a> › Chương 7C
+        </div>
+        <h1 class="title">Phản ứng Oxi hóa - Khử</h1>
+        <div class="title-stroke"></div>
+        <p class="subtitle">Dòng dịch chuyển electron kì diệu</p>
+        <p class="intro">
+          Phản ứng oxi hóa - khử là cốt lõi của sự sống và công nghệ. Từ hơi thở trong lồng ngực, sự quang hợp của cây xanh, sự ăn mòn kim loại cho đến những viên pin cung cấp năng lượng cho điện thoại... tất cả đều vận hành nhờ dòng dịch chuyển electron giữa các chất.<br><br>
+          Hãy lật từng trang vở để khám phá cách các nguyên tử cho nhận electron và làm thế nào để chúng ta làm chủ những dòng điện hóa học này!
+        </p>
+      </header>
+
+      <main class="layout">
+        
+        <!-- SECTION 1: SỐ OXI HÓA -->
+        <section id="sec-notebook-1" class="card ruled-page" data-demo="1">
+          <h2>1. Số Oxi Hóa</h2>
+          <p>
+            Để theo dõi dòng đi của các electron trong phản ứng hóa học, các nhà khoa học đưa ra khái niệm <span class="key">Số oxi hóa</span>. 
+          </p>
+          <p>
+            <b>Số oxi hóa</b> là điện tích giả định của một nguyên tử trong phân tử, nếu giả định rằng tất cả các liên kết trong phân tử đều là liên kết ion (tức là electron chung bị hút lệch hoàn toàn về phía nguyên tử có độ âm điện lớn hơn).
+          </p>
+          
+          <h3>4 Quy Tắc Xác Định Nhanh Số Oxi Hóa:</h3>
+          <ul>
+            <li class="rule-item"><span class="key">Quy tắc 1:</span> Trong các đơn chất, số oxi hóa của nguyên tử bằng 0. Ví dụ: Cu<sup>0</sup>, O₂<sup>0</sup>, Na<sup>0</sup>.</li>
+            <li class="rule-item"><span class="key">Quy tắc 2:</span> Trong hầu hết các hợp chất: H luôn có số oxi hóa là <span class="key">+1</span>, O luôn là <span class="key">-2</span>. Kim loại kiềm (nhóm IA) luôn là <span class="key">+1</span>, kiềm thổ (IIA) là <span class="key">+2</span>, nhôm (Al) là <span class="key">+3</span>.</li>
+            <li class="rule-item"><span class="key">Quy tắc 3:</span> Trong một phân tử trung hòa điện, tổng số oxi hóa của các nguyên tử bằng <span class="key">0</span>.</li>
+            <li class="rule-item"><span class="key">Quy tắc 4:</span> Trong ion đơn nguyên tử, số oxi hóa bằng điện tích ion. Trong ion đa nguyên tử, tổng số oxi hóa của các nguyên tử bằng điện tích của ion đó.</li>
+          </ul>
+
+          <div class="formula-box">
+            <b>Ví dụ tính:</b> Tìm số oxi hóa của lưu huỳnh (S) trong axit sunfuric (H₂SO₄):<br>
+            Đặt số oxi hóa của S là <i>x</i>. Theo quy tắc 2 và 3, ta có:<br>
+            2 · (+1) + <i>x</i> + 4 · (-2) = 0 &nbsp;⇒&nbsp; +2 + <i>x</i> - 8 = 0 &nbsp;⇒&nbsp; <b><i>x</i> = +6</b>.<br>
+            Kí hiệu: H₂<sup>+1</sup>S<sup>+6</sup>O₄<sup>-2</sup>
+          </div>
+          
+          <!-- Mobile Placeholder (visual moves here on small screens) -->
+          <div id="mob-demo-1" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 2: BẢN CHẤT PHẢN ỨNG -->
+        <section id="sec-notebook-2" class="card ruled-page" data-demo="2">
+          <h2>2. Bản Chất: "Khử cho - O nhận"</h2>
+          <p>
+            Phản ứng oxi hóa - khử là phản ứng hóa học trong đó có sự chuyển dịch electron giữa các chất phản ứng, dẫn đến sự thay đổi số oxi hóa của một hoặc một số nguyên tố.
+          </p>
+          <p>
+            Mỗi phản ứng luôn bao gồm hai cấu phần diễn ra đồng thời:
+          </p>
+          <ul>
+            <li class="rule-item"><span class="key">Chất khử (chất bị oxi hóa):</span> Là chất <span class="key">nhường electron</span>. Số oxi hóa của chất khử sẽ <span class="key">tăng lên</span> sau phản ứng.</li>
+            <li class="rule-item"><span class="key">Chất oxi hóa (chất bị khử):</span> Là chất <span class="key">nhận electron</span>. Số oxi hóa của chất oxi hóa sẽ <span class="key">giảm đi</span> sau phản ứng.</li>
+            <li class="rule-item"><span class="key">Quá trình oxi hóa:</span> Là sự nhường electron của chất khử.</li>
+            <li class="rule-item"><span class="key">Quá trình khử:</span> Là sự nhận electron của chất oxi hóa.</li>
+          </ul>
+
+          <div class="formula-box" style="text-align: center; font-size: 1.25rem;">
+            <b>Khẩu quyết cốt lõi:</b><br>
+            <span style="color: var(--accent); font-size: 1.5rem; font-weight: bold;">"KHỬ CHO (nhường e) - O NHẬN (e)"</span><br>
+            <span style="color: var(--accent-deep); font-size: 1.1rem;">"O-giảm, Khử-tăng (số oxi hóa)"</span>
+          </div>
+
+          <p>
+            Hãy xem thí nghiệm đinh kẽm (Zn) nhúng vào dung dịch Đồng sunfat (CuSO₄) ở bảng thí nghiệm bên phải để thấy quá trình nhường nhận electron này trực quan.
+          </p>
+          
+          <!-- Mobile Placeholder -->
+          <div id="mob-demo-2" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 3: PHƯƠNG PHÁP THĂNG BẰNG ELECTRON -->
+        <section id="sec-notebook-3" class="card ruled-page" data-demo="3">
+          <h2>3. Thăng Bằng Electron</h2>
+          <p>
+            Để cân bằng một phản ứng oxi hóa - khử phức tạp, phương pháp thăng bằng electron là công cụ chuẩn xác nhất. Nguyên tắc cơ bản là:
+          </p>
+          <div class="formula-box" style="text-align: center; font-weight: bold;">
+            Tổng số electron chất khử NHƯỜNG = Tổng số electron chất oxi hóa NHẬN
+          </div>
+          <p>
+            Quy trình thăng bằng gồm 4 bước cụ thể:
+          </p>
+          <ul>
+            <li class="rule-item"><b>Bước 1:</b> Xác định số oxi hóa của các nguyên tử để tìm ra chất khử và chất oxi hóa.</li>
+            <li class="rule-item"><b>Bước 2:</b> Viết các bán phản ứng: Quá trình oxi hóa (chất khử nhường e) và Quá trình khử (chất oxi hóa nhận e).</li>
+            <li class="rule-item"><b>Bước 3:</b> Tìm hệ số nhân thích hợp cho mỗi quá trình sao cho tổng số e nhường bằng nhận (bằng cách lấy Bội chung nhỏ nhất).</li>
+            <li class="rule-item"><b>Bước 4:</b> Đưa hệ số vào phương trình và cân bằng các nguyên tố còn lại (kim loại khác, gốc axit, H, và cuối cùng là kiểm tra bằng O).</li>
+          </ul>
+
+          <!-- Mobile Placeholder -->
+          <div id="mob-demo-3" class="mobile-demo-placeholder"></div>
+        </section>
+
+        <!-- SECTION 4: ỨNG DỤNG - PIN ĐIỆN HÓA DANIELL -->
+        <section id="sec-notebook-4" class="card ruled-page" data-demo="4">
+          <h2>4. Pin Điện Hóa Daniell</h2>
+          <p>
+            Khi chúng ta trộn trực tiếp chất khử và chất oxi hóa (như Zn và CuSO₄), phản ứng tỏa nhiệt nhưng năng lượng electron bị tiêu tán dưới dạng nhiệt năng.
+          </p>
+          <p>
+            Nhưng nếu chúng ta tách biệt chất khử và chất oxi hóa vào hai ngăn riêng biệt và kết nối chúng bằng một dây dẫn bên ngoài, các electron buộc phải đi xuyên qua dây dẫn để chuyển từ ngăn này sang ngăn kia. Dòng chuyển dịch electron có hướng này tạo ra <span class="key">dòng điện</span>!
+          </p>
+          <p>
+            Đó chính là nguyên lý hoạt động của các loại pin, tiêu biểu là <b>Pin điện hóa Daniell</b>:
+          </p>
+          <ul>
+            <li class="rule-item"><span class="key">Ngăn Anode (Cực âm):</span> Gồm thanh kẽm nhúng trong dung dịch ZnSO₄. Ở đây xảy ra <span class="key">quá trình oxi hóa</span>: Zn → Zn²⁺ + 2e⁻. Thanh kẽm bị mòn dần.</li>
+            <li class="rule-item"><span class="key">Ngăn Cathode (Cực dương):</span> Gồm thanh đồng nhúng trong dung dịch CuSO₄. Ở đây xảy ra <span class="key">quá trình khử</span>: Cu²⁺ + 2e⁻ → Cu. Đồng kim loại bám thêm vào thanh đồng.</li>
+            <li class="rule-item"><span class="key">Cầu muối:</span> Chứa dung dịch chất điện li (như KCl) để giúp các ion di chuyển qua lại, duy trì tính trung hòa điện cho cả 2 ngăn và khép kín mạch điện.</li>
+          </ul>
+          
+          <!-- Mobile Placeholder -->
+          <div id="mob-demo-4" class="mobile-demo-placeholder"></div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- RIGHT SIDE: ELEGANT LAB BENCH / CHALKBOARD -->
+    <div class="lab-panel">
+      <div class="lab-sticky-wrapper">
+        <div class="blackboard-title">BẢNG PHÒNG THÍ NGHIỆM ẢO</div>
+        
+        <!-- DEMO 1: OXIDATION STATE BOARD -->
+        <div id="desk-demo-1" class="desk-demo-slot">
+          <div id="demo-1" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Tính Số Oxi Hóa Từng Bước</div>
+              
+              <div class="canvas-wrap">
+                <div class="svg-canvas-board">
+                  <svg viewBox="0 0 320 200" id="svg-ox-state" style="width: 100%; height: 100%;">
+                    <!-- Background Dark Grid -->
+                    <rect x="5" y="5" width="310" height="190" rx="8" fill="#080c07" stroke="rgba(47, 143, 111, 0.2)" stroke-width="2"/>
+                    
+                    <!-- SVG Elements will be rendered by Javascript -->
+                    <g id="ox-atoms-group"></g>
+                    <g id="ox-equations-group"></g>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Controls -->
+              <div class="ctrl-row">
+                <select class="select-lab" id="select-ox-compound">
+                  <option value="H2SO4">Axit sunfuric: H₂SO₄</option>
+                  <option value="KMnO4">Kali pemanganat: KMnO₄</option>
+                  <option value="HNO3">Axit nitric: HNO₃</option>
+                  <option value="CO2">Cacbon đioxit: CO₂</option>
+                  <option value="NH4">Ion amoni: NH₄⁺</option>
+                </select>
+                <button class="btn-lab" id="btn-ox-step">Giải thích bước tiếp</button>
+                <button class="btn-lab" id="btn-ox-reset" style="flex-grow: 0;">Đặt lại</button>
+              </div>
+
+              <div class="info-display-card">
+                <div class="title-info" id="ox-step-title">Hướng dẫn tính</div>
+                <p id="ox-step-desc">Chọn chất trong danh sách ở trên và nhấn nút "Giải thích bước tiếp" để xem chi tiết cách áp dụng quy tắc.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 2: Zn + CuSO4 ELECTRON TRANSFER -->
+        <div id="desk-demo-2" class="desk-demo-slot">
+          <div id="demo-2" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Chuyển Dịch Electron: Zn + CuSO₄</div>
+              
+              <div class="canvas-wrap">
+                <div class="svg-canvas-board">
+                  <svg viewBox="0 0 320 200" id="svg-electron-transfer" style="width: 100%; height: 100%;">
+                    <!-- Background Grid -->
+                    <rect x="5" y="5" width="310" height="190" rx="8" fill="#080c07" stroke="rgba(47, 143, 111, 0.2)" stroke-width="2"/>
+                    
+                    <!-- Liquid in Beaker -->
+                    <rect id="react-solution-fill" x="80" y="70" width="160" height="90" fill="rgba(41, 128, 185, 0.35)" rx="4"/>
+                    
+                    <!-- Beaker Outline -->
+                    <path d="M 75 50 L 75 165 C 75 168, 77 170, 80 170 L 240 170 C 243 170, 245 168, 245 165 L 245 50" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.6"/>
+                    <line x1="70" y1="50" x2="80" y2="50" stroke="#fff" stroke-width="3" opacity="0.6"/>
+                    <line x1="240" y1="50" x2="250" y2="50" stroke="#fff" stroke-width="3" opacity="0.6"/>
+                    
+                    <!-- Zinc Nail/Strip -->
+                    <g id="zinc-strip-group">
+                      <rect id="zinc-metal-plate" x="145" y="30" width="30" height="110" fill="#7f8c8d" rx="2" stroke="#566573" stroke-width="1.5"/>
+                      <!-- Copper coating layer, animated -->
+                      <rect id="copper-coat-layer" x="144" y="70" width="32" height="71" fill="#d35400" rx="2" opacity="0"/>
+                    </g>
+                    
+                    <!-- Ions -->
+                    <g id="transfer-ions-group">
+                      <!-- Blue CuSO4 ions (Cu2+ and SO42-) -->
+                      <g class="ion-cu" id="cu-ion-1" transform="translate(100, 95)">
+                        <circle r="9" fill="#1f77b4" stroke="#fff" stroke-width="1"/>
+                        <text class="chemical-text" font-size="8">Cu²⁺</text>
+                      </g>
+                      <g class="ion-cu" id="cu-ion-2" transform="translate(220, 110)">
+                        <circle r="9" fill="#1f77b4" stroke="#fff" stroke-width="1"/>
+                        <text class="chemical-text" font-size="8">Cu²⁺</text>
+                      </g>
+                      <g class="ion-cu" id="cu-ion-3" transform="translate(120, 140)">
+                        <circle r="9" fill="#1f77b4" stroke="#fff" stroke-width="1"/>
+                        <text class="chemical-text" font-size="8">Cu²⁺</text>
+                      </g>
+
+                      <!-- SO42- Spectator ions -->
+                      <g transform="translate(195, 85)">
+                        <circle r="10" fill="#8c564b" opacity="0.4" stroke="#fff" stroke-width="0.5"/>
+                        <text class="chemical-text" font-size="7" opacity="0.8">SO₄²⁻</text>
+                      </g>
+                      <g transform="translate(105, 125)">
+                        <circle r="10" fill="#8c564b" opacity="0.4" stroke="#fff" stroke-width="0.5"/>
+                        <text class="chemical-text" font-size="7" opacity="0.8">SO₄²⁻</text>
+                      </g>
+                      <g transform="translate(210, 145)">
+                        <circle r="10" fill="#8c564b" opacity="0.4" stroke="#fff" stroke-width="0.5"/>
+                        <text class="chemical-text" font-size="7" opacity="0.8">SO₄²⁻</text>
+                      </g>
+                    </g>
+                    
+                    <!-- Flying electrons group -->
+                    <g id="flying-electrons"></g>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Controls -->
+              <div class="ctrl-row">
+                <button class="btn-lab" id="btn-transfer-start">Bắt đầu phản ứng</button>
+                <button class="btn-lab" id="btn-transfer-reset" disabled>Đặt lại</button>
+              </div>
+
+              <div class="info-display-card">
+                <div class="title-info" id="transfer-title">Trạng thái: Trước phản ứng</div>
+                <p id="transfer-desc">Thanh kẽm nhúng vào dung dịch CuSO₄ có màu xanh của ion Cu²⁺. Nhấn "Bắt đầu phản ứng" để xem sự chuyển dịch electron ở cấp độ nguyên tử.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 3: STEP-BY-STEP REDOX BALANCER -->
+        <div id="desk-demo-3" class="desk-demo-slot">
+          <div id="demo-3" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Thăng Bằng Electron Từng Bước</div>
+              
+              <div class="canvas-wrap">
+                <div class="svg-canvas-board" style="padding: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #080c07;">
+                  <!-- Unbalanced reaction display -->
+                  <div style="font-family: 'Itim', cursive; font-size: clamp(14px, 1.5vw, 18px); color: #fff; margin-bottom: 20px; text-align: center; width: 100%;">
+                    <div id="bal-eq-line" style="line-height: 2.2;">
+                      Cu + HNO₃ → Cu(NO₃)₂ + NO + H₂O
+                    </div>
+                  </div>
+                  
+                  <!-- Half reactions area -->
+                  <div id="bal-half-reactions" style="width: 90%; border-top: 1px dashed rgba(47, 143, 111, 0.3); padding-top: 15px; min-height: 75px; font-family: 'Itim', cursive; font-size: clamp(13px, 1.3vw, 16px); color: #cbd7c2;">
+                    <!-- Filled by JS -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Controls -->
+              <div class="ctrl-row">
+                <button class="btn-lab" id="btn-bal-prev" disabled>Quay lại</button>
+                <button class="btn-lab" id="btn-bal-next">Tiếp theo</button>
+                <button class="btn-lab" id="btn-bal-reset" style="flex-grow:0;">Đặt lại</button>
+              </div>
+
+              <div class="info-display-card">
+                <div class="title-info" id="bal-step-title">Bước 1: Xác định số oxi hóa</div>
+                <p id="bal-step-desc">Nhấn "Tiếp theo" để bắt đầu quá trình thăng bằng electron cho phản ứng giữa đồng (Cu) và axit nitric loãng (HNO₃).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 4: DANIELL GALVANIC CELL -->
+        <div id="desk-demo-4" class="desk-demo-slot">
+          <div id="demo-4" class="demo-panel">
+            <div class="glass-bench">
+              <div class="bench-title">Mô Phỏng Pin Điện Hóa Daniell</div>
+              
+              <div class="canvas-wrap">
+                <div class="svg-canvas-board">
+                  <svg viewBox="0 0 320 200" id="svg-daniell-cell" style="width: 100%; height: 100%;">
+                    <!-- Background Grid -->
+                    <rect x="5" y="5" width="310" height="190" rx="8" fill="#080c07" stroke="rgba(47, 143, 111, 0.2)" stroke-width="2"/>
+                    
+                    <!-- Left Beaker (ZnSO4) - Colorless/light gray -->
+                    <rect x="35" y="90" width="95" height="75" fill="rgba(200, 200, 200, 0.15)" rx="3"/>
+                    <path d="M 30 70 L 30 165 C 30 167, 32 168, 35 168 L 130 168 C 133 168, 135 167, 135 165 L 135 70" fill="none" stroke="#fff" stroke-width="2" opacity="0.5"/>
+                    
+                    <!-- Right Beaker (CuSO4) - Blue -->
+                    <rect x="190" y="90" width="95" height="75" fill="rgba(41, 128, 185, 0.3)" rx="3"/>
+                    <path d="M 185 70 L 185 165 C 185 167, 187 168, 190 168 L 285 168 C 288 168, 290 167, 290 165 L 290 70" fill="none" stroke="#fff" stroke-width="2" opacity="0.5"/>
+                    
+                    <!-- Salt Bridge -->
+                    <path id="salt-bridge" d="M 100 110 L 100 75 A 15 15 0 0 1 130 60 L 190 60 A 15 15 0 0 1 220 75 L 220 110" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="14" stroke-linecap="square"/>
+                    <path d="M 100 110 L 100 75 A 15 15 0 0 1 130 60 L 190 60 A 15 15 0 0 1 220 75 L 220 110" fill="none" stroke="#795548" stroke-width="10" stroke-linecap="square" opacity="0.8"/>
+                    
+                    <!-- Zinc Electrode (Anode) -->
+                    <rect id="daniell-zn-plate" x="55" y="55" width="16" height="85" fill="#7f8c8d" rx="1"/>
+                    <text x="63" y="130" class="chemical-text" font-size="8" fill="#222" font-weight="bold">Zn</text>
+                    
+                    <!-- Copper Electrode (Cathode) -->
+                    <rect id="daniell-cu-plate" x="249" y="55" width="16" height="85" fill="#d35400" rx="1"/>
+                    <text x="257" y="130" class="chemical-text" font-size="8" fill="#fff" font-weight="bold">Cu</text>
+                    
+                    <!-- Wire connection & lightbulb -->
+                    <path d="M 63 55 L 63 30 L 145 30" fill="none" stroke="#ffd54f" stroke-width="1.5"/>
+                    <path d="M 257 55 L 257 30 L 175 30" fill="none" stroke="#ffd54f" stroke-width="1.5"/>
+                    
+                    <!-- Light bulb socket & glass -->
+                    <circle cx="160" cy="30" r="10" fill="rgba(255,255,255,0.1)" stroke="#888" stroke-width="1.5"/>
+                    <path d="M 155 35 L 165 35 L 162 40 L 158 40 Z" fill="#888"/>
+                    <circle id="daniell-bulb-glow" cx="160" cy="30" r="14" fill="url(#bulb-glow-grad)" opacity="0"/>
+                    <path id="daniell-bulb-filament" d="M 157 32 Q 160 25 163 32" fill="none" stroke="#555" stroke-width="1"/>
+                    
+                    <!-- Salt Bridge Moving Ions Group -->
+                    <g id="bridge-ions-group"></g>
+                    
+                    <!-- Beaker Moving Ions Group -->
+                    <g id="beaker-ions-group"></g>
+                    
+                    <!-- Wire Moving Electrons Group -->
+                    <g id="wire-electrons-group"></g>
+                    
+                    <!-- Gradients & Filters Definitions -->
+                    <defs>
+                      <radialGradient id="bulb-glow-grad" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#fffde7" stop-opacity="1"/>
+                        <stop offset="50%" stop-color="#fff59d" stop-opacity="0.8"/>
+                        <stop offset="100%" stop-color="#fff59d" stop-opacity="0"/>
+                      </radialGradient>
+                    </defs>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Controls -->
+              <div class="ctrl-row">
+                <button class="btn-lab" id="btn-daniell-toggle">Đóng công tắc</button>
+              </div>
+
+              <div class="info-display-card">
+                <div class="title-info" id="daniell-title">Pin: Mạch hở</div>
+                <p id="daniell-desc">Mạch đang mở, electron không di chuyển. Nhấn "Đóng công tắc" để tạo mạch khép kín, electron sẽ chạy từ cực âm Zn sang cực dương Cu làm bóng đèn phát sáng.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src="./support.js"></script>
+  <script>
+    (function() {
+      // ══════════════════════════════════════
+      // SCROLLYTELLING TRIGGER SYSTEM
+      // ══════════════════════════════════════
+      const notebookSections = document.querySelectorAll('.hero, #sec-notebook-1, #sec-notebook-2, #sec-notebook-3, #sec-notebook-4');
+      const demoPanels = document.querySelectorAll('.demo-panel');
+
+      let activeDemoNum = '0';
+      const activeLoops = {
+        transfer: null,
+        daniell: null
+      };
+
+      function clearAllActiveLoops() {
+        for (const k in activeLoops) {
+          if (activeLoops[k]) {
+            cancelAnimationFrame(activeLoops[k]);
+            activeLoops[k] = null;
+          }
+        }
+      }
+
+      function setActiveSection(secElement) {
+        notebookSections.forEach(s => s.classList.remove('active-section'));
+        secElement.classList.add('active-section');
+
+        const demoNum = secElement.getAttribute('data-demo');
+        if (demoNum === activeDemoNum) return;
+
+        activeDemoNum = demoNum;
+
+        // Toggle active panel on the right
+        demoPanels.forEach(panel => {
+          panel.classList.remove('active');
+          if (panel.id === `demo-${demoNum}`) {
+            panel.classList.add('active');
+          }
+        });
+
+        // Kill active animations
+        clearAllActiveLoops();
+
+        // Initialize corresponding demo
+        if (activeDemoNum === '1') {
+          initOxStateDemo();
+        } else if (activeDemoNum === '2') {
+          initTransferDemo();
+        } else if (activeDemoNum === '3') {
+          initBalancerDemo();
+        } else if (activeDemoNum === '4') {
+          initDaniellDemo();
+        }
+      }
+
+      function observeSection(sec) {
+        const scroller = window.innerWidth > 920 ? document.querySelector('.notebook-panel') : null;
+        const options = {
+          root: scroller || null,
+          threshold: 0.25
+        };
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveSection(entry.target);
+            }
+          });
+        }, options);
+        io.observe(sec);
+        return io;
+      }
+
+      let sectionObservers = [];
+      function initObservers() {
+        sectionObservers.forEach(io => io.disconnect());
+        sectionObservers = [];
+        notebookSections.forEach(sec => {
+          sectionObservers.push(observeSection(sec));
+        });
+      }
+      initObservers();
+
+      // ══════════════════════════════════════
+      // MOBILE RESPONSIVE RELOCATION
+      // ══════════════════════════════════════
+      let wasDesktop = window.innerWidth > 920;
+
+      const relocateDemos = () => {
+        const isMobile = window.innerWidth <= 920;
+        const isDesktop = !isMobile;
+        
+        if (isDesktop !== wasDesktop) {
+          wasDesktop = isDesktop;
+          initObservers();
+        }
+
+        for (let i = 1; i <= 4; i++) {
+          const demo = document.getElementById(`demo-${i}`);
+          if (!demo) continue;
+          
+          if (isMobile) {
+            const mobContainer = document.getElementById(`mob-demo-${i}`);
+            if (mobContainer && demo.parentElement !== mobContainer) {
+              mobContainer.appendChild(demo);
+            }
+          } else {
+            const deskContainer = document.getElementById(`desk-demo-${i}`);
+            if (deskContainer && demo.parentElement !== deskContainer) {
+              deskContainer.appendChild(demo);
+            }
+          }
+        }
+        
+        if (isMobile) {
+          notebookSections.forEach((s) => {
+            const targets = Array.from(s.children).filter(c => !c.classList.contains('mobile-demo-placeholder'));
+            targets.forEach(t => t.style.opacity = ''); // reset opacity
+          });
+        }
+      };
+
+      window.addEventListener('resize', relocateDemos);
+      setTimeout(relocateDemos, 150);
+
+
+      // ══════════════════════════════════════
+      // DEMO 1: OXIDATION STATE BOARD
+      // ══════════════════════════════════════
+      const oxCompounds = {
+        H2SO4: {
+          formula: 'H₂SO₄',
+          atoms: [
+            { id: 'H1', label: 'H', x: 40, y: 100, role: 'h' },
+            { id: 'O1', label: 'O', x: 95, y: 100, role: 'o' },
+            { id: 'S', label: 'S', x: 160, y: 100, role: 's' },
+            { id: 'O2', label: 'O', x: 225, y: 100, role: 'o' },
+            { id: 'H2', label: 'H', x: 280, y: 100, role: 'h' },
+            { id: 'O3', label: 'O', x: 160, y: 45, role: 'o' },
+            { id: 'O4', label: 'O', x: 160, y: 155, role: 'o' }
+          ],
+          bonds: [
+            { from: 'H1', to: 'O1' },
+            { from: 'O1', to: 'S' },
+            { from: 'S', to: 'O2' },
+            { from: 'O2', to: 'H2' },
+            { from: 'S', to: 'O3', double: true },
+            { from: 'S', to: 'O4', double: true }
+          ],
+          steps: [
+            { title: "Quy tắc 2: Hydro là +1", desc: "H luôn có số oxi hóa +1 trong hầu hết các hợp chất. Ta gán số oxi hóa +1 cho 2 nguyên tử H.", activeRole: "h", val: "+1" },
+            { title: "Quy tắc 2: Oxy là -2", desc: "Oxy luôn có số oxi hóa -2 trong hợp chất. Ta gán số oxi hóa -2 cho 4 nguyên tử O.", activeRole: "o", val: "-2" },
+            { title: "Quy tắc 3: Thiết lập phương trình", desc: "Tổng số oxi hóa cả phân tử H₂SO₄ bằng 0. Gọi số oxi hóa của S là x:\n2 · (+1) + x + 4 · (-2) = 0  ⇒  +2 + x - 8 = 0.", activeRole: null },
+            { title: "Kết luận: S là +6", desc: "Giải phương trình: x = +6. Vậy lưu huỳnh trong H₂SO₄ có số oxi hóa là +6.", activeRole: "s", val: "+6" }
+          ]
+        },
+        KMnO4: {
+          formula: 'KMnO₄',
+          atoms: [
+            { id: 'K', label: 'K', x: 45, y: 100, role: 'k' },
+            { id: 'Mn', label: 'Mn', x: 160, y: 100, role: 'mn' },
+            { id: 'O1', label: 'O', x: 100, y: 100, role: 'o' },
+            { id: 'O2', label: 'O', x: 160, y: 40, role: 'o' },
+            { id: 'O3', label: 'O', x: 160, y: 160, role: 'o' },
+            { id: 'O4', label: 'O', x: 220, y: 100, role: 'o' }
+          ],
+          bonds: [
+            { from: 'K', to: 'O1' },
+            { from: 'O1', to: 'Mn' },
+            { from: 'Mn', to: 'O2', double: true },
+            { from: 'Mn', to: 'O3', double: true },
+            { from: 'Mn', to: 'O4', double: true }
+          ],
+          steps: [
+            { title: "Quy tắc 2: Kali (Kim loại kiềm)", desc: "Kali thuộc nhóm IA nên luôn có số oxi hóa là +1 trong hợp chất.", activeRole: "k", val: "+1" },
+            { title: "Quy tắc 2: Oxy là -2", desc: "Oxy luôn có số oxi hóa -2 trong hợp chất. Ta gán -2 cho 4 nguyên tử O.", activeRole: "o", val: "-2" },
+            { title: "Quy tắc 3: Thiết lập phương trình", desc: "Tổng số oxi hóa KMnO₄ bằng 0. Gọi số oxi hóa của Mn là x:\n(+1) + x + 4 · (-2) = 0  ⇒  +1 + x - 8 = 0.", activeRole: null },
+            { title: "Kết luận: Mn là +7", desc: "Giải phương trình: x = +7. Mangan có số oxi hóa cao nhất là +7.", activeRole: "mn", val: "+7" }
+          ]
+        },
+        HNO3: {
+          formula: 'HNO₃',
+          atoms: [
+            { id: 'H', label: 'H', x: 40, y: 100, role: 'h' },
+            { id: 'O1', label: 'O', x: 105, y: 100, role: 'o' },
+            { id: 'N', label: 'N', x: 170, y: 100, role: 'n' },
+            { id: 'O2', label: 'O', x: 235, y: 70, role: 'o' },
+            { id: 'O3', label: 'O', x: 235, y: 130, role: 'o' }
+          ],
+          bonds: [
+            { from: 'H', to: 'O1' },
+            { from: 'O1', to: 'N' },
+            { from: 'N', to: 'O2', double: true },
+            { from: 'N', to: 'O3' }
+          ],
+          steps: [
+            { title: "Quy tắc 2: Hydro là +1", desc: "Hydro luôn có số oxi hóa +1 trong hợp chất.", activeRole: "h", val: "+1" },
+            { title: "Quy tắc 2: Oxy là -2", desc: "Oxy luôn có số oxi hóa -2. Ta gán -2 cho 3 nguyên tử O.", activeRole: "o", val: "-2" },
+            { title: "Quy tắc 3: Thiết lập phương trình", desc: "Tổng số oxi hóa HNO₃ bằng 0. Gọi số oxi hóa của N là x:\n(+1) + x + 3 · (-2) = 0  ⇒  +1 + x - 6 = 0.", activeRole: null },
+            { title: "Kết luận: N là +5", desc: "Giải ra x = +5. Nitơ có số oxi hóa +5 trong HNO₃.", activeRole: "n", val: "+5" }
+          ]
+        },
+        CO2: {
+          formula: 'CO₂',
+          atoms: [
+            { id: 'O1', label: 'O', x: 80, y: 100, role: 'o' },
+            { id: 'C', label: 'C', x: 160, y: 100, role: 'c' },
+            { id: 'O2', label: 'O', x: 240, y: 100, role: 'o' }
+          ],
+          bonds: [
+            { from: 'O1', to: 'C', double: true },
+            { from: 'C', to: 'O2', double: true }
+          ],
+          steps: [
+            { title: "Quy tắc 2: Oxy là -2", desc: "Oxy có số oxi hóa -2. Ta gán -2 cho cả 2 nguyên tử O.", activeRole: "o", val: "-2" },
+            { title: "Quy tắc 3: Thiết lập phương trình", desc: "Tổng số oxi hóa CO₂ bằng 0. Gọi số oxi hóa của C là x:\nx + 2 · (-2) = 0  ⇒  x - 4 = 0.", activeRole: null },
+            { title: "Kết luận: C là +4", desc: "Giải ra x = +4. Cacbon có số oxi hóa +4.", activeRole: "c", val: "+4" }
+          ]
+        },
+        NH4: {
+          formula: 'NH₄⁺',
+          atoms: [
+            { id: 'N', label: 'N', x: 160, y: 100, role: 'n' },
+            { id: 'H1', label: 'H', x: 160, y: 40, role: 'h' },
+            { id: 'H2', label: 'H', x: 160, y: 160, role: 'h' },
+            { id: 'H3', label: 'H', x: 100, y: 100, role: 'h' },
+            { id: 'H4', label: 'H', x: 220, y: 100, role: 'h' }
+          ],
+          bonds: [
+            { from: 'N', to: 'H1' },
+            { from: 'N', to: 'H2' },
+            { from: 'N', to: 'H3' },
+            { from: 'N', to: 'H4' }
+          ],
+          steps: [
+            { title: "Quy tắc 2: Hydro là +1", desc: "Hydro luôn có số oxi hóa +1 trong ion đa nguyên tử.", activeRole: "h", val: "+1" },
+            { title: "Quy tắc 4: Tổng điện tích của Ion", desc: "Vì đây là ion NH₄⁺ có điện tích 1+, tổng số oxi hóa của các nguyên tử phải bằng +1.", activeRole: null },
+            { title: "Thiết lập phương trình", desc: "Gọi số oxi hóa của N là x. Ta có phương trình:\nx + 4 · (+1) = +1  ⇒  x + 4 = +1.", activeRole: null },
+            { title: "Kết luận: N là -3", desc: "Giải ra x = +1 - 4 = -3. Nitơ có số oxi hóa -3 trong ion amoni.", activeRole: "n", val: "-3" }
+          ]
+        }
+      };
+
+      let oxCurrentKey = 'H2SO4';
+      let oxCurrentStep = 0;
+      let oxAssignedValues = {};
+
+      function initOxStateDemo() {
+        const select = document.getElementById('select-ox-compound');
+        const btnStep = document.getElementById('btn-ox-step');
+        const btnReset = document.getElementById('btn-ox-reset');
+        
+        select.onchange = () => {
+          oxCurrentKey = select.value;
+          oxCurrentStep = 0;
+          oxAssignedValues = {};
+          renderOxState();
+        };
+
+        btnStep.onclick = () => {
+          const comp = oxCompounds[oxCurrentKey];
+          if (oxCurrentStep < comp.steps.length) {
+            const step = comp.steps[oxCurrentStep];
+            if (step.activeRole) {
+              comp.atoms.forEach(atom => {
+                if (atom.role === step.activeRole) {
+                  oxAssignedValues[atom.id] = step.val;
+                }
+              });
+            }
+            oxCurrentStep++;
+            renderOxState();
+          }
+        };
+
+        btnReset.onclick = () => {
+          oxCurrentStep = 0;
+          oxAssignedValues = {};
+          renderOxState();
+        };
+
+        renderOxState();
+      }
+
+      function renderOxState() {
+        const comp = oxCompounds[oxCurrentKey];
+        const atomsGroup = document.getElementById('ox-atoms-group');
+        const eqGroup = document.getElementById('ox-equations-group');
+        
+        atomsGroup.innerHTML = '';
+        eqGroup.innerHTML = '';
+
+        // Draw Bonds
+        comp.bonds.forEach(bond => {
+          const fromAtom = comp.atoms.find(a => a.id === bond.from);
+          const toAtom = comp.atoms.find(a => a.id === bond.to);
+          if (bond.double) {
+            // Draw 2 parallel lines
+            const dx = toAtom.x - fromAtom.x;
+            const dy = toAtom.y - fromAtom.y;
+            const len = Math.sqrt(dx*dx + dy*dy);
+            const ox = -dy / len * 3;
+            const oy = dx / len * 3;
+            atomsGroup.innerHTML += `<line x1="${fromAtom.x + ox}" y1="${fromAtom.y + oy}" x2="${toAtom.x + ox}" y2="${toAtom.y + oy}" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>`;
+            atomsGroup.innerHTML += `<line x1="${fromAtom.x - ox}" y1="${fromAtom.y - oy}" x2="${toAtom.x - ox}" y2="${toAtom.y - oy}" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>`;
+          } else {
+            atomsGroup.innerHTML += `<line x1="${fromAtom.x}" y1="${fromAtom.y}" x2="${toAtom.x}" y2="${toAtom.y}" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>`;
+          }
+        });
+
+        // Draw Atoms
+        comp.atoms.forEach(atom => {
+          const isAssigned = oxAssignedValues[atom.id] !== undefined;
+          const color = isAssigned ? 'var(--accent)' : '#2f8f6f';
+          const r = 14;
+          
+          atomsGroup.innerHTML += `
+            <circle cx="${atom.x}" cy="${atom.y}" r="${r}" fill="#0b0f0a" stroke="${color}" stroke-width="2" />
+            <text x="${atom.x}" y="${atom.y}" class="chemical-text" font-size="12" fill="#fff" font-weight="bold">${atom.label}</text>
+          `;
+
+          if (isAssigned) {
+            // Render oxidation state above atom
+            atomsGroup.innerHTML += `
+              <text x="${atom.x}" y="${atom.y - 20}" class="chemical-text" font-size="11" fill="var(--accent)" font-weight="bold">${oxAssignedValues[atom.id]}</text>
+            `;
+          }
+        });
+
+        // Update Text Cards
+        const stepTitle = document.getElementById('ox-step-title');
+        const stepDesc = document.getElementById('ox-step-desc');
+        const btnStep = document.getElementById('btn-ox-step');
+
+        if (oxCurrentStep === 0) {
+          stepTitle.innerText = `Chất: ${comp.formula}`;
+          stepDesc.innerText = `Chọn "Giải thích bước tiếp" để gán các số oxi hóa cho phân tử ${comp.formula} theo quy tắc.`;
+          btnStep.disabled = false;
+        } else {
+          const currentStepInfo = comp.steps[oxCurrentStep - 1];
+          stepTitle.innerText = `Bước ${oxCurrentStep}: ${currentStepInfo.title}`;
+          stepDesc.innerText = currentStepInfo.desc;
+          if (oxCurrentStep >= comp.steps.length) {
+            btnStep.disabled = true;
+          } else {
+            btnStep.disabled = false;
+          }
+        }
+      }
+
+
+      // ══════════════════════════════════════
+      // DEMO 2: Zn + CuSO4 ELECTRON TRANSFER
+      // ══════════════════════════════════════
+      let transferAnimState = 'idle'; // 'idle', 'running', 'completed'
+      let transferAnimFrame = null;
+      let transferStartTime = 0;
+      let eTransferList = [];
+      let ionsData = [
+        { id: 'cu-ion-1', x: 100, y: 95, color: '#1f77b4', element: 'Cu²⁺', opacity: 1, active: true },
+        { id: 'cu-ion-2', x: 220, y: 110, color: '#1f77b4', element: 'Cu²⁺', opacity: 1, active: true },
+        { id: 'cu-ion-3', x: 120, y: 140, color: '#1f77b4', element: 'Cu²⁺', opacity: 1, active: true }
+      ];
+      let znIons = [];
+
+      function initTransferDemo() {
+        const btnStart = document.getElementById('btn-transfer-start');
+        const btnReset = document.getElementById('btn-transfer-reset');
+
+        btnStart.onclick = () => {
+          if (transferAnimState === 'idle') {
+            startTransferAnimation();
+          }
+        };
+
+        btnReset.onclick = () => {
+          resetTransferDemo();
+        };
+
+        resetTransferDemo();
+      }
+
+      function resetTransferDemo() {
+        transferAnimState = 'idle';
+        if (transferAnimFrame) {
+          cancelAnimationFrame(transferAnimFrame);
+          transferAnimFrame = null;
+        }
+        eTransferList = [];
+        znIons = [];
+        ionsData = [
+          { id: 'cu-ion-1', x: 100, y: 95, color: '#1f77b4', element: 'Cu²⁺', opacity: 1, active: true },
+          { id: 'cu-ion-2', x: 220, y: 110, color: '#1f77b4', element: 'Cu²⁺', opacity: 1, active: true },
+          { id: 'cu-ion-3', x: 120, y: 140, color: '#1f77b4', element: 'Cu²⁺', opacity: 1, active: true }
+        ];
+
+        document.getElementById('copper-coat-layer').setAttribute('opacity', '0');
+        document.getElementById('react-solution-fill').setAttribute('fill', 'rgba(41, 128, 185, 0.35)');
+        document.getElementById('flying-electrons').innerHTML = '';
+        
+        document.getElementById('btn-transfer-start').disabled = false;
+        document.getElementById('btn-transfer-reset').disabled = true;
+
+        document.getElementById('transfer-title').innerText = "Trạng thái: Trước phản ứng";
+        document.getElementById('transfer-desc').innerText = 'Thanh kẽm nhúng vào dung dịch CuSO₄ có màu xanh của ion Cu²⁺. Nhấn "Bắt đầu phản ứng" để xem sự dịch chuyển electron.';
+        renderTransferIons();
+      }
+
+      function renderTransferIons() {
+        const ionsGroup = document.getElementById('transfer-ions-group');
+        // Maintain static SO42- and draw dynamic Cu2+ / Zn2+
+        let html = `
+          <!-- SO42- Spectator ions -->
+          <g transform="translate(195, 85)">
+            <circle r="10" fill="#8c564b" opacity="0.4" stroke="#fff" stroke-width="0.5"/>
+            <text class="chemical-text" font-size="7" opacity="0.8">SO₄²⁻</text>
+          </g>
+          <g transform="translate(105, 125)">
+            <circle r="10" fill="#8c564b" opacity="0.4" stroke="#fff" stroke-width="0.5"/>
+            <text class="chemical-text" font-size="7" opacity="0.8">SO₄²⁻</text>
+          </g>
+          <g transform="translate(210, 145)">
+            <circle r="10" fill="#8c564b" opacity="0.4" stroke="#fff" stroke-width="0.5"/>
+            <text class="chemical-text" font-size="7" opacity="0.8">SO₄²⁻</text>
+          </g>
+        `;
+
+        // Draw Cu2+ ions
+        ionsData.forEach(ion => {
+          if (ion.opacity > 0) {
+            html += `
+              <g id="${ion.id}" transform="translate(${ion.x}, ${ion.y})" opacity="${ion.opacity}">
+                <circle r="9" fill="${ion.color}" stroke="#fff" stroke-width="1"/>
+                <text class="chemical-text" font-size="8">${ion.element}</text>
+              </g>
+            `;
+          }
+        });
+
+        // Draw Zn2+ ions
+        znIons.forEach(ion => {
+          html += `
+            <g transform="translate(${ion.x}, ${ion.y})">
+              <circle r="9" fill="none" stroke="#fff" stroke-width="1.5"/>
+              <text class="chemical-text" font-size="8" fill="#fff">Zn²⁺</text>
+            </g>
+          `;
+        });
+
+        ionsGroup.innerHTML = html;
+      }
+
+      function startTransferAnimation() {
+        transferAnimState = 'running';
+        document.getElementById('btn-transfer-start').disabled = true;
+        document.getElementById('btn-transfer-reset').disabled = false;
+        
+        document.getElementById('transfer-title').innerText = "Trạng thái: Đang xảy ra phản ứng...";
+        document.getElementById('transfer-desc').innerText = "Kẽm nhường electron: Các phân tử Zn nhường 2 electron chuyển thành ion Zn²⁺ đi vào dung dịch. Các ion Cu²⁺ tiến gần thanh kẽm để nhận electron.";
+
+        transferStartTime = performance.now();
+        
+        // Spawn electrons schedules
+        // Target 1: cu-ion-1 (x=100, y=95) at t=1.0s
+        // Target 2: cu-ion-3 (x=120, y=140) at t=3.0s
+        // Target 3: cu-ion-2 (x=220, y=110) at t=5.0s
+        eTransferList = [
+          { targetId: 'cu-ion-1', startT: 1000, endT: 2200, progress: 0, electrons: [] },
+          { targetId: 'cu-ion-3', startT: 3000, endT: 4200, progress: 0, electrons: [] },
+          { targetId: 'cu-ion-2', startT: 5000, endT: 6200, progress: 0, electrons: [] }
+        ];
+
+        tickTransferAnimation();
+      }
+
+      function tickTransferAnimation() {
+        if (transferAnimState !== 'running') return;
+        const now = performance.now();
+        const elapsed = now - transferStartTime;
+
+        const eGroup = document.getElementById('flying-electrons');
+        eGroup.innerHTML = '';
+
+        let solutionBlueFactor = 1.0; // Fades to 0
+
+        eTransferList.forEach(transfer => {
+          if (elapsed >= transfer.startT) {
+            const target = ionsData.find(i => i.id === transfer.targetId);
+            if (!target) return;
+
+            const totalDuration = transfer.endT - transfer.startT;
+            const t = Math.min(1, (elapsed - transfer.startT) / totalDuration);
+            
+            // Generate electrons if not done
+            if (transfer.electrons.length === 0) {
+              // start position: on the zinc plate, near the target's height
+              transfer.electrons = [
+                { startX: 145, startY: target.y - 10, curX: 145, curY: target.y - 10 },
+                { startX: 145, startY: target.y + 10, curX: 145, curY: target.y + 10 }
+              ];
+              // Zinc dissolves Zn2+
+              znIons.push({ x: 140, y: target.y, targetX: 140 - 25, targetY: target.y + (Math.random()*20-10) });
+            }
+
+            // Move electrons
+            transfer.electrons.forEach((el, index) => {
+              // Ease in out
+              const factor = t;
+              el.curX = el.startX + (target.x - el.startX) * factor;
+              el.curY = el.startY + (target.y - el.startY) * factor;
+              
+              // Draw electron
+              eGroup.innerHTML += `
+                <circle cx="${el.curX}" cy="${el.curY}" r="3.5" class="electron-dot" />
+              `;
+            });
+
+            // Target attraction motion
+            if (t > 0.5) {
+              const diffX = 153 - target.x; // moves to Zn plate edge (x=144)
+              const pull = (t - 0.5) * 2;
+              target.x = target.x + (140 - target.x) * (t - 0.5) * 0.1;
+            }
+
+            // Electron arrival
+            if (t >= 1.0 && target.active) {
+              target.active = false;
+              target.element = 'Cu';
+              target.color = '#d35400'; // Copper color
+              // Deposit on the plate
+              target.x = 143; // Attach to left edge of plate
+              // Increment copper coating layer opacity
+              const activeCount = ionsData.filter(i => !i.active).length;
+              document.getElementById('copper-coat-layer').setAttribute('opacity', (activeCount / 3) * 0.8);
+            }
+          }
+        });
+
+        // Move Zn2+ ions out
+        znIons.forEach(zn => {
+          if (zn.x > zn.targetX) zn.x -= 0.3;
+          if (Math.abs(zn.y - zn.targetY) > 0.5) {
+            zn.y += (zn.targetY - zn.y) * 0.02;
+          }
+        });
+
+        // Color solution fading
+        const inactiveCount = ionsData.filter(i => !i.active).length;
+        const blueOpacity = 0.35 - (inactiveCount / 3) * 0.3;
+        document.getElementById('react-solution-fill').setAttribute('fill', `rgba(41, 128, 185, ${blueOpacity})`);
+
+        renderTransferIons();
+
+        if (elapsed < 7000) {
+          transferAnimFrame = requestAnimationFrame(tickTransferAnimation);
+        } else {
+          // Completed
+          transferAnimState = 'completed';
+          document.getElementById('transfer-title').innerText = "Trạng thái: Phản ứng kết thúc!";
+          document.getElementById('transfer-desc').innerText = "Cu²⁺ đã nhận hết e và hóa thành Cu kim loại bám ngoài thanh kẽm. Dung dịch CuSO₄ mất màu xanh đặc trưng. Quá trình oxi hóa - khử kết thúc hoàn hảo.";
+          eGroup.innerHTML = '';
+        }
+      }
+
+
+      // ══════════════════════════════════════
+      // DEMO 3: STEP-BY-STEP REDOX BALANCER
+      // ══════════════════════════════════════
+      let balCurrentStep = 1;
+      const totalBalSteps = 4;
+
+      function initBalancerDemo() {
+        const btnPrev = document.getElementById('btn-bal-prev');
+        const btnNext = document.getElementById('btn-bal-next');
+        const btnReset = document.getElementById('btn-bal-reset');
+
+        btnPrev.onclick = () => {
+          if (balCurrentStep > 1) {
+            balCurrentStep--;
+            renderBalancer();
+          }
+        };
+
+        btnNext.onclick = () => {
+          if (balCurrentStep < totalBalSteps) {
+            balCurrentStep++;
+            renderBalancer();
+          }
+        };
+
+        btnReset.onclick = () => {
+          balCurrentStep = 1;
+          renderBalancer();
+        };
+
+        renderBalancer();
+      }
+
+      function renderBalancer() {
+        const eqLine = document.getElementById('bal-eq-line');
+        const halfReactions = document.getElementById('bal-half-reactions');
+        const stepTitle = document.getElementById('bal-step-title');
+        const stepDesc = document.getElementById('bal-step-desc');
+        
+        const btnPrev = document.getElementById('btn-bal-prev');
+        const btnNext = document.getElementById('btn-bal-next');
+
+        btnPrev.disabled = balCurrentStep === 1;
+        btnNext.disabled = balCurrentStep === totalBalSteps;
+
+        if (balCurrentStep === 1) {
+          stepTitle.innerText = "Bước 1: Xác định số oxi hóa";
+          stepDesc.innerText = "Tìm các nguyên tố có số oxi hóa thay đổi trước và sau phản ứng. Cu chuyển từ 0 lên +2. N trong gốc axit chuyển từ +5 xuống +2 trong NO.";
+          
+          eqLine.innerHTML = `
+            <span style="display:inline-block; text-align:center;"><div style="color:var(--accent); font-size:12px;">0</div>Cu</span> + 
+            H<span style="display:inline-block; text-align:center;"><div style="color:var(--accent); font-size:12px;">+5</div>N</span>O₃ → 
+            <span style="display:inline-block; text-align:center;"><div style="color:var(--accent); font-size:12px;">+2</div>Cu</span>(NO₃)₂ + 
+            <span style="display:inline-block; text-align:center;"><div style="color:var(--accent); font-size:12px;">+2</div>N</span>O + H₂O
+          `;
+
+          halfReactions.innerHTML = `
+            <div style="margin-bottom:8px; font-weight:bold; color:var(--accent);">Nhận xét:</div>
+            • Cu là <span class="key">Chất khử</span> (số oxi hóa tăng từ 0 lên +2)<br>
+            • HNO₃ (N) là <span class="key">Chất oxi hóa</span> (số oxi hóa giảm từ +5 xuống +2)
+          `;
+        } 
+        else if (balCurrentStep === 2) {
+          stepTitle.innerText = "Bước 2: Viết các quá trình";
+          stepDesc.innerText = "Viết chi tiết quá trình nhường electron (quá trình oxi hóa) và quá trình nhận electron (quá trình khử).";
+          
+          eqLine.innerHTML = `
+            Cu⁰ + HN⁺⁵O₃ → Cu⁺²(NO₃)₂ + N⁺²O + H₂O
+          `;
+
+          halfReactions.innerHTML = `
+            <div style="display:flex; justify-content:space-around; margin-top:5px;">
+              <div>
+                <div style="font-weight:bold; color:var(--accent); margin-bottom:5px;">Quá trình Oxi hóa</div>
+                <div style="font-size:18px;">Cu⁰ → Cu⁺² + 2e</div>
+              </div>
+              <div style="border-left:1px dashed rgba(255,255,255,0.1); padding-left:20px;">
+                <div style="font-weight:bold; color:#2f8f6f; margin-bottom:5px;">Quá trình Khử</div>
+                <div style="font-size:18px;">N⁺⁵ + 3e → N⁺²</div>
+              </div>
+            </div>
+          `;
+        } 
+        else if (balCurrentStep === 3) {
+          stepTitle.innerText = "Bước 3: Tìm hệ số thăng bằng";
+          stepDesc.innerText = "Tìm hệ số sao cho tổng số electron cho bằng tổng số electron nhận. Nhân chéo: Nhân quá trình Cu với 3, nhân quá trình N với 2. Tổng số electron trao đổi là 6.";
+
+          eqLine.innerHTML = `
+            Cu⁰ + HN⁺⁵O₃ → Cu⁺²(NO₃)₂ + N⁺²O + H₂O
+          `;
+
+          halfReactions.innerHTML = `
+            <div style="display:flex; flex-direction:column; gap:8px; align-items:center; margin-top:5px;">
+              <div style="font-size:17px; background:rgba(255,255,255,0.03); padding:6px 12px; border-radius:4px;">
+                <span style="color:var(--accent); font-weight:bold;">3 ×</span> ( Cu⁰ → Cu⁺² + 2e )
+              </div>
+              <div style="font-size:17px; background:rgba(255,255,255,0.03); padding:6px 12px; border-radius:4px;">
+                <span style="color:#2f8f6f; font-weight:bold;">2 ×</span> ( N⁺⁵ + 3e → N⁺² )
+              </div>
+              <div style="font-size:13px; color:#aaa; margin-top:2px;">
+                Tổng e nhường (3 · 2e = 6e) = Tổng e nhận (2 · 3e = 6e)
+              </div>
+            </div>
+          `;
+        }
+        else if (balCurrentStep === 4) {
+          stepTitle.innerText = "Bước 4: Cân bằng phương trình";
+          stepDesc.innerText = "Đưa hệ số 3 vào Cu và Cu(NO₃)₂. Đưa hệ số 2 vào NO. Đếm tổng số N ở vế phải (3 · 2 = 6 trong muối + 2 trong NO = 8) để điền hệ số 8 vào HNO₃. Cuối cùng, cân bằng H bằng hệ số 4 ở H₂O. Kiểm tra oxi: 24 = 24!";
+
+          eqLine.innerHTML = `
+            <span style="color:var(--accent); font-size:24px; font-weight:bold;">3</span>Cu + 
+            <span style="color:var(--accent); font-size:24px; font-weight:bold;">8</span>HNO₃ → 
+            <span style="color:var(--accent); font-size:24px; font-weight:bold;">3</span>Cu(NO₃)₂ + 
+            <span style="color:var(--accent); font-size:24px; font-weight:bold;">2</span>NO + 
+            <span style="color:var(--accent); font-size:24px; font-weight:bold;">4</span>H₂O
+          `;
+
+          halfReactions.innerHTML = `
+            <div style="color:#2f8f6f; font-weight:bold; margin-bottom:8px; font-size:15px; text-align:center;">
+              ✓ PHƯƠNG TRÌNH ĐÃ CÂN BẰNG HOÀN TOÀN!
+            </div>
+            <div style="font-size:12.5px; color:#aaa; text-align:center; line-height:1.4;">
+              Kiểm tra nguyên tố: 3 Cu | 8 H | 8 N | 24 O ở cả 2 vế.<br>
+              Phương pháp thăng bằng electron đã giải quyết dễ dàng!
+            </div>
+          `;
+        }
+      }
+
+
+      // ══════════════════════════════════════
+      // DEMO 4: DANIELL GALVANIC CELL
+      // ══════════════════════════════════════
+      let daniellState = 'open'; // 'open', 'closed'
+      let daniellLoop = null;
+      let daniellTime = 0;
+      let cellElectrons = [];
+      let cellBridgeIons = [];
+      let cellBeakerIons = [];
+
+      function initDaniellDemo() {
+        const btnToggle = document.getElementById('btn-daniell-toggle');
+        
+        btnToggle.onclick = () => {
+          if (daniellState === 'open') {
+            daniellState = 'closed';
+            btnToggle.innerText = "Mở công tắc";
+            document.getElementById('daniell-title').innerText = "Pin: Mạch kín (Đang chạy)";
+            document.getElementById('daniell-desc').innerText = "Electron giải phóng từ Anode (Zn) chạy qua dây dẫn tới Cathode (Cu), thắp sáng bóng đèn! Cầu muối giải phóng ion K⁺ sang ngăn Cu và Cl⁻ sang ngăn Zn để giữ cân bằng điện tích.";
+            document.getElementById('daniell-bulb-glow').setAttribute('opacity', '1');
+            document.getElementById('daniell-bulb-filament').setAttribute('stroke', '#ffb300');
+            startDaniellLoop();
+          } else {
+            daniellState = 'open';
+            btnToggle.innerText = "Đóng công tắc";
+            document.getElementById('daniell-title').innerText = "Pin: Mạch hở";
+            document.getElementById('daniell-desc').innerText = "Mạch đang mở, electron không di chuyển. Nhấn \"Đóng công tắc\" để tạo mạch khép kín, electron sẽ chạy từ cực âm Zn sang cực dương Cu làm bóng đèn phát sáng.";
+            document.getElementById('daniell-bulb-glow').setAttribute('opacity', '0');
+            document.getElementById('daniell-bulb-filament').setAttribute('stroke', '#555');
+            stopDaniellLoop();
+          }
+        };
+
+        resetDaniellDemo();
+      }
+
+      function resetDaniellDemo() {
+        daniellState = 'open';
+        document.getElementById('btn-daniell-toggle').innerText = "Đóng công tắc";
+        document.getElementById('daniell-title').innerText = "Pin: Mạch hở";
+        document.getElementById('daniell-desc').innerText = "Mạch đang mở, electron không di chuyển. Nhấn \"Đóng công tắc\" để tạo mạch khép kín, electron sẽ chạy từ cực âm Zn sang cực dương Cu làm bóng đèn phát sáng.";
+        document.getElementById('daniell-bulb-glow').setAttribute('opacity', '0');
+        document.getElementById('daniell-bulb-filament').setAttribute('stroke', '#555');
+        
+        cellElectrons = [];
+        cellBridgeIons = [];
+        cellBeakerIons = [];
+
+        // Static ions initially
+        cellBeakerIons = [
+          { x: 50, y: 110, type: 'zn', scale: 1 },
+          { x: 105, y: 130, type: 'zn', scale: 1 },
+          { x: 205, y: 110, type: 'cu', scale: 1 },
+          { x: 265, y: 135, type: 'cu', scale: 1 }
+        ];
+
+        drawDaniellParticles();
+      }
+
+      function startDaniellLoop() {
+        daniellTime = 0;
+        tickDaniell();
+      }
+
+      function stopDaniellLoop() {
+        if (daniellLoop) {
+          cancelAnimationFrame(daniellLoop);
+          daniellLoop = null;
+        }
+        drawDaniellParticles();
+      }
+
+      function tickDaniell() {
+        if (daniellState !== 'closed') return;
+        daniellTime++;
+
+        // 1. Electron Flow along wire path
+        // Zn electrode is at x=63, y=55. Path goes: (63,55) -> (63,30) -> (160,30) -> (257,30) -> (257,55).
+        if (daniellTime % 15 === 0) {
+          cellElectrons.push({ d: 0 }); // distance along wire path
+        }
+
+        // Update electrons along path
+        cellElectrons.forEach(e => {
+          e.d += 1.5;
+        });
+        // Remove arrived electrons
+        cellElectrons = cellElectrons.filter(e => e.d < 100);
+
+        // 2. Salt Bridge Ions Flow
+        // Salt bridge path center line goes from: Left (100, 110) to Right (220, 110).
+        // Cl- (green) flows Left (towards ZnSO4 beaker).
+        // K+ (blue) flows Right (towards CuSO4 beaker).
+        if (daniellTime % 25 === 0) {
+          cellBridgeIons.push({ d: 50, type: 'cl' }); // starts in middle
+          cellBridgeIons.push({ d: 50, type: 'k' });
+        }
+
+        cellBridgeIons.forEach(ion => {
+          if (ion.type === 'cl') {
+            ion.d -= 0.6; // move left
+          } else {
+            ion.d += 0.6; // move right
+          }
+        });
+        // Remove ions that left the bridge
+        cellBridgeIons = cellBridgeIons.filter(ion => ion.d > 0 && ion.d < 100);
+
+        // 3. Beaker ions animations
+        // Zn2+ ions peeling off Zn plate (63, 100) and moving into solution
+        if (daniellTime % 70 === 0) {
+          cellBeakerIons.push({ x: 72, y: 100, type: 'zn_new', vx: 0.4, vy: Math.random()*0.4 - 0.2, age: 0 });
+        }
+
+        // Cu2+ ions migrating to Cu plate (249, 100)
+        cellBeakerIons.forEach(ion => {
+          if (ion.type === 'cu') {
+            // pull to cathode plate (x=249)
+            const dx = 240 - ion.x;
+            const dy = 100 - ion.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist > 1) {
+              ion.x += dx / dist * 0.25;
+              ion.y += dy / dist * 0.25;
+            } else {
+              // Arrived! Disappear and regenerate
+              ion.x = 190 + Math.random()*60;
+              ion.y = 100 + Math.random()*50;
+            }
+          }
+          if (ion.type === 'zn_new') {
+            ion.x += ion.vx;
+            ion.y += ion.vy;
+            ion.age++;
+          }
+        });
+
+        // Clean up old zn_new ions
+        cellBeakerIons = cellBeakerIons.filter(ion => ion.type !== 'zn_new' || ion.age < 150);
+
+        drawDaniellParticles();
+
+        daniellLoop = requestAnimationFrame(tickDaniell);
+      }
+
+      function drawDaniellParticles() {
+        const bridgeGroup = document.getElementById('bridge-ions-group');
+        const beakerGroup = document.getElementById('beaker-ions-group');
+        const wireGroup = document.getElementById('wire-electrons-group');
+
+        bridgeGroup.innerHTML = '';
+        beakerGroup.innerHTML = '';
+        wireGroup.innerHTML = '';
+
+        // 1. Draw Electrons along wire
+        cellElectrons.forEach(e => {
+          // Calculate coordinate based on distance % [0, 100]
+          // Total length = 25 (up) + 194 (horiz) + 25 (down) = 244px
+          // Let's divide paths:
+          // Path 1: (63, 55) to (63, 30). len = 25.
+          // Path 2: (63, 30) to (257, 30). len = 194.
+          // Path 3: (257, 30) to (257, 55). len = 25.
+          let x = 63, y = 55;
+          const dpx = e.d * 2.44; // convert to pixels
+
+          if (dpx < 25) {
+            x = 63;
+            y = 55 - dpx;
+          } else if (dpx < 219) {
+            x = 63 + (dpx - 25);
+            y = 30;
+          } else {
+            x = 257;
+            y = 30 + (dpx - 219);
+          }
+
+          wireGroup.innerHTML += `<circle cx="${x}" cy="${y}" r="2.5" class="electron-dot" />`;
+        });
+
+        // 2. Draw Bridge Ions
+        // Bridge centerline curve:
+        // Left down tube: (100, 110) to (100, 75). L=35.
+        // Left arc: center (115, 75). radius 15. L=23.5.
+        // Center straight: (115, 60) to (205, 60). L=90.
+        // Right arc: center (205, 75). radius 15. L=23.5.
+        // Right down tube: (220, 75) to (220, 110). L=35.
+        // Total bridge path len = ~207px.
+        cellBridgeIons.forEach(ion => {
+          const dpx = (ion.d / 100) * 207;
+          let x = 160, y = 60;
+          
+          if (dpx < 35) {
+            x = 100;
+            y = 110 - dpx;
+          } else if (dpx < 58.5) {
+            // Arc 1 (100,75) to (115,60)
+            const angle = Math.PI - ((dpx - 35) / 23.5) * (Math.PI/2);
+            x = 115 + Math.cos(angle)*15;
+            y = 75 - Math.sin(angle)*15;
+          } else if (dpx < 148.5) {
+            x = 115 + (dpx - 58.5);
+            y = 60;
+          } else if (dpx < 172) {
+            // Arc 2 (205,60) to (220,75)
+            const angle = (Math.PI/2) - ((dpx - 148.5) / 23.5) * (Math.PI/2);
+            x = 205 + Math.cos(angle)*15;
+            y = 75 - Math.sin(angle)*15;
+          } else {
+            x = 220;
+            y = 75 + (dpx - 172);
+          }
+
+          const fill = ion.type === 'cl' ? '#2ecc71' : '#ff7675';
+          const symbol = ion.type === 'cl' ? 'Cl⁻' : 'K⁺';
+          bridgeGroup.innerHTML += `
+            <circle cx="${x}" cy="${y}" r="5.5" fill="${fill}" stroke="#fff" stroke-width="0.5" />
+            <text x="${x}" y="${y}" class="chemical-text" font-size="5" fill="#fff">${symbol}</text>
+          `;
+        });
+
+        // 3. Draw Beaker Ions
+        cellBeakerIons.forEach(ion => {
+          let fill = '#fff', stroke = '#bbb', text = 'Zn²⁺', r = 7, fontColor = '#222';
+          if (ion.type === 'zn' || ion.type === 'zn_new') {
+            fill = 'none';
+            stroke = '#cbd7c2';
+            text = 'Zn²⁺';
+            fontColor = '#fff';
+            r = 8;
+          } else if (ion.type === 'cu') {
+            fill = '#1f77b4';
+            stroke = '#fff';
+            text = 'Cu²⁺';
+            fontColor = '#fff';
+            r = 8;
+          }
+
+          beakerGroup.innerHTML += `
+            <g transform="translate(${ion.x}, ${ion.y})">
+              <circle r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.5" />
+              <text class="chemical-text" font-size="7" fill="${fontColor}">${text}</text>
+            </g>
+          `;
+        });
+      }
+
+      // Initialize defaults
+      setTimeout(() => {
+        initOxStateDemo();
+      }, 100);
+
+    })();
+  </script>
+</body>
+</html>

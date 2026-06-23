@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hóa học hữu cơ · Chương 21 — C₂H₂ Axetilen (Split Notebook)</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    /* ══════════════════════════════════════
+       SPLIT NOTEBOOK & LAB BENCH SYSTEM
+    ══════════════════════════════════════ */
+    @import url('https://fonts.googleapis.com/css2?family=Itim&family=Pacifico&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:        #F5F0E0;
+      --paper-dark:   #EDE5CC;
+      --ink:          #1A1208;
+      --ink-mid:      #3D2F18;
+      --ink-light:    #6B5535;
+      --red-margin:   #E05050;
+      --blue-line:    rgba(100, 140, 210, 0.30);
+      --accent:       #10B981; /* Mint Green Accent */
+      --accent-deep:  #059669;
+      --accent-red:   #EF4444;
+      --accent-blue:  #3B82F6;
+      --highlight-y:  rgba(255, 218, 50, 0.50);
+      --highlight-p:  rgba(16, 185, 129, 0.15);
+      --line-h:       30px;
+      --font-base:    15px;
+      --font-h2:      24px;
+      --font-h3:      16px;
+      --font-sub:     12px;
+      --ruled-top-offset: calc(var(--line-h) * 22 / 30);
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #112F24; /* Dark Forest Green for Organic Chem */
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #1B4D3E 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #0A1F18 0%, transparent 50%),
+        repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+      color: var(--ink);
+      font-family: 'Itim', cursive;
+    }
+    ::selection { background: var(--highlight-p); color: var(--ink); }
+
+    .back-link {
+      position: absolute; top: 24px; left: 96px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--paper); color: var(--accent-deep);
+      border: 1.5px solid rgba(26,18,8,0.25);
+      font-family: 'Itim', cursive; font-size: 14px; font-weight: 700;
+      text-decoration: none; box-shadow: 2px 3px 7px rgba(0,0,0,0.15);
+      transform: rotate(0.8deg); transition: transform 0.1s;
+    }
+    .back-link:hover { transform: rotate(0deg); border-color: var(--accent); }
+
+    /* ══════════════════════════════════════
+       SPLIT LAYOUT CONTAINER
+     ══════════════════════════════════════ */
+    .scrolly-container {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Left Side - School Notebook */
+    .notebook-panel {
+      width: 50%;
+      position: relative;
+      background-color: var(--paper);
+      box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+      z-index: 5;
+    }
+
+    /* Ruled paper background classes */
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(90deg, transparent calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 73 / 30), transparent calc(var(--line-h) * 73 / 30)),
+        repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
+      background-attachment: local;
+      background-position: 0 0, 0 var(--ruled-top-offset);
+    }
+
+    .hero {
+      padding: calc(3 * var(--line-h)) calc(var(--line-h) * 40 / 30) calc(var(--line-h) * 30 / 30) calc(3.2 * var(--line-h));
+      border-bottom: 2px solid rgba(26,18,8,0.12);
+      position: relative; overflow: hidden;
+      scroll-snap-align: start;
+    }
+    .hero::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #7A6548 0%, #7A6548 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+
+    .notebook-title {
+      font-family: 'Pacifico', cursive;
+      font-size: clamp(28px, 4vw, 44px);
+      color: var(--accent-deep);
+      line-height: 1.2; margin-bottom: 5px;
+      text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
+    }
+    .subtitle {
+      font-size: clamp(13px, 1.5vw, 16px);
+      color: var(--ink-light);
+      margin-bottom: 20px;
+      font-style: italic; border-bottom: 1.5px dashed rgba(26,18,8,0.15);
+      padding-bottom: 10px;
+    }
+    .intro {
+      font-size: var(--font-base);
+      line-height: 1.7; color: var(--ink-mid);
+    }
+
+    .card {
+      padding: calc(2 * var(--line-h)) calc(var(--line-h) * 40 / 30) calc(2 * var(--line-h)) calc(3.2 * var(--line-h));
+      border-bottom: 2px solid rgba(26,18,8,0.08);
+      scroll-snap-align: start;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    .card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #7A6548 0%, #7A6548 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+
+    .card h2 {
+      font-family: 'Pacifico', cursive;
+      font-size: var(--font-h2);
+      color: var(--ink); margin-bottom: 18px;
+      line-height: 1.3;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 6px; display: inline-block;
+    }
+    .card p {
+      font-size: var(--font-base);
+      line-height: 1.7; color: var(--ink-mid);
+      margin-bottom: 15px; text-align: justify;
+    }
+    .card .key {
+      background: var(--highlight-p);
+      padding: 1px 5px; border-radius: 3px;
+      font-weight: bold; border-bottom: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .formula-box {
+      background: var(--paper-dark);
+      border-left: 4px solid var(--accent);
+      padding: 12px 16px; margin: 15px 0;
+      font-size: var(--font-base); line-height: 1.6;
+      border-radius: 0 6px 6px 0;
+      box-shadow: inset 1px 1px 3px rgba(0,0,0,0.05);
+    }
+
+    /* Right Side - Chalkboard Lab Bench */
+    .lab-panel {
+      width: 50%;
+      position: relative;
+      background: #0B1914; /* Chalkboard Greenish Black */
+      border-left: 8px double #1E2D27;
+      display: flex;
+      flex-direction: column;
+    }
+    .lab-sticky-wrapper {
+      position: sticky; top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 24px; box-sizing: border-box;
+      overflow: hidden;
+    }
+    .blackboard-title {
+      font-family: 'Itim', cursive;
+      font-size: 14px; color: #84cc16; /* Chalky green-yellow */
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 12px; border-bottom: 1px dashed rgba(132, 204, 22, 0.3);
+      padding-bottom: 6px; display: flex; align-items: center; gap: 8px;
+    }
+    .blackboard-title::before {
+      content: ''; display: inline-block; width: 8px; height: 8px;
+      border-radius: 50%; background: #84cc16;
+      box-shadow: 0 0 8px #84cc16;
+    }
+
+    .demo-panel {
+      display: none;
+      flex-direction: column;
+      flex: 1; min-height: 0;
+    }
+    .demo-panel.active { display: flex; }
+
+    .glass-bench {
+      flex: 1; background: rgba(15, 23, 42, 0.4);
+      border: 2px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px; position: relative;
+      margin-bottom: 16px; overflow: hidden;
+      display: flex; flex-direction: column;
+      box-shadow: inset 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .glass-bench canvas {
+      width: 100%; height: 100%; display: block;
+      cursor: crosshair;
+    }
+
+    .control-box {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; padding: 14px;
+      display: flex; flex-direction: column; gap: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .control-box span {
+      font-size: 13px; color: #9ca3af;
+      line-height: 1.4;
+    }
+    .btn-action {
+      font-family: 'Itim', cursive;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 6px;
+      padding: 10px 18px; font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 3px 6px rgba(16, 185, 129, 0.3);
+    }
+    .btn-action:hover {
+      background: var(--accent-deep);
+      transform: translateY(-1px);
+      box-shadow: 0 5px 12px rgba(16, 185, 129, 0.4);
+    }
+    .btn-action:active { transform: translateY(1px); }
+    .btn-action:disabled {
+      background: #4b5563 !important;
+      cursor: not-allowed;
+      box-shadow: none !important;
+      transform: none !important;
+      opacity: 0.6;
+    }
+
+    .slider-container {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .slider-row {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .slider-row label {
+      font-size: 13px; color: #fff; min-width: 80px;
+    }
+    .slider-row input[type=range] {
+      flex: 1; accent-color: var(--accent); cursor: pointer;
+    }
+    .slider-row span.val {
+      font-size: 13px; color: #84cc16; font-weight: bold; min-width: 35px; text-align: right;
+    }
+
+    /* Active section highlight in notebook */
+    .active-section {
+      background-color: #FAF6ED !important;
+      box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.04);
+    }
+
+    /* Mobile Relocation Placeholders */
+    .mobile-demo-placeholder {
+      display: none;
+      width: 100%;
+      margin: 15px 0;
+    }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE LAYOUT (<= 920px)
+     ══════════════════════════════════════ */
+    @media (max-width: 920px) {
+      .scrolly-container { flex-direction: column; }
+      .notebook-panel { width: 100%; box-shadow: none; z-index: 1; }
+      .lab-panel { display: none; }
+      
+      .mobile-demo-placeholder {
+        display: flex;
+        flex-direction: column;
+      }
+      .mobile-demo-placeholder .demo-panel {
+        display: flex !important;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      .mobile-demo-placeholder .glass-bench {
+        height: 250px;
+      }
+
+      .back-link {
+        position: static;
+        margin: 20px 0 0 24px;
+        display: inline-flex;
+      }
+      .hero {
+        padding: calc(1 * var(--line-h)) calc(var(--line-h) * 20 / 30) calc(var(--line-h) * 20 / 30) calc(1.5 * var(--line-h));
+      }
+      .card {
+        padding: calc(1 * var(--line-h)) calc(var(--line-h) * 20 / 30) calc(1 * var(--line-h)) calc(1.5 * var(--line-h));
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BACK TO MAIN MENU -->
+  <a href="Muc Luc.html" class="back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    Vở ghi mục lục
+  </a>
+
+  <div class="scrolly-container">
+    
+    <!-- CỘT TRÁI: VỞ GHI LÝ THUYẾT (NOTEBOOK) -->
+    <div class="notebook-panel">
+      
+      <!-- HERO ENTRY -->
+      <div class="hero active-section" data-demo="0">
+        <h1 class="notebook-title">Chương 21 — C₂H₂ Axetilen</h1>
+        <p class="subtitle">Ankin đơn giản nhất · Hàn cắt kim loại · Nguyên liệu tổng hợp hữu cơ</p>
+        <div class="intro">
+          Chúng ta tiếp tục mở rộng kiến thức về hydrocarbon không no với thành viên đại diện cho dòng ankin (alkyne): <strong>Axetilen ($C_2H_2$)</strong>.
+          <br><br>
+          Với sự xuất hiện của liên kết ba cực kỳ đặc biệt, axetilen sở hữu hoạt tính hóa học vô cùng mạnh mẽ, tạo ra ngọn lửa cháy ở nhiệt độ cao kỷ lục và tham gia vào nhiều phản ứng thế kim loại đặc trưng, làm nền tảng cho ngành hóa chất polyme nhân tạo ngày nay.
+        </div>
+      </div>
+
+      <!-- SECTION 1 -->
+      <div class="card ruled-page" id="sec-notebook-1" data-demo="1">
+        <h2>1. Cấu tạo phân tử Axetilen</h2>
+        <p>
+          Trong phân tử Axetilen (<span class="key">$C_2H_2$</span>), hai nguyên tử Carbon ở trạng thái <span class="key">lai hóa $sp$</span>.
+        </p>
+        <p>
+          Chúng liên kết với nhau bằng <strong>liên kết ba ($C\equiv C$)</strong>. Liên kết ba này bao gồm:
+          <br>• <strong>1 liên kết $\sigma$ (sigma)</strong>: rất bền vững, nằm dọc theo trục liên kết.
+          <br>• <strong>2 liên kết $\pi$ (pi)</strong>: kém bền vững hơn, nằm bao quanh trục liên kết. 2 liên kết $\pi$ này rất dễ bị phá vỡ trong các phản ứng cộng.
+        </p>
+        <div class="formula-box">
+          • Công thức cấu tạo: <strong>$H-C\equiv C-H$</strong>
+          <br>• Hình học phân tử: <strong>Thẳng hàng (Linear)</strong>. Cả 4 nguyên tử nằm trên một đường thẳng.
+          <br>• Góc liên kết $H-C-C$: bằng đúng <strong>$180^\circ$</strong>.
+        </div>
+        <p>
+          Hãy kéo chuột xoay mô hình 3D ở bên phải để kiểm chứng hình học thẳng hàng và liên kết ba uốn cong của phân tử axetilen nhé!
+        </p>
+
+        <!-- Placeholder for Mobile Relocation -->
+        <div class="mobile-demo-placeholder" id="mob-demo-1"></div>
+      </div>
+
+      <!-- SECTION 2 -->
+      <div class="card ruled-page" id="sec-notebook-2" data-demo="2">
+        <h2>2. Điều chế trong phòng thí nghiệm</h2>
+        <p>
+          Trong phòng thí nghiệm, khí axetilen được điều chế bằng cách cho nước tác dụng trực tiếp với <strong>Canxi cacbua ($CaC_2$)</strong> - hay còn gọi là đất đèn.
+        </p>
+        <p>
+          Phản ứng xảy ra cực kỳ mãnh liệt ngay ở nhiệt độ thường, sinh ra khí axetilen thoát ra và tạo dung dịch Canxi hydroxit vôi đục:
+        </p>
+        <div class="formula-box">
+          $$CaC_2 + 2H_2O \rightarrow C_2H_2\uparrow + Ca(OH)_2$$
+        </div>
+        <p>
+          Trong thực tế cuộc sống, người ta thường ứng dụng đất đèn để sinh khí $C_2H_2$ giúp thúc quả xanh chín nhanh (giống etilen) hoặc làm nhiên liệu đốt.
+        </p>
+        <p>
+          Ở bảng thực hành bên cạnh, hãy thử bấm nút nhỏ giọt nước xuống cục đất đèn để quan sát phản ứng sinh khí sủi bọt và vẩn đục vôi nhé!
+        </p>
+
+        <!-- Placeholder for Mobile Relocation -->
+        <div class="mobile-demo-placeholder" id="mob-demo-2"></div>
+      </div>
+
+      <!-- SECTION 3 -->
+      <div class="card ruled-page" id="sec-notebook-3" data-demo="3">
+        <h2>3. Phản ứng cháy &amp; Đèn xì Oxy-Axetilen</h2>
+        <p>
+          Khi đốt trong không khí, axetilen cháy tỏa nhiều nhiệt và sinh ra nhiều muội than do thiếu oxy. Tuy nhiên, nếu được trộn với oxy tinh chất theo tỷ lệ chuẩn, axetilen cháy hoàn toàn và tỏa nhiệt lượng cực lớn:
+        </p>
+        <div class="formula-box">
+          $$2C_2H_2 + 5O_2 \xrightarrow{t^\circ} 4CO_2 + 2H_2O + Q$$
+        </div>
+        <p>
+          Nhiệt độ ngọn lửa đèn xì Oxy-Axetilen có thể đạt tới <strong>$3000^\circ C$</strong>. Mức nhiệt độ cực cao này đủ sức làm tan chảy ngay lập tức các tấm thép dày, nên được ứng dụng rộng rãi để hàn và cắt kim loại.
+        </p>
+        <p>
+          Hãy thử kéo thanh trượt điều chỉnh tỷ lệ khí Oxy và khí Axetilen ở Demo bên phải, rồi bấm đánh lửa để xem ngọn lửa biến đổi và làm nóng chảy thép thế nào!
+        </p>
+
+        <!-- Placeholder for Mobile Relocation -->
+        <div class="mobile-demo-placeholder" id="mob-demo-3"></div>
+      </div>
+
+      <!-- SECTION 4 -->
+      <div class="card ruled-page" id="sec-notebook-4" data-demo="4">
+        <h2>4. Phản ứng thế bạc (Silver Substitution Test)</h2>
+        <p>
+          Do nguyên tử Hydrogen liên kết trực tiếp với nguyên tử Carbon mang liên kết ba ($C\equiv C$) có tính linh động cao hơn alkane và alkene, ankin đầu mạch (alk-1-yne) có phản ứng đặc trưng: <strong>phản ứng thế ion kim loại</strong>.
+        </p>
+        <p>
+          Khi sục khí axetilen vào dung dịch Bạc nitrat trong Amoniac (<span class="key">$AgNO_3/NH_3$</span>), hai nguyên tử hydro linh động bị thế bởi hai nguyên tử bạc, tạo ra kết tủa màu vàng nhạt là Bạc axetilua ($Ag-C\equiv C-Ag$):
+        </p>
+        <div class="formula-box">
+          $$HC\equiv CH + 2AgNO_3 + 2NH_3 \rightarrow AgC\equiv CAg\downarrow + 2NH_4NO_3$$
+        </div>
+        <p>
+          > [!WARNING]
+          > Kết tủa bạc axetilua màu vàng này khi phơi khô rất dễ bị nổ khi có va chạm mạnh hoặc tia lửa!
+        </p>
+        <p>
+          Hãy tiến hành sục khí axetilen vào ống nghiệm $AgNO_3/NH_3$ ở bàn thí nghiệm bên phải để quan sát sự hình thành kết tủa vàng nhạt đặc trưng này.
+        </p>
+
+        <!-- Placeholder for Mobile Relocation -->
+        <div class="mobile-demo-placeholder" id="mob-demo-4"></div>
+      </div>
+
+      <!-- SECTION 5 -->
+      <div class="card ruled-page" id="sec-notebook-5" data-demo="5">
+        <h2>5. Đánh giá kiến thức Axetilen</h2>
+        <p>
+          Bạn đã ghi nhớ cấu trúc thẳng hàng ($180^\circ$), liên kết ba C≡C bền vững cùng phản ứng điều chế từ đất đèn, ngọn lửa đèn xì cực nóng và phản ứng thế bạc đặc trưng của Axetilen?
+        </p>
+        <p>
+          Hãy thử thách trả lời nhanh 5 câu hỏi kiểm tra trắc nghiệm ở bảng bên cạnh để củng cố toàn bộ kiến thức về bài học này nhé!
+        </p>
+
+        <!-- Placeholder for Mobile Relocation -->
+        <div class="mobile-demo-placeholder" id="mob-demo-5"></div>
+      </div>
+
+    </div>
+
+    <!-- CỘT PHẢI: BÀN THÍ NGHIỆM ĐỒNG BỘ (LAB BENCH) -->
+    <div class="lab-panel">
+      <div class="lab-sticky-wrapper">
+        <div class="blackboard-title">Organic Chemistry Lab · Acetylene Suite</div>
+
+        <!-- DEMO 0: INTRO BENCH -->
+        <div class="demo-panel active" id="demo-0">
+          <div class="glass-bench" style="justify-content: center; align-items: center; text-align: center;">
+            <div style="font-size: 60px; margin-bottom: 20px;">🔥</div>
+            <div style="font-family: 'Pacifico', cursive; font-size: 26px; color: #10B981; margin-bottom: 12px;">Thí nghiệm Axetilen</div>
+            <p style="color: #9ca3af; font-size: 14px; max-width: 320px; line-height: 1.5; padding: 0 10px;">
+              Chào mừng bạn đến với khu vực mô phỏng phòng thí nghiệm Axetilen. Cuộn vở ghi lý thuyết bên trái để tự động mở các bài thực hành trực quan tương ứng!
+            </p>
+          </div>
+        </div>
+
+        <!-- DEMO 1: 3D ACETYLENE MODEL -->
+        <div class="demo-panel" id="demo-1">
+          <div class="glass-bench">
+            <canvas id="canvas-acetylene-3d"></canvas>
+          </div>
+          <div class="control-box">
+            <span><strong>Mô hình 3D Axetilen ($C_2H_2$):</strong> Thẳng hàng (180°), Carbon lai hóa sp. Liên kết ba C≡C nối ở giữa. Kéo chuột hoặc ngón tay để xoay 3D.</span>
+          </div>
+        </div>
+
+        <!-- DEMO 2: CAC2 GENERATOR -->
+        <div class="demo-panel" id="demo-2">
+          <div class="glass-bench">
+            <canvas id="canvas-cac2-generator"></canvas>
+            <span id="cac2-desc" style="position: absolute; bottom: 12px; left: 16px; right: 16px; color: #a7f3d0; font-size: 12.5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); line-height: 1.4;">Nhấn nhỏ giọt nước xuống đất đèn để sinh khí axetilen.</span>
+          </div>
+          <div class="control-box" style="flex-direction: row; gap: 10px;">
+            <button class="btn-action" id="btn-drop-water" style="flex: 1;">Nhỏ nước vào đất đèn 💧</button>
+            <button class="btn-action" id="btn-reset-generator" style="background:#4b5563; box-shadow: none;" title="Khôi phục">🔄</button>
+          </div>
+        </div>
+
+        <!-- DEMO 3: OXY-ACETYLENE FLAME -->
+        <div class="demo-panel" id="demo-3">
+          <div class="glass-bench">
+            <canvas id="canvas-oxy-acetylene"></canvas>
+            <span id="flame-status-desc" style="position: absolute; top: 12px; left: 16px; right: 16px; color: #fef08a; font-size: 13px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">Đèn xì chưa được kích hoạt. Hãy chỉnh tỷ lệ rồi bấm Đánh lửa.</span>
+          </div>
+          <div class="control-box">
+            <div class="slider-container">
+              <div class="slider-row">
+                <label>Lưu lượng O₂:</label>
+                <input type="range" id="slider-o2" min="0" max="50" value="25" />
+                <span class="val" id="val-o2">2.5</span>
+              </div>
+              <div class="slider-row">
+                <label>Lưu lượng C₂H₂:</label>
+                <input type="range" id="slider-c2h2" min="5" max="30" value="10" />
+                <span class="val" id="val-c2h2">1.0</span>
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn-action" id="btn-ignite-flame" style="flex: 2; background: #f97316; box-shadow: 0 3px 6px rgba(249, 115, 22, 0.3);">Đánh lửa 🔥</button>
+              <button class="btn-action" id="btn-reset-flame" style="flex: 1; background: #4b5563; box-shadow: none;">Tắt đèn 🔄</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO 4: SILVER SUBSTITUTION -->
+        <div class="demo-panel" id="demo-4">
+          <div class="glass-bench">
+            <canvas id="canvas-silver-test"></canvas>
+            <span id="silver-desc" style="position: absolute; bottom: 12px; left: 16px; right: 16px; color: #fde047; font-size: 12.5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); line-height: 1.4;">Nhấn sục khí axetilen để thế bạc.</span>
+          </div>
+          <div class="control-box" style="flex-direction: row; gap: 10px;">
+            <button class="btn-action" id="btn-suc-silver" style="flex: 1; background: #f59e0b; box-shadow: 0 3px 6px rgba(245, 158, 11, 0.3);">Sục khí Axetilen 🫧</button>
+            <button class="btn-action" id="btn-reset-silver" style="background:#4b5563; box-shadow: none;" title="Làm mới">🔄</button>
+          </div>
+        </div>
+
+        <!-- DEMO 5: QUIZ INTERACTIVE -->
+        <div class="demo-panel" id="demo-5">
+          <div class="glass-bench" style="padding: 16px; box-sizing: border-box;">
+            <!-- Quiz Card -->
+            <div id="quiz-card" style="flex:1; display:flex; flex-direction:column; justify-content:center; padding:10px 0; box-sizing:border-box;">
+              <div style="width:100%; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; margin-bottom:12px; overflow:hidden;">
+                <div id="quiz-progress-bar" style="width:20%; height:100%; background:var(--accent); transition:width 0.3s;"></div>
+              </div>
+              <div id="quiz-question" style="font-size:14px; line-height:1.5; color:#fff; margin-bottom:12px; font-weight:bold;">
+                Câu hỏi đang tải...
+              </div>
+              <div id="quiz-options-container" style="display:flex; flex-direction:column; gap:8px;">
+                <!-- Options will be dynamically rendered here -->
+              </div>
+              <div id="quiz-explanation" style="display:none; margin-top:12px; padding:10px; background:rgba(16,185,129,0.08); border-left:3px solid var(--accent); border-radius:4px; font-size:12px; line-height:1.4; color:#a7f3d0;">
+                Giải thích đáp án...
+              </div>
+            </div>
+            <!-- Quiz Result View -->
+            <div id="quiz-result" style="display:none; flex:1; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+              <h3 id="result-headline" style="font-family: 'Pacifico'; font-size: 24px; color: #a7f3d0;">Kết quả kiểm tra</h3>
+              <div style="font-size: 36px; font-weight: bold; color: var(--accent);" id="score-num">0/5</div>
+              <p id="result-desc" style="font-size: 14px; line-height: 1.5; color: #9ca3af; max-width: 300px;">
+                Hãy ôn tập lại để cải thiện điểm số nhé!
+              </p>
+              <button class="btn-action" id="quiz-restart-btn" style="margin-top: 15px;">Làm lại thử thách 🔄</button>
+            </div>
+          </div>
+          <div class="control-box" style="padding: 10px 14px;">
+            <button class="btn-action" id="quiz-next-btn" style="margin-top: 0;" disabled>Câu tiếp theo</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    (function() {
+      // Setup scrolling trigger and matching demo panel
+      const notebookSections = document.querySelectorAll('.hero, #sec-notebook-1, #sec-notebook-2, #sec-notebook-3, #sec-notebook-4, #sec-notebook-5');
+      const demoPanels = document.querySelectorAll('.demo-panel');
+
+      let activeDemoNum = '0';
+      const activeLoops = {
+        acetylene3d: null,
+        cac2: null,
+        flame: null,
+        silver: null
+      };
+
+      function clearAllActiveLoops() {
+        for (const k in activeLoops) {
+          if (activeLoops[k]) {
+            cancelAnimationFrame(activeLoops[k]);
+            activeLoops[k] = null;
+          }
+        }
+      }
+
+      function setActiveSection(secElement) {
+        notebookSections.forEach(s => s.classList.remove('active-section'));
+        secElement.classList.add('active-section');
+
+        const demoNum = secElement.getAttribute('data-demo');
+        if (demoNum === activeDemoNum) return;
+
+        activeDemoNum = demoNum;
+
+        // Toggle active panel on the right
+        demoPanels.forEach(panel => {
+          panel.classList.remove('active');
+          if (panel.id === `demo-${demoNum}`) {
+            panel.classList.add('active');
+          }
+        });
+
+        // Kill active canvas animation loops
+        clearAllActiveLoops();
+
+        // Trigger canvas resize and init on active panel
+        if (activeDemoNum === '1') {
+          initAcetylene3dDemo();
+        } else if (activeDemoNum === '2') {
+          initCac2Demo();
+        } else if (activeDemoNum === '3') {
+          initOxyAcetyleneDemo();
+        } else if (activeDemoNum === '4') {
+          initSilverDemo();
+        } else if (activeDemoNum === '5') {
+          initQuizDemo();
+        }
+      }
+
+      function observeSection(sec) {
+        const scroller = window.innerWidth > 920 ? document.querySelector('.notebook-panel') : null;
+        const options = {
+          root: scroller || null,
+          threshold: 0.2
+        };
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveSection(entry.target);
+            }
+          });
+        }, options);
+        io.observe(sec);
+        return io;
+      }
+
+      let sectionObservers = [];
+
+      function initObservers() {
+        sectionObservers.forEach(io => io.disconnect());
+        sectionObservers = [];
+        notebookSections.forEach(sec => {
+          sectionObservers.push(observeSection(sec));
+        });
+      }
+
+      initObservers();
+
+      /* ══════════════════════════════════════
+         MOBILE RESPONSIVE ELEMENT RELOCATION
+      ══════════════════════════════════════ */
+      let wasDesktop = window.innerWidth > 920;
+
+      const relocateDemos = () => {
+        const isMobile = window.innerWidth <= 920;
+        const isDesktop = !isMobile;
+        if (isDesktop !== wasDesktop) {
+          wasDesktop = isDesktop;
+          initObservers();
+        }
+
+        for (let i = 0; i <= 5; i++) {
+          const demo = document.getElementById(`demo-${i}`);
+          if (!demo) continue;
+          if (isMobile) {
+            const mobContainer = document.getElementById(`mob-demo-${i}`);
+            if (mobContainer && demo.parentElement !== mobContainer) {
+              mobContainer.appendChild(demo);
+            }
+          } else {
+            const deskContainer = document.querySelector('.lab-sticky-wrapper');
+            if (deskContainer && demo.parentElement !== deskContainer) {
+              deskContainer.appendChild(demo);
+            }
+          }
+        }
+
+        // Re-trigger layout sizes on active canvas
+        if (activeDemoNum === '1') initAcetylene3dDemo();
+        else if (activeDemoNum === '2') initCac2Demo();
+        else if (activeDemoNum === '3') initOxyAcetyleneDemo();
+        else if (activeDemoNum === '4') initSilverDemo();
+        else if (activeDemoNum === '5') initQuizDemo();
+      };
+
+      window.addEventListener('resize', relocateDemos);
+      window.addEventListener('load', relocateDemos);
+      setTimeout(relocateDemos, 100);
+
+      /* ══════════════════════════════════════
+         DEMO 1: 3D ACETYLENE LINEAR MODEL
+      ══════════════════════════════════════ */
+      function initAcetylene3dDemo() {
+        const canvas = document.getElementById('canvas-acetylene-3d');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight || 180;
+
+        let rotX = 0.5;
+        let rotY = 0.5;
+        let isDragging = false;
+        let lastMouseX = 0, lastMouseY = 0;
+
+        // C2H2 linear structure
+        // Carbon-Carbon distance = 60, Carbon-Hydrogen distance = 45
+        const rawVertices = [
+          { id: 'C1', name: 'C', x: -30, y: 0, z: 0, rad: 22, color: '#1f2937' },
+          { id: 'C2', name: 'C', x: 30, y: 0, z: 0, rad: 22, color: '#1f2937' },
+          { id: 'H1', name: 'H', x: -75, y: 0, z: 0, rad: 13, color: '#f3f4f6' },
+          { id: 'H2', name: 'H', x: 75, y: 0, z: 0, rad: 13, color: '#f3f4f6' }
+        ];
+
+        // Controls for triple bond curves
+        const rawControls = [
+          { id: 'cp1', x: 0, y: 16, z: 0 },
+          { id: 'cp2', x: 0, y: -16, z: 0 }
+        ];
+
+        function rotateX(p, angle) {
+          const cos = Math.cos(angle), sin = Math.sin(angle);
+          return { ...p, x: p.x, y: p.y * cos - p.z * sin, z: p.y * sin + p.z * cos };
+        }
+
+        function rotateY(p, angle) {
+          const cos = Math.cos(angle), sin = Math.sin(angle);
+          return { ...p, x: p.x * cos + p.z * sin, y: p.y, z: -p.x * sin + p.z * cos };
+        }
+
+        const onStartDrag = (clientX, clientY) => {
+          isDragging = true;
+          lastMouseX = clientX;
+          lastMouseY = clientY;
+        };
+
+        const onMoveDrag = (clientX, clientY) => {
+          if (!isDragging) return;
+          const dx = clientX - lastMouseX;
+          const dy = clientY - lastMouseY;
+          rotY += dx * 0.008;
+          rotX += dy * 0.008;
+          lastMouseX = clientX;
+          lastMouseY = clientY;
+        };
+
+        const onEndDrag = () => { isDragging = false; };
+
+        canvas.onmousedown = (e) => { e.preventDefault(); onStartDrag(e.clientX, e.clientY); };
+        canvas.ontouchstart = (e) => { onStartDrag(e.touches[0].clientX, e.touches[0].clientY); };
+
+        window.addEventListener('mousemove', (e) => onMoveDrag(e.clientX, e.clientY));
+        window.addEventListener('touchmove', (e) => onMoveDrag(e.touches[0].clientX, e.touches[0].clientY));
+        window.addEventListener('mouseup', onEndDrag);
+        window.addEventListener('touchend', onEndDrag);
+
+        function drawSphere(cx, cy, r, colorBase) {
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          const grad = ctx.createRadialGradient(cx - r*0.3, cy - r*0.3, r*0.1, cx, cy, r);
+          if (colorBase === '#1f2937') {
+            grad.addColorStop(0, '#52525b');
+            grad.addColorStop(0.7, '#18181b');
+            grad.addColorStop(1, '#09090b');
+          } else {
+            grad.addColorStop(0, '#ffffff');
+            grad.addColorStop(0.8, '#e4e4e7');
+            grad.addColorStop(1, '#a1a1aa');
+          }
+          ctx.fillStyle = grad;
+          ctx.fill();
+          ctx.strokeStyle = colorBase === '#1f2937' ? '#3f3f46' : '#71717a';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+
+        function loop() {
+          if (!isDragging) {
+            rotY += 0.005;
+          }
+
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          const centerX = canvas.width / 2;
+          const centerY = canvas.height / 2;
+
+          // Rotate vertices
+          const rotated = rawVertices.map(v => {
+            let p1 = rotateY(v, rotY);
+            let p2 = rotateX(p1, rotX);
+            return {
+              ...v,
+              tx: p2.x + centerX,
+              ty: -p2.y + centerY,
+              tz: p2.z
+            };
+          });
+
+          // Rotate control points
+          const rotatedControls = rawControls.map(cp => {
+            let p1 = rotateY(cp, rotY);
+            let p2 = rotateX(p1, rotX);
+            return {
+              ...cp,
+              tx: p2.x + centerX,
+              ty: -p2.y + centerY,
+              tz: p2.z
+            };
+          });
+
+          const c1 = rotated.find(v => v.id === 'C1');
+          const c2 = rotated.find(v => v.id === 'C2');
+
+          const elements = [];
+
+          // Single C-H Bonds
+          const chBonds = [
+            { h: rotated.find(v => v.id === 'H1'), c: c1 },
+            { h: rotated.find(v => v.id === 'H2'), c: c2 }
+          ];
+
+          chBonds.forEach(bond => {
+            elements.push({
+              type: 'bond-ch',
+              z: (bond.h.tz + bond.c.tz) / 2,
+              draw: () => {
+                ctx.beginPath();
+                ctx.moveTo(bond.c.tx, bond.c.ty);
+                ctx.lineTo(bond.h.tx, bond.h.ty);
+                ctx.strokeStyle = '#4b5563';
+                ctx.lineWidth = 5;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(bond.c.tx, bond.c.ty);
+                ctx.lineTo(bond.h.tx, bond.h.ty);
+                ctx.strokeStyle = '#9ca3af';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+              }
+            });
+          });
+
+          // C≡C Triple bond curves and straight middle bond
+          elements.push({
+            type: 'bond-cc-triple',
+            z: (c1.tz + c2.tz) / 2,
+            draw: () => {
+              // 1. Straight center sigma bond
+              ctx.beginPath();
+              ctx.moveTo(c1.tx, c1.ty);
+              ctx.lineTo(c2.tx, c2.ty);
+              ctx.strokeStyle = '#4b5563';
+              ctx.lineWidth = 6;
+              ctx.stroke();
+              
+              ctx.beginPath();
+              ctx.moveTo(c1.tx, c1.ty);
+              ctx.lineTo(c2.tx, c2.ty);
+              ctx.strokeStyle = '#10B981';
+              ctx.lineWidth = 2;
+              ctx.stroke();
+
+              // 2. Two curved pi bonds using control points
+              rotatedControls.forEach(cp => {
+                ctx.beginPath();
+                ctx.moveTo(c1.tx, c1.ty);
+                ctx.quadraticCurveTo(cp.tx, cp.ty, c2.tx, c2.ty);
+                ctx.strokeStyle = '#4b5563';
+                ctx.lineWidth = 6;
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(c1.tx, c1.ty);
+                ctx.quadraticCurveTo(cp.tx, cp.ty, c2.tx, c2.ty);
+                ctx.strokeStyle = '#10B981';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+              });
+            }
+          });
+
+          // Atoms
+          rotated.forEach(at => {
+            elements.push({
+              type: 'atom',
+              z: at.tz,
+              draw: () => drawSphere(at.tx, at.ty, at.rad, at.color)
+            });
+          });
+
+          // Linear overlay indicator
+          elements.push({
+            type: 'angle-overlay',
+            z: 1000,
+            draw: () => {
+              const h1 = rotated.find(v => v.id === 'H1');
+              const h2 = rotated.find(v => v.id === 'H2');
+              
+              ctx.beginPath();
+              ctx.setLineDash([4, 4]);
+              ctx.moveTo(h1.tx, h1.ty - 30);
+              ctx.lineTo(h2.tx, h2.ty - 30);
+              ctx.strokeStyle = '#eab308';
+              ctx.lineWidth = 1.5;
+              ctx.stroke();
+              ctx.setLineDash([]);
+
+              ctx.beginPath();
+              ctx.moveTo(h1.tx, h1.ty - 25);
+              ctx.lineTo(h1.tx, h1.ty - 35);
+              ctx.moveTo(h2.tx, h2.ty - 25);
+              ctx.lineTo(h2.tx, h2.ty - 35);
+              ctx.strokeStyle = '#eab308';
+              ctx.lineWidth = 1.5;
+              ctx.stroke();
+
+              ctx.font = 'bold 12px Itim';
+              ctx.fillStyle = '#eab308';
+              ctx.textAlign = 'center';
+              ctx.fillText('Đường thẳng (180°)', (h1.tx + h2.tx) / 2, h1.ty - 40);
+            }
+          });
+
+          elements.sort((a, b) => a.z - b.z);
+          elements.forEach(el => el.draw());
+
+          activeLoops.acetylene3d = requestAnimationFrame(loop);
+        }
+
+        loop();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 2: CAC2 LAB GENERATOR
+      ══════════════════════════════════════ */
+      function initCac2Demo() {
+        const canvas = document.getElementById('canvas-cac2-generator');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight || 180;
+
+        const btnDrop = document.getElementById('btn-drop-water');
+        const btnReset = document.getElementById('btn-reset-generator');
+        const descText = document.getElementById('cac2-desc');
+
+        let isDropping = false;
+        let droplets = [];
+        let bubbles = [];
+        let precipitateHeight = 0;
+        let soilPieces = [
+          { x: canvas.width * 0.45, y: canvas.height * 0.8, w: 20, h: 14, active: true },
+          { x: canvas.width * 0.52, y: canvas.height * 0.82, w: 24, h: 16, active: true },
+          { x: canvas.width * 0.49, y: canvas.height * 0.78, w: 18, h: 12, active: true }
+        ];
+
+        btnDrop.onclick = () => {
+          isDropping = true;
+          descText.textContent = 'Nước nhỏ xuống phản ứng mạnh với Đất đèn (CaC₂). Khí C₂H₂ thoát ra, tạo vôi đục Ca(OH)₂.';
+          btnDrop.disabled = true;
+        };
+
+        btnReset.onclick = () => {
+          isDropping = false;
+          droplets = [];
+          bubbles = [];
+          precipitateHeight = 0;
+          soilPieces.forEach(p => p.active = true);
+          descText.textContent = 'Đã đặt lại thí nghiệm. Đất đèn (CaC₂) khô và phễu chứa nước sẵn sàng.';
+          btnDrop.disabled = false;
+        };
+
+        function drawFlask(centerX, bottomY) {
+          ctx.beginPath();
+          ctx.arc(centerX, bottomY - 30, 40, -Math.PI * 0.15, Math.PI * 1.15);
+          ctx.lineTo(centerX - 10, bottomY - 90);
+          ctx.lineTo(centerX + 10, bottomY - 90);
+          ctx.closePath();
+          ctx.strokeStyle = '#e5e7eb';
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.rect(centerX - 8, bottomY - 130, 16, 30);
+          ctx.moveTo(centerX, bottomY - 100);
+          ctx.lineTo(centerX, bottomY - 90);
+          ctx.strokeStyle = '#9ca3af';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          ctx.fillStyle = 'rgba(59, 130, 246, 0.4)';
+          ctx.fillRect(centerX - 7, bottomY - 128, 14, 25);
+        }
+
+        function loop() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          ctx.fillStyle = '#060e0c';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          const cX = canvas.width / 2;
+          const bY = canvas.height * 0.85;
+
+          if (precipitateHeight > 2) {
+            ctx.fillStyle = `rgba(229, 231, 235, ${Math.min(0.2 + precipitateHeight * 0.015, 0.6)})`;
+            ctx.beginPath();
+            ctx.arc(cX, bY - 30, 39, Math.PI * 0.1, Math.PI * 0.9);
+            ctx.fill();
+          }
+
+          if (precipitateHeight > 5) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.beginPath();
+            ctx.ellipse(cX, bY - 6, 25, precipitateHeight * 0.4, 0, 0, Math.PI*2);
+            ctx.fill();
+          }
+
+          soilPieces.forEach(p => {
+            if (p.active) {
+              ctx.fillStyle = '#4b5563';
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(p.x + p.w, p.y - 2);
+              ctx.lineTo(p.x + p.w - 5, p.y - p.h);
+              ctx.lineTo(p.x + 4, p.y - p.h + 3);
+              ctx.closePath();
+              ctx.fill();
+              ctx.strokeStyle = '#1f2937';
+              ctx.stroke();
+            }
+          });
+
+          drawFlask(cX, bY);
+
+          ctx.beginPath();
+          ctx.moveTo(cX, bY - 80);
+          ctx.lineTo(cX + 60, bY - 80);
+          ctx.lineTo(cX + 60, bY - 40);
+          ctx.strokeStyle = '#9ca3af';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          if (isDropping && Math.random() < 0.04 && droplets.length < 5) {
+            droplets.push({ x: cX, y: bY - 100, vy: 3 });
+          }
+
+          droplets.forEach((d, idx) => {
+            d.y += d.vy;
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, 3.5, 0, Math.PI*2);
+            ctx.fillStyle = '#60a5fa';
+            ctx.fill();
+
+            if (d.y > bY - 20) {
+              droplets.splice(idx, 1);
+              precipitateHeight = Math.min(precipitateHeight + 0.5, 20);
+
+              for (let i = 0; i < 6; i++) {
+                bubbles.push({
+                  x: cX + (Math.random() * 30 - 15),
+                  y: bY - 10,
+                  vx: Math.random() * 1.5 - 0.75,
+                  vy: -(Math.random() * 2 + 1),
+                  size: Math.random() * 2 + 1.5,
+                  alpha: 1.0
+                });
+              }
+            }
+          });
+
+          bubbles.forEach((b, idx) => {
+            b.x += b.vx;
+            b.y += b.vy;
+            b.alpha -= 0.012;
+
+            if (b.y < bY - 75) {
+              b.x += 2;
+              b.y = bY - 80;
+            }
+
+            if (b.alpha <= 0 || b.x > cX + 65) {
+              bubbles.splice(idx, 1);
+            } else {
+              ctx.beginPath();
+              ctx.arc(b.x, b.y, b.size, 0, Math.PI*2);
+              ctx.fillStyle = `rgba(16, 185, 129, ${b.alpha})`;
+              ctx.fill();
+            }
+          });
+
+          if (precipitateHeight >= 20 && isDropping) {
+            isDropping = false;
+            descText.textContent = 'Phản ứng kết thúc. Đất đèn CaC₂ đã tan hết, tạo kết tủa sữa trắng Ca(OH)₂ lắng đáy.';
+          }
+
+          ctx.font = '10px Itim';
+          ctx.fillStyle = '#9ca3af';
+          ctx.textAlign = 'center';
+          ctx.fillText('Nước (H₂O)', cX, bY - 136);
+          ctx.fillText('Đất đèn (CaC₂)', cX - 45, bY + 12);
+          ctx.fillStyle = '#10B981';
+          ctx.fillText('Khí C₂H₂', cX + 60, bY - 90);
+
+          activeLoops.cac2 = requestAnimationFrame(loop);
+        }
+
+        loop();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 3: OXY-ACETYLENE FLAME
+      ══════════════════════════════════════ */
+      function initOxyAcetyleneDemo() {
+        const canvas = document.getElementById('canvas-oxy-acetylene');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight || 180;
+
+        const sliderO2 = document.getElementById('slider-o2');
+        const sliderC2H2 = document.getElementById('slider-c2h2');
+        const labelO2 = document.getElementById('val-o2');
+        const labelC2H2 = document.getElementById('val-c2h2');
+        const btnIgnite = document.getElementById('btn-ignite-flame');
+        const btnReset = document.getElementById('btn-reset-flame');
+        const descText = document.getElementById('flame-status-desc');
+
+        let isIgnited = false;
+        let metalTemp = 25;
+        let sparkParticles = [];
+        let time = 0;
+
+        sliderO2.oninput = () => { labelO2.textContent = (sliderO2.value / 10).toFixed(1); };
+        sliderC2H2.oninput = () => { labelC2H2.textContent = (sliderC2H2.value / 10).toFixed(1); };
+
+        btnIgnite.onclick = () => {
+          isIgnited = true;
+          btnIgnite.disabled = true;
+        };
+
+        btnReset.onclick = () => {
+          isIgnited = false;
+          metalTemp = 25;
+          sparkParticles = [];
+          btnIgnite.disabled = false;
+          descText.textContent = 'Đèn xì đã tắt. Chỉnh tỷ lệ khí và bấm Đánh lửa.';
+        };
+
+        function loop() {
+          time += 0.1;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          ctx.fillStyle = '#060e0c';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          const o2 = sliderO2.value / 10;
+          const c2h2 = sliderC2H2.value / 10;
+          const ratio = o2 / c2h2;
+
+          const nozzleX = 80;
+          const nozzleY = canvas.height * 0.5;
+
+          const metalX = canvas.width - 50;
+          ctx.fillStyle = '#4b5563';
+          ctx.fillRect(metalX, 20, 20, canvas.height - 40);
+          ctx.strokeStyle = '#374151';
+          ctx.strokeRect(metalX, 20, 20, canvas.height - 40);
+
+          ctx.beginPath();
+          ctx.moveTo(10, nozzleY - 12);
+          ctx.lineTo(nozzleX - 20, nozzleY - 6);
+          ctx.strokeStyle = '#2563eb';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(10, nozzleY + 12);
+          ctx.lineTo(nozzleX - 20, nozzleY + 6);
+          ctx.strokeStyle = '#10B981';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          ctx.fillStyle = '#d97706';
+          ctx.beginPath();
+          ctx.moveTo(nozzleX - 25, nozzleY - 10);
+          ctx.lineTo(nozzleX, nozzleY - 4);
+          ctx.lineTo(nozzleX, nozzleY + 4);
+          ctx.lineTo(nozzleX - 25, nozzleY + 10);
+          ctx.closePath();
+          ctx.fill();
+
+          if (isIgnited) {
+            let flameLength = 80;
+            let flameWidth = 14;
+            let flameColorInner = 'rgba(59, 130, 246, 0.9)';
+            let flameColorOuter = 'rgba(239, 68, 68, 0.4)';
+            let flameName = 'Neutral';
+
+            if (ratio < 0.95) {
+              flameLength = 120 + Math.sin(time) * 5;
+              flameWidth = 22;
+              flameColorInner = 'rgba(245, 158, 11, 0.95)';
+              flameColorOuter = 'rgba(239, 68, 68, 0.6)';
+              metalTemp = Math.min(metalTemp + 2, 1200);
+              flameName = 'Lửa thiếu Oxy (Cacbon hóa) ~1800°C';
+              descText.textContent = `Ngọn lửa vàng nhiều muội than do tỷ lệ O₂ thấp (Tỷ lệ: ${ratio.toFixed(2)}). Không đủ nóng chảy thép.`;
+
+              if (Math.random() < 0.25) {
+                sparkParticles.push({
+                  x: nozzleX + 20,
+                  y: nozzleY + (Math.random() * 10 - 5),
+                  vx: Math.random() * 3 + 1,
+                  vy: Math.random() * 2 - 1,
+                  color: 'rgba(50, 50, 50, 0.8)',
+                  size: Math.random() * 3 + 2,
+                  life: 1.0
+                });
+              }
+            } else if (ratio >= 0.95 && ratio <= 1.3) {
+              flameLength = 95 + Math.sin(time) * 2;
+              flameWidth = 12;
+              flameColorInner = 'rgba(255, 255, 255, 0.95)';
+              flameColorOuter = 'rgba(59, 130, 246, 0.7)';
+              metalTemp = Math.min(metalTemp + 8, 3000);
+              flameName = 'Lửa Trung Hòa (Lý Tưởng) ~3100°C';
+              descText.textContent = `Tỷ lệ O₂/C₂H₂ hoàn hảo (${ratio.toFixed(2)}). Thép đang bị nung đỏ và chảy lỏng cực nhanh!`;
+
+              if (metalTemp > 1800 && Math.random() < 0.6) {
+                sparkParticles.push({
+                  x: metalX - 2,
+                  y: nozzleY + (Math.random() * 12 - 6),
+                  vx: -(Math.random() * 4 + 2),
+                  vy: Math.random() * 4 - 2,
+                  color: '#fbbf24',
+                  size: Math.random() * 2 + 1,
+                  life: 1.0
+                });
+              }
+            } else {
+              flameLength = 65 + Math.sin(time) * 3;
+              flameWidth = 8;
+              flameColorInner = 'rgba(124, 58, 237, 0.9)';
+              flameColorOuter = 'rgba(59, 130, 246, 0.4)';
+              metalTemp = Math.min(metalTemp + 4, 3300);
+              flameName = 'Lửa Oxy Hóa (Thừa O₂) ~3300°C';
+              descText.textContent = `Ngọn lửa ngắn, kêu xè xè (Tỷ lệ: ${ratio.toFixed(2)}). Quá nhiều Oxy khiến kim loại bị cháy xám xịt.`;
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(nozzleX, nozzleY - flameWidth);
+            ctx.quadraticCurveTo(nozzleX + flameLength * 0.5, nozzleY - flameWidth * 1.5, nozzleX + flameLength, nozzleY);
+            ctx.quadraticCurveTo(nozzleX + flameLength * 0.5, nozzleY + flameWidth * 1.5, nozzleX, nozzleY + flameWidth);
+            ctx.closePath();
+            ctx.fillStyle = flameColorOuter;
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(nozzleX, nozzleY - flameWidth * 0.4);
+            ctx.quadraticCurveTo(nozzleX + flameLength * 0.25, nozzleY, nozzleX + flameLength * 0.4, nozzleY);
+            ctx.quadraticCurveTo(nozzleX + flameLength * 0.25, nozzleY, nozzleX, nozzleY + flameWidth * 0.4);
+            ctx.closePath();
+            ctx.fillStyle = flameColorInner;
+            ctx.fill();
+
+            if (nozzleX + flameLength >= metalX) {
+              const heatGrad = ctx.createRadialGradient(metalX, nozzleY, 2, metalX, nozzleY, 20);
+              let heatColor = '#f97316';
+              if (metalTemp > 1000) heatColor = '#ef4444';
+              if (metalTemp > 2000) heatColor = '#f59e0b';
+              if (metalTemp > 2800) heatColor = '#fffbeb';
+              heatGrad.addColorStop(0, heatColor);
+              heatGrad.addColorStop(1, 'rgba(75, 85, 99, 0)');
+              ctx.fillStyle = heatGrad;
+              ctx.beginPath();
+              ctx.arc(metalX, nozzleY, 25, 0, Math.PI*2);
+              ctx.fill();
+            }
+
+            ctx.font = 'bold 12px Itim';
+            ctx.fillStyle = '#fff';
+            ctx.fillText(flameName, 12, 40);
+          }
+
+          for (let i = sparkParticles.length - 1; i >= 0; i--) {
+            const p = sparkParticles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= 0.02;
+
+            if (p.life <= 0) {
+              sparkParticles.splice(i, 1);
+            } else {
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+              ctx.fillStyle = p.color;
+              ctx.fill();
+            }
+          }
+
+          ctx.font = '11px Itim';
+          ctx.fillStyle = '#fff';
+          ctx.textAlign = 'right';
+          ctx.fillText(`Nhiệt độ thép: ${metalTemp}°C`, canvas.width - 12, 35);
+          ctx.fillStyle = '#9ca3af';
+          ctx.fillText(metalTemp > 2800 ? 'ĐANG CHẢY LỎNG 💦' : (metalTemp > 1000 ? 'NÓNG ĐỎ 🔥' : 'Bình thường ❄️'), canvas.width - 12, 50);
+
+          activeLoops.flame = requestAnimationFrame(loop);
+        }
+
+        loop();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 4: SILVER SUBSTITUTION
+      ══════════════════════════════════════ */
+      function initSilverDemo() {
+        const canvas = document.getElementById('canvas-silver-test');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight || 180;
+
+        const btnSuc = document.getElementById('btn-suc-silver');
+        const btnReset = document.getElementById('btn-reset-silver');
+        const descText = document.getElementById('silver-desc');
+
+        let isBubbling = false;
+        let reactionProgress = 0;
+        let bubbleTimer = 0;
+        const bubbles = [];
+        const precipitates = [];
+
+        btnSuc.onclick = () => {
+          isBubbling = !isBubbling;
+          if (isBubbling) {
+            btnSuc.textContent = 'Dừng sục khí ⏹️';
+            descText.textContent = 'Khí axetilen sục qua thế nguyên tử hydro linh động, tạo kết tủa vàng nhạt Bạc axetilua.';
+          } else {
+            btnSuc.textContent = 'Sục khí Axetilen 🫧';
+          }
+        };
+
+        btnReset.onclick = () => {
+          isBubbling = false;
+          reactionProgress = 0;
+          bubbles.length = 0;
+          precipitates.length = 0;
+          btnSuc.textContent = 'Sục khí Axetilen 🫧';
+          descText.textContent = 'Đã đặt lại dung dịch AgNO₃/NH₃ trong suốt ban đầu.';
+          btnSuc.disabled = false;
+        };
+
+        function loop() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          ctx.fillStyle = '#060e0c';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          const tubeLeft = canvas.width / 2;
+          const tubeBottom = canvas.height * 0.85;
+
+          ctx.beginPath();
+          ctx.moveTo(0, tubeBottom - 80);
+          ctx.lineTo(tubeLeft - 5, tubeBottom - 80);
+          ctx.lineTo(tubeLeft - 5, tubeBottom - 20);
+          ctx.strokeStyle = '#9ca3af';
+          ctx.lineWidth = 4;
+          ctx.stroke();
+
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+          ctx.fillRect(tubeLeft - 30, tubeBottom - 100, 60, 110);
+          ctx.strokeStyle = '#e5e7eb';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(tubeLeft - 30, tubeBottom - 100, 60, 110);
+
+          let r = Math.round(59 + reactionProgress * (234 - 59));
+          let g = Math.round(130 + reactionProgress * (179 - 130));
+          let b = Math.round(246 + reactionProgress * (8 - 246));
+          let alpha = 0.08 + reactionProgress * 0.25;
+
+          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+          ctx.fillRect(tubeLeft - 29, tubeBottom - 60, 58, 69);
+
+          if (reactionProgress > 0.05) {
+            const sedimentHeight = reactionProgress * 18;
+            ctx.fillStyle = '#fef08a';
+            ctx.fillRect(tubeLeft - 29, tubeBottom - sedimentHeight + 9, 58, sedimentHeight);
+            ctx.strokeStyle = '#eab308';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(tubeLeft - 29, tubeBottom - sedimentHeight + 9, 58, sedimentHeight);
+          }
+
+          if (isBubbling) {
+            bubbleTimer++;
+            reactionProgress = Math.min(reactionProgress + 0.002, 1);
+
+            if (reactionProgress === 1) {
+              isBubbling = false;
+              btnSuc.textContent = 'Sục khí Axetilen 🫧';
+              btnSuc.disabled = true;
+              descText.textContent = 'Phản ứng kết thúc! Tạo lượng kết tủa vàng nhạt Silver acetylide (Ag-C≡C-Ag) tối đa.';
+            }
+
+            if (bubbleTimer % 8 === 0) {
+              bubbles.push({
+                x: tubeLeft - 5 + (Math.random() * 8 - 4),
+                y: tubeBottom - 20,
+                radius: Math.random() * 2 + 2,
+                speedY: Math.random() * 1.5 + 1.2
+              });
+            }
+
+            if (Math.random() < 0.2) {
+              precipitates.push({
+                x: tubeLeft - 25 + Math.random() * 50,
+                y: tubeBottom - 60,
+                speedY: Math.random() * 0.5 + 0.5,
+                size: Math.random() * 2 + 1.5
+              });
+            }
+          }
+
+          for (let i = bubbles.length - 1; i >= 0; i--) {
+            const bub = bubbles[i];
+            bub.y -= bub.speedY;
+            ctx.beginPath();
+            ctx.arc(bub.x, bub.y, bub.radius, 0, Math.PI*2);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.fill();
+            ctx.stroke();
+
+            if (bub.y < tubeBottom - 60) {
+              bubbles.splice(i, 1);
+            }
+          }
+
+          for (let i = precipitates.length - 1; i >= 0; i--) {
+            const p = precipitates[i];
+            p.y += p.speedY;
+            
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+            ctx.fillStyle = '#fef08a';
+            ctx.fill();
+
+            const sedimentTop = tubeBottom - (reactionProgress * 18);
+            if (p.y >= sedimentTop) {
+              precipitates.splice(i, 1);
+            }
+          }
+
+          ctx.font = '12px Itim';
+          ctx.fillStyle = reactionProgress > 0.7 ? '#eab308' : '#9ca3af';
+          ctx.textAlign = 'center';
+          ctx.fillText(reactionProgress > 0.7 ? 'Kết tủa Ag-C≡C-Ag (Vàng nhạt)' : 'Dung dịch AgNO₃/NH₃', tubeLeft, tubeBottom - 80);
+
+          activeLoops.silver = requestAnimationFrame(loop);
+        }
+
+        loop();
+      }
+
+      /* ══════════════════════════════════════
+         DEMO 5: MULTIPLE CHOICE QUIZ
+      ══════════════════════════════════════ */
+      function initQuizDemo() {
+        const quizQuestions = [
+          {
+            q: "Chất hữu cơ nào sau đây là hydrocarbon đơn giản nhất có chứa liên kết ba C≡C?",
+            options: [
+              "Metan (CH₄)",
+              "Etilen (C₂H₄)",
+              "Axetilen (C₂H₂)",
+              "Benzen (C₆H₆)"
+            ],
+            ans: 2,
+            explain: "Axetilen (C₂H₂) là ankin đơn giản nhất chứa liên kết ba C≡C đầu mạch."
+          },
+          {
+            q: "Cấu trúc hình học phân tử của axetilen C₂H₂ là gì?",
+            options: [
+              "Cấu trúc tứ diện lệch",
+              "Cấu trúc phẳng đồng phẳng",
+              "Cấu trúc thẳng hàng (tuyến tính)",
+              "Cấu trúc hình lập phương"
+            ],
+            ans: 2,
+            explain: "Do các carbon ở trạng thái lai hóa sp nên phân tử axetilen có cấu trúc thẳng hàng, góc liên kết H-C-C đạt 180°."
+          },
+          {
+            q: "Phản ứng điều chế axetilen trong phòng thí nghiệm từ đất đèn (CaC₂) cần thêm tác chất nào?",
+            options: [
+              "Dung dịch Axit Sunfuric",
+              "Nước (H₂O)",
+              "Kim loại Natri",
+              "Dung dịch kiềm đặc NaOH"
+            ],
+            ans: 1,
+            explain: "Đất đèn canxi cacbua phản ứng rất mạnh với nước ở nhiệt độ thường tạo khí C₂H₂ bay lên: CaC₂ + 2H₂O -> C₂H₂ + Ca(OH)₂."
+          },
+          {
+            q: "Hiện tượng xảy ra khi sục khí axetilen vào dung dịch AgNO₃ trong môi trường NH₃ là gì?",
+            options: [
+              "Dung dịch chuyển sang màu xanh lam nhạt",
+              "Xuất hiện kết tủa màu vàng nhạt",
+              "Có khói trắng bốc lên dữ dội",
+              "Dung dịch bị mất màu hoàn toàn, không tạo cặn"
+            ],
+            ans: 1,
+            explain: "Các ankin có liên kết ba đầu mạch phản ứng thế với ion bạc tạo kết tủa vàng nhạt Silver acetylide (AgC≡CAg)."
+          },
+          {
+            q: "Nhiệt độ ngọn lửa đèn xì Oxy-Axetilen khi cháy hoàn toàn có thể đạt tới khoảng bao nhiêu độ C?",
+            options: [
+              "Khoảng 500°C",
+              "Khoảng 1000°C",
+              "Khoảng 2000°C",
+              "Khoảng 3000°C"
+            ],
+            ans: 3,
+            explain: "Phản ứng cháy của khí axetilen tỏa nhiệt lượng cực kì lớn, khi đốt cùng dòng khí Oxy nguyên chất tạo ngọn lửa đạt tới 3000°C dùng để hàn cắt kim loại."
+          }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+        let answerSelected = false;
+
+        const card = document.getElementById('quiz-card');
+        const resultView = document.getElementById('quiz-result');
+        const qStatement = document.getElementById('quiz-question');
+        const optionsContainer = document.getElementById('quiz-options-container');
+        const progressBar = document.getElementById('quiz-progress-bar');
+        const expBox = document.getElementById('quiz-explanation');
+        const btnNext = document.getElementById('quiz-next-btn');
+        const btnRestart = document.getElementById('quiz-restart-btn');
+
+        function loadQuestion(idx) {
+          answerSelected = false;
+          btnNext.disabled = true;
+          expBox.style.display = 'none';
+          
+          const progress = ((idx) / quizQuestions.length) * 100;
+          progressBar.style.width = `${progress}%`;
+
+          const question = quizQuestions[idx];
+          qStatement.textContent = `Câu ${idx + 1}: ${question.q}`;
+          optionsContainer.innerHTML = '';
+
+          question.options.forEach((opt, oIdx) => {
+            const btn = document.createElement('button');
+            btn.style.width = '100%';
+            btn.style.padding = '10px 14px';
+            btn.style.background = 'rgba(255,255,255,0.05)';
+            btn.style.color = '#fff';
+            btn.style.border = '1px solid rgba(255,255,255,0.15)';
+            btn.style.borderRadius = '6px';
+            btn.style.fontFamily = 'Itim';
+            btn.style.fontSize = '13.5px';
+            btn.style.textAlign = 'left';
+            btn.style.cursor = 'pointer';
+            btn.style.transition = 'all 0.2s';
+            
+            btn.onmouseover = () => {
+              if (!answerSelected) btn.style.background = 'rgba(16, 185, 129, 0.1)';
+            };
+            btn.onmouseout = () => {
+              if (!answerSelected) btn.style.background = 'rgba(255,255,255,0.05)';
+            };
+
+            btn.onclick = () => selectAnswer(oIdx, btn);
+            optionsContainer.appendChild(btn);
+            
+            btn.textContent = opt;
+          });
+        }
+
+        function selectAnswer(oIdx, selectedBtn) {
+          if (answerSelected) return;
+          answerSelected = true;
+
+          const question = quizQuestions[currentQ];
+          const buttons = optionsContainer.querySelectorAll('button');
+
+          buttons.forEach((btn, idx) => {
+            btn.style.cursor = 'not-allowed';
+            if (idx === question.ans) {
+              btn.style.background = 'rgba(16, 185, 129, 0.3)';
+              btn.style.borderColor = '#10B981';
+            }
+          });
+
+          if (oIdx === question.ans) {
+            score++;
+            selectedBtn.style.background = 'rgba(16, 185, 129, 0.35)';
+            selectedBtn.style.borderColor = '#10B981';
+          } else {
+            selectedBtn.style.background = 'rgba(239, 68, 68, 0.3)';
+            selectedBtn.style.borderColor = '#EF4444';
+          }
+
+          expBox.textContent = `💡 Giải thích: ${question.explain}`;
+          expBox.style.display = 'block';
+          btnNext.disabled = false;
+        }
+
+        btnNext.onclick = () => {
+          currentQ++;
+          if (currentQ < quizQuestions.length) {
+            loadQuestion(currentQ);
+          } else {
+            progressBar.style.width = '100%';
+            card.style.display = 'none';
+            resultView.style.display = 'flex';
+            btnNext.style.display = 'none';
+
+            document.getElementById('score-num').textContent = `${score}/${quizQuestions.length}`;
+            
+            let headline = 'Cố gắng lên!';
+            let desc = 'Hãy đọc kỹ lại vở lý thuyết bên trái và làm lại bài kiểm tra nhé.';
+            
+            if (score === 5) {
+              headline = 'Xuất sắc! 🎉';
+              desc = 'Bạn đã nắm vững hoàn toàn kiến thức về cấu trúc và tính chất hóa học của Axetilen!';
+            } else if (score >= 3) {
+              headline = 'Khá tốt! 👍';
+              desc = 'Bạn đã hiểu cấu trúc cơ bản của Axetilen. Ôn tập thêm phản ứng thế bạc để đạt điểm tối đa.';
+            }
+
+            document.getElementById('result-headline').textContent = headline;
+            document.getElementById('result-desc').textContent = desc;
+          }
+        };
+
+        btnRestart.onclick = () => {
+          currentQ = 0;
+          score = 0;
+          card.style.display = 'flex';
+          resultView.style.display = 'none';
+          btnNext.style.display = 'block';
+          loadQuestion(0);
+        };
+
+        loadQuestion(0);
+      }
+
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chương: Các pha và tổ chức tế vi của Thép</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Itim&family=Pacifico&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ══════════════════════════════════════
+       SPLIT NOTEBOOK & LAB BENCH SYSTEM
+       ══════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:        #FBF4E4;
+      --paper-dark:   #F2E7CE;
+      --ink:          #2A2520;
+      --ink-mid:      #4D4439;
+      --ink-light:    #8A7E6C;
+      --red-margin:   #C73C2E;
+      --blue-line:    rgba(111, 184, 209, 0.25);
+      --accent:       #D9633B;       /* Terracotta */
+      --accent-blue:  #1F6A52;       /* Jade green */
+      --highlight-y:  rgba(242, 181, 68, 0.40);
+      --highlight-g:  rgba(47, 143, 111, 0.25);
+      --line-h:       30px;
+      --font-base:    15px;
+      --font-h2:      24px;
+      --font-h3:      16px;
+      --font-sub:     12px;
+      --ruled-top-offset: calc(var(--line-h) * 22 / 30);
+    }
+
+    @media (min-width: 921px) {
+      :root {
+        --line-h:       clamp(30px, 1.25vw + 18.5px, 42px);
+        --font-base:    clamp(15px, 0.6vw + 9.5px, 21px);
+        --font-h2:      clamp(24px, 1vw + 14.8px, 34px);
+        --font-h3:      clamp(16px, 0.7vw + 9.5px, 23px);
+        --font-sub:     clamp(12px, 0.5vw + 7.4px, 17px);
+      }
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #2a3439;
+      background-image:
+        radial-gradient(ellipse at 30% 20%, #35444b 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 80%, #1e2528 0%, transparent 55%),
+        repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+      color: var(--ink);
+      font-family: 'Itim', sans-serif;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--highlight-y); color: var(--ink); }
+
+    .scrolly-container {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Left Side - School Notebook */
+    .notebook-panel {
+      width: 50%;
+      position: relative;
+      background-color: var(--paper);
+      box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+      z-index: 5;
+    }
+
+    .ruled-page {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(90deg, transparent calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 71 / 30), var(--red-margin) calc(var(--line-h) * 73 / 30), transparent calc(var(--line-h) * 73 / 30)),
+        repeating-linear-gradient(180deg, transparent 0px, transparent calc(var(--line-h) - 1px), var(--blue-line) calc(var(--line-h) - 1px), var(--blue-line) var(--line-h));
+      background-attachment: local;
+      background-position: 0 0, 0 var(--ruled-top-offset);
+    }
+
+    .hero {
+      padding: calc(3 * var(--line-h)) calc(var(--line-h) * 40 / 30) calc(var(--line-h) * 40 / 30) calc(3.2 * var(--line-h));
+      border-bottom: 2px solid rgba(42,37,32,0.12);
+      position: relative; overflow: hidden;
+      scroll-snap-align: start;
+    }
+    .hero::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #2a3439 0%, #2a3439 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+    .crumb { font-size: var(--font-sub); letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: var(--line-h); line-height: var(--line-h); }
+    .crumb a { color: var(--accent); text-decoration: none; }
+    .crumb a:hover { text-decoration: underline; }
+    .title { font-family: 'Pacifico', cursive; font-size: clamp(30px, 4vw, 55px); line-height: 60px; color: var(--ink); margin-bottom: 30px; font-weight: 700; }
+    .title-stroke { width: clamp(140px, 30vw, 300px); height: 3px; background: var(--accent); border-radius: 2px; margin-top: calc(-0.5 * var(--line-h)); margin-bottom: calc(0.4 * var(--line-h)); }
+    .subtitle { font-family: 'Itim', cursive; font-size: var(--font-sub); letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-blue); margin-bottom: var(--line-h); line-height: var(--line-h); }
+    .intro { max-width: 800px; font-size: var(--font-base); line-height: var(--line-h); color: var(--ink-mid); }
+
+    .card {
+      padding: calc(3 * var(--line-h)) calc(1.2 * var(--line-h)) calc(3 * var(--line-h)) calc(3.2 * var(--line-h));
+      border-top: 1px solid rgba(42,37,32,0.08);
+      position: relative; overflow: hidden;
+      min-height: 100vh;
+      box-sizing: border-box;
+      scroll-snap-align: start;
+      transition: background-color 0.3s;
+    }
+    .card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+      background-color: rgba(0,0,0,0.04);
+      background-image: radial-gradient(circle 10px at 18px 50%, #2a3439 0%, #2a3439 55%, transparent 56%);
+      background-size: 36px 80px; background-repeat: repeat-y; background-position: 0 20px;
+    }
+
+    .card h2 {
+      font-size: var(--font-h2);
+      line-height: var(--line-h);
+      margin-bottom: var(--line-h);
+      font-weight: 600;
+      color: var(--accent-blue);
+    }
+    .card p {
+      font-size: var(--font-base);
+      line-height: var(--line-h);
+      margin-bottom: calc(var(--line-h) / 2);
+      color: var(--ink-mid);
+    }
+    .card ul {
+      margin-left: 20px;
+      margin-bottom: calc(var(--line-h) / 2);
+    }
+    .card li {
+      font-size: var(--font-base);
+      line-height: var(--line-h);
+      color: var(--ink-mid);
+    }
+
+    /* Right Side - Chalkboard Lab Bench */
+    .lab-panel {
+      width: 50%;
+      background: #0d1113;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(13, 22, 26, 0.6) 0%, #080c0d 100%),
+        repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.01) 40px, rgba(255,255,255,0.01) 41px);
+      position: fixed;
+      right: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1;
+      box-shadow: inset 5px 0 20px rgba(0,0,0,0.6);
+    }
+
+    .lab-sticky-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Desktop Snapping Rules */
+    @media (min-width: 921px) {
+      .hero {
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+      .scrolly-container {
+        height: 100vh;
+        overflow: hidden;
+      }
+      .notebook-panel {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scrollbar-width: none;
+      }
+      .notebook-panel::-webkit-scrollbar {
+        display: none;
+      }
+      .lab-panel {
+        position: relative;
+        right: auto;
+        top: auto;
+        height: 100vh;
+      }
+      .card > *:not(.mobile-demo-placeholder) {
+        opacity: 0.2;
+        transition: opacity 0.5s ease;
+      }
+      .card.active-section > *:not(.mobile-demo-placeholder) {
+        opacity: 1;
+      }
+      .hero > * {
+        opacity: 0.2;
+        transition: opacity 0.5s ease;
+      }
+      .hero.active-section > * {
+        opacity: 1;
+      }
+    }
+
+    /* Mobile Setup */
+    @media (max-width: 920px) {
+      .scrolly-container {
+        flex-direction: column;
+      }
+      .notebook-panel {
+        width: 100%;
+      }
+      .lab-panel {
+        display: none;
+      }
+      .mobile-demo-placeholder {
+        display: block;
+        width: 100%;
+        margin: 20px 0;
+      }
+      .demo-panel {
+        position: relative !important;
+        top: auto !important; bottom: auto !important; left: auto !important; right: auto !important;
+        opacity: 1 !important;
+        transform: none !important;
+        pointer-events: auto !important;
+        padding: 10px 0 !important;
+        margin-top: 15px;
+        height: auto !important;
+      }
+      .card {
+        min-height: auto;
+        padding-bottom: 30px;
+      }
+    }
+
+    /* ══════════════════════════════════════
+       DEMO SLOTS & VISUALIZER STYLING
+       ══════════════════════════════════════ */
+    .desk-demo-slot {
+      position: absolute;
+      top: 35px;
+      bottom: 35px;
+      left: 35px;
+      right: 35px;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .demo-panel {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      transform: scale(0.96) translateY(15px);
+      pointer-events: none;
+      transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .demo-panel.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    /* ══════════════════════════════════════
+       GLASSMETALLURGY CHALKBOARD STYLE
+       ══════════════════════════════════════ */
+    .dashboard-widget {
+      width: 100%;
+      height: 100%;
+      background: rgba(13, 20, 24, 0.85);
+      border: 2px solid rgba(226, 192, 122, 0.15); /* chalky-gold border */
+      border-radius: 12px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      padding: 18px;
+      box-sizing: border-box;
+      gap: 12px;
+      font-family: 'Inter', sans-serif;
+      color: #e2e8f0;
+    }
+
+    .widget-header {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #e2c07a;
+      border-bottom: 1px solid rgba(226, 192, 122, 0.1);
+      padding-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .widget-body {
+      display: flex;
+      flex: 1;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .visual-left {
+      flex: 1.1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-width: 0;
+      position: relative;
+    }
+
+    .visual-right {
+      flex: 0.9;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      min-width: 180px;
+    }
+
+    /* Interactive Scatter Plot (Demo 5) */
+    .scatter-plot {
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 15, 20, 0.9);
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .scatter-point {
+      cursor: pointer;
+      transition: r 0.2s, fill-opacity 0.2s;
+    }
+    .scatter-point:hover {
+      r: 7;
+      fill-opacity: 1;
+    }
+    .scatter-label {
+      font-size: 9px;
+      fill: #cbd5e1;
+      font-family: 'Inter', sans-serif;
+      pointer-events: none;
+    }
+
+    /* Microscope View */
+    .microscope-container {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: #000;
+      box-shadow: 
+        0 0 0 6px #1b2226,
+        0 0 0 8px #35444b,
+        inset 0 0 15px rgba(0,0,0,0.9);
+      overflow: hidden;
+    }
+    .microscope-container::after {
+      content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .microscope-canvas {
+      width: 100%; height: 100%; display: block; border-radius: 50%;
+    }
+
+    /* Lattice Box */
+    .lattice-box {
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 15, 20, 0.9);
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+    }
+    .lattice-canvas {
+      width: 100%; height: 100%; display: block;
+    }
+
+    /* Button Selectors */
+    .btn-row {
+      display: flex;
+      gap: 6px;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+    .btn-select {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+      padding: 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      text-align: center;
+      min-width: 60px;
+    }
+    .btn-select:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #f8fafc;
+    }
+    .btn-select.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: #3b82f6;
+      color: #60a5fa;
+    }
+
+    /* Sliders Card */
+    .controls-box {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .slider-row-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #94a3b8;
+    }
+    .slider-row-val {
+      font-family: 'Fira Code', monospace; color: #e2c07a; font-weight: 600;
+    }
+    .slider-input {
+      -webkit-appearance: none; width: 100%; height: 4px; background: #334155; border-radius: 2px; outline: none;
+    }
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: #3b82f6; cursor: pointer;
+    }
+
+    /* Data Output */
+    .data-readout {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .readout-row {
+      display: flex;
+      justify-content: space-between;
+    }
+    .readout-val {
+      font-weight: 600; color: #e2c07a;
+    }
+
+    /* Tooltip */
+    .diagram-tooltip {
+      position: absolute;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid #3b82f6;
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: #fff;
+      font-size: 10px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 10;
+      max-width: 160px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+
+<div class="scrolly-container">
+  
+  <!-- LEFT SIDE: NOTEBOOK COLUMN -->
+  <div class="notebook-panel">
+    
+    <!-- Hero / Header Section -->
+    <header class="hero ruled-page" data-demo="0">
+      <div class="crumb">
+        <a href="../Learning Resources Hub v4.html">Hóa học</a> › Vật liệu học
+      </div>
+      <h1 class="title">Các Pha của Thép</h1>
+      <div class="title-stroke"></div>
+      <p class="subtitle">Bản chép tay cấu trúc pha</p>
+      <p class="intro">
+        Chào mừng bạn đến với bài học nghiên cứu chi tiết về <b>Các Pha và Tổ Chức Tế Vi của Thép</b>. 
+        Độ bền, độ dẻo và độ cứng của một chi tiết thép không chỉ phụ thuộc vào thành phần cacbon, 
+        mà phần lớn được quyết định bởi tỷ lệ và hình thái của các pha rắn hình thành trong quá trình nhiệt luyện.
+      </p>
+    </header>
+
+    <main class="layout">
+      
+      <!-- SECTION 1 -->
+      <section id="sec-notebook-1" class="card ruled-page" data-demo="1">
+        <h2>1. Các Pha Cân Bằng Cơ Bản</h2>
+        <p>
+          Trong trạng thái cân bằng chậm, thép cacbon gồm ba pha cơ bản:
+        </p>
+        <ul>
+          <li><b>Ferit (α)</b>: Dung dịch rắn xen kẽ của cacbon trong sắt Fe-BCC. Có độ hòa tan cacbon cực kỳ thấp (tối đa 0.022%). Ferit rất mềm (độ cứng ~80 HB), dẻo dai cao và có từ tính mạnh ở nhiệt độ thường.</li>
+          <li><b>Austenit (γ)</b>: Dung dịch rắn xen kẽ của cacbon trong sắt Fe-FCC. Chỉ ổn định ở nhiệt độ cao (trên 727°C). Austenit dẻo, dai và không có từ tính.</li>
+          <li><b>Xêmentit (Fe₃C)</b>: Hợp chất hóa học dạng xen kẽ của sắt và cacbon (6.67% C). Xêmentit có cấu trúc tinh thể trực thoi phức tạp, cực kỳ cứng (&gt;800 HB) và rất giòn.</li>
+        </ul>
+        <p>
+          <i>Xem bảng bên phải: Chọn nút bấm để thay đổi hiển thị cấu trúc mạng tinh thể 3D (BCC cho Ferit, FCC cho Austenit) và hình thái biên giới hạt tương ứng!</i>
+        </p>
+        
+        <div id="mob-demo-1" class="mobile-demo-placeholder"></div>
+      </section>
+
+      <!-- SECTION 2 -->
+      <section id="sec-notebook-2" class="card ruled-page" data-demo="2">
+        <h2>2. Tổ Chức Cùng Tích Lớp: Pearlite, Sorbite & Troostite</h2>
+        <p>
+          Khi làm nguội Austenit với các tốc độ làm nguội khác nhau dưới 727°C, ta thu được các hỗn hợp cơ học của hai pha Ferit (α) và Xêmentit (Fe₃C) xếp lớp xen kẽ nhau (lamellar):
+        </p>
+        <ul>
+          <li><b>Pêrlit (Pearlite)</b>: Hình thành khi làm nguội cực chậm trong lò. Tấm Ferit và Xêmentit thô dày (khoảng cách lớp d &approx; 0.5 - 1.0 μm). Độ cứng khoảng 200 HB.</li>
+          <li><b>Sôbit (Sorbite)</b>: Hình thành khi làm nguội trong không khí tĩnh. Tấm mịn trung bình (d &approx; 0.25 - 0.4 μm). Kết hợp tối ưu giữa độ bền và độ dẻo dai chịu va đập.</li>
+          <li><b>Trutstit (Troostite)</b>: Hình thành khi nguội nhanh trong dầu/không khí cưỡng bức. Các lớp siêu mịn (d &approx; 0.1 - 0.15 μm). Có độ cứng cao hơn (~400 HB) nhưng độ dẻo giảm.</li>
+        </ul>
+        <p>
+          <i>Xem mô phỏng bên phải: Di chuyển thanh trượt "Tốc độ làm nguội" để quan sát sự thay đổi kích thước các lớp sọc tấm thô/mịn dưới kính hiển vi tế vi!</i>
+        </p>
+        
+        <div id="mob-demo-2" class="mobile-demo-placeholder"></div>
+      </section>
+
+      <!-- SECTION 3 -->
+      <section id="sec-notebook-3" class="card ruled-page" data-demo="3">
+        <h2>3. Martensit (Martensite) - Pha Quá Bão Hòa</h2>
+        <p>
+          Khi làm nguội thép với tốc độ cực nhanh (tôi nước), nguyên tử cacbon không kịp khuếch tán ra ngoài để tạo Xêmentit. Chúng bị giam giữ lại trong các lỗ hổng của mạng lập phương.
+        </p>
+        <p>
+          Sự giam giữ này làm biến dạng mạng tinh thể sắt từ lập phương tâm khối (BCC) thành mạng <b>Lập phương tâm mặt bị kéo dài dọc - Lập phương tâm khối lệch (BCT - Body-Centered Tetragonal)</b>. 
+          Pha này gọi là <b>Martensit</b>. Martensit chịu ứng suất nội phần cực lớn, làm cho thép có độ cứng và độ bền cực kỳ cao (lên tới 60-65 HRC) nhưng rất giòn. Dưới kính hiển vi, nó có dạng các kim nhọn đan xen.
+        </p>
+        <p>
+          <i>Xem bảng bên phải: Quan sát mạng tinh thể BCT bị biến dạng kéo dài theo trục thẳng đứng do nguyên tử Cacbon (màu cam) bị kẹt ở tâm, và cấu trúc dạng kim sắc nhọn đặc trưng của Martensit trong kính hiển vi.</i>
+        </p>
+        
+        <div id="mob-demo-3" class="mobile-demo-placeholder"></div>
+      </section>
+
+      <!-- SECTION 4 -->
+      <section id="sec-notebook-4" class="card ruled-page" data-demo="4">
+        <h2>4. Phản ứng Cùng Tinh & Gang Trắng</h2>
+        <p>
+          <b>Bainit</b> là tổ chức trung gian hình thành khi làm nguội nhanh đến nhiệt độ khoảng 250°C - 550°C và giữ nhiệt đẳng nhiệt. Nó gồm pha ferit quá bão hòa cacbon chứa các hạt xêmentit siêu mịn phân tán.
+        </p>
+        <ul>
+          <li><b>Bainit Trên (Upper Bainite)</b>: Hình thành ở nhiệt độ cao hơn (350 - 550°C). Tinh thể ferit dạng bản dẹt song song xen kẽ xêmentit dạng thanh dài, dưới kính hiển vi trông như những chiếc <b>lông chim (feather-like)</b>.</li>
+          <li><b>Bainit Dưới (Lower Bainite)</b>: Hình thành ở nhiệt độ thấp hơn (250 - 350°C). Gồm các <b>kim ferit cực mịn</b> chứa tinh thể xêmentit dạng đốm nhỏ nghiêng góc 60°. Lower Bainite có độ cứng cao gần bằng Martensit nhưng có độ dẻo dai va đập tốt hơn rất nhiều.</li>
+        </ul>
+        <p>
+          <i>Xem mô phỏng bên phải: Chuyển đổi giữa Bainite Trên và Dưới để quan sát sự khác biệt cấu trúc lông chim thô và cấu trúc kim mịn đốm!</i>
+        </p>
+        
+        <div id="mob-demo-4" class="mobile-demo-placeholder"></div>
+      </section>
+
+      <!-- SECTION 5 -->
+      <section id="sec-notebook-5" class="card ruled-page" data-demo="5">
+        <h2>5. Tương Quan Tính Chất Các Pha & Ứng Dụng</h2>
+        <p>
+          Để lựa chọn loại thép phù hợp cho từng ứng dụng cơ khí, người kỹ sư phải cân đối giữa hai tính chất đối nghịch: <b>Độ cứng (Hardness)</b> và <b>Độ dẻo (Ductility)</b>.
+        </p>
+        <p>
+          Ferit dẻo nhất nhưng yếu nhất; Martensit cứng nhất nhưng giòn nhất. Pearlite, Sorbite và Bainite nằm ở các khoảng dung hòa tối ưu ở giữa. Bằng cách <i>ram thép (tempering)</i> - nung nóng Martensit sau khi tôi ở các nhiệt độ khác nhau, ta có thể điều chỉnh để Martensit phân rã thành Ferit và Xêmentit hạt mịn, phục hồi độ dẻo dai.
+        </p>
+        <p>
+          <i>Xem đồ thị tương quan bên phải: Rê chuột vào các điểm tròn đại diện cho mỗi pha để xem thông số độ cứng (HRC/HB) và độ dãn dài tương đối (độ dẻo %) của chúng để so sánh trực quan!</i>
+        </p>
+        
+        <div id="mob-demo-5" class="mobile-demo-placeholder"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- RIGHT SIDE: ELEGANT LAB BENCH -->
+  <div class="lab-panel">
+    <div class="lab-sticky-wrapper">
+      
+      <!-- DESKTOP DEMO SLOTS -->
+      <div id="desk-demo-1" class="desk-demo-slot">
+        <div id="demo-1" class="demo-panel">
+          <!-- Interactive Widget 1 -->
+          <div class="dashboard-widget">
+            <div class="widget-header">
+              <span>Pha Cân Bằng Cơ Bản</span>
+              <span id="label-1" style="color: #60a5fa;">Ferit (α)</span>
+            </div>
+            <div class="widget-body">
+              <div class="visual-left">
+                <!-- Lattice 3D box -->
+                <div class="lattice-box">
+                  <canvas id="lattice-canvas-1" class="lattice-canvas" width="200" height="200"></canvas>
+                </div>
+              </div>
+              <div class="visual-right">
+                <div class="microscope-container">
+                  <canvas id="micro-canvas-1" class="microscope-canvas" width="140" height="140"></canvas>
+                </div>
+                <div class="btn-row">
+                  <button class="btn-select active" id="btn-1-ferrite" onclick="changeDemo1('ferrite')">Ferit</button>
+                  <button class="btn-select" id="btn-1-austenite" onclick="changeDemo1('austenite')">Austenit</button>
+                  <button class="btn-select" id="btn-1-cementite" onclick="changeDemo1('cementite')">Xêmentit</button>
+                </div>
+                <div class="data-readout" id="readout-1">
+                  <div class="readout-row"><span>Mạng:</span><span class="readout-val" id="val-1-lattice">BCC</span></div>
+                  <div class="readout-row"><span>Độ cứng:</span><span class="readout-val" id="val-1-hard">80 HB</span></div>
+                  <div class="readout-row"><span>Độ dẻo:</span><span class="readout-val" id="val-1-duct">Cực cao</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="desk-demo-2" class="desk-demo-slot">
+        <div id="demo-2" class="demo-panel">
+          <!-- Interactive Widget 2 -->
+          <div class="dashboard-widget">
+            <div class="widget-header">
+              <span>Tổ Chức Cùng Tích Lớp</span>
+              <span id="label-2" style="color:#a855f7;">Pêrlit (Pearlite)</span>
+            </div>
+            <div class="widget-body">
+              <div class="visual-left">
+                <!-- Spacing Zoom view -->
+                <div class="lattice-box" style="display:flex; justify-content:center; align-items:center; flex-direction:column; padding: 20px;">
+                  <span style="font-size:12px; margin-bottom:8px; color:#cbd5e1;">Khoảng cách lớp d tế vi:</span>
+                  <div style="width:140px; height:80px; background:rgba(0,0,0,0.3); border-radius:6px; border:1px solid rgba(255,255,255,0.05); overflow:hidden; position:relative;" id="lamellar-zoom">
+                    <!-- Lines drawn dynamically by JS -->
+                  </div>
+                  <span style="font-size:14px; font-weight:600; color:#e2c07a; margin-top:10px;" id="lamellar-val-label">d = 0.8 μm</span>
+                </div>
+              </div>
+              <div class="visual-right">
+                <div class="microscope-container">
+                  <canvas id="micro-canvas-2" class="microscope-canvas" width="140" height="140"></canvas>
+                </div>
+                <div class="controls-box">
+                  <div class="slider-row">
+                    <div class="slider-row-header">
+                      <span>Tốc độ nguội</span>
+                      <span class="slider-row-val" id="slide-cool-val">Rất chậm</span>
+                    </div>
+                    <input type="range" class="slider-input" id="slide-cool" min="1" max="3" step="1" value="1" oninput="changeCoolingRate()" />
+                  </div>
+                </div>
+                <div class="data-readout" id="readout-2">
+                  <div class="readout-row"><span>Tổ chức:</span><span class="readout-val" id="val-2-name">Pêrlit tấm</span></div>
+                  <div class="readout-row"><span>Độ cứng:</span><span class="readout-val" id="val-2-hard">200 HB</span></div>
+                  <div class="readout-row"><span>Độ bền:</span><span class="readout-val" id="val-2-strength">Trung bình</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="desk-demo-3" class="desk-demo-slot">
+        <div id="demo-3" class="demo-panel">
+          <!-- Interactive Widget 3 -->
+          <div class="dashboard-widget">
+            <div class="widget-header">
+              <span>Martensit & Mạng BCT lệch</span>
+              <span style="color:#ec4899;">Quá bão hòa C</span>
+            </div>
+            <div class="widget-body">
+              <div class="visual-left">
+                <div class="lattice-box">
+                  <canvas id="lattice-canvas-3" class="lattice-canvas" width="200" height="200"></canvas>
+                </div>
+              </div>
+              <div class="visual-right">
+                <div class="microscope-container">
+                  <canvas id="micro-canvas-3" class="microscope-canvas" width="140" height="140"></canvas>
+                </div>
+                <div class="data-readout">
+                  <div class="readout-row"><span>Mạng tinh thể:</span><span class="readout-val">BCT (Tetragonal)</span></div>
+                  <div class="readout-row"><span>Độ cứng:</span><span class="readout-val" style="color:#ef4444;">62 HRC (~700 HB)</span></div>
+                  <div class="readout-row"><span>Ứng suất nội:</span><span class="readout-val" style="color:#ef4444;">Rất cao</span></div>
+                  <div class="readout-row"><span>Độ dai:</span><span class="readout-val">Rất thấp (Giòn)</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="desk-demo-4" class="desk-demo-slot">
+        <div id="demo-4" class="demo-panel">
+          <!-- Interactive Widget 4 -->
+          <div class="dashboard-widget">
+            <div class="widget-header">
+              <span>Tổ chức Bainit trung gian</span>
+              <span id="label-4" style="color:#10b981;">Bainite Trên (Upper)</span>
+            </div>
+            <div class="widget-body">
+              <div class="visual-left">
+                <div class="lattice-box" style="display:flex; flex-direction:column; justify-content:center; align-items:center; padding:15px; font-size:11px;">
+                  <span style="color:#cbd5e1; font-weight:600; margin-bottom:8px;">Nhiệt độ hình thành:</span>
+                  <span style="font-size:16px; font-weight:700; color:#e2c07a; margin-bottom:12px;" id="val-4-temp">350 - 550 °C</span>
+                  <span style="color:#94a3b8; text-align:center; line-height:1.4;" id="val-4-mech">Tinh thể Ferit dạng bản song song chứa các hạt Xêmentit thô xếp dọc theo biên giới tấm.</span>
+                </div>
+              </div>
+              <div class="visual-right">
+                <div class="microscope-container">
+                  <canvas id="micro-canvas-4" class="microscope-canvas" width="140" height="140"></canvas>
+                </div>
+                <div class="btn-row">
+                  <button class="btn-select active" id="btn-4-upper" onclick="changeDemo4('upper')">Bainit Trên</button>
+                  <button class="btn-select" id="btn-4-lower" onclick="changeDemo4('lower')">Bainit Dưới</button>
+                </div>
+                <div class="data-readout">
+                  <div class="readout-row"><span>Hình thái:</span><span class="readout-val" id="val-4-shape">Lông chim</span></div>
+                  <div class="readout-row"><span>Độ cứng:</span><span class="readout-val" id="val-4-hard">400 HB</span></div>
+                  <div class="readout-row"><span>Độ dai va đập:</span><span class="readout-val" id="val-4-tough">Khá tốt</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="desk-demo-5" class="desk-demo-slot">
+        <div id="demo-5" class="demo-panel">
+          <!-- Interactive Widget 5 -->
+          <div class="dashboard-widget">
+            <div class="widget-header">
+              <span>Tương Quan Độ Cứng vs Độ Dẻo</span>
+              <span style="color: #cbd5e1; font-size:10px;">Rê chuột vào điểm tròn để so sánh</span>
+            </div>
+            <div class="widget-body">
+              <div class="visual-left">
+                <div class="scatter-plot" id="scatter-container-5">
+                  <svg id="svg-scatter" viewBox="0 0 240 180"></svg>
+                </div>
+              </div>
+              <div class="visual-right" style="justify-content:space-between; padding:10px 0;">
+                <div class="microscope-container" style="width:85px; height:85px;">
+                  <canvas id="micro-canvas-5" class="microscope-canvas" width="85" height="85"></canvas>
+                </div>
+                <div class="data-readout" style="width:100%;">
+                  <div style="font-weight:700; color:#e2c07a; font-size:12px; margin-bottom:2px;" id="plot-name-5">Ferit (α)</div>
+                  <div class="readout-row"><span>Độ cứng:</span><span class="readout-val" id="plot-hard-5">80 HB</span></div>
+                  <div class="readout-row"><span>Độ dãn dài δ:</span><span class="readout-val" id="plot-duct-5">40%</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT GRAPHICS & CONTROLLER
+     ══════════════════════════════════════ -->
+<script>
+  // 1. DATA AND STATES FOR DEMO 1-5
+  let state = {
+    demo1: 'ferrite', // ferrite, austenite, cementite
+    demo2_cool: 1,    // 1 (slow Pearlite), 2 (medium Sorbite), 3 (fast Troostite)
+    demo4: 'upper',   // upper, lower
+    demo5_hover: 'ferrite'
+  };
+
+  const phaseData = {
+    ferrite: { name: 'Ferit (α)', lattice: 'BCC', hard: '80 HB', duct: '40%', fill: '#60a5fa', stroke: '#1d4ed8', latticeNum: 'BCC', scale: 80, pos: [80, 40] },
+    austenite: { name: 'Austenit (γ)', lattice: 'FCC', hard: '180 HB', duct: '25%', fill: '#3b82f6', stroke: '#1d4ed8', latticeNum: 'FCC', scale: 80, pos: [180, 25] },
+    cementite: { name: 'Xêmentit (Fe₃C)', lattice: 'Trực thoi', hard: '800 HB', duct: '0%', fill: '#f43f5e', stroke: '#9f1239', latticeNum: 'Ortho', scale: 65, pos: [800, 0] },
+    pearlite: { name: 'Pêrlit (P)', lattice: 'Tấm song song', hard: '200 HB', duct: '15%', fill: '#a855f7', stroke: '#6b21a8', pos: [200, 15] },
+    sorbite: { name: 'Sôbit (S)', lattice: 'Tấm mịn', hard: '300 HB', duct: '20%', fill: '#8b5cf6', stroke: '#5b21b6', pos: [300, 20] },
+    troostite: { name: 'Trutstit (T)', lattice: 'Tấm siêu mịn', hard: '400 HB', duct: '8%', fill: '#6366f1', stroke: '#3730a3', pos: [400, 8] },
+    bainite: { name: 'Bainit (B)', lattice: 'Kim và hạt', hard: '450 HB', duct: '12%', fill: '#10b981', stroke: '#065f46', pos: [450, 12] },
+    martensite: { name: 'Martensit (M)', lattice: 'BCT lệch', hard: '62 HRC (~700 HB)', duct: '1%', fill: '#ec4899', stroke: '#9d174d', pos: [700, 1] }
+  };
+
+  let voronoiGrains = [];
+  function initVoronoiCells() {
+    const count = 12;
+    let centers = [];
+    for (let i = 0; i < count; i++) {
+      let a = Math.random() * Math.PI * 2;
+      let r = Math.random() * 50;
+      let x = 70 + r * Math.cos(a);
+      let y = 70 + r * Math.sin(a);
+      let ok = true;
+      for (let c of centers) {
+        if (Math.hypot(c.x - x, c.y - y) < 22) { ok = false; break; }
+      }
+      if (!ok) { i--; continue; }
+      centers.push({ x, y, angle: Math.random() * Math.PI, threshold: Math.random() });
+    }
+    const box = [{x: 0, y: 0}, {x: 140, y: 0}, {x: 140, y: 140}, {x: 0, y: 140}];
+    voronoiGrains = [];
+    for (let i = 0; i < centers.length; i++) {
+      let poly = [...box];
+      let p_i = centers[i];
+      for (let j = 0; j < centers.length; j++) {
+        if (i === j) continue;
+        let p_j = centers[j];
+        let a = p_i.x - p_j.x;
+        let b = p_i.y - p_j.y;
+        let mx = (p_i.x + p_j.x) / 2;
+        let my = (p_i.y + p_j.y) / 2;
+        let c = -(a * mx + b * my);
+        let clipped = [];
+        for (let k = 0; k < poly.length; k++) {
+          let p1 = poly[k]; let p2 = poly[(k + 1) % poly.length];
+          let d1 = a * p1.x + b * p1.y + c;
+          let d2 = a * p2.x + b * p2.y + c;
+          if (d1 >= 0) clipped.push(p1);
+          if ((d1 >= 0 && d2 < 0) || (d1 < 0 && d2 >= 0)) {
+            let t = d1 / (d1 - d2);
+            clipped.push({ x: p1.x + t * (p2.x - p1.x), y: p1.y + t * (p2.y - p1.y) });
+          }
+        }
+        poly = clipped;
+      }
+      voronoiGrains.push({ center: p_i, polygon: poly });
+    }
+  }
+
+  function drawLatticeWireframe(canvasId, latticeType) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,200,200);
+
+    let angleY = Date.now() * 0.001;
+    let angleX = 0.35;
+
+    function project(x, y, z) {
+      let scale = latticeType === 'Ortho' ? 55 : 65;
+      let x1 = x * Math.cos(angleY) - z * Math.sin(angleY);
+      let z1 = x * Math.sin(angleY) + z * Math.cos(angleY);
+      let y2 = y * Math.cos(angleX) - z1 * Math.sin(angleX);
+      let z2 = y * Math.sin(angleX) + z1 * Math.cos(angleX);
+      return { x: 100 + x1 * scale, y: 100 + y2 * scale, z: z2 };
+    }
+
+    let corners = [];
+    let edges = [];
+    let extraAtoms = [];
+
+    if (latticeType === 'BCC') {
+      corners = [
+        [-0.5,-0.5,-0.5], [0.5,-0.5,-0.5], [0.5,0.5,-0.5], [-0.5,0.5,-0.5],
+        [-0.5,-0.5,0.5],  [0.5,-0.5,0.5],  [0.5,0.5,0.5],  [-0.5,0.5,0.5]
+      ];
+      edges = [
+        [0,1], [1,2], [2,3], [3,0], [4,5], [5,6], [6,7], [7,4], [0,4], [1,5], [2,6], [3,7]
+      ];
+      extraAtoms = [{pos: [0, 0, 0], r: 9, fill: '#f59e0b', stroke: '#b45309'}];
+    } 
+    else if (latticeType === 'FCC') {
+      corners = [
+        [-0.5,-0.5,-0.5], [0.5,-0.5,-0.5], [0.5,0.5,-0.5], [-0.5,0.5,-0.5],
+        [-0.5,-0.5,0.5],  [0.5,-0.5,0.5],  [0.5,0.5,0.5],  [-0.5,0.5,0.5]
+      ];
+      edges = [
+        [0,1], [1,2], [2,3], [3,0], [4,5], [5,6], [6,7], [7,4], [0,4], [1,5], [2,6], [3,7]
+      ];
+      let fCenters = [
+        [0, 0, -0.5], [0, 0, 0.5], [0, -0.5, 0], [0, 0.5, 0], [-0.5, 0, 0], [0.5, 0, 0]
+      ];
+      fCenters.forEach(fc => extraAtoms.push({pos: fc, r: 8, fill: '#60a5fa', stroke: '#1d4ed8'}));
+    }
+    else if (latticeType === 'BCT') {
+      corners = [
+        [-0.5,-0.6,-0.5], [0.5,-0.6,-0.5], [0.5,0.6,-0.5], [-0.5,0.6,-0.5],
+        [-0.5,-0.6,0.5],  [0.5,-0.6,0.5],  [0.5,0.6,0.5],  [-0.5,0.6,0.5]
+      ];
+      edges = [
+        [0,1], [1,2], [2,3], [3,0], [4,5], [5,6], [6,7], [7,4], [0,4], [1,5], [2,6], [3,7]
+      ];
+      extraAtoms = [
+        {pos: [0, 0, 0], r: 9, fill: '#60a5fa', stroke: '#1d4ed8'},
+        {pos: [0.5, 0, 0], r: 5, fill: '#f97316', stroke: '#c2410c'},
+        {pos: [-0.5, 0, 0], r: 5, fill: '#f97316', stroke: '#c2410c'}
+      ];
+    }
+    else if (latticeType === 'Ortho') {
+      corners = [
+        [-0.4,-0.6,-0.4], [0.4,-0.6,-0.4], [0.4,0.6,-0.4], [-0.4,0.6,-0.4],
+        [-0.4,-0.6,0.4],  [0.4,-0.6,0.4],  [0.4,0.6,0.4],  [-0.4,0.6,0.4]
+      ];
+      edges = [
+        [0,1], [1,2], [2,3], [3,0], [4,5], [5,6], [6,7], [7,4], [0,4], [1,5], [2,6], [3,7]
+      ];
+      extraAtoms = [
+        {pos: [0, 0.3, 0], r: 8, fill: '#f43f5e', stroke: '#9f1239'},
+        {pos: [0, -0.3, 0], r: 5, fill: '#f97316', stroke: '#c2410c'}
+      ];
+    }
+
+    let pCorners = corners.map(c => project(c[0], c[1], c[2]));
+    let pExtra = extraAtoms.map(ea => ({
+      proj: project(ea.pos[0], ea.pos[1], ea.pos[2]),
+      r: ea.r, fill: ea.fill, stroke: ea.stroke
+    }));
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1.5;
+    edges.forEach(e => {
+      let p1 = pCorners[e[0]];
+      let p2 = pCorners[e[1]];
+      ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+    });
+
+    let spheres = [];
+    pCorners.forEach(p => {
+      spheres.push({x: p.x, y: p.y, z: p.z, r: 8, fill: '#94a3b8', stroke: '#475569'});
+    });
+    pExtra.forEach(pe => {
+      spheres.push({x: pe.proj.x, y: pe.proj.y, z: pe.proj.z, r: pe.r, fill: pe.fill, stroke: pe.stroke});
+    });
+
+    spheres.sort((a,b) => b.z - a.z);
+
+    spheres.forEach(s => {
+      let grad = ctx.createRadialGradient(s.x - s.r*0.3, s.y - s.r*0.3, 1, s.x, s.y, s.r);
+      grad.addColorStop(0, '#ffffff'); grad.addColorStop(0.3, s.fill); grad.addColorStop(1, s.stroke);
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
+    });
+  }
+
+  function renderMicroscope(canvasId, phaseId, option = {}) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const size = canvas.width;
+    const center = size / 2;
+    const radius = size * 0.48;
+
+    ctx.save();
+    ctx.clearRect(0,0,size,size);
+    ctx.beginPath();
+    ctx.arc(center, center, radius, 0, Math.PI * 2);
+    ctx.clip();
+
+    if (phaseId === 'ferrite') {
+      voronoiGrains.forEach(g => {
+        ctx.fillStyle = '#fafaf5';
+        ctx.beginPath();
+        ctx.moveTo(g.polygon[0].x * (size/140), g.polygon[0].y * (size/140));
+        for(let i=1; i<g.polygon.length; i++) ctx.lineTo(g.polygon[i].x * (size/140), g.polygon[i].y * (size/140));
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#27272a'; ctx.lineWidth = 1; ctx.stroke();
+      });
+    }
+    else if (phaseId === 'austenite') {
+      voronoiGrains.forEach(g => {
+        ctx.fillStyle = '#e5d7cb';
+        ctx.beginPath();
+        ctx.moveTo(g.polygon[0].x * (size/140), g.polygon[0].y * (size/140));
+        for(let i=1; i<g.polygon.length; i++) ctx.lineTo(g.polygon[i].x * (size/140), g.polygon[i].y * (size/140));
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#27272a'; ctx.lineWidth = 1; ctx.stroke();
+      });
+    }
+    else if (phaseId === 'cementite') {
+      ctx.fillStyle = '#111827';
+      ctx.fillRect(0,0,size,size);
+      
+      ctx.strokeStyle = '#f8fafc';
+      ctx.lineWidth = 4;
+      for (let i = 0; i < 6; i++) {
+        ctx.beginPath();
+        ctx.moveTo(Math.random()*size, 0);
+        ctx.lineTo(Math.random()*size, size);
+        ctx.stroke();
+      }
+    }
+    else if (phaseId === 'pearlite' || phaseId === 'sorbite' || phaseId === 'troostite') {
+      let spacing = 6;
+      if (phaseId === 'sorbite') spacing = 3;
+      if (phaseId === 'troostite') spacing = 1.4;
+
+      voronoiGrains.forEach(g => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(g.polygon[0].x * (size/140), g.polygon[0].y * (size/140));
+        for(let i=1; i<g.polygon.length; i++) ctx.lineTo(g.polygon[i].x * (size/140), g.polygon[i].y * (size/140));
+        ctx.closePath();
+        ctx.clip();
+
+        ctx.fillStyle = '#fafaf5'; ctx.fill();
+        ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1;
+        let cos = Math.cos(g.center.angle);
+        let sin = Math.sin(g.center.angle);
+        for (let d = -size; d < size; d += spacing) {
+          ctx.beginPath();
+          ctx.moveTo(center + d*cos - size*sin, center + d*sin + size*cos);
+          ctx.lineTo(center + d*cos + size*sin, center + d*sin - size*cos);
+          ctx.stroke();
+        }
+        ctx.restore();
+        
+        ctx.beginPath();
+        ctx.moveTo(g.polygon[0].x * (size/140), g.polygon[0].y * (size/140));
+        for(let i=1; i<g.polygon.length; i++) ctx.lineTo(g.polygon[i].x * (size/140), g.polygon[i].y * (size/140));
+        ctx.closePath();
+        ctx.strokeStyle = '#334155'; ctx.lineWidth = 0.8; ctx.stroke();
+      });
+    }
+    else if (phaseId === 'martensite') {
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0,0,size,size);
+
+      ctx.fillStyle = '#cbd5e1';
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 1;
+
+      let seeds = [
+        {x: 35, y: 45, len: 65, ang: 0.5}, {x: 105, y: 50, len: 75, ang: 1.2},
+        {x: 50, y: 100, len: 80, ang: -0.8}, {x: 100, y: 105, len: 55, ang: 2.3},
+        {x: 75, y: 75, len: 90, ang: -0.2}, {x: 20, y: 80, len: 50, ang: 1.5},
+        {x: 120, y: 30, len: 60, ang: -0.4}, {x: 60, y: 20, len: 45, ang: 0.8}
+      ];
+
+      seeds.forEach(n => {
+        ctx.save();
+        ctx.translate(n.x * (size/140), n.y * (size/140));
+        ctx.rotate(n.ang);
+        ctx.beginPath();
+        ctx.moveTo(-n.len/2, 0); ctx.lineTo(0, -3.5); ctx.lineTo(n.len/2, 0); ctx.lineTo(0, 3.5);
+        ctx.closePath();
+        ctx.fill(); ctx.stroke();
+        ctx.restore();
+      });
+    }
+    else if (phaseId === 'bainite') {
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0,0,size,size);
+
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1.5;
+
+      if (option.type === 'upper') {
+        const lines = [
+          {x: 30, y: 30, x2: 110, y2: 110, ang: Math.PI/4},
+          {x: 110, y: 30, x2: 30, y2: 110, ang: -Math.PI/4}
+        ];
+        lines.forEach(l => {
+          ctx.save();
+          ctx.beginPath(); ctx.moveTo(l.x*(size/140), l.y*(size/140)); ctx.lineTo(l.x2*(size/140), l.y2*(size/140)); ctx.stroke();
+          ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+          ctx.lineWidth = 1;
+          for (let d = 10; d < 100; d += 6) {
+            let sx = l.x + d*Math.cos(l.ang);
+            let sy = l.y + d*Math.sin(l.ang);
+            ctx.beginPath();
+            ctx.moveTo(sx*(size/140), sy*(size/140));
+            ctx.lineTo((sx + 8*Math.cos(l.ang+Math.PI/2))*(size/140), (sy + 8*Math.sin(l.ang+Math.PI/2))*(size/140));
+            ctx.moveTo(sx*(size/140), sy*(size/140));
+            ctx.lineTo((sx - 8*Math.cos(l.ang+Math.PI/2))*(size/140), (sy - 8*Math.sin(l.ang+Math.PI/2))*(size/140));
+            ctx.stroke();
+          }
+          ctx.restore();
+        });
+      } else {
+        ctx.fillStyle = '#475569';
+        ctx.strokeStyle = '#334155';
+        let seeds = [
+          {x: 35, y: 45, len: 65, ang: 0.5}, {x: 105, y: 50, len: 75, ang: 1.2},
+          {x: 50, y: 100, len: 80, ang: -0.8}, {x: 100, y: 105, len: 55, ang: 2.3}
+        ];
+        seeds.forEach(n => {
+          ctx.save();
+          ctx.translate(n.x * (size/140), n.y * (size/140));
+          ctx.rotate(n.ang);
+          ctx.beginPath();
+          ctx.moveTo(-n.len/2, 0); ctx.lineTo(0, -2); ctx.lineTo(n.len/2, 0); ctx.lineTo(0, 2);
+          ctx.closePath();
+          ctx.fill(); ctx.stroke();
+
+          ctx.fillStyle = '#ffffff';
+          for(let d = -n.len/3; d < n.len/3; d += 6) {
+            ctx.beginPath(); ctx.arc(d, Math.sin(d)*0.5, 1, 0, Math.PI*2); ctx.fill();
+          }
+          ctx.restore();
+        });
+      }
+    }
+
+    ctx.restore();
+  }
+
+  function drawLamellarZoom(spacing) {
+    const box = document.getElementById('lamellar-zoom');
+    if (!box) return;
+    let linesHtml = '';
+    for (let x = 0; x < 140; x += spacing * 3) {
+      linesHtml += `<div style="position:absolute; left:${x}px; top:0; bottom:0; width:${spacing * 1.2}px; background:#1e293b;"></div>`;
+    }
+    box.innerHTML = linesHtml;
+  }
+
+  function changeDemo1(type) {
+    state.demo1 = type;
+    document.querySelectorAll('#demo-1 .btn-select').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`btn-1-${type}`).classList.add('active');
+
+    const label = document.getElementById('label-1');
+    const rdLattice = document.getElementById('val-1-lattice');
+    const rdHard = document.getElementById('val-1-hard');
+    const rdDuct = document.getElementById('val-1-duct');
+
+    let dat = phaseData[type];
+    label.innerText = dat.name;
+    rdLattice.innerText = dat.lattice;
+    rdHard.innerText = dat.hard;
+    rdDuct.innerText = dat.duct;
+
+    renderDemo1();
+  }
+
+  function renderDemo1() {
+    let dat = phaseData[state.demo1];
+    drawLatticeWireframe('lattice-canvas-1', dat.latticeNum);
+    renderMicroscope('micro-canvas-1', state.demo1);
+  }
+
+  function changeCoolingRate() {
+    let val = parseInt(document.getElementById('slide-cool').value);
+    state.demo2_cool = val;
+
+    const lbl = document.getElementById('slide-cool-val');
+    const label2 = document.getElementById('label-2');
+    const rdName = document.getElementById('val-2-name');
+    const rdHard = document.getElementById('val-2-hard');
+    const rdStrength = document.getElementById('val-2-strength');
+
+    if (val === 1) {
+      lbl.innerText = 'Rất chậm (Lò)';
+      label2.innerText = 'Pêrlit (Pearlite)';
+      rdName.innerText = 'Pêrlit thô';
+      rdHard.innerText = phaseData['pearlite'].hard;
+      rdStrength.innerText = 'Trung bình';
+      drawLamellarZoom(8);
+      renderMicroscope('micro-canvas-2', 'pearlite');
+    } else if (val === 2) {
+      lbl.innerText = 'Không khí (Bình thường)';
+      label2.innerText = 'Sôbit (Sorbite)';
+      rdName.innerText = 'Sôbit hạt mịn';
+      rdHard.innerText = phaseData['sorbite'].hard;
+      rdStrength.innerText = 'Khá cao';
+      drawLamellarZoom(4.5);
+      renderMicroscope('micro-canvas-2', 'sorbite');
+    } else {
+      lbl.innerText = 'Nhanh (Gió/Dầu nhẹ)';
+      label2.innerText = 'Trutstit (Troostite)';
+      rdName.innerText = 'Trutstit siêu mịn';
+      rdHard.innerText = phaseData['troostite'].hard;
+      rdStrength.innerText = 'Rất cao';
+      drawLamellarZoom(2);
+      renderMicroscope('micro-canvas-2', 'troostite');
+    }
+  }
+
+  function changeDemo4(type) {
+    state.demo4 = type;
+    document.querySelectorAll('#demo-4 .btn-select').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`btn-4-${type}`).classList.add('active');
+
+    const lbl = document.getElementById('label-4');
+    const rdShape = document.getElementById('val-4-shape');
+    const rdHard = document.getElementById('val-4-hard');
+    const rdTough = document.getElementById('val-4-tough');
+    const rdTemp = document.getElementById('val-4-temp');
+    const rdMech = document.getElementById('val-4-mech');
+
+    if (type === 'upper') {
+      lbl.innerText = 'Bainite Trên (Upper)';
+      rdShape.innerText = 'Lông chim';
+      rdHard.innerText = '400 HB';
+      rdTough.innerText = 'Khá tốt';
+      rdTemp.innerText = '350 - 550 °C';
+      rdMech.innerText = 'Tinh thể Ferit dạng bản dẹt song song chứa các hạt Xêmentit thô xếp dọc theo biên giới bản.';
+    } else {
+      lbl.innerText = 'Bainite Dưới (Lower)';
+      rdShape.innerText = 'Kim cực mịn';
+      rdHard.innerText = '450 HB';
+      rdTough.innerText = 'Cực kỳ dai';
+      rdTemp.innerText = '250 - 350 °C';
+      rdMech.innerText = 'Kim Ferit vô cùng nhỏ phân tán hạt Xêmentit siêu mịn nghiêng một góc 60 độ so với trục kim.';
+    }
+
+    renderMicroscope('micro-canvas-4', 'bainite', { type });
+  }
+
+  function initScatterPlot() {
+    const svg = document.getElementById('svg-scatter');
+    if (!svg) return;
+
+    const pad = { left: 30, right: 15, top: 10, bottom: 20 };
+    const w = 240 - pad.left - pad.right;
+    const h = 180 - pad.top - pad.bottom;
+
+    function scaleX(hardVal) {
+      return pad.left + (hardVal / 900) * w;
+    }
+    function scaleY(ductVal) {
+      return pad.top + (1 - (ductVal / 50)) * h;
+    }
+
+    let inner = '';
+    for (let x = 200; x <= 800; x += 200) {
+      let sx = scaleX(x);
+      inner += `<line x1="${sx}" y1="${pad.top}" x2="${sx}" y2="${180 - pad.bottom}" stroke="rgba(255,255,255,0.05)"></line>`;
+      inner += `<text x="${sx}" y="${180 - pad.bottom + 12}" fill="#64748b" font-size="8" text-anchor="middle">${x}</text>`;
+    }
+    for (let y = 10; y <= 40; y += 10) {
+      let sy = scaleY(y);
+      inner += `<line x1="${pad.left}" y1="${sy}" x2="${240 - pad.right}" y2="${sy}" stroke="rgba(255,255,255,0.05)"></line>`;
+      inner += `<text x="${pad.left - 4}" y="${sy + 3}" fill="#64748b" font-size="8" text-anchor="end">${y}%</text>`;
+    }
+
+    inner += `<line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${180 - pad.bottom}" stroke="rgba(255,255,255,0.2)"></line>`;
+    inner += `<line x1="${pad.left}" y1="${180 - pad.bottom}" x2="${240 - pad.right}" y2="${180 - pad.bottom}" stroke="rgba(255,255,255,0.2)"></line>`;
+
+    const keys = ['ferrite', 'austenite', 'pearlite', 'sorbite', 'troostite', 'bainite', 'martensite', 'cementite'];
+    keys.forEach(k => {
+      let d = phaseData[k];
+      let hardNum = parseInt(d.hard);
+      if (k === 'martensite') hardNum = 700;
+      let ductNum = parseInt(d.duct);
+
+      let cx = scaleX(hardNum);
+      let cy = scaleY(ductNum);
+
+      inner += `
+        <circle id="sc-point-${k}" class="scatter-point" cx="${cx}" cy="${cy}" r="5" 
+                fill="${d.fill}" stroke="${d.stroke}" stroke-width="1" fill-opacity="0.75"
+                onmouseenter="hoverScatter('${k}')" />
+        <text class="scatter-label" x="${cx}" y="${cy - 7}" text-anchor="middle">${k.substring(0,3).toUpperCase()}</text>
+      `;
+    });
+
+    svg.innerHTML = inner;
+    hoverScatter('ferrite');
+  }
+
+  function hoverScatter(key) {
+    state.demo5_hover = key;
+    const items = ['ferrite', 'austenite', 'pearlite', 'sorbite', 'troostite', 'bainite', 'martensite', 'cementite'];
+    items.forEach(it => {
+      const el = document.getElementById(`sc-point-${it}`);
+      if (el) {
+        el.setAttribute('r', it === key ? '7.5' : '5');
+        el.setAttribute('fill-opacity', it === key ? '1' : '0.75');
+      }
+    });
+
+    let d = phaseData[key];
+    document.getElementById('plot-name-5').innerText = d.name;
+    document.getElementById('plot-name-5').style.color = d.fill;
+    document.getElementById('plot-hard-5').innerText = d.hard;
+    document.getElementById('plot-duct-5').innerText = d.duct;
+
+    renderMicroscope('micro-canvas-5', key, { type: 'lower' });
+  }
+
+  // 6. SCROLL DETECTION OBSERVER
+  const notebookSections = document.querySelectorAll('.hero, #sec-notebook-1, #sec-notebook-2, #sec-notebook-3, #sec-notebook-4, #sec-notebook-5');
+  const demoPanels = document.querySelectorAll('.demo-panel');
+  let observers = [];
+
+  function setActiveSection(sec) {
+    const num = sec.dataset.demo;
+    notebookSections.forEach(s => s.classList.toggle('active-section', s === sec));
+    demoPanels.forEach(p => p.classList.toggle('active', p.id === `demo-${num}`));
+
+    if (num === '1') renderDemo1();
+    if (num === '2') changeCoolingRate();
+    if (num === '3') {
+      drawLatticeWireframe('lattice-canvas-3', 'BCT');
+      renderMicroscope('micro-canvas-3', 'martensite');
+    }
+    if (num === '4') changeDemo4(state.demo4);
+    if (num === '5') initScatterPlot();
+  }
+
+  function observeSection(sec) {
+    const scroller = window.innerWidth > 920 ? document.querySelector('.notebook-panel') : null;
+    const options = { root: scroller, threshold: 0.3 };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) setActiveSection(e.target);
+      });
+    }, options);
+    io.observe(sec);
+    return io;
+  }
+
+  function initObservers() {
+    observers.forEach(o => o.disconnect());
+    observers = [];
+    notebookSections.forEach(s => observers.push(observeSection(s)));
+  }
+
+  // 7. RESPONSIVE MOBILE RELOCATION
+  let wasDesktop = window.innerWidth > 920;
+  function relocateDemos() {
+    const isMobile = window.innerWidth <= 920;
+    const isDesktop = !isMobile;
+
+    if (isDesktop !== wasDesktop) {
+      wasDesktop = isDesktop;
+      initObservers();
+    }
+
+    for (let i = 1; i <= 5; i++) {
+      const demo = document.getElementById(`demo-${i}`);
+      if (!demo) continue;
+      if (isMobile) {
+        const mob = document.getElementById(`mob-demo-${i}`);
+        if (mob && demo.parentElement !== mob) mob.appendChild(demo);
+      } else {
+        const desk = document.getElementById(`desk-demo-${i}`);
+        if (desk && demo.parentElement !== desk) desk.appendChild(demo);
+      }
+    }
+
+    if (isMobile) {
+      notebookSections.forEach(s => {
+        Array.from(s.children).filter(c => !c.classList.contains('mobile-demo-placeholder'))
+          .forEach(t => t.style.opacity = '');
+      });
+    }
+
+    if (document.getElementById('demo-1').classList.contains('active')) renderDemo1();
+    if (document.getElementById('demo-2').classList.contains('active')) changeCoolingRate();
+    if (document.getElementById('demo-3').classList.contains('active')) {
+      drawLatticeWireframe('lattice-canvas-3', 'BCT');
+      renderMicroscope('micro-canvas-3', 'martensite');
+    }
+    if (document.getElementById('demo-4').classList.contains('active')) changeDemo4(state.demo4);
+    if (document.getElementById('demo-5').classList.contains('active')) initScatterPlot();
+  }
+
+  window.addEventListener('resize', relocateDemos);
+
+  // 8. GLOBAL ONLOAD
+  window.onload = function() {
+    initVoronoiCells();
+    
+    function animateLattices() {
+      if (document.getElementById('demo-1').classList.contains('active')) {
+        renderDemo1();
+      }
+      if (document.getElementById('demo-3').classList.contains('active')) {
+        drawLatticeWireframe('lattice-canvas-3', 'BCT');
+      }
+      requestAnimationFrame(animateLattices);
+    }
+    requestAnimationFrame(animateLattices);
+
+    initObservers();
+    setTimeout(relocateDemos, 150);
+  };
+</script>
+
+</body>
+</html>
