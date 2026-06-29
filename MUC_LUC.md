@@ -13,34 +13,31 @@ Dự án hiện có các tệp học liệu thuộc phân hệ **Hóa học** v�
 
 Dưới đây là danh sách các chương học thuộc môn Hóa học:
 
-| Tên chương học | File làm việc (`-split`) | File phân phối (Production) | Giao diện |
-| :--- | :--- | :--- | :--- |
-| **Chương 1 — Cấu trúc nguyên tử** | [chuong-cau-truc-nguyen-tu-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-cau-truc-nguyen-tu-split.html) | [chuong-cau-truc-nguyen-tu.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-cau-truc-nguyen-tu.html) | Split-Screen 🌟 |
-| **Chương 1B — Sự chuyển mức năng lượng electron** | [chuong-chuyen-muc-nang-luong-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-chuyen-muc-nang-luong-split.html) | [chuong-chuyen-muc-nang-luong.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-chuyen-muc-nang-luong.html) | Split-Screen 🌟 |
-| **Chương 2 — Bảng Tuần Hoàn** | [chuong-bang-tuan-hoan-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-bang-tuan-hoan-split.html) | [chuong-bang-tuan-hoan.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-bang-tuan-hoan.html) | Split-Screen 🌟 |
-| **Chương 3 — Các loại liên kết** | [chuong-cac-loai-lien-ket-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-cac-loai-lien-ket-split.html) | [chuong-cac-loai-lien-ket.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-cac-loai-lien-ket.html) | Split-Screen 🌟 |
-| **Chương 4 — Liên kết Octet & lai hóa** | [chuong-lien-ket-octet-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-lien-ket-octet-split.html) | [chuong-lien-ket-octet.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-lien-ket-octet.html) | Split-Screen 🌟 |
-| **Chương 5 — Hóa trị & Công thức hóa học** | [chuong-hoa-tri-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-hoa-tri-split.html) | [chuong-hoa-tri.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-hoa-tri.html) | Split-Screen 🌟 |
-| **Chương 6 — Phương trình hóa học** | [chuong-phuong-trinh-hoa-hoc-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-phuong-trinh-hoa-hoc-split.html) | [chuong-phuong-trinh-hoa-hoc.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-phuong-trinh-hoa-hoc.html) | Split-Screen 🌟 |
-| **Chương 7 — Mol & Tính toán hóa học** | [chuong-mol-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-mol-split.html) | [chuong-mol.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-mol.html) | Split-Screen 🌟 |
-| **Chương 7B — Tốc độ phản ứng và chất xúc tác** | [chuong-toc-do-phan-ung-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-toc-do-phan-ung-split.html) | [chuong-toc-do-phan-ung.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-toc-do-phan-ung.html) | Split-Screen 🌟 |
-| **Chương 7C — Phản ứng oxi hóa - khử** | [chuong-oxy-hoa-khu-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-oxy-hoa-khu-split.html) | [chuong-oxy-hoa-khu.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-oxy-hoa-khu.html) | Split-Screen 🌟 |
-| **Chương 8 — Trạng thái chất** | [chuong-trang-thai-chat-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-trang-thai-chat-split.html) | [chuong-trang-thai-chat.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-trang-thai-chat.html) | Split-Screen 🌟 |
-| **Chương 9 — Phòng thí nghiệm** | *Không có bản split riêng* | [chuong-phong-thi-nghiem.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-phong-thi-nghiem.html) | Bố cục truyền thống 📄 |
-| **Chương 10 — Acid (Axit)** | [chuong-acid-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-acid-split.html) | [chuong-acid.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-acid.html) | Split-Screen 🌟 |
-| **Chương 11 — Base (Bazơ)** | [chuong-bazo-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-bazo-split.html) | [chuong-bazo.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-bazo.html) | Split-Screen 🌟 |
-| **Chương 12 — Muối (Salts)** | [chuong-muoi-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-muoi-split.html) | [chuong-muoi.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-muoi.html) | Split-Screen 🌟 |
-| **Chương 13 — Chuyên đề: Nhôm (Al)** | *Không có bản split riêng* | [chuong-nhom.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-nhom.html) | Split-Screen 🌟 |
-| **Chương 14 — Cấu trúc Tinh thể** | *Không có bản split riêng* | [chuong-cau-truc-tinh-the.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-cau-truc-tinh-the.html) | Split-Screen 🌟 |
-| **Chương 15 — Điện phân** | [chuong-dien-phan-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-dien-phan-split.html) | [chuong-dien-phan.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-dien-phan.html) | Split-Screen 🌟 |
-| **Chương 16 — Nhiệt động học 1** | [chuong-nhiet-dong-hoc-1-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-nhiet-dong-hoc-1-split.html) | [chuong-nhiet-dong-hoc-1.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-nhiet-dong-hoc-1.html) | Split-Screen 🌟 |
-| **Chương 17 — Nhiệt động học 2** | [chuong-nhiet-dong-hoc-2-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-nhiet-dong-hoc-2-split.html) | [chuong-nhiet-dong-hoc-2.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-nhiet-dong-hoc-2.html) | Split-Screen 🌟 |
-| **Chương 17B — Năng lượng tự do Gibbs** | [chuong-gibbs-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-gibbs-split.html) | [chuong-gibbs.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-gibbs.html) | Split-Screen 🌟 |
-| **Chương 18 — Tính toán Nhiệt động học** | [chuong-nhiet-dong-hoc-tinh-toan-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-nhiet-dong-hoc-tinh-toan-split.html) | [chuong-nhiet-dong-hoc-tinh-toan.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-nhiet-dong-hoc-tinh-toan.html) | Split-Screen 🌟 |
-| **Chương 19 — CH₄ Metan** | [chuong-metan-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-metan-split.html) | [chuong-metan.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-metan.html) | Split-Screen 🌟 |
-| **Chương 20 — C₂H₄ Etilen** | [chuong-etilen-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-etilen-split.html) | [chuong-etilen.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-etilen.html) | Split-Screen 🌟 |
-| **Chương 21 — C₂H₂ Axetilen** | [chuong-axetilen-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-axetilen-split.html) | [chuong-axetilen.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-axetilen.html) | Split-Screen 🌟 |
-| **Chương 22 — C₆H₆ Benzen** | [chuong-benzen-split.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-benzen-split.html) | [chuong-benzen.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-benzen.html) | Split-Screen 🌟 |
-
-> [!NOTE]
-> Các tệp có đuôi `-split.html` là nơi mã nguồn giao diện chia đôi được phát triển chính thức. Bản không có chữ `-split` là bản sao đồng bộ (mirror) để đưa vào hệ thống học tập thực tế.
+| Tên chương học | File học liệu | Giao diện |
+| :--- | :--- | :--- |
+| **Chương 1 — Cấu trúc nguyên tử** | [chuong-cau-truc-nguyen-tu.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-cau-truc-nguyen-tu.html) | Split-Screen 🌟 |
+| **Chương 1B — Sự chuyển mức năng lượng electron** | [chuong-chuyen-muc-nang-luong.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-chuyen-muc-nang-luong.html) | Split-Screen 🌟 |
+| **Chương 2 — Bảng Tuần Hoàn** | [chuong-bang-tuan-hoan.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-bang-tuan-hoan.html) | Split-Screen 🌟 |
+| **Chương 3 — Các loại liên kết** | [chuong-cac-loai-lien-ket.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-cac-loai-lien-ket.html) | Split-Screen 🌟 |
+| **Chương 4 — Liên kết Octet & lai hóa** | [chuong-lien-ket-octet.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-lien-ket-octet.html) | Split-Screen 🌟 |
+| **Chương 5 — Hóa trị & Công thức hóa học** | [chuong-hoa-tri.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-hoa-tri.html) | Split-Screen 🌟 |
+| **Chương 6 — Phương trình hóa học** | [chuong-phuong-trinh-hoa-hoc.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-phuong-trinh-hoa-hoc.html) | Split-Screen 🌟 |
+| **Chương 7 — Mol & Tính toán hóa học** | [chuong-mol.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-mol.html) | Split-Screen 🌟 |
+| **Chương 7B — Tốc độ phản ứng và chất xúc tác** | [chuong-toc-do-phan-ung.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-toc-do-phan-ung.html) | Split-Screen 🌟 |
+| **Chương 7C — Phản ứng oxi hóa - khử** | [chuong-oxy-hoa-khu.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-oxy-hoa-khu.html) | Split-Screen 🌟 |
+| **Chương 8 — Trạng thái chất** | [chuong-trang-thai-chat.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-trang-thai-chat.html) | Split-Screen 🌟 |
+| **Chương 9 — Phòng thí nghiệm** | [chuong-phong-thi-nghiem.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-phong-thi-nghiem.html) | Bố cục truyền thống 📄 |
+| **Chương 10 — Acid (Axit)** | [chuong-acid.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-acid.html) | Split-Screen 🌟 |
+| **Chương 11 — Base (Bazơ)** | [chuong-bazo.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-bazo.html) | Split-Screen 🌟 |
+| **Chương 12 — Muối (Salts)** | [chuong-muoi.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-muoi.html) | Split-Screen 🌟 |
+| **Chương 13 — Chuyên đề: Nhôm (Al)** | [chuong-nhom.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-nhom.html) | Split-Screen 🌟 |
+| **Chương 14 — Cấu trúc Tinh thể** | [chuong-cau-truc-tinh-the.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-cau-truc-tinh-the.html) | Split-Screen 🌟 |
+| **Chương 15 — Điện phân** | [chuong-dien-phan.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-dien-phan.html) | Split-Screen 🌟 |
+| **Chương 16 — Nhiệt động học 1** | [chuong-nhiet-dong-hoc-1.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-nhiet-dong-hoc-1.html) | Split-Screen 🌟 |
+| **Chương 17 — Nhiệt động học 2** | [chuong-nhiet-dong-hoc-2.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-nhiet-dong-hoc-2.html) | Split-Screen 🌟 |
+| **Chương 17B — Năng lượng tự do Gibbs** | [chuong-gibbs.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-gibbs.html) | Split-Screen 🌟 |
+| **Chương 18 — Tính toán Nhiệt động học** | [chuong-nhiet-dong-hoc-tinh-toan.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-nhiet-dong-hoc-tinh-toan.html) | Split-Screen 🌟 |
+| **Chương 19 — CH₄ Metan** | [chuong-metan.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-metan.html) | Split-Screen 🌟 |
+| **Chương 20 — C₂H₄ Etilen** | [chuong-etilen.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-etilen.html) | Split-Screen 🌟 |
+| **Chương 21 — C₂H₂ Axetilen** | [chuong-axetilen.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-axetilen.html) | Split-Screen 🌟 |
+| **Chương 22 — C₆H₆ Benzen** | [chuong-benzen.html](file:///c:/Users/eng137/Documents/Ben%20Personal/BewyNoteBook/chuong-benzen.html) | Split-Screen 🌟 |

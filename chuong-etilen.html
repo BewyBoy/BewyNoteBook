@@ -379,7 +379,7 @@
 <body>
 
   <!-- Nút quay lại Mục lục chính -->
-  <a href="Muc Luc.html" class="back-link">
+  <a href="index.html" class="back-link">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <line x1="19" y1="12" x2="5" y2="12"></line>
       <polyline points="12 19 5 12 12 5"></polyline>
@@ -394,7 +394,7 @@
       
       <!-- HERO -->
       <div class="hero ruled-page active-section" data-demo="0">
-        <div class="crumb">Hóa học &gt; Phần V &gt; <a href="Muc Luc.html">Mục lục</a></div>
+        <div class="crumb">Hóa học &gt; Phần V &gt; <a href="index.html">Mục lục</a></div>
         <h1 class="title">C₂H₄ Etilen</h1>
         <div class="title-stroke"></div>
         <p class="subtitle">Alkene đơn giản nhất · Khí kích chín · Nguyên liệu polymer</p>
@@ -1197,10 +1197,11 @@
 
           // Inverted beaker/tube containing Bromine water
           // We compute the color based on colorFading: dark reddish brown to transparent pale yellow
+          // Original Bromine water: RGB (154, 52, 18) -> colorFading -> RGB (13, 18, 20) / Transparent
           let r = Math.round(154 + colorFading * (240 - 154));
           let g = Math.round(52 + colorFading * (240 - 52));
           let b = Math.round(18 + colorFading * (240 - 18));
-          let alpha = 0.7 - colorFading * 0.65;
+          let alpha = 0.7 - colorFading * 0.65; // Fade to almost clear transparent
 
           // Draw test tube container
           ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
@@ -1280,6 +1281,7 @@
         let isPolymerizing = false;
         let progress = 0;
 
+        // 3 monomers initially
         const monomers = [
           { cx: canvas.width * 0.2, cy: canvas.height * 0.5, HOffset: 30, doubleBondOpen: 0 },
           { cx: canvas.width * 0.5, cy: canvas.height * 0.5, HOffset: 30, doubleBondOpen: 0 },
@@ -1303,20 +1305,24 @@
         };
 
         function drawMethyleneUnit(mx, my, HOffset, linkProgress, openFactor) {
+          // Draw 2 Carbon atoms
+          // C1 (left), C2 (right)
           const cDistance = 35;
           const c1x = mx - cDistance/2;
           const c2x = mx + cDistance/2;
 
           // Draw double bond C=C
           if (openFactor < 0.95) {
+            // Upper line of double bond
             ctx.beginPath();
             ctx.moveTo(c1x, my - 4);
             ctx.lineTo(c2x, my - 4);
-            ctx.strokeStyle = `rgba(16, 185, 129, ${1 - openFactor})`;
+            ctx.strokeStyle = `rgba(16, 185, 129, ${1 - openFactor})`; // double bond fades
             ctx.lineWidth = 3;
             ctx.stroke();
           }
 
+          // Lower line of double bond (remains as single sigma bond)
           ctx.beginPath();
           ctx.moveTo(c1x, my + 4);
           ctx.lineTo(c2x, my + 4);
@@ -1340,6 +1346,7 @@
             ctx.lineWidth = 3;
             ctx.stroke();
             
+            // Hydrogen spheres
             ctx.beginPath();
             ctx.arc(hb.hx, hb.hy, 7, 0, Math.PI*2);
             ctx.fillStyle = '#f3f4f6';
@@ -1357,9 +1364,11 @@
           ctx.strokeStyle = '#3f3f46';
           ctx.stroke();
 
+          // Draw extending links to next monomers
           if (openFactor > 0.1) {
             const linkLen = openFactor * 25;
             
+            // Left link from C1
             ctx.beginPath();
             ctx.moveTo(c1x, my);
             ctx.lineTo(c1x - linkLen, my);
@@ -1367,6 +1376,7 @@
             ctx.lineWidth = 4;
             ctx.stroke();
 
+            // Right link from C2
             ctx.beginPath();
             ctx.moveTo(c2x, my);
             ctx.lineTo(c2x + linkLen, my);
@@ -1379,6 +1389,7 @@
         function loop() {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+          // Draw polymerization reactor box
           ctx.strokeStyle = 'rgba(16, 185, 129, 0.15)';
           ctx.lineWidth = 2;
           ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
@@ -1391,18 +1402,24 @@
             }
           }
 
+          // Move monomers closer as polymerization progress increases
           const targetY = canvas.height * 0.5;
           const targetSpacing = canvas.width * 0.28;
 
           monomers.forEach((m, idx) => {
             const openFactor = progress;
+            
+            // Initial positions: scattered
+            // Final positions: aligned in a single straight chain
             const initialX = idx === 0 ? canvas.width * 0.18 : (idx === 1 ? canvas.width * 0.5 : canvas.width * 0.82);
             const finalX = (canvas.width / 2) + (idx - 1) * targetSpacing;
+            
             const currentX = initialX + progress * (finalX - initialX);
 
             drawMethyleneUnit(currentX, targetY, m.HOffset, progress, openFactor);
           });
 
+          // Draw monomer formula labels
           if (progress < 0.2) {
             ctx.font = '10px Itim';
             ctx.fillStyle = '#9ca3af';

@@ -470,7 +470,7 @@
     <!-- Hero / Header Section -->
     <header class="hero ruled-page" data-demo="0">
       <div class="crumb">
-        <a href="../Learning Resources Hub v4.html">Hóa học</a> › Vật liệu học
+        <a href="../learning-resources-hub-v4.html">Hóa học</a> › Vật liệu học
       </div>
       <h1 class="title">Giản đồ pha Fe-C</h1>
       <div class="title-stroke"></div>
@@ -1120,6 +1120,7 @@
         this.t = yToT(y);
       }
 
+      // Sync widgets
       if (this.sliderC) this.sliderC.value = this.c;
       if (this.sliderT && this.options.lockTemp === null) this.sliderT.value = this.t;
 
@@ -1136,6 +1137,7 @@
       let html = '';
       let cMax = this.options.cMax;
 
+      // Draw Grid & Axes
       for (let t = 400; t <= 1600; t += 400) {
         let y = tToY(t);
         html += `<line class="grid-line" x1="${svgPadding.left}" y1="${y}" x2="${svgW - svgPadding.right}" y2="${y}"></line>`;
@@ -1149,6 +1151,7 @@
         html += `<text class="grid-label" x="${x}" y="${svgH - svgPadding.bottom + 12}" text-anchor="middle">${c}%</text>`;
       }
 
+      // Draw Phase fields
       regions.forEach(r => {
         let path = generatePath(r.points, cMax);
         if (path) {
@@ -1156,11 +1159,13 @@
         }
       });
 
+      // Special reaction lines
       if (2.14 < cMax) {
         html += `<line class="boundary-line" stroke="#ef4444" stroke-dasharray="2,2" x1="${cToX(2.14, cMax)}" y1="${tToY(1147)}" x2="${cToX(Math.min(6.67, cMax), cMax)}" y2="${tToY(1147)}"></line>`;
       }
       html += `<line class="boundary-line" stroke="#a855f7" stroke-dasharray="2,2" x1="${cToX(0.022, cMax)}" y1="${tToY(727)}" x2="${cToX(Math.min(6.67, cMax), cMax)}" y2="${tToY(727)}"></line>`;
 
+      // Special Points
       specPoints.forEach(pt => {
         if (pt.c <= cMax) {
           let x = cToX(pt.c, cMax);
@@ -1169,6 +1174,7 @@
         }
       });
 
+      // Reticle
       html += `
         <g id="reticle-group-${this.id}">
           <line id="ret-v-${this.id}" class="reticle-line" x1="0" y1="0" x2="0" y2="${svgH}"></line>
@@ -1192,6 +1198,7 @@
       if (lineH) { lineH.setAttribute('y1', y); lineH.setAttribute('y2', y); }
       if (circle) { circle.setAttribute('cx', x); circle.setAttribute('cy', y); }
 
+      // Highlight active region in SVG
       const activeReg = findActiveRegion(this.c, this.t);
       regions.forEach(r => {
         let pathEl = document.getElementById(`reg-${this.id}-${r.id}`);
@@ -1212,6 +1219,7 @@
         label.innerText = activeReg.name;
       }
       
+      // Update Lever Rule if shown
       if (this.options.showLever && activeReg) {
         let lev = this.calculateLever(this.c, this.t, activeReg.id);
         const barL = document.getElementById(`lever-bar-l-${this.id}`);
@@ -1295,64 +1303,92 @@
       }
     }
 
+    // 2D Projection FCC Lattice Cube Renderer
     renderLattice() {
       const ctx = this.ctx;
       ctx.clearRect(0,0,150,150);
 
+      // Rotate angle based on time
       let angleY = Date.now() * 0.001;
-      let angleX = 0.35;
+      let angleX = 0.35; // fixed tilt
 
       function project(x, y, z) {
         let scale = 50;
+        // center at 75, 75
+        // Y rotate
         let x1 = x * Math.cos(angleY) - z * Math.sin(angleY);
         let z1 = x * Math.sin(angleY) + z * Math.cos(angleY);
+        // X rotate
         let y2 = y * Math.cos(angleX) - z1 * Math.sin(angleX);
         let z2 = y * Math.sin(angleX) + z1 * Math.cos(angleX);
-        return { x: 75 + x1 * scale, y: 75 + y2 * scale, z: z2 };
+        
+        return {
+          x: 75 + x1 * scale,
+          y: 75 + y2 * scale,
+          z: z2
+        };
       }
 
+      // Cube corners in relative [-0.5, 0.5]
       const corners = [
         [-0.5,-0.5,-0.5], [0.5,-0.5,-0.5], [0.5,0.5,-0.5], [-0.5,0.5,-0.5],
         [-0.5,-0.5,0.5],  [0.5,-0.5,0.5],  [0.5,0.5,0.5],  [-0.5,0.5,0.5]
       ];
 
+      // Edges index
       const edges = [
         [0,1], [1,2], [2,3], [3,0],
         [4,5], [5,6], [6,7], [7,4],
         [0,4], [1,5], [2,6], [3,7]
       ];
 
+      // FCC face centers
       const faces = [
         [0, 0, -0.5], [0, 0, 0.5],
         [0, -0.5, 0], [0, 0.5, 0],
         [-0.5, 0, 0], [0.5, 0, 0]
       ];
 
+      // Carbon in octahedral interstitial site (0, 0, 0)
       const carbon = [0, 0, 0];
 
+      // Project all corner points
       let pCorners = corners.map(c => project(c[0], c[1], c[2]));
       let pFaces = faces.map(f => project(f[0], f[1], f[2]));
       let pCarbon = project(carbon[0], carbon[1], carbon[2]);
 
+      // Draw edges
       ctx.strokeStyle = 'rgba(255,255,255,0.15)';
       ctx.lineWidth = 1.5;
       edges.forEach(e => {
         let p1 = pCorners[e[0]];
         let p2 = pCorners[e[1]];
-        ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
       });
 
+      // Gather all atoms to sort by depth (Z) for correct rendering order
       let atoms = [];
       pCorners.forEach(p => atoms.push({x: p.x, y: p.y, z: p.z, r: 8, fill: '#60a5fa', stroke: '#1d4ed8'}));
       pFaces.forEach(p => atoms.push({x: p.x, y: p.y, z: p.z, r: 8, fill: '#93c5fd', stroke: '#1d4ed8'}));
-      atoms.push({x: pCarbon.x, y: pCarbon.y, z: pCarbon.z, r: 5, fill: '#f97316', stroke: '#c2410c'});
+      atoms.push({x: pCarbon.x, y: pCarbon.y, z: pCarbon.z, r: 5, fill: '#f97316', stroke: '#c2410c'}); // Carbon atom
 
+      // Sort by depth (painters algorithm)
       atoms.sort((a,b) => b.z - a.z);
 
+      // Draw spheres
       atoms.forEach(a => {
         let grad = ctx.createRadialGradient(a.x - a.r*0.3, a.y - a.r*0.3, 1, a.x, a.y, a.r);
-        grad.addColorStop(0, '#ffffff'); grad.addColorStop(0.3, a.fill); grad.addColorStop(1, a.stroke);
-        ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); ctx.fillStyle = grad; ctx.fill();
+        grad.addColorStop(0, '#ffffff');
+        grad.addColorStop(0.3, a.fill);
+        grad.addColorStop(1, a.stroke);
+        
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
       });
     }
 
@@ -1361,13 +1397,17 @@
       ctx.save();
       ctx.clearRect(0,0,150,150);
       
+      // circular mask
       ctx.beginPath();
       ctx.arc(75, 75, 68, 0, Math.PI * 2);
       ctx.clip();
 
       const activeReg = findActiveRegion(this.c, this.t);
       if (!activeReg) {
-        ctx.fillStyle = '#000'; ctx.fill(); ctx.restore(); return;
+        ctx.fillStyle = '#000';
+        ctx.fill();
+        ctx.restore();
+        return;
       }
 
       const id = activeReg.id;
@@ -1395,24 +1435,37 @@
 
       ctx.restore();
 
-      ctx.beginPath(); ctx.arc(75, 75, 68, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 2; ctx.stroke();
+      // Eyepiece line
+      ctx.beginPath();
+      ctx.arc(75, 75, 68, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
     }
 
     drawLiquid(ctx, pctLiquid) {
       let grad = ctx.createRadialGradient(75, 75, 0, 75, 75, 70);
-      grad.addColorStop(0, '#f97316'); grad.addColorStop(1, '#b45309');
-      ctx.fillStyle = grad; ctx.fillRect(0,0,150,150);
+      grad.addColorStop(0, '#f97316');
+      grad.addColorStop(1, '#b45309');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0,0,150,150);
 
-      ctx.strokeStyle = 'rgba(251, 191, 36, 0.25)'; ctx.lineWidth = 1.5;
+      // heat flow currents
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.25)';
+      ctx.lineWidth = 1.5;
       for (let i = 0; i < 4; i++) {
-        ctx.beginPath(); ctx.arc(75, 75, 10 + i * 15, Math.sin(Date.now() / 600 + i) * 0.3, Math.PI + Math.cos(Date.now() / 600 + i) * 0.3); ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(75, 75, 10 + i * 15, Math.sin(Date.now() / 600 + i) * 0.3, Math.PI + Math.cos(Date.now() / 600 + i) * 0.3);
+        ctx.stroke();
       }
     }
 
     drawDendrites(ctx, pctAustenite) {
       const positions = [
-        {x: 45, y: 45, size: 20, angle: 0.5}, {x: 105, y: 50, size: 28, angle: 1.2},
-        {x: 50, y: 100, size: 25, angle: -0.8}, {x: 100, y: 105, size: 22, angle: 2.3},
+        {x: 45, y: 45, size: 20, angle: 0.5},
+        {x: 105, y: 50, size: 28, angle: 1.2},
+        {x: 50, y: 100, size: 25, angle: -0.8},
+        {x: 100, y: 105, size: 22, angle: 2.3},
         {x: 75, y: 75, size: 32, angle: -0.2}
       ];
 
@@ -1420,9 +1473,17 @@
       positions.forEach(pos => {
         let size = pos.size * scale;
         if (size > 3) {
-          ctx.save(); ctx.translate(pos.x, pos.y); ctx.rotate(pos.angle);
-          ctx.strokeStyle = '#93c5fd'; ctx.lineWidth = size * 0.12;
-          ctx.beginPath(); ctx.moveTo(0, -size); ctx.lineTo(0, size); ctx.stroke();
+          ctx.save();
+          ctx.translate(pos.x, pos.y);
+          ctx.rotate(pos.angle);
+          ctx.strokeStyle = '#93c5fd';
+          ctx.lineWidth = size * 0.12;
+
+          ctx.beginPath();
+          ctx.moveTo(0, -size);
+          ctx.lineTo(0, size);
+          ctx.stroke();
+
           for (let i = -size * 0.7; i <= size * 0.7; i += size * 0.3) {
             if (Math.abs(i) < 0.5) continue;
             let len = size * 0.5 * (1 - Math.abs(i) / size);
@@ -1435,19 +1496,27 @@
 
     drawNeedles(ctx, pctCementite) {
       const needles = [
-        {x: 40, y: 50, len: 60, ang: 0.3}, {x: 100, y: 45, len: 70, ang: -0.8},
-        {x: 50, y: 105, len: 80, ang: 1.4}, {x: 110, y: 100, len: 50, ang: -0.2}
+        {x: 40, y: 50, len: 60, ang: 0.3},
+        {x: 100, y: 45, len: 70, ang: -0.8},
+        {x: 50, y: 105, len: 80, ang: 1.4},
+        {x: 110, y: 100, len: 50, ang: -0.2}
       ];
 
       let scale = pctCementite / 100;
-      ctx.fillStyle = '#f8fafc'; ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1;
+      ctx.fillStyle = '#f8fafc';
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1;
 
       needles.forEach(n => {
         let length = n.len * scale;
         if (length > 6) {
-          ctx.save(); ctx.translate(n.x, n.y); ctx.rotate(n.ang);
-          ctx.beginPath(); ctx.moveTo(-length/2, 0); ctx.lineTo(0, -2); ctx.lineTo(length/2, 0); ctx.lineTo(0, 2);
-          ctx.closePath(); ctx.fill(); ctx.stroke();
+          ctx.save();
+          ctx.translate(n.x, n.y);
+          ctx.rotate(n.ang);
+          ctx.beginPath();
+          ctx.moveTo(-length/2, 0); ctx.lineTo(0, -2); ctx.lineTo(length/2, 0); ctx.lineTo(0, 2);
+          ctx.closePath();
+          ctx.fill(); ctx.stroke();
           ctx.restore();
         }
       });
@@ -1510,6 +1579,7 @@
 
         ctx.restore();
 
+        // Grain borders
         ctx.beginPath();
         ctx.moveTo(g.polygon[0].x, g.polygon[0].y);
         for(let i=1; i<g.polygon.length; i++) ctx.lineTo(g.polygon[i].x, g.polygon[i].y);
@@ -1554,7 +1624,9 @@
       for (let x = minX - 4; x <= maxX + 4; x += 5) {
         for (let y = minY - 4; y <= maxY + 4; y += 5) {
           if (pointInPolygon([x, y], polygon.map(p => [p.x, p.y]))) {
-            ctx.beginPath(); ctx.arc(x + (Math.random() - 0.5) * 1.5, y + (Math.random() - 0.5) * 1.5, 1, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x + (Math.random() - 0.5) * 1.5, y + (Math.random() - 0.5) * 1.5, 1, 0, Math.PI * 2);
+            ctx.fill();
           }
         }
       }
@@ -1575,14 +1647,17 @@
     const activeDemoNum = sec.dataset.demo;
     const isDesktop = window.innerWidth > 920;
 
+    // Fade classes on desktop
     notebookSections.forEach((s) => {
       s.classList.toggle('active-section', s === sec);
     });
 
+    // Toggle active panels
     demoPanels.forEach((panel) => {
       panel.classList.toggle('active', panel.id === `demo-${activeDemoNum}`);
     });
 
+    // Resize handlers (if canvas rendering needs refresh)
     let vis = visualizers[activeDemoNum];
     if (vis) {
       vis.renderGraphics();
@@ -1651,6 +1726,7 @@
       });
     }
 
+    // Refresh canvas renders on relocation
     Object.values(visualizers).forEach(vis => vis.renderGraphics());
   };
 
@@ -1661,12 +1737,14 @@
     initSampledRegions();
     initVoronoiCells();
 
+    // Spawn visualizers for each panel
     visualizers['1'] = new FeCVisualizer('1', 0.76, 727, { showSliders: true, freePlay: true, showLever: false });
     visualizers['2'] = new FeCVisualizer('2', 0.8, 950, { showSliders: false, showLattice: true, cMax: 2.14 });
     visualizers['3'] = new FeCVisualizer('3', 0.76, 700, { showSliders: false, cMax: 2.14 });
     visualizers['4'] = new FeCVisualizer('4', 4.3, 1100, { showSliders: false });
     visualizers['5'] = new FeCVisualizer('5', 1.20, 600, { showSliders: true, lockTemp: 600, showLever: true });
 
+    // Rotate unit cell continuously for Demo 2
     function animateLattice() {
       if (visualizers['2'] && document.getElementById('demo-2').classList.contains('active')) {
         visualizers['2'].renderGraphics();

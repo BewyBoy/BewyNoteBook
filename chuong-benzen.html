@@ -300,7 +300,7 @@
 <body>
 
   <!-- BACK TO MAIN MENU -->
-  <a href="Muc Luc.html" class="back-link">
+  <a href="index.html" class="back-link">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
     Vở ghi mục lục
   </a>
@@ -436,7 +436,7 @@
             <div style="font-size: 60px; margin-bottom: 20px;">⬡</div>
             <div style="font-family: 'Pacifico', cursive; font-size: 26px; color: #10B981; margin-bottom: 12px;">Thí nghiệm Benzen</div>
             <p style="color: #9ca3af; font-size: 14px; max-width: 320px; line-height: 1.5; padding: 0 10px;">
-              Chào mừng bạn đến với khu vực mô phỏng phòng thí nghiệm Benzen. Cuộn vở ghi lý thuyết bên trái để tự động mở các bài thực hành trực quan tương ứng!
+              Chào mừng bạn đến với khu vực mô phỏng phòng thí nghiệm Benzen. Cuộn vở ghi lý thuyết bên trái để tự động mở các bài thực hành tương ứng!
             </p>
           </div>
         </div>
@@ -669,6 +669,7 @@
         let isDragging = false;
         let lastMouseX = 0, lastMouseY = 0;
 
+        // Generate 6 carbons (radius 46) and 6 hydrogens (radius 76)
         const rawVertices = [];
         const numAtoms = 6;
         
@@ -677,6 +678,7 @@
           const cos = Math.cos(angle);
           const sin = Math.sin(angle);
           
+          // Carbon
           rawVertices.push({
             id: `C${i}`,
             name: 'C',
@@ -687,6 +689,7 @@
             color: '#1f2937'
           });
           
+          // Hydrogen
           rawVertices.push({
             id: `H${i}`,
             name: 'H',
@@ -698,6 +701,7 @@
           });
         }
 
+        // Generate 32 points along the central aromatic ring circle at radius 28
         const rawRingPoints = [];
         const ringRes = 32;
         for (let i = 0; i < ringRes; i++) {
@@ -775,6 +779,7 @@
           const centerX = canvas.width / 2;
           const centerY = canvas.height / 2;
 
+          // Rotate vertices
           const rotated = rawVertices.map(v => {
             let p1 = rotateY(v, rotY);
             let p2 = rotateX(p1, rotX);
@@ -786,6 +791,7 @@
             };
           });
 
+          // Rotate ring points
           const rotatedRing = rawRingPoints.map(rp => {
             let p1 = rotateY(rp, rotY);
             let p2 = rotateX(p1, rotX);
@@ -798,6 +804,7 @@
 
           const elements = [];
 
+          // Carbon-Carbon single bonds
           for (let i = 0; i < 6; i++) {
             const cCurrent = rotated.find(v => v.id === `C${i}`);
             const cNext = rotated.find(v => v.id === `C${(i+1)%6}`);
@@ -812,6 +819,7 @@
                 ctx.lineWidth = 4.5;
                 ctx.lineCap = 'round';
                 ctx.stroke();
+                // inner core
                 ctx.beginPath();
                 ctx.moveTo(cCurrent.tx, cCurrent.ty);
                 ctx.lineTo(cNext.tx, cNext.ty);
@@ -821,6 +829,7 @@
               }
             });
 
+            // Carbon-Hydrogen bonds
             const hCurrent = rotated.find(v => v.id === `H${i}`);
             elements.push({
               type: 'bond-ch',
@@ -836,6 +845,7 @@
             });
           }
 
+          // Aromatic ring system (delocalized pi circle)
           elements.push({
             type: 'pi-cloud-circle',
             z: rotatedRing.reduce((sum, rp) => sum + rp.tz, 0) / rotatedRing.length,
@@ -846,14 +856,15 @@
                 ctx.lineTo(rotatedRing[i].tx, rotatedRing[i].ty);
               }
               ctx.closePath();
-              ctx.strokeStyle = '#10B981';
+              ctx.strokeStyle = '#10B981'; // Mint green pi cloud indicator
               ctx.lineWidth = 2.5;
-              ctx.setLineDash([3, 3]);
+              ctx.setLineDash([3, 3]); // Dotted circle representing delocalization
               ctx.stroke();
               ctx.setLineDash([]);
             }
           });
 
+          // Atoms
           rotated.forEach(at => {
             elements.push({
               type: 'atom',
@@ -862,6 +873,7 @@
             });
           });
 
+          // Sort depth back-to-front
           elements.sort((a, b) => a.z - b.z);
           elements.forEach(el => el.draw());
 
@@ -887,10 +899,10 @@
         const btnReset = document.getElementById('btn-reset-solubility');
         const descText = document.getElementById('sol-desc');
 
-        let step = 0;
+        let step = 0; // 0: water, 1: water + benzene separated, 2: shaking, 3: extracted purple
         let shakeOffset = 0;
         let shakeTimer = 0;
-        let colorProgress = 0;
+        let colorProgress = 0; // turns top layer purple
 
         btnAdd.onclick = () => {
           step = 1;
@@ -901,7 +913,7 @@
 
         btnShake.onclick = () => {
           step = 2;
-          shakeTimer = 80;
+          shakeTimer = 80; // duration of shaking
           btnShake.disabled = true;
           descText.textContent = 'Đang lắc mạnh ống nghiệm... I-ốt phân bố khuếch tán vào các lớp dung môi.';
         };
@@ -923,17 +935,22 @@
           const tubeTop = canvas.height * 0.2;
           const tubeHeight = tubeBottom - tubeTop;
 
-          ctx.fillStyle = 'rgba(147, 197, 253, 0.2)';
+          // Liquid 1 (bottom water layer)
+          // Occupies 40px height from bottom
+          ctx.fillStyle = 'rgba(147, 197, 253, 0.2)'; // transparent pale blue-grey water
           ctx.fillRect(tubeLeft + 1, tubeBottom - 38, tubeWidth - 2, 38);
 
+          // Liquid 2 (top Benzene layer)
           if (step >= 1) {
-            let r = Math.round(255 - colorProgress * (255 - 168));
+            // Blend from clear transparent to purple based on colorProgress
+            let r = Math.round(255 - colorProgress * (255 - 168)); // turns violet
             let g = Math.round(255 - colorProgress * (255 - 85));
             let b = Math.round(255 - colorProgress * (255 - 247));
             ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${0.15 + colorProgress * 0.4})`;
             ctx.fillRect(tubeLeft + 1, tubeBottom - 76, tubeWidth - 2, 38);
           }
 
+          // Dividing line
           if (step >= 1) {
             ctx.beginPath();
             ctx.moveTo(tubeLeft, tubeBottom - 38);
@@ -943,6 +960,7 @@
             ctx.stroke();
           }
 
+          // Glass Test tube outline
           ctx.strokeStyle = '#e5e7eb';
           ctx.lineWidth = 2.5;
           ctx.beginPath();
@@ -952,15 +970,20 @@
           ctx.lineTo(tubeLeft + tubeWidth, tubeTop);
           ctx.stroke();
 
+          // Iodine crystals inside test tube
           if (step === 1) {
+            // Falling red-brown dots
             ctx.fillStyle = '#7c2d12';
             ctx.beginPath();
             ctx.arc(tubeLeft + 22, tubeBottom - 30, 2.5, 0, Math.PI*2);
             ctx.arc(tubeLeft + 28, tubeBottom - 34, 2, 0, Math.PI*2);
             ctx.arc(tubeLeft + 16, tubeBottom - 10, 3, 0, Math.PI*2);
             ctx.fill();
+          } else if (step === 3) {
+            // Dissolved fully in top benzene layer (no crystal left)
           }
 
+          // Labels
           ctx.font = '11px Itim';
           ctx.textAlign = 'center';
           if (step >= 1) {
@@ -977,15 +1000,18 @@
         function loop() {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+          // Dark background
           ctx.fillStyle = '#060e0c';
           ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+          // Wood test tube rack base
           ctx.fillStyle = '#78350f';
           ctx.fillRect(canvas.width * 0.25, canvas.height * 0.85, canvas.width * 0.5, 12);
 
+          // Handle shaking simulation
           if (step === 2) {
             shakeTimer--;
-            shakeOffset = Math.sin(shakeTimer * 0.8) * 8;
+            shakeOffset = Math.sin(shakeTimer * 0.8) * 8; // vibrates left/right
             colorProgress = Math.min(colorProgress + 0.012, 1);
 
             if (shakeTimer <= 0) {
@@ -1039,12 +1065,14 @@
           time += 0.15;
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+          // Dark background
           ctx.fillStyle = '#060e0c';
           ctx.fillRect(0, 0, canvas.width, canvas.height);
 
           const pX = canvas.width / 2;
           const pY = canvas.height * 0.8;
 
+          // Petri dish contain liquid benzen
           ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
           ctx.beginPath();
           ctx.ellipse(pX, pY, 40, 10, 0, 0, Math.PI*2);
@@ -1052,12 +1080,14 @@
           ctx.strokeStyle = '#e5e7eb';
           ctx.stroke();
 
-          ctx.fillStyle = 'rgba(16, 185, 129, 0.15)';
+          // Liquid Benzene representation inside
+          ctx.fillStyle = 'rgba(16, 185, 129, 0.15)'; // light teal liquid
           ctx.beginPath();
           ctx.ellipse(pX, pY, 38, 8, 0, 0, Math.PI*2);
           ctx.fill();
 
           if (isBurning) {
+            // Spawn soot/smoke particles
             if (Math.random() < 0.45 && particles.length < 120) {
               particles.push({
                 x: pX + (Math.random() * 50 - 25),
@@ -1066,16 +1096,18 @@
                 vy: -(Math.random() * 2 + 1.2),
                 size: Math.random() * 6 + 4,
                 alpha: 1.0,
-                color: `rgba(${Math.round(20 + Math.random()*20)}, ${Math.round(20 + Math.random()*20)}, ${Math.round(20 + Math.random()*20)},`
+                color: `rgba(${Math.round(20 + Math.random()*20)}, ${Math.round(20 + Math.random()*20)}, ${Math.round(20 + Math.random()*20)},` // dark grey
               });
             }
 
+            // Draw Flame
             const fH = 75 + Math.sin(time * 1.2) * 8;
             const fW = 20 + Math.sin(time) * 3;
 
+            // Outer orange flame
             const gradOuter = ctx.createLinearGradient(pX, pY, pX, pY - fH);
-            gradOuter.addColorStop(0, '#f97316');
-            gradOuter.addColorStop(0.5, '#ef4444');
+            gradOuter.addColorStop(0, '#f97316'); // orange
+            gradOuter.addColorStop(0.5, '#ef4444'); // red
             gradOuter.addColorStop(1, 'rgba(239, 68, 68, 0)');
             
             ctx.fillStyle = gradOuter;
@@ -1086,8 +1118,9 @@
             ctx.closePath();
             ctx.fill();
 
+            // Inner yellow core
             const gradInner = ctx.createLinearGradient(pX, pY, pX, pY - fH * 0.6);
-            gradInner.addColorStop(0, '#fef08a');
+            gradInner.addColorStop(0, '#fef08a'); // yellow
             gradInner.addColorStop(1, 'rgba(254, 240, 138, 0)');
             
             ctx.fillStyle = gradInner;
@@ -1099,12 +1132,13 @@
             ctx.fill();
           }
 
+          // Move & draw smoke/soot particles
           for (let i = particles.length - 1; i >= 0; i--) {
             const p = particles[i];
             p.x += p.vx;
             p.y += p.vy;
-            p.alpha -= 0.007;
-            p.size += 0.12;
+            p.alpha -= 0.007; // Fades slowly
+            p.size += 0.12; // Swells up
 
             if (p.alpha <= 0 || p.y < 0) {
               particles.splice(i, 1);
@@ -1116,6 +1150,7 @@
             }
           }
 
+          // Label
           ctx.font = '12px Itim';
           ctx.fillStyle = isBurning ? '#ef4444' : '#9ca3af';
           ctx.textAlign = 'center';
@@ -1143,7 +1178,7 @@
         const descText = document.getElementById('brom-desc');
 
         let activeReaction = false;
-        let progress = 0;
+        let progress = 0; // 0 to 1
         let time = 0;
         let bubbles = [];
 
@@ -1162,6 +1197,7 @@
         };
 
         function drawReactants(flaskX, bottomY) {
+          // Round bottom flask container
           ctx.strokeStyle = '#e5e7eb';
           ctx.lineWidth = 2.5;
           ctx.beginPath();
@@ -1171,18 +1207,21 @@
           ctx.closePath();
           ctx.stroke();
 
+          // Liquid inside flask. Fades from red-brown (#9a3412) to clear colorless (#10b981 / transparent)
+          // Bromine color: RGB(154, 52, 18) -> clear colorless: RGB(229, 231, 235) with low opacity
           let r = Math.round(154 - progress * (154 - 229));
           let g = Math.round(52 - progress * (52 - 231));
           let b = Math.round(18 - progress * (18 - 235));
-          let alpha = 0.85 - progress * 0.7;
+          let alpha = 0.85 - progress * 0.7; // turns pale transparent
 
           ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
           ctx.beginPath();
-          ctx.arc(flaskX, bottomY - 33, 33, Math.PI * 0.1, Math.PI * 0.9);
+          ctx.arc(flaskX, bottomY - 30, 33, Math.PI * 0.1, Math.PI * 0.9);
           ctx.fill();
 
+          // Small Fe catalyst particles settling if progress > 0
           if (activeReaction && progress < 0.95) {
-            ctx.fillStyle = '#000000';
+            ctx.fillStyle = '#000000'; // black Fe grains
             ctx.beginPath();
             ctx.arc(flaskX - 12, bottomY - 12, 1.5, 0, Math.PI*2);
             ctx.arc(flaskX + 16, bottomY - 14, 1.2, 0, Math.PI*2);
@@ -1192,29 +1231,37 @@
         }
 
         function drawBeaker(beakerX, bottomY) {
+          // Beaker outline
           ctx.strokeStyle = '#e5e7eb';
           ctx.lineWidth = 2;
           ctx.strokeRect(beakerX - 25, bottomY - 55, 50, 55);
 
+          // Water liquid inside beaker
           ctx.fillStyle = 'rgba(59, 130, 246, 0.12)';
           ctx.fillRect(beakerX - 24, bottomY - 35, 48, 34);
 
+          // Litmus paper strip (originally blue, turning red from bottom up as progress increases)
+          // Blue: #3b82f6, Red: #ef4444
           const paperX = beakerX - 8;
           const paperY = bottomY - 48;
           const paperW = 16;
           const paperH = 40;
 
+          // Split coloring based on progress (reaction acidity)
           const redHeight = progress * paperH;
 
+          // Bottom red part
           if (redHeight > 0) {
             ctx.fillStyle = '#ef4444';
             ctx.fillRect(paperX, paperY + paperH - redHeight, paperW, redHeight);
           }
+          // Top blue part
           if (redHeight < paperH) {
             ctx.fillStyle = '#3b82f6';
             ctx.fillRect(paperX, paperY, paperW, paperH - redHeight);
           }
 
+          // Litmus paper outline
           ctx.strokeStyle = '#fff';
           ctx.lineWidth = 0.5;
           ctx.strokeRect(paperX, paperY, paperW, paperH);
@@ -1236,21 +1283,25 @@
           const bX = canvas.width * 0.75;
           const bY = canvas.height * 0.85;
 
+          // Draw Bunsen burner under the flask
           ctx.fillStyle = '#374151';
           ctx.fillRect(fX - 15, bY + 2, 30, 10);
           ctx.fillStyle = '#4b5563';
           ctx.fillRect(fX - 4, bY - 8, 8, 10);
           if (activeReaction && progress < 0.95) {
-            ctx.fillStyle = 'rgba(59, 130, 246, 0.8)';
+            // Draw fire
+            ctx.fillStyle = 'rgba(59, 130, 246, 0.8)'; // blue burner flame
             ctx.beginPath();
             ctx.moveTo(fX - 6, bY - 8);
             ctx.quadraticCurveTo(fX, bY - 22 + Math.sin(time*2)*2, fX + 6, bY - 8);
             ctx.fill();
           }
 
+          // Reactants and beaker
           drawReactants(fX, bY);
           drawBeaker(bX, bY);
 
+          // Delivery gas pipe from flask to beaker
           ctx.beginPath();
           ctx.moveTo(fX, bY - 80);
           ctx.lineTo(fX + 45, bY - 80);
@@ -1261,6 +1312,7 @@
           ctx.lineWidth = 3.5;
           ctx.stroke();
 
+          // Gas reaction bubble animations
           if (activeReaction) {
             progress = Math.min(progress + 0.0018, 1);
 
@@ -1269,6 +1321,7 @@
               descText.textContent = 'Phản ứng thế hoàn tất! Brom đã thế nhân thơm tạo Bromobenzen trong suốt. Khí HBr hòa tan làm đỏ quỳ tím hoàn toàn.';
             }
 
+            // Spawn bubbles in flask
             if (Math.random() < 0.25 && bubbles.length < 30) {
               bubbles.push({
                 x: fX + (Math.random() * 30 - 15),
@@ -1281,6 +1334,7 @@
               });
             }
 
+            // Spawn bubbles in beaker (HBr escaping)
             if (Math.random() < 0.15 && bubbles.length < 30) {
               bubbles.push({
                 x: bX + (Math.random() * 10 - 5),
@@ -1294,6 +1348,7 @@
             }
           }
 
+          // Move and draw bubbles
           for (let i = bubbles.length - 1; i >= 0; i--) {
             const b = bubbles[i];
             b.x += b.vx;
@@ -1314,6 +1369,7 @@
             }
           }
 
+          // Labels
           ctx.font = '10px Itim';
           ctx.fillStyle = '#9ca3af';
           ctx.textAlign = 'center';

@@ -497,7 +497,7 @@
     <!-- Hero / Header Section -->
     <header class="hero ruled-page" data-demo="0">
       <div class="crumb">
-        <a href="../Learning Resources Hub v4.html">Hóa học</a> › Vật liệu học
+        <a href="../learning-resources-hub-v4.html">Hóa học</a> › Vật liệu học
       </div>
       <h1 class="title">Các Pha của Thép</h1>
       <div class="title-stroke"></div>
@@ -566,7 +566,7 @@
 
       <!-- SECTION 4 -->
       <section id="sec-notebook-4" class="card ruled-page" data-demo="4">
-        <h2>4. Phản ứng Cùng Tinh & Gang Trắng</h2>
+        <h2>4. Bainit (Bainite) - Tổ Chức Trung Gian</h2>
         <p>
           <b>Bainit</b> là tổ chức trung gian hình thành khi làm nguội nhanh đến nhiệt độ khoảng 250°C - 550°C và giữ nhiệt đẳng nhiệt. Nó gồm pha ferit quá bão hòa cacbon chứa các hạt xêmentit siêu mịn phân tán.
         </p>
@@ -805,6 +805,7 @@
     martensite: { name: 'Martensit (M)', lattice: 'BCT lệch', hard: '62 HRC (~700 HB)', duct: '1%', fill: '#ec4899', stroke: '#9d174d', pos: [700, 1] }
   };
 
+  // Voronoi grain seeds cached
   let voronoiGrains = [];
   function initVoronoiCells() {
     const count = 12;
@@ -851,6 +852,7 @@
     }
   }
 
+  // 2. LATTICE STRUCTURE 3D RENDERERS
   function drawLatticeWireframe(canvasId, latticeType) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
@@ -871,7 +873,7 @@
 
     let corners = [];
     let edges = [];
-    let extraAtoms = [];
+    let extraAtoms = []; // face centers or body centers
 
     if (latticeType === 'BCC') {
       corners = [
@@ -881,7 +883,7 @@
       edges = [
         [0,1], [1,2], [2,3], [3,0], [4,5], [5,6], [6,7], [7,4], [0,4], [1,5], [2,6], [3,7]
       ];
-      extraAtoms = [{pos: [0, 0, 0], r: 9, fill: '#f59e0b', stroke: '#b45309'}];
+      extraAtoms = [{pos: [0, 0, 0], r: 9, fill: '#f59e0b', stroke: '#b45309'}]; // Center atom
     } 
     else if (latticeType === 'FCC') {
       corners = [
@@ -891,12 +893,14 @@
       edges = [
         [0,1], [1,2], [2,3], [3,0], [4,5], [5,6], [6,7], [7,4], [0,4], [1,5], [2,6], [3,7]
       ];
+      // Face centers
       let fCenters = [
         [0, 0, -0.5], [0, 0, 0.5], [0, -0.5, 0], [0, 0.5, 0], [-0.5, 0, 0], [0.5, 0, 0]
       ];
       fCenters.forEach(fc => extraAtoms.push({pos: fc, r: 8, fill: '#60a5fa', stroke: '#1d4ed8'}));
     }
     else if (latticeType === 'BCT') {
+      // Martensite: BCC stretched vertically (z height is 1.25)
       corners = [
         [-0.5,-0.6,-0.5], [0.5,-0.6,-0.5], [0.5,0.6,-0.5], [-0.5,0.6,-0.5],
         [-0.5,-0.6,0.5],  [0.5,-0.6,0.5],  [0.5,0.6,0.5],  [-0.5,0.6,0.5]
@@ -905,12 +909,13 @@
         [0,1], [1,2], [2,3], [3,0], [4,5], [5,6], [6,7], [7,4], [0,4], [1,5], [2,6], [3,7]
       ];
       extraAtoms = [
-        {pos: [0, 0, 0], r: 9, fill: '#60a5fa', stroke: '#1d4ed8'},
-        {pos: [0.5, 0, 0], r: 5, fill: '#f97316', stroke: '#c2410c'},
+        {pos: [0, 0, 0], r: 9, fill: '#60a5fa', stroke: '#1d4ed8'}, // center Fe
+        {pos: [0.5, 0, 0], r: 5, fill: '#f97316', stroke: '#c2410c'}, // carbon trapped
         {pos: [-0.5, 0, 0], r: 5, fill: '#f97316', stroke: '#c2410c'}
       ];
     }
     else if (latticeType === 'Ortho') {
+      // cementite cuboid
       corners = [
         [-0.4,-0.6,-0.4], [0.4,-0.6,-0.4], [0.4,0.6,-0.4], [-0.4,0.6,-0.4],
         [-0.4,-0.6,0.4],  [0.4,-0.6,0.4],  [0.4,0.6,0.4],  [-0.4,0.6,0.4]
@@ -918,6 +923,7 @@
       edges = [
         [0,1], [1,2], [2,3], [3,0], [4,5], [5,6], [6,7], [7,4], [0,4], [1,5], [2,6], [3,7]
       ];
+      // Draw some iron & carbon atoms inside
       extraAtoms = [
         {pos: [0, 0.3, 0], r: 8, fill: '#f43f5e', stroke: '#9f1239'},
         {pos: [0, -0.3, 0], r: 5, fill: '#f97316', stroke: '#c2410c'}
@@ -930,6 +936,7 @@
       r: ea.r, fill: ea.fill, stroke: ea.stroke
     }));
 
+    // Draw wireframe edges
     ctx.strokeStyle = 'rgba(255,255,255,0.15)';
     ctx.lineWidth = 1.5;
     edges.forEach(e => {
@@ -938,6 +945,7 @@
       ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
     });
 
+    // Sort all spheres by Z depth
     let spheres = [];
     pCorners.forEach(p => {
       spheres.push({x: p.x, y: p.y, z: p.z, r: 8, fill: '#94a3b8', stroke: '#475569'});
@@ -955,11 +963,12 @@
     });
   }
 
+  // 3. MICROSCOPE RENDER FUNCTIONS
   function renderMicroscope(canvasId, phaseId, option = {}) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const size = canvas.width;
+    const size = canvas.width; // 140 or 85
     const center = size / 2;
     const radius = size * 0.48;
 
@@ -970,6 +979,7 @@
     ctx.clip();
 
     if (phaseId === 'ferrite') {
+      // Clean white grains
       voronoiGrains.forEach(g => {
         ctx.fillStyle = '#fafaf5';
         ctx.beginPath();
@@ -981,6 +991,7 @@
       });
     }
     else if (phaseId === 'austenite') {
+      // Polygonal beige grains
       voronoiGrains.forEach(g => {
         ctx.fillStyle = '#e5d7cb';
         ctx.beginPath();
@@ -992,6 +1003,7 @@
       });
     }
     else if (phaseId === 'cementite') {
+      // White hard needles or networks in background
       ctx.fillStyle = '#111827';
       ctx.fillRect(0,0,size,size);
       
@@ -1005,6 +1017,7 @@
       }
     }
     else if (phaseId === 'pearlite' || phaseId === 'sorbite' || phaseId === 'troostite') {
+      // Spacing based on phase
       let spacing = 6;
       if (phaseId === 'sorbite') spacing = 3;
       if (phaseId === 'troostite') spacing = 1.4;
@@ -1017,6 +1030,7 @@
         ctx.closePath();
         ctx.clip();
 
+        // draw lamellae
         ctx.fillStyle = '#fafaf5'; ctx.fill();
         ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1;
         let cos = Math.cos(g.center.angle);
@@ -1037,6 +1051,7 @@
       });
     }
     else if (phaseId === 'martensite') {
+      // Needles structure
       ctx.fillStyle = '#0f172a';
       ctx.fillRect(0,0,size,size);
 
@@ -1044,6 +1059,7 @@
       ctx.strokeStyle = '#475569';
       ctx.lineWidth = 1;
 
+      // Draw 15 acicular needles
       let seeds = [
         {x: 35, y: 45, len: 65, ang: 0.5}, {x: 105, y: 50, len: 75, ang: 1.2},
         {x: 50, y: 100, len: 80, ang: -0.8}, {x: 100, y: 105, len: 55, ang: 2.3},
@@ -1070,13 +1086,16 @@
       ctx.lineWidth = 1.5;
 
       if (option.type === 'upper') {
+        // Feather-like Upper Bainite
         const lines = [
           {x: 30, y: 30, x2: 110, y2: 110, ang: Math.PI/4},
           {x: 110, y: 30, x2: 30, y2: 110, ang: -Math.PI/4}
         ];
         lines.forEach(l => {
           ctx.save();
+          // Draw main stem
           ctx.beginPath(); ctx.moveTo(l.x*(size/140), l.y*(size/140)); ctx.lineTo(l.x2*(size/140), l.y2*(size/140)); ctx.stroke();
+          // Draw small perpendicular feathery branches
           ctx.strokeStyle = 'rgba(255,255,255,0.4)';
           ctx.lineWidth = 1;
           for (let d = 10; d < 100; d += 6) {
@@ -1092,6 +1111,7 @@
           ctx.restore();
         });
       } else {
+        // Lower Bainite (very fine needles with cementite dots)
         ctx.fillStyle = '#475569';
         ctx.strokeStyle = '#334155';
         let seeds = [
@@ -1107,6 +1127,7 @@
           ctx.closePath();
           ctx.fill(); ctx.stroke();
 
+          // draw tiny cementite spots inside needles
           ctx.fillStyle = '#ffffff';
           for(let d = -n.len/3; d < n.len/3; d += 6) {
             ctx.beginPath(); ctx.arc(d, Math.sin(d)*0.5, 1, 0, Math.PI*2); ctx.fill();
@@ -1119,16 +1140,20 @@
     ctx.restore();
   }
 
+  // Helper: Draw Zoomed Lamellar structure in Demo 2
   function drawLamellarZoom(spacing) {
     const box = document.getElementById('lamellar-zoom');
     if (!box) return;
     let linesHtml = '';
+    // Draw vertical stripes
     for (let x = 0; x < 140; x += spacing * 3) {
+      // draw cementite (dark) stripe
       linesHtml += `<div style="position:absolute; left:${x}px; top:0; bottom:0; width:${spacing * 1.2}px; background:#1e293b;"></div>`;
     }
     box.innerHTML = linesHtml;
   }
 
+  // 4. DEMO INTERACTION CONTROLLERS
   function changeDemo1(type) {
     state.demo1 = type;
     document.querySelectorAll('#demo-1 .btn-select').forEach(btn => btn.classList.remove('active'));
@@ -1222,10 +1247,13 @@
     renderMicroscope('micro-canvas-4', 'bainite', { type });
   }
 
+  // 5. INTERACTIVE SCATTER PLOT IN DEMO 5
   function initScatterPlot() {
     const svg = document.getElementById('svg-scatter');
     if (!svg) return;
 
+    // Plot mapping: X-axis: Hardness (0 to 900 HB). Y-axis: Ductility (0 to 50 % Elongation)
+    // padding: left 30, right 15, top 10, bottom 20
     const pad = { left: 30, right: 15, top: 10, bottom: 20 };
     const w = 240 - pad.left - pad.right;
     const h = 180 - pad.top - pad.bottom;
@@ -1238,6 +1266,7 @@
     }
 
     let inner = '';
+    // Grid Lines
     for (let x = 200; x <= 800; x += 200) {
       let sx = scaleX(x);
       inner += `<line x1="${sx}" y1="${pad.top}" x2="${sx}" y2="${180 - pad.bottom}" stroke="rgba(255,255,255,0.05)"></line>`;
@@ -1249,14 +1278,17 @@
       inner += `<text x="${pad.left - 4}" y="${sy + 3}" fill="#64748b" font-size="8" text-anchor="end">${y}%</text>`;
     }
 
+    // Axes
     inner += `<line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${180 - pad.bottom}" stroke="rgba(255,255,255,0.2)"></line>`;
     inner += `<line x1="${pad.left}" y1="${180 - pad.bottom}" x2="${240 - pad.right}" y2="${180 - pad.bottom}" stroke="rgba(255,255,255,0.2)"></line>`;
 
+    // Plot Points
     const keys = ['ferrite', 'austenite', 'pearlite', 'sorbite', 'troostite', 'bainite', 'martensite', 'cementite'];
     keys.forEach(k => {
       let d = phaseData[k];
+      // extract hardness numeric
       let hardNum = parseInt(d.hard);
-      if (k === 'martensite') hardNum = 700;
+      if (k === 'martensite') hardNum = 700; // HRC to HB conversion approx
       let ductNum = parseInt(d.duct);
 
       let cx = scaleX(hardNum);
@@ -1271,7 +1303,7 @@
     });
 
     svg.innerHTML = inner;
-    hoverScatter('ferrite');
+    hoverScatter('ferrite'); // default
   }
 
   function hoverScatter(key) {
@@ -1285,12 +1317,14 @@
       }
     });
 
+    // Update readout
     let d = phaseData[key];
     document.getElementById('plot-name-5').innerText = d.name;
     document.getElementById('plot-name-5').style.color = d.fill;
     document.getElementById('plot-hard-5').innerText = d.hard;
     document.getElementById('plot-duct-5').innerText = d.duct;
 
+    // Draw corresponding micro on canvas
     renderMicroscope('micro-canvas-5', key, { type: 'lower' });
   }
 
@@ -1304,6 +1338,7 @@
     notebookSections.forEach(s => s.classList.toggle('active-section', s === sec));
     demoPanels.forEach(p => p.classList.toggle('active', p.id === `demo-${num}`));
 
+    // Update specific graphics on scroll
     if (num === '1') renderDemo1();
     if (num === '2') changeCoolingRate();
     if (num === '3') {
@@ -1362,6 +1397,7 @@
       });
     }
 
+    // Refresh active renders
     if (document.getElementById('demo-1').classList.contains('active')) renderDemo1();
     if (document.getElementById('demo-2').classList.contains('active')) changeCoolingRate();
     if (document.getElementById('demo-3').classList.contains('active')) {
@@ -1378,6 +1414,7 @@
   window.onload = function() {
     initVoronoiCells();
     
+    // Continuous rotation for Demo 1 (BCC/FCC) & Demo 3 (BCT)
     function animateLattices() {
       if (document.getElementById('demo-1').classList.contains('active')) {
         renderDemo1();
